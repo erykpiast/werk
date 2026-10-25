@@ -8,12 +8,10 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { logPathFor, readRecords } from "../fake-agent/launch-log.ts";
 import type { Script } from "../fake-agent/script.ts";
 import { cleanEnv, FAKE_DIR, fakeIsFirst } from "./env.ts";
-
-const CLI = resolve(import.meta.dir, "../cli.ts");
 
 export type ProjectOptions = {
   /** The script the fake agent replays. With none, the fake exits with an error. */
@@ -33,8 +31,6 @@ export type Project = {
   logPath: string;
   /** Runs a program in the project and waits for it. */
   run(argv: string[], env?: Record<string, string>): Promise<RunResult>;
-  /** Runs a werk command in the project. */
-  werk(args: string[], env?: Record<string, string>): Promise<RunResult>;
   /** Starts a program in the project. The harness stops it when the test ends. */
   start(
     argv: string[],
@@ -135,8 +131,6 @@ export function createProject(options: ProjectOptions = {}): Project {
     target,
     logPath,
     run,
-    werk: (args, env) =>
-      run(["bun", CLI, ...args], { WERK_LOG: logPath, ...env }),
     start,
     events: () =>
       existsSync(logPath)
