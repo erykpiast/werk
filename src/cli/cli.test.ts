@@ -344,3 +344,69 @@ test("remove takes the subtree and restore undoes it", async () => {
   expect((await werk("remove")).code).toBe(2);
   expect((await werk("restore")).code).toBe(2);
 });
+
+/** A real card with a two-block body, decided with who me. */
+async function decidedCard(id: string) {
+  await werk("add", id, "--title", "Seats", "--body", "One.\n\nTwo.");
+  await accept(id, "--actor", "you");
+  await werk("edit", id, "--who", "me", "--no-basis", "root");
+  await werk("kill", id, "--revisit");
+  expect((await werk("status", id, "decided")).code).toBe(0);
+}
+
+test("propose refuses a body block that no op names, and prints the block", async () => {
+  await decidedCard("q");
+  const ops = JSON.stringify([{ tag: "elaborated", old: "One.", new: "One." }]);
+  const refused = await werk("propose", "q", "--ops", ops);
+  expect(refused.code).toBe(1);
+  expect(refused.stderr).toContain("cover");
+  expect(refused.stderr).toContain('"Two."');
+  expect((await werk("propose", "q", "--ops", "nope")).code).toBe(2);
+  expect((await werk("propose", "q")).code).toBe(1);
+});
+
+test("propose shows one diff on the card, and an accept amends the decided card", async () => {
+  await decidedCard("q");
+  const ops = JSON.stringify([
+    { tag: "elaborated", old: "One.", new: "One." },
+    { tag: "elaborated", old: "Two.", new: "Two, more." },
+  ]);
+  expect(
+    (await werk("propose", "q", "--title", "Seats now", "--ops", ops)).code,
+  ).toBe(0);
+  const pending = (await werk("show", "q")).stdout;
+  expect(pending).toContain("pending change");
+  expect(pending).toContain("title: Seats {+now+}");
+  expect(pending).toContain("[-Two.-] {+Two, more.+}");
+  expect((await accept("q")).code).toBe(1);
+  expect((await accept("q", "--actor", "you")).code).toBe(0);
+  const shown = (await werk("show", "q")).stdout;
+  expect(shown).toContain("[decided]");
+  expect(shown).toContain("Two, more.");
+  expect(shown).not.toContain("pending change");
+});
+
+test("discard drops the pending change of a card in the map", async () => {
+  await decidedCard("q");
+  await werk("propose", "q", "--why", "because");
+  expect((await werk("discard", "q")).stdout.trim()).toBe("discarded");
+  expect((await werk("show", "q")).stdout).not.toContain("pending change");
+});
+
+test("remove takes an option only when the decided card keeps an option", async () => {
+  await werk("add", "r", "--title", "R");
+  await accept("r", "--actor", "you");
+  await werk("edit", "r", "--who", "you", "--no-basis", "root");
+  await werk("add", "r:o1", "--kind", "option", "--title", "O1");
+  await werk("link", "r:o1", "r", "--type", "alternative_to");
+  await accept("r:o1", "--actor", "you");
+  await werk("kill", "r", "--revisit");
+  expect((await werk("status", "r", "decided")).code).toBe(0);
+  const refused = await werk("remove", "r:o1");
+  expect(refused.code).toBe(1);
+  expect(refused.stderr).toContain("option");
+  await werk("add", "r:o2", "--kind", "option", "--title", "O2");
+  await werk("link", "r:o2", "r", "--type", "alternative_to");
+  await accept("r:o2", "--actor", "you");
+  expect((await werk("remove", "r:o1")).code).toBe(0);
+});

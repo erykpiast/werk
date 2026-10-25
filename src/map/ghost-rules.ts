@@ -25,6 +25,16 @@ function ghostCheck(map: FoldedMap, id: string): Violation | null {
   return null;
 }
 
+/** The refusal for an accept that does not state that the person asked for it. */
+export function actorRefusal(actor: unknown): Violation | null {
+  return actor === "you"
+    ? null
+    : {
+        rule: "accept-actor",
+        detail: "an accept must state that the person asked for it",
+      };
+}
+
 /**
  * Commits one ghost with its ghost refines ancestors up to the first real card,
  * and the ghost sources, excerpts and options that the committed cards carry.
@@ -35,12 +45,8 @@ export function acceptGhost(
   id: string,
   actor: unknown,
 ): Violation | null {
-  if (actor !== "you") {
-    return {
-      rule: "accept-actor",
-      detail: "an accept must state that the person asked for it",
-    };
-  }
+  const unasked = actorRefusal(actor);
+  if (unasked) return unasked;
   const refused = ghostCheck(map, id);
   if (refused) return refused;
   const accepted = new Set([id]);

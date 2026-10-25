@@ -1,4 +1,5 @@
 /** The text that the show verb prints for one card. See #werk-cli-show. */
+import { renderPending } from "./edit-diff.ts";
 import type { Criterion, Edge, FoldedMap, MapNode } from "./fold.ts";
 import { threadLines } from "./thread.ts";
 
@@ -27,7 +28,7 @@ export function renderCard(map: FoldedMap, id: string): string | null {
   const node = map.nodes.get(id);
   if (!node) return null;
   const lines = [
-    `${node.kind} ${node.id}  [${node.status}]${node.proposed ? "  proposed" : ""}`,
+    `${node.kind} ${node.id}  [${node.status}]${node.proposed ? "  proposed" : ""}${node.pending ? "  pending change" : ""}`,
     node.title,
   ];
   if (node.why !== "") lines.push(`why: ${node.why}`);
@@ -40,6 +41,7 @@ export function renderCard(map: FoldedMap, id: string): string | null {
     ...node.kill.map((criterion) => `kill: ${killText(criterion)}`),
   ];
   if (facts.length > 0) lines.push("", ...facts);
+  if (node.pending) lines.push("", ...renderPending(node, node.pending));
   const edges = [
     ...map.edges.map((edge) => ({ edge, held: false })),
     ...map.ghostEdges.map((edge) => ({ edge, held: true })),
