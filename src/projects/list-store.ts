@@ -15,8 +15,9 @@ type Env = Record<string, string | undefined>;
 /** The per-user folder. WERK_HOME or WERK_LOG names another one, to run a second server on purpose. Tests run that way. */
 export function userHome(env: Env): string {
   if (env.WERK_HOME) return env.WERK_HOME;
-  // A second instance on purpose: its list and its lock sit beside the log it names (#werk-onelock).
-  if (env.WERK_LOG) return dirname(env.WERK_LOG);
+  // A second instance on purpose: its list and its server lock sit in a folder beside the log it names.
+  // The folder keeps the server lock apart from the project lock that sits next to the log (#werk-onelock).
+  if (env.WERK_LOG) return join(dirname(env.WERK_LOG), "server");
   return join(env.XDG_CONFIG_HOME || join(homedir(), ".config"), "werk");
 }
 

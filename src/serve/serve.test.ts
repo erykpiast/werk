@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import {
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -122,6 +123,29 @@ test("a server of another per-user folder waits for the project, then refuses wi
   expect(second.code).toBe(1);
   expect(second.stderr).toContain(`waiting for pid ${first.pid}`);
   expect(second.stderr).toContain(`on port ${first.port} (pid ${first.pid})`);
+}, 20000);
+
+test("a server with WERK_LOG runs beside a first server, with its locks beside the log it names", async () => {
+  project.start(["bun", CLI, "serve", "--port", "0"]);
+  const first = await holder();
+  const other = join(scratch, "other");
+  mkdirSync(other);
+  writeFileSync(join(other, "log.jsonl"), "");
+  const second = project.start(["bun", CLI, "serve", "--port", "0"], {
+    WERK_HOME: "",
+    WERK_LOG: join(other, "log.jsonl"),
+  });
+  const lock = await until(() => {
+    const read = JSON.parse(
+      readFileSync(join(other, "server", "serve.lock"), "utf8"),
+    );
+    return read.port > 0 ? (read as { pid: number; port: number }) : undefined;
+  });
+  expect(lock.pid).not.toBe(first.pid);
+  expect(lock.port).not.toBe(first.port);
+  expect(existsSync(join(other, "serve.lock"))).toBe(true);
+  expect(second.exitCode).toBeNull();
+  expect((await holder()).pid).toBe(first.pid);
 }, 20000);
 
 test("a stale lock from a killed server is taken over", async () => {

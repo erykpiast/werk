@@ -29,6 +29,6 @@ test("the per-user folder comes from WERK_HOME, then the config folder, then the
 });
 
 test("WERK_LOG puts the per-user folder beside the log it names", () => {
-  expect(userHome({ WERK_LOG: "/x/log.jsonl" })).toBe("/x");
+  expect(userHome({ WERK_LOG: "/x/log.jsonl" })).toBe("/x/server");
   expect(userHome({ WERK_HOME: "/h", WERK_LOG: "/x/log.jsonl" })).toBe("/h");
 });
