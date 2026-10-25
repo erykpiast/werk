@@ -563,7 +563,7 @@ describe("cited cards and plans that extend", () => {
       rules(
         plan("r/01", { cited: { a: 1 } }),
         mark,
-        move("r/01", "ready", "agent"),
+        move("r/01", "ready", { actor: "agent" }),
       ),
     ).toEqual(["marked"]);
   });
