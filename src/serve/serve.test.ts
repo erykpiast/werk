@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import {
-  cpSync,
   existsSync,
   mkdtempSync,
   readFileSync,
@@ -9,6 +8,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { copyApp } from "../test-env/app-copy.ts";
 import { createProject, type Project } from "../test-env/project.ts";
 
 const SRC = join(import.meta.dir, "..");
@@ -155,8 +155,7 @@ test("killing the server leaves a stale lock that the next start takes over", as
 
 test("an edit to a route handler in a copy of the app is live with no restart", async () => {
   const app = join(scratch, "app");
-  cpSync(SRC, join(app, "src"), { recursive: true });
-  project.start(["bun", join(app, "src", "cli.ts"), "serve", "--port", "0"]);
+  project.start(["bun", copyApp(app), "serve", "--port", "0"]);
   const { pid, port } = await holder();
   expect((await fetch(url(port, "/api/ping"))).status).toBe(404);
 
@@ -179,8 +178,7 @@ test("an edit to a route handler in a copy of the app is live with no restart", 
 
 test("a hot reload keeps the token and the open live connections", async () => {
   const app = join(scratch, "app");
-  cpSync(SRC, join(app, "src"), { recursive: true });
-  project.start(["bun", join(app, "src", "cli.ts"), "serve", "--port", "0"]);
+  project.start(["bun", copyApp(app), "serve", "--port", "0"]);
   const { port } = await holder();
   const token = await tokenOf(port);
   const live = await fetch(url(port, "/api/live"));
