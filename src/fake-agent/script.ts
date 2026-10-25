@@ -3,7 +3,16 @@ export type Step =
   | { event: Record<string, unknown> }
   | { edit: string; content: string }
   | { pause: number }
-  | { ask: { id: string; tool: string; input?: Record<string, unknown> } }
+  | {
+      ask: {
+        id: string;
+        tool: string;
+        input?: Record<string, unknown>;
+        /** The engine's reason, and the widening updates it attaches. */
+        reason?: string;
+        suggestions?: Record<string, unknown>[];
+      };
+    }
   | { crash: number };
 
 export type Reply = Step[];

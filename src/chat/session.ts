@@ -8,6 +8,17 @@ import type { FoldedMap } from "../map/fold.ts";
 import { buildRuleTitles } from "./build-rules.ts";
 import { cardLine } from "./card-line.ts";
 import { chatArgs } from "./child-args.ts";
+import {
+  type Answer,
+  type Ask,
+  allowFlags,
+  callLabel,
+  parseAsk,
+  type Question,
+  reply as replyTo,
+  suggestionLabels,
+} from "./permission.ts";
+import { appendAsk, keepAllow, readAllow } from "./permission-store.ts";
 import { feed, initialReply, type Part } from "./reply-stream.ts";
 import {
   emptyQueue,
@@ -26,6 +37,8 @@ export type ChatEvent =
   | { name: "delta"; data: Part & { type: "delta"; turn: string } }
   | { name: "chat"; data: Part & { type: "chat"; turn: string } }
   | { name: "status"; data: Part & { type: "status"; turn: string } }
+  | { name: "ask"; data: AskData }
+  | { name: "ask-done"; data: { id: string } }
   | {
       name: "turn-end";
       data: {
@@ -37,6 +50,18 @@ export type ChatEvent =
         exited?: string;
       };
     };
+
+/** A question that waits for the person, as a page receives it. */
+export type AskData = {
+  turn: string;
+  id: string;
+  tool: string;
+  input: unknown;
+  reason: string | null;
+  /** The rules Always allow would store, or null when the CLI attached no suggestion. */
+  suggestion: string | null;
+  questions: Question[] | null;
+};
 
 export type SessionDeps = {
   folder: string;
@@ -57,6 +82,11 @@ export type ChatSession = {
   running(): string[];
   /** The events a page that joins late replays, in order. Streamed tokens and statuses are not kept. */
   history(): ChatEvent[];
+  /** Answers an open ask. An id that is not open, or an answer the ask cannot take, gives a reason. */
+  answer(
+    id: string,
+    answer: Answer,
+  ): { ok: true } | { ok: false; reason: string };
   /** Ends the child. Every open turn ends with the exit. */
   stop(): Promise<void>;
 };
@@ -75,6 +105,8 @@ export function createSession(deps: SessionDeps): ChatSession {
   let stderrText = "";
   let pumping: Promise<void> = Promise.resolve();
   const kept: ChatEvent[] = [];
+  /** The asks that wait for the person, by the id of the control request. */
+  const asks = new Map<string, Ask>();
 
   const emit = (event: ChatEvent) => {
     if (event.name !== "delta" && event.name !== "status") {
@@ -89,6 +121,8 @@ export function createSession(deps: SessionDeps): ChatSession {
     child = null;
     reply = initialReply;
     announced = null;
+    for (const id of asks.keys()) emit({ name: "ask-done", data: { id } });
+    asks.clear();
     const { queue: next, ended } = exitAll(queue);
     queue = next;
     for (const turn of ended) {
@@ -114,13 +148,16 @@ export function createSession(deps: SessionDeps): ChatSession {
       projectIsWerk: deps.projectIsWerk,
       buildRuleTitles: buildRuleTitles(map),
     });
-    const spawned = Bun.spawn(["claude", ...chatArgs(options)], {
-      cwd: deps.folder,
-      env: { ...deps.env, WERK_LOG: deps.logPath, ...options.env },
-      stdin: "pipe",
-      stdout: "pipe",
-      stderr: "pipe",
-    }) as Child;
+    const spawned = Bun.spawn(
+      ["claude", ...chatArgs(options, allowFlags(readAllow(deps.logPath)))],
+      {
+        cwd: deps.folder,
+        env: { ...deps.env, WERK_LOG: deps.logPath, ...options.env },
+        stdin: "pipe",
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    ) as Child;
     stderrText = "";
     pumping = pump(spawned);
     return spawned;
@@ -131,6 +168,24 @@ export function createSession(deps: SessionDeps): ChatSession {
     try {
       event = JSON.parse(line);
     } catch {
+      return;
+    }
+    const ask = parseAsk(event);
+    if (ask) {
+      asks.set(ask.id, ask);
+      const suggestion = suggestionLabels(ask.suggestions);
+      emit({
+        name: "ask",
+        data: {
+          turn: queue.active?.turn ?? "",
+          id: ask.id,
+          tool: ask.tool,
+          input: ask.input,
+          reason: ask.reason,
+          suggestion: suggestion.length === 0 ? null : suggestion.join(", "),
+          questions: ask.questions,
+        },
+      });
       return;
     }
     let parts: Part[];
@@ -226,6 +281,27 @@ export function createSession(deps: SessionDeps): ChatSession {
       ...queue.waiting.map((w) => w.turn),
     ],
     history: () => [...kept],
+    answer(id, answer) {
+      const ask = asks.get(id);
+      if (!ask || !child) return { ok: false, reason: "no such open ask" };
+      const made = replyTo(ask, answer);
+      if (!made.ok) return { ok: false, reason: made.message };
+      child.stdin.write(made.line);
+      child.stdin.flush();
+      asks.delete(id);
+      appendAsk(deps.logPath, {
+        at: new Date().toISOString(),
+        tool: ask.tool,
+        label: callLabel(ask.tool, ask.input),
+        input: ask.input,
+        reason: ask.reason,
+        decision: made.logged,
+        widened: made.widened,
+      });
+      if (made.logged === "always") keepAllow(deps.logPath, ask.suggestions);
+      emit({ name: "ask-done", data: { id } });
+      return { ok: true };
+    },
     async stop() {
       const running = child;
       if (!running) return;

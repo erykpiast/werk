@@ -4,6 +4,7 @@
  * (#werk-chat, #werk-serve-trust).
  */
 import { join, resolve } from "node:path";
+import { parseAnswer } from "../chat/permission.ts";
 import { createSession } from "../chat/session.ts";
 import { readMap } from "../map/log-store.ts";
 import { selfCommandLine } from "../own/own.ts";
@@ -72,4 +73,32 @@ export async function chatRoute(
     );
   }
   return Response.json({ turn }, { status: 202 });
+}
+
+/** An answer to an open ask: the id of the control request and the person's choice (#werk-approve). */
+export async function askRoute(
+  context: Context,
+  req: Request,
+): Promise<Response> {
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return refuse("send a JSON body");
+  }
+  const answer = parseAnswer(body);
+  const id = (body as Record<string, unknown> | null)?.id;
+  if (typeof id !== "string" || answer === null) {
+    return refuse("send the id of the ask and a decision");
+  }
+  const done = context.chat?.answer(id, answer) ?? {
+    ok: false as const,
+    reason: "no such open ask",
+  };
+  if (done.ok) return Response.json({ id }, { status: 200 });
+  const status = done.reason === "no such open ask" ? 409 : 400;
+  return Response.json(
+    { error: status === 409 ? "closed" : "bad-request", message: done.reason },
+    { status },
+  );
 }

@@ -260,3 +260,105 @@ test("a send without the token is refused", async ({ page, app }) => {
   );
   expect(res.status()).toBe(403);
 });
+
+const mkdirAsk = {
+  id: "a1",
+  tool: "Bash",
+  input: { command: "mkdir -p /tmp/werk-e2e" },
+  reason: "rule",
+  suggestions: [
+    {
+      type: "addRules",
+      behavior: "allow",
+      destination: "session",
+      rules: [{ toolName: "Bash", ruleContent: "mkdir:*" }],
+    },
+  ],
+};
+
+test("a permission ask holds the turn until Allow, and Always allow shows its rule", async ({
+  page,
+  evidence,
+}) => {
+  await withChat(
+    {
+      roles: { chat: { replies: [[{ ask: mkdirAsk }, say("m1", "Made it")]] } },
+    },
+    async (server) => {
+      await page.goto(server.url);
+      await send(page, "Make a folder");
+      const bar = page.locator('[data-slot="ask-bar"]');
+      await expect(bar).toContainText(
+        "Bash wants to run. The turn is waiting.",
+      );
+      await expect(bar).toContainText("mkdir -p /tmp/werk-e2e");
+      await expect(bar).toContainText("Claude Code could not decide: rule");
+      await expect(
+        bar.getByRole("button", { name: "Always allow Bash(mkdir:*)" }),
+      ).toBeVisible();
+      // The turn is open while the ask waits.
+      const head = page.locator('[data-slot="chat-head"]');
+      await expect(head).toHaveAttribute("data-busy", "true");
+      await evidence(page, "chat-ask");
+      await page.keyboard.press("Meta+Enter");
+      await expect(bar).toBeHidden();
+      await expect(head).not.toHaveAttribute("data-busy", "true");
+      await expect(chat(page).getByText("Made it")).toBeVisible();
+      // Cmd+Enter was the bar's, so the composer sent nothing.
+      expect(messages(server)).toHaveLength(1);
+    },
+  );
+});
+
+test("a question form sends its picks as one line, and Escape denies a permission ask", async ({
+  page,
+}) => {
+  const question = {
+    id: "q1",
+    tool: "AskUserQuestion",
+    input: {
+      questions: [
+        {
+          question: "Which db?",
+          header: "DB",
+          multiSelect: false,
+          options: [
+            { label: "Postgres", description: "SQL" },
+            { label: "SQLite", description: "file" },
+          ],
+        },
+      ],
+    },
+  };
+  await withChat(
+    {
+      roles: {
+        chat: {
+          replies: [
+            [{ ask: question }, say("m1", "Noted")],
+            [{ ask: { ...mkdirAsk, suggestions: [] } }, say("m2", "Stopped")],
+          ],
+        },
+      },
+    },
+    async (server) => {
+      await page.goto(server.url);
+      await send(page, "Pick a database");
+      const bar = page.locator('[data-slot="ask-bar"]');
+      await expect(bar).toContainText("A. Postgres");
+      await expect(
+        bar.getByRole("button", { name: "Submit answer" }),
+      ).toBeDisabled();
+      await bar.getByLabel(/B\. SQLite/).check();
+      await bar.getByRole("button", { name: "Submit answer" }).click();
+      await expect(bar).toBeHidden();
+      await expect(chat(page).getByText("Noted")).toBeVisible();
+      await send(page, "Make a folder");
+      await expect(
+        bar.getByRole("button", { name: /Always allow/ }),
+      ).toHaveCount(0);
+      await page.keyboard.press("Escape");
+      await expect(chat(page).getByText("Stopped")).toBeVisible();
+    },
+  );
+});

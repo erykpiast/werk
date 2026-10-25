@@ -40,13 +40,16 @@ function isControlResponse(line: string): boolean {
   }
 }
 
-function answerOf(line: string): { id: string; allow: boolean } | null {
+function answerOf(
+  line: string,
+): { id: string; allow: boolean; message?: string } | null {
   try {
     const response = JSON.parse(line)?.response;
     if (typeof response?.request_id !== "string") return null;
     return {
       id: response.request_id,
       allow: response.response?.behavior === "allow",
+      message: response.response?.message,
     };
   } catch {
     return null;
@@ -69,7 +72,8 @@ function messageText(line: string): string {
   return line;
 }
 
-function toolResult(id: string, allowed: boolean): string {
+/** A refusal carries the message that the answer gave, as the real agent's tool result does. */
+function toolResult(id: string, allowed: boolean, message?: string): string {
   return JSON.stringify({
     type: "user",
     message: {
@@ -78,7 +82,7 @@ function toolResult(id: string, allowed: boolean): string {
         {
           type: "tool_result",
           tool_use_id: id,
-          content: allowed ? "allowed" : "denied",
+          content: allowed ? "allowed" : (message ?? "denied"),
           is_error: !allowed,
         },
       ],
@@ -116,6 +120,12 @@ async function playReply(
             subtype: "can_use_tool",
             tool_name: step.ask.tool,
             input: step.ask.input ?? {},
+            ...(step.ask.reason === undefined
+              ? {}
+              : { decision_reason: step.ask.reason }),
+            ...(step.ask.suggestions === undefined
+              ? {}
+              : { permission_suggestions: step.ask.suggestions }),
           },
         }),
       );
@@ -128,7 +138,7 @@ async function playReply(
     if (line === null) break;
     const answer = answerOf(line);
     if (answer && open.delete(answer.id))
-      ctx.out(toolResult(answer.id, answer.allow));
+      ctx.out(toolResult(answer.id, answer.allow, answer.message));
   }
   // The input is closed: each ask that is still open is denied.
   for (const id of open) ctx.out(toolResult(id, false));

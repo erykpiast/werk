@@ -42,9 +42,37 @@ export type Turn = {
   end: TurnEnd | null;
 };
 
-export type ChatState = { turns: Turn[] };
+/** What the person picked for one question of a form. */
+export type Selection = { labels: string[]; other: string };
 
-export const emptyChat: ChatState = { turns: [] };
+/** A question that waits for the person, with whether its answer is on the way. */
+export type PendingAsk = {
+  id: string;
+  turn: string;
+  tool: string;
+  input: unknown;
+  reason: string | null;
+  suggestion: string | null;
+  questions:
+    | {
+        question: string;
+        header: string | null;
+        multiSelect: boolean;
+        options: { label: string; description: string }[];
+      }[]
+    | null;
+  sending: boolean;
+};
+
+export type ChatState = {
+  turns: Turn[];
+  /** The open asks, oldest first. */
+  asks: PendingAsk[];
+  /** The picks of each open question form, kept here so a redraw never clears them (#werk-mc-askqa). */
+  selections: Record<string, Selection[]>;
+};
+
+export const emptyChat: ChatState = { turns: [], asks: [], selections: {} };
 
 export type Action =
   | { type: "sent"; turn: string; text: string }
@@ -79,7 +107,11 @@ export type Action =
       tool: string | null;
       tokens: number;
     }
-  | ({ type: "turn-end"; turn: string } & TurnEnd);
+  | ({ type: "turn-end"; turn: string } & TurnEnd)
+  | { type: "ask"; ask: Omit<PendingAsk, "sending"> }
+  | { type: "ask-done"; id: string }
+  | { type: "ask-sending"; id: string; sending: boolean }
+  | { type: "pick"; id: string; question: number; selection: Selection };
 
 const isOpen = (turn: Turn) => turn.end === null;
 
@@ -105,7 +137,10 @@ function within(
   const turns = known
     ? state.turns
     : [...state.turns, newTurn(name, null, false)];
-  return { turns: turns.map((t) => (t.name === name ? change(t) : t)) };
+  return {
+    ...state,
+    turns: turns.map((t) => (t.name === name ? change(t) : t)),
+  };
 }
 
 function upsert(items: Item[], next: Item): Item[] {
@@ -116,10 +151,46 @@ function upsert(items: Item[], next: Item): Item[] {
 
 export function reduce(state: ChatState, action: Action): ChatState {
   switch (action.type) {
+    case "ask": {
+      // A replay of the history names an ask that is open already, and keeps its state.
+      if (state.asks.some((a) => a.id === action.ask.id)) return state;
+      return {
+        ...state,
+        asks: [...state.asks, { ...action.ask, sending: false }],
+      };
+    }
+    case "ask-done": {
+      const { [action.id]: _gone, ...selections } = state.selections;
+      return {
+        ...state,
+        asks: state.asks.filter((a) => a.id !== action.id),
+        selections,
+      };
+    }
+    case "ask-sending":
+      return {
+        ...state,
+        asks: state.asks.map((a) =>
+          a.id === action.id ? { ...a, sending: action.sending } : a,
+        ),
+      };
+    case "pick": {
+      const ask = state.asks.find((a) => a.id === action.id);
+      if (!ask) return state;
+      const have = pickedOf(state, ask);
+      const next = have.map((s, i) =>
+        i === action.question ? action.selection : s,
+      );
+      return {
+        ...state,
+        selections: { ...state.selections, [action.id]: next },
+      };
+    }
     case "sent": {
       if (state.turns.some((t) => t.name === action.turn)) return state;
       const waiting = state.turns.some(isOpen);
       return {
+        ...state,
         turns: [...state.turns, newTurn(action.turn, action.text, waiting)],
       };
     }
@@ -212,6 +283,25 @@ export function reduce(state: ChatState, action: Action): ChatState {
         },
       }));
   }
+}
+
+const noSelection: Selection = { labels: [], other: "" };
+
+/** The picks of an ask, one entry for each of its questions. */
+export function pickedOf(state: ChatState, ask: PendingAsk): Selection[] {
+  const have = state.selections[ask.id] ?? [];
+  return (ask.questions ?? []).map((_, i) => have[i] ?? noSelection);
+}
+
+/** What each question's answer sends: the labels picked, then the free text. Null until each has one. */
+export function picksToSend(
+  selections: readonly Selection[],
+): string[][] | null {
+  const picks = selections.map((s) => [
+    ...s.labels,
+    ...(s.other.trim() === "" ? [] : [s.other.trim()]),
+  ]);
+  return picks.length > 0 && picks.every((p) => p.length > 0) ? picks : null;
 }
 
 export type Row =

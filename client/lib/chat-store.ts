@@ -3,7 +3,13 @@
  * The page never writes to the map. A message goes to the server with the server token, and the
  * agent's turn writes (#werk-chat).
  */
-import { type Action, type ChatState, emptyChat, reduce } from "./chat-log";
+import {
+  type Action,
+  type ChatState,
+  emptyChat,
+  reduce,
+  type Selection,
+} from "./chat-log";
 import { apiOf } from "./project-route";
 
 /** The events of the live channel that the chat reads. */
@@ -14,7 +20,14 @@ export const CHAT_EVENTS = [
   "chat",
   "status",
   "turn-end",
+  "ask",
+  "ask-done",
 ] as const;
+
+/** The answer of the person to an open ask. */
+export type AskAnswer =
+  | { decision: "allow" | "always" | "deny" | "decline" }
+  | { decision: "answer"; picks: string[][] };
 
 export type ChatDeps = {
   fetch: (url: string, init?: RequestInit) => Promise<Response>;
@@ -34,6 +47,10 @@ export type ChatStore = {
   /** Reads the events that the server kept, for a page that joins late. */
   load(): Promise<void>;
   send(text: string): Promise<void>;
+  /** Sends the answer to an ask. The ask closes when the server says so, and not before. */
+  answer(id: string, answer: AskAnswer): Promise<void>;
+  /** Keeps the picks of one question of a form. */
+  pick(id: string, question: number, selection: Selection): void;
 };
 
 export function createChatStore(deps: ChatDeps, project: string): ChatStore {
@@ -50,6 +67,17 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     try {
       body = JSON.parse(data);
     } catch {
+      return;
+    }
+    if (type === "ask-done" && typeof body.id === "string") {
+      apply({ type: "ask-done", id: body.id });
+      return;
+    }
+    if (type === "ask" && typeof body.id === "string") {
+      apply({
+        type: "ask",
+        ask: body as Extract<Action, { type: "ask" }>["ask"],
+      });
       return;
     }
     if (typeof body.turn !== "string") return;
@@ -86,6 +114,26 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
       };
       for (const event of events)
         receive(event.name, JSON.stringify(event.data));
+    },
+    pick: (id, question, selection) =>
+      apply({ type: "pick", id, question, selection }),
+    async answer(id, answer) {
+      apply({ type: "ask-sending", id, sending: true });
+      try {
+        const res = await deps.fetch(apiOf(project, "/ask"), {
+          method: "POST",
+          headers: {
+            "x-werk-token": deps.token,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ id, ...answer }),
+        });
+        // A 409 says the ask closed already, and its ask-done follows or came.
+        if (res.ok || res.status === 409) return;
+      } catch {
+        // The bar opens again so the person can answer once more.
+      }
+      apply({ type: "ask-sending", id, sending: false });
     },
     async send(text) {
       const turn = deps.newTurn();
