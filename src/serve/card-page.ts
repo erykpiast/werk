@@ -235,8 +235,11 @@ function linkList(heading: string, rows: string[]): string {
     : section(heading, `<ul class="link-list">${rows.join("")}</ul>`);
 }
 
+/** The mark on a link that waits for the ✓ of its ghost end (#werk-propose-new). */
+const PENDING_LINK = ` <span class="tag tag-pending-link" title="This link waits for the ✓ of the card at its other end">pending</span>`;
+
 /** The words of a piece of evidence: its why line and its body. */
-function evidenceRow(map: FoldedMap, node: MapNode): string {
+function evidenceRow(map: FoldedMap, node: MapNode, held: boolean): string {
   const known = (id: string) => map.nodes.has(id);
   const words = [
     node.why === ""
@@ -246,7 +249,7 @@ function evidenceRow(map: FoldedMap, node: MapNode): string {
       ? ""
       : `<div class="words-body">${renderMarkdown(node.body, known)}</div>`,
   ].join("");
-  return `<li class="evidence-row ${cardClasses(node)}" data-card-id="${escapeHtml(node.id)}"><a class="card-ref" href="${cardHref(node.id)}"><span class="link-label">${node.kind}</span> <span class="card-id">#${escapeHtml(node.id)}</span> ${renderTitle(node.title)}</a>${words}</li>`;
+  return `<li class="evidence-row ${cardClasses(node)}" data-card-id="${escapeHtml(node.id)}"><a class="card-ref" href="${cardHref(node.id)}"><span class="link-label">${node.kind}</span> <span class="card-id">#${escapeHtml(node.id)}</span> ${renderTitle(node.title)}</a>${held ? PENDING_LINK : ""}${words}</li>`;
 }
 
 function sections(
@@ -260,7 +263,8 @@ function sections(
     ({ node: option }) => renderCardTile(map, option, undefined),
   );
   const evidence = realFirst(linked(map, id, "supported_by", "out")).map(
-    ({ node: item }) => evidenceRow(map, item),
+    ({ node: item, edge }) =>
+      evidenceRow(map, item, map.ghostEdges.includes(edge)),
   );
   const citedBy = realFirst(linked(map, id, "supported_by", "in")).map(
     ({ node: card }) => linkRow("Cited by", card, card.why, known),

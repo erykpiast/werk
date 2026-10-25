@@ -221,3 +221,30 @@ test("a tile of a card with a pending removal has a red badge", () => {
     '<span class="tag tag-proposed tag-removal">proposed</span>',
   );
 });
+
+test("a quote on a decided card stages a ghost excerpt with a pending link, and the card keeps its words", () => {
+  const quoted = {
+    type: "excerpt.quoted",
+    id: "d:ex0",
+    title: "We should charge per seat.",
+    card: "d",
+    conversation: "talk",
+    session: "s1",
+    message: 3,
+    start: 0,
+    end: 5,
+    speaker: "agent",
+    said_at: "10:02",
+  };
+  const before = build(decided("d", { title: "Seats", why: "units" }));
+  const map = build(decided("d", { title: "Seats", why: "units" }), quoted);
+  expect(map.problems).toEqual([]);
+  expect(map.nodes.get("d:ex0")?.proposed).toBe(true);
+  expect(map.ghostEdges).toMatchObject([{ from: "d", to: "d:ex0" }]);
+  expect(map.edges).toEqual(before.edges);
+  expect(map.nodes.get("d")).toEqual(before.nodes.get("d"));
+  const html = page(map, "d");
+  expect(html).toContain("is-proposed");
+  expect(html).toContain("tag-pending-link");
+  expect(page(before, "d")).not.toContain("tag-pending-link");
+});
