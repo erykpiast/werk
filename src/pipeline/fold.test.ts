@@ -182,3 +182,21 @@ test("an event is checked for its shape", () => {
   expect(checkPipelineEvent(end("pass", 1, "red"))).toBeNull();
   expect(checkPipelineEvent(start("pass", 1))).toBeNull();
 });
+
+test("a spec or tickets step belongs to a plan, so it needs no build and no pass", () => {
+  for (const step of ["plan", "spec", "tickets"]) {
+    const event = {
+      type: "step.started",
+      step,
+      id: `${step}-1`,
+      at,
+    };
+    expect(checkPipelineEvent(event)).toBeNull();
+    expect(
+      fold([
+        event,
+        { ...event, type: "step.ended", result: "green", ms: 1, cost: COST },
+      ]).builds.size,
+    ).toBe(0);
+  }
+});

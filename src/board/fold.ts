@@ -75,9 +75,19 @@ export type Ticket = {
   followupRecords: FollowupRecord[];
 };
 
+/** One run of a plan: its agents run until it ends, and each writer step names its agent log (#vi-board-plan). */
+export type PlanRun = {
+  state: "running" | "ended";
+  pid?: number;
+  steps: { step: string; log?: string }[];
+  result?: string;
+  reason?: string;
+};
+
 export type Plan = {
   id: string;
   tier?: string;
+  run?: PlanRun;
   /** Gates by name: waiting or passed. */
   gates: Record<string, "waiting" | "passed">;
   /** The merge-loop process that holds the run, from "run started" to "run ended". */
@@ -90,6 +100,8 @@ export type Board = {
   plans: Map<string, Plan>;
   /** The order of ready tickets, archived ones included, so a restore keeps the place. */
   readyOrder: string[];
+  /** The project's target repository: the path of the latest target event (#st-build-target-board-log). */
+  target?: string;
   problems: BoardProblem[];
 };
 
@@ -378,6 +390,46 @@ function followupRecorded(board: Board, rec: Rec): BoardViolation | null {
   return null;
 }
 
+function targetSet(board: Board, rec: Rec): BoardViolation | null {
+  const path = str(rec, "path");
+  if (path === undefined) return bad("target needs path");
+  board.target = path;
+  return null;
+}
+
+function planRunEvent(
+  board: Board,
+  type: string,
+  rec: Rec,
+): BoardViolation | null {
+  const planId = planOf(rec);
+  if (typeof planId !== "string") return planId;
+  const plan = ensurePlan(board, planId);
+  if (type === "plan.started") {
+    if (!Number.isInteger(rec.pid)) return bad("plan started needs pid");
+    plan.run = { state: "running", pid: rec.pid as number, steps: [] };
+    return null;
+  }
+  const run = plan.run;
+  if (run === undefined || run.state !== "running")
+    return bad(`${type} needs a plan that runs`);
+  if (type === "plan.step") {
+    const step = str(rec, "step");
+    if (step === undefined) return bad("plan step needs step");
+    const log = str(rec, "log");
+    run.steps.push(log === undefined ? { step } : { step, log });
+    return null;
+  }
+  const result = str(rec, "result");
+  if (result === undefined) return bad("plan ended needs result");
+  run.state = "ended";
+  delete run.pid;
+  run.result = result;
+  const reason = str(rec, "reason");
+  if (reason !== undefined) run.reason = reason;
+  return null;
+}
+
 function planOf(rec: Rec): string | BoardViolation {
   return str(rec, "plan") ?? bad("event needs plan");
 }
@@ -429,7 +481,10 @@ const TICKET_EVENTS: Record<
   "ticket.heldout": heldout,
   "ticket.followup": followup,
   "ticket.followup_recorded": followupRecorded,
+  "project.target": targetSet,
 };
+
+const PLAN_EVENTS = new Set(["plan.started", "plan.step", "plan.ended"]);
 
 const RUN_EVENTS = new Set([
   "run.tier",
@@ -450,6 +505,7 @@ export function applyBoardEvent(
   const handler = TICKET_EVENTS[type];
   if (handler) return handler(board, event);
   if (RUN_EVENTS.has(type)) return runEvent(board, type, event);
+  if (PLAN_EVENTS.has(type)) return planRunEvent(board, type, event);
   return bad(`unknown event type ${type}`);
 }
 

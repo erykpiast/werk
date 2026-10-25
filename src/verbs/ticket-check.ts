@@ -1,11 +1,12 @@
 // `ticket-check` judges a folder of tickets with one verdict (#werk-ticket-check-verb-form).
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { resolve } from "node:path";
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 import { logPathFor, readMap } from "../map/log-store.ts";
 import { checkTickets, formatVerdict } from "../tickets/check-folder.ts";
 import { decidedUnder } from "../tickets/decided-cards.ts";
+import { readTicketFiles } from "../tickets/read-folder.ts";
 import { storiesOf } from "../tickets/spec-stories.ts";
 
 const USAGE = "usage: ticket-check <folder> --root <card-id> --spec <file>";
@@ -53,9 +54,7 @@ registerVerb({
       err(`werk: unknown root card "${root}"`);
       return 2;
     }
-    const files = readdirSync(dir)
-      .filter((name) => name.endsWith(".md"))
-      .map((name) => ({ name, text: readFileSync(join(dir, name), "utf8") }));
+    const files = readTicketFiles(dir);
     const verdict = checkTickets(
       files,
       decidedUnder(map, cardId(root)),
