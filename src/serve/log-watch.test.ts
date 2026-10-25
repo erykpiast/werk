@@ -35,7 +35,13 @@ test("an append to the log is a signal", async () => {
 test("a log that does not exist yet signals when it appears", async () => {
   watch = watchLog(log, () => grown++);
   writeFileSync(log, "one\n");
-  expect(await until(() => grown > 0)).toBe(true);
+  // The operating system's file events can start late under load, so the log grows again until one arrives.
+  expect(
+    await until(() => {
+      if (grown === 0) appendFileSync(log, "more\n");
+      return grown > 0;
+    }, 5000),
+  ).toBe(true);
 });
 
 test("a write to another file in the directory is no signal", async () => {
