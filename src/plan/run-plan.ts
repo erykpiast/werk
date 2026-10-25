@@ -3,13 +3,7 @@
  * becomes a ghost card under the subtree root (#st-spec, #st-spec-linked, #st-spec-answers, #st-ticket-partial).
  * The files go to werk's store for the project, never to the target repository (#st-build-target).
  */
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
 import {
@@ -29,7 +23,7 @@ import {
 } from "../pipeline/log-store.ts";
 import { checkTickets, formatVerdict } from "../tickets/check-folder.ts";
 import { decidedUnder } from "../tickets/decided-cards.ts";
-import { readTicketFiles } from "../tickets/read-folder.ts";
+import { clearTicketFolder, readTicketFiles } from "../tickets/read-folder.ts";
 import { storiesOf } from "../tickets/spec-stories.ts";
 import { ticketNumber } from "../tickets/ticket-parse.ts";
 import { parseAnswers, proposalEvent } from "./answers.ts";
@@ -167,11 +161,7 @@ export async function runPlan(input: PlanInput): Promise<number> {
   mkdirSync(specDir, { recursive: true });
   mkdirSync(ticketsDir, { recursive: true });
   // The text of a ticket the board still holds stays; every other file of an earlier run goes.
-  for (const name of readdirSync(ticketsDir)) {
-    const digits = ticketNumber(name);
-    if (digits === null || !numbersOnBoard.has(Number(digits)))
-      rmSync(join(ticketsDir, name), { recursive: true, force: true });
-  }
+  clearTicketFolder(ticketsDir, numbersOnBoard);
   const paths: PlanPaths = {
     spec: join(specDir, "spec.md"),
     specAnswers: join(specDir, "spec-answers.json"),
