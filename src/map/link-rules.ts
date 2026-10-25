@@ -58,6 +58,12 @@ export function checkLink(map: FoldedMap, edge: Edge): Violation | null {
     }
   }
   if (edge.type === "refines") {
+    if (!from.proposed && map.nodes.get(edge.to)?.proposed) {
+      return {
+        rule: "ghost-parent",
+        detail: `"${edge.from}" is a real card and "${edge.to}" is a ghost; accept the ghost first`,
+      };
+    }
     const parent = map.parents.get(edge.from);
     if (parent !== undefined) {
       return {

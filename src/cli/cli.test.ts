@@ -160,3 +160,104 @@ test("link rejects a missing type or a wrong count of ids", async () => {
   expect((await werk("link", "a", "b")).code).toBe(2);
   expect((await werk("link", "a", "--type", "refines")).code).toBe(2);
 });
+
+const accept = (id: string, ...rest: string[]) => werk("accept", id, ...rest);
+
+test("accept without the person's statement exits non-zero and appends nothing", async () => {
+  await werk("add", "a", "--title", "A");
+  const result = await accept("a");
+  expect(result.code).toBe(1);
+  expect(result.stderr).toContain("accept-actor");
+  expect((await accept("a", "--actor", "me")).code).toBe(1);
+  expect(current().events()).toHaveLength(1);
+  expect((await werk("show", "a")).stdout).toContain("proposed");
+});
+
+test("accepting a ghost child under a ghost parent makes both real and their edges live", async () => {
+  await werk("add", "p", "--title", "P");
+  await werk("add", "c", "--title", "C", "--parent", "p");
+  const result = await accept("#c", "--actor", "you");
+  expect(result.stdout.trim()).toBe("accepted");
+  for (const id of ["p", "c"]) {
+    const shown = (await werk("show", id)).stdout;
+    expect(shown).not.toContain("proposed");
+    expect(shown).not.toContain("[held]");
+  }
+});
+
+test("an accept takes the ghost source, and a discard keeps a source another ghost cites", async () => {
+  for (const id of ["c", "d"]) await werk("add", id, "--title", id);
+  await werk("add", "s", "--title", "S", "--kind", "source");
+  await werk("add", "t", "--title", "T", "--kind", "source");
+  for (const [from, to] of [
+    ["c", "s"],
+    ["d", "s"],
+    ["c", "t"],
+  ]) {
+    await werk("link", from as string, to as string, "--type", "supported_by");
+  }
+  expect((await werk("discard", "c")).stdout.trim()).toBe("discarded");
+  expect((await werk("show", "t")).code).toBe(1);
+  expect((await werk("show", "s")).stdout).toContain("proposed");
+  await accept("d", "--actor", "you");
+  const shown = (await werk("show", "s")).stdout;
+  expect(shown).not.toContain("proposed");
+  expect((await werk("discard", "d")).code).toBe(1);
+});
+
+test("edit refuses the body of a ghost, and who and link work on it", async () => {
+  await werk("add", "a", "--title", "A");
+  await werk("add", "b", "--title", "B");
+  const body = await werk("edit", "a", "--body", "x");
+  expect(body.code).toBe(1);
+  expect(body.stderr).toContain("frozen");
+  expect((await werk("edit", "a", "--who", "you")).stdout.trim()).toBe(
+    "a: edited",
+  );
+  expect((await werk("link", "a", "b", "--type", "supported_by")).code).toBe(0);
+  expect((await werk("edit", "a")).code).toBe(2);
+  expect((await werk("edit", "a", "--who", "x")).code).toBe(1);
+});
+
+test("a corrected ghost keeps its notes, with a marker where the new words begin", async () => {
+  await werk("add", "x", "--title", "First");
+  expect((await werk("say", "x", "Say what it writes.")).stdout.trim()).toBe(
+    "noted",
+  );
+  await werk("discard", "x");
+  expect((await werk("inbox")).stdout).toContain("Say what it writes.");
+  await werk("add", "x", "--title", "Second");
+  await werk("say", "x", "Better.");
+  const lines = (await werk("inbox")).stdout.trim().split("\n");
+  expect(lines).toHaveLength(3);
+  expect(lines[0]).toContain("Say what it writes.");
+  expect(lines[1]).toContain("proposed again");
+  expect(lines[2]).toContain("Better.");
+  const shown = (await werk("show", "x")).stdout;
+  expect(shown.indexOf("Say what")).toBeLessThan(
+    shown.indexOf("proposed again"),
+  );
+  expect(shown.indexOf("proposed again")).toBeLessThan(
+    shown.indexOf("Better."),
+  );
+  const since = (await werk("inbox", "--since", "2", "-n", "1")).stdout.trim();
+  expect(since).toContain("proposed again");
+});
+
+test("say, inbox, accept, discard and add refuse bad input", async () => {
+  for (const args of [
+    ["say", "a"],
+    ["say", "a", "x", "y"],
+    ["accept"],
+    ["accept", "a", "--x", "1"],
+    ["discard"],
+    ["inbox", "a"],
+    ["inbox", "--since", "x"],
+    ["add", "a", "--title", "A", "--kind", "x"],
+  ]) {
+    expect((await werk(...args)).code).toBe(2);
+  }
+  expect((await werk("say", "nope", "x")).code).toBe(1);
+  expect((await werk("discard", "nope")).code).toBe(1);
+  expect(current().events()).toHaveLength(0);
+});

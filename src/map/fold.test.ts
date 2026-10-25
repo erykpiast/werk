@@ -211,3 +211,82 @@ describe("depends_on links", () => {
     expect(map.ghostEdges).toHaveLength(1);
   });
 });
+
+describe("ghost events", () => {
+  const edit = (fields: Record<string, unknown>) => ({
+    type: "node.edited",
+    id: "a",
+    ...fields,
+  });
+  const note = (id: string, text = "n") => ({
+    type: "note.added",
+    id,
+    by: "person",
+    text,
+  });
+
+  test("an edit of why or body refuses on a ghost; who works on it", () => {
+    expect(rules(node("a"), edit({ body: "x" }), edit({ why: "x" }))).toEqual([
+      "frozen",
+      "frozen",
+    ]);
+    const map = fold(entries(node("a"), edit({ who: "you" })));
+    expect(map.problems).toEqual([]);
+    expect(map.nodes.get("a")?.who).toBe("you");
+  });
+
+  test("an edit of the words of a real card refuses too", () => {
+    expect(
+      rules(
+        node("a"),
+        { type: "node.accepted", id: "a", actor: "you" },
+        edit({ body: "b", why: "w" }),
+      ),
+    ).toEqual(["frozen"]);
+  });
+
+  test("a bad edit, accept, discard or note is a bad-event or an unknown card", () => {
+    expect(
+      rules(
+        node("a"),
+        { type: "node.edited" },
+        edit({ who: "x" }),
+        edit({ why: 1 }),
+        edit({ body: 1 }),
+        { type: "node.edited", id: "zz" },
+        { type: "node.accepted" },
+        { type: "node.discarded" },
+        { type: "note.added", by: "a", text: "t" },
+        { type: "note.added", id: "a", text: "t" },
+        { type: "note.added", id: "a", by: "a", text: "" },
+        node("b", { who: "x" }),
+        node("c", { who: 1 }),
+      ),
+    ).toEqual([
+      "bad-event",
+      "bad-event",
+      "bad-event",
+      "bad-event",
+      "unknown-card",
+      "bad-event",
+      "bad-event",
+      "bad-event",
+      "bad-event",
+      "bad-event",
+      "bad-event",
+      "bad-event",
+    ]);
+  });
+
+  test("a note on an unknown card is refused, and a thread outlives its card", () => {
+    expect(rules(note("zz"))).toEqual(["unknown-card"]);
+    const map = fold(
+      entries(node("a"), note("a", "N1"), { type: "node.discarded", id: "a" }),
+    );
+    expect(map.nodes.has("a")).toBe(false);
+    expect(map.threads.get("a")).toHaveLength(1);
+    expect(
+      rules(node("a"), { type: "node.discarded", id: "a" }, note("a")),
+    ).toEqual(["unknown-card"]);
+  });
+});
