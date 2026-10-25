@@ -7,7 +7,7 @@ import { instructionsText } from "./instructions.ts";
 import { type SubagentDefinition, subagentDefinitions } from "./subagents.ts";
 
 export const OPUS = "claude-opus-5-5";
-export const SONNET = "claude-sonnet-5-5[1m]";
+export const SONNET = "claude-sonnet-5-5";
 
 /** A model and its optional advisor, the pair the chat header selects. */
 export type ModelChoice = { model: string; advisor: string | null };
@@ -41,6 +41,12 @@ const SONNET_ROLES = new Set([
   "heldout-binder",
   "heldout-author",
   "classifier",
+  // One reviewer per quality area of the review.
+  "reviewer-design",
+  "reviewer-maintainability",
+  "reviewer-tests",
+  "reviewer-security",
+  "reviewer-performance",
 ]);
 /** The roles whose contract the instruction text would contradict. */
 const NO_TEXT = new Set(["sample", "diagram-scout", "diagram-updater"]);
@@ -55,9 +61,7 @@ const MAP_WRITERS = new Set([
 function modelFor(role: string, chat: ModelChoice | undefined): ModelChoice {
   if (OPUS_ROLES.has(role)) return { model: OPUS, advisor: null };
   if (role === "builder") return { model: SONNET, advisor: OPUS };
-  // A reviewer's role name carries its quality area (#st-build-seam-role-env-reviewer-area).
-  if (SONNET_ROLES.has(role) || role.startsWith("reviewer-"))
-    return { model: SONNET, advisor: null };
+  if (SONNET_ROLES.has(role)) return { model: SONNET, advisor: null };
   return chat ?? { model: "", advisor: null };
 }
 
