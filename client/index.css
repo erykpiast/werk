@@ -247,8 +247,8 @@ body,
   overflow-x: auto;
 }
 
-.code-box code,
-code {
+code,
+.code-box code {
   font-family: ui-monospace, monospace;
 }
 

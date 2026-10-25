@@ -56,7 +56,9 @@ test("an action posts to the project's route with the token", async () => {
   expect(ok).toBeNull();
   expect(seen[0]?.url).toBe("/api/projects/demo/accept");
   expect(
-    (seen[0]?.init.headers as Record<string, string>)["x-werk-token"],
+    (seen[0]?.init.headers as Record<string, string> | undefined)?.[
+      "x-werk-token"
+    ],
   ).toBe("tok");
   expect(seen[0]?.init.body).toBe('{"card":"g"}');
 });
