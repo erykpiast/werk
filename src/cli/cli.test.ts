@@ -261,3 +261,31 @@ test("say, inbox, accept, discard and add refuse bad input", async () => {
   expect((await werk("discard", "nope")).code).toBe(1);
   expect(current().events()).toHaveLength(0);
 });
+
+test("remove proposes, a person's remove takes the subtree, removed lists it, restore undoes it", async () => {
+  await werk("add", "r", "--title", "R");
+  await werk("add", "c", "--title", "C", "--parent", "r");
+  await werk("accept", "c", "--actor", "you");
+  const proposed = await werk("remove", "r");
+  expect(proposed.stdout.trim()).toBe("removal proposed");
+  expect((await werk("show", "c")).code).toBe(0);
+  expect((await werk("remove", "r", "--actor", "you")).stdout.trim()).toBe(
+    "removed",
+  );
+  expect((await werk("show", "c")).code).toBe(1);
+  const list = await werk("removed");
+  expect(list.stdout).toContain("r  R");
+  expect(list.stdout).toContain("with it: c");
+  const again = await werk("add", "r", "--title", "New");
+  expect(again.code).toBe(1);
+  expect(again.stderr).toContain("restore");
+  expect((await werk("restore", "c")).code).toBe(1);
+  expect((await werk("restore", "r")).stdout.trim()).toBe("restored");
+  expect((await werk("show", "c")).code).toBe(0);
+  expect((await werk("removed")).stdout.trim()).toBe("");
+  expect((await werk("remove", "r", "--reparent", "--actor", "you")).code).toBe(
+    1,
+  );
+  expect((await werk("remove")).code).toBe(2);
+  expect((await werk("restore")).code).toBe(2);
+});

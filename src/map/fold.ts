@@ -7,6 +7,12 @@
 
 import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
+import {
+  isOut,
+  proposeRemoval,
+  removeCard,
+  restoreCard,
+} from "./removal-rules.ts";
 
 export type Kind = "card" | "option" | "source" | "excerpt";
 export type Who = "you" | "me" | "prototype";
@@ -58,7 +64,12 @@ export type RuleName =
   | "not-ghost"
   | "accept-actor"
   | "frozen"
-  | "ghost-parent";
+  | "ghost-parent"
+  | "remove-actor"
+  | "remove-target"
+  | "no-grandparent"
+  | "not-removed"
+  | "parent-out";
 
 export type Violation = { rule: RuleName; detail: string };
 export type Problem = Violation & { line: number };
@@ -68,6 +79,17 @@ export type ThreadEntry = { line: number } & (
   | { kind: "note"; by: string; text: string }
   | { kind: "proposed-again" }
 );
+
+/**
+ * One removal that is not undone. `nodes` is every node it took, the named card first.
+ * `moved` lists the children that a reparent removal attached to the grandparent.
+ */
+export type Removal = {
+  id: string;
+  reparent: boolean;
+  nodes: MapNode[];
+  moved: { child: string; parent: string; why: string }[];
+};
 
 export type FoldedMap = {
   nodes: Map<string, MapNode>;
@@ -79,6 +101,12 @@ export type FoldedMap = {
   parents: Map<string, string>;
   /** The notes of each id ever proposed. A discard keeps them (#werk-propose-new-discard-thread). */
   threads: Map<string, ThreadEntry[]>;
+  /** The removals that are not undone, oldest first. Their nodes are not in `nodes`. */
+  removals: Removal[];
+  /** Edges with an end that is out. Each returns when both ends are in the map (#werk-write-remove-links). */
+  waiting: Edge[];
+  /** Removals that an agent proposed and the person has not accepted. */
+  pendingRemovals: Map<string, { reparent: boolean }>;
   problems: Problem[];
 };
 
@@ -92,6 +120,9 @@ export function emptyMap(): FoldedMap {
     ghostEdges: [],
     parents: new Map(),
     threads: new Map(),
+    removals: [],
+    waiting: [],
+    pendingRemovals: new Map(),
     problems: [],
   };
 }
@@ -185,6 +216,12 @@ function applyProposed(
   if (map.nodes.has(id)) {
     return { rule: "duplicate-id", detail: `the id "${id}" is taken` };
   }
+  if (isOut(map, id)) {
+    return {
+      rule: "duplicate-id",
+      detail: `the id "${id}" is taken by a removed card; restore it to bring it back`,
+    };
+  }
   if (typeof parent === "string") {
     if (!map.nodes.has(parent)) {
       return { rule: "unknown-card", detail: `no card "${parent}"` };
@@ -248,6 +285,18 @@ function applyDiscarded(map: FoldedMap, fields: Fields): Violation | null {
   return discardGhost(map, fields.id);
 }
 
+/** The id and the reparent flag of a removal event. */
+function removalFields(
+  fields: Fields,
+): { id: string; reparent: boolean } | Violation {
+  if (typeof fields.id !== "string") return bad('"id" must be text');
+  const { reparent } = fields;
+  if (reparent !== undefined && typeof reparent !== "boolean") {
+    return bad('"reparent" must be true or false');
+  }
+  return { id: fields.id, reparent: reparent === true };
+}
+
 function applyNote(
   map: FoldedMap,
   fields: Fields,
@@ -307,6 +356,22 @@ export function applyEvent(
       return applyDiscarded(map, event);
     case "node.edited":
       return applyEdited(map, event);
+    case "removal.proposed": {
+      const removal = removalFields(event);
+      return isViolation(removal)
+        ? removal
+        : proposeRemoval(map, removal.id, removal.reparent);
+    }
+    case "node.removed": {
+      const removal = removalFields(event);
+      return isViolation(removal)
+        ? removal
+        : removeCard(map, removal.id, removal.reparent, event.actor);
+    }
+    case "node.restored":
+      return typeof event.id === "string"
+        ? restoreCard(map, event.id)
+        : bad('"id" must be text');
     case "note.added":
       return applyNote(map, event, line);
     case "edge.added":

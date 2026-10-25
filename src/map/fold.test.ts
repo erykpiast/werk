@@ -290,3 +290,53 @@ describe("ghost events", () => {
     ).toEqual(["unknown-card"]);
   });
 });
+
+describe("removal events", () => {
+  const accepted = (id: string) => ({
+    type: "node.accepted",
+    id,
+    actor: "you",
+  });
+  const base = [node("p"), node("c", { parent: "p" }), accepted("c")];
+
+  test("a removal and its restore fold as one pair", () => {
+    const out = fold(
+      entries(...base, { type: "node.removed", id: "c", actor: "you" }),
+    );
+    expect(out.problems).toEqual([]);
+    expect(out.removals.map((r) => r.id)).toEqual(["c"]);
+    const back = fold(
+      entries(
+        ...base,
+        { type: "node.removed", id: "c", actor: "you" },
+        { type: "node.restored", id: "c" },
+      ),
+    );
+    expect(back.removals).toEqual([]);
+  });
+
+  test("a removal event that is not well formed is refused", () => {
+    expect(
+      rules(
+        ...base,
+        { type: "node.removed", id: 1, actor: "you" },
+        { type: "removal.proposed", id: "c", reparent: "yes" },
+        { type: "node.restored" },
+      ),
+    ).toEqual(["bad-event", "bad-event", "bad-event"]);
+  });
+
+  test("a proposal with a good id is pending and a removed id is taken", () => {
+    const map = fold(
+      entries(...base, { type: "removal.proposed", id: "c", reparent: true }),
+    );
+    expect(map.pendingRemovals.get("c")).toEqual({ reparent: true });
+    expect(
+      rules(
+        ...base,
+        { type: "node.removed", id: "c", actor: "you" },
+        node("c"),
+      ),
+    ).toEqual(["duplicate-id"]);
+  });
+});
