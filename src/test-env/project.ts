@@ -16,8 +16,6 @@ import { cleanEnv, FAKE_DIR, fakeIsFirst } from "./env.ts";
 export type ProjectOptions = {
   /** The script the fake agent replays. With none, the fake exits with an error. */
   script?: Script;
-  /** Also make a fresh target repository. */
-  target?: boolean;
 };
 
 export type RunResult = { code: number; stdout: string; stderr: string };
@@ -25,8 +23,6 @@ export type RunResult = { code: number; stdout: string; stderr: string };
 export type Project = {
   /** The project directory: a git repository with an empty map. */
   dir: string;
-  /** The target repository, when the test asked for one. */
-  target: string | undefined;
   /** The map log of the project. It does not exist until the first event. */
   logPath: string;
   /** Runs a program in the project and waits for it. */
@@ -79,7 +75,6 @@ export function createProject(options: ProjectOptions = {}): Project {
   assertFakeFirst();
   const root = mkdtempSync(join(tmpdir(), "werk-test-"));
   const dir = join(root, "project");
-  const target = options.target ? join(root, "target") : undefined;
   const scriptPath = join(root, "script.json");
   const logPath = join(dir, ".werk", "log.jsonl");
   const children = new Set<Bun.Subprocess>();
@@ -87,7 +82,6 @@ export function createProject(options: ProjectOptions = {}): Project {
   try {
     newRepo(dir);
     mkdirSync(join(dir, ".werk"));
-    if (target) newRepo(target);
   } catch (error) {
     rmSync(root, { recursive: true, force: true });
     throw error;
@@ -128,7 +122,6 @@ export function createProject(options: ProjectOptions = {}): Project {
 
   return {
     dir,
-    target,
     logPath,
     run,
     start,

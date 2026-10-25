@@ -31,7 +31,7 @@ describe("the cleaned environment", () => {
 });
 
 describe("a fresh project", () => {
-  test("has a git repository, no map events, and no target unless asked", async () => {
+  test("has a git repository and no map events", async () => {
     await withProject({}, async (project) => {
       const git = await project.run([
         "git",
@@ -40,37 +40,18 @@ describe("a fresh project", () => {
       ]);
       expect(git.stdout.trim()).toBe("true");
       expect(project.events()).toEqual([]);
-      expect(project.target).toBeUndefined();
-    });
-  });
-
-  test("a target repository is a second git repository", async () => {
-    await withProject({ target: true }, async (project) => {
-      const target = project.target as string;
-      expect(target).not.toBe(project.dir);
-      const git = await project.run([
-        "git",
-        "-C",
-        target,
-        "rev-parse",
-        "--git-dir",
-      ]);
-      expect(git.code).toBe(0);
     });
   });
 
   test("a failing test leaves no directory behind", async () => {
     let dir = "";
-    let target = "";
     await expect(
-      withProject({ target: true }, (project) => {
+      withProject({}, (project) => {
         dir = project.dir;
-        target = project.target as string;
         throw new Error("the test fails");
       }),
     ).rejects.toThrow("the test fails");
     expect(existsSync(dir)).toBe(false);
-    expect(existsSync(target)).toBe(false);
   });
 
   test("dispose stops a process the harness started", async () => {
