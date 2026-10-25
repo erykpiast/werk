@@ -16,6 +16,7 @@ test("a valid ticket is planned under the plan id and its two-digit number", () 
       id: "app/01",
       title: "A person can reopen a card",
       blocked_by: [],
+      cited: { "map-reopen": 0 },
     },
   ]);
   expect(result.unplanned).toEqual([]);
@@ -57,4 +58,47 @@ test("planned tickets come in number order", () => {
     { name: "01-a.md", text: ticket() },
   ]);
   expect(result.planned.map((t) => t.id)).toEqual(["app/01", "app/02"]);
+});
+
+const twoFiles = [
+  { name: "01-a.md", text: ticket() },
+  { name: "02-b.md", text: ticket() },
+];
+const planOn = (
+  board: { numbers: number[]; open: number[] },
+  versions: Record<string, number> = {},
+  files = twoFiles,
+) =>
+  planTickets(
+    "app",
+    files,
+    checkTickets(files, ["map-reopen"], ["1"]),
+    versions,
+    { numbers: new Set(board.numbers), open: new Set(board.open) },
+  );
+
+test("an open ticket on the board is replanned in place, and a new number is planned", () => {
+  const result = planOn({ numbers: [1], open: [1] });
+  expect(result.planned.map((t) => [t.id, t.type])).toEqual([
+    ["app/01", "ticket.replanned"],
+    ["app/02", "ticket.planned"],
+  ]);
+});
+
+test("a ticket on the board that is not open gets no event", () => {
+  const result = planOn({ numbers: [1, 2], open: [2] });
+  expect(result.planned.map((t) => [t.id, t.type])).toEqual([
+    ["app/02", "ticket.replanned"],
+  ]);
+});
+
+test("a cite takes the version the plan read, with or without the hash sign", () => {
+  const files = [{ name: "01-a.md", text: ticket({ cites: "#map-reopen" }) }];
+  const result = planOn({ numbers: [], open: [] }, { "map-reopen": 7 }, files);
+  expect(result.planned[0]?.cited).toEqual({ "map-reopen": 7 });
+});
+
+test("a cite with no known version records 0", () => {
+  const result = planOn({ numbers: [], open: [] }, { other: 3 });
+  expect(result.planned[0]?.cited).toEqual({ "map-reopen": 0 });
 });

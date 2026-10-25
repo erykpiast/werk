@@ -3,9 +3,16 @@
  * becomes a ghost card under the subtree root (#st-spec, #st-spec-linked, #st-spec-answers, #st-ticket-partial).
  * The files go to werk's store for the project, never to the target repository (#st-build-target).
  */
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
+import { type Ticket as BoardTicket, isOpen } from "../board/fold.ts";
 import {
   appendBoardEvent,
   boardLogBeside,
@@ -21,12 +28,18 @@ import {
   appendPipelineEvent,
   pipelineLogBeside,
 } from "../pipeline/log-store.ts";
-import { checkTickets, formatVerdict } from "../tickets/check-folder.ts";
+import {
+  checkTickets,
+  formatVerdict,
+  type Verdict,
+} from "../tickets/check-folder.ts";
 import { decidedUnder } from "../tickets/decided-cards.ts";
 import { clearTicketFolder, readTicketFiles } from "../tickets/read-folder.ts";
 import { storiesOf } from "../tickets/spec-stories.ts";
 import { ticketNumber } from "../tickets/ticket-parse.ts";
 import { parseAnswers, proposalEvent } from "./answers.ts";
+import { citedChanges, versionsOf } from "./cited-changes.ts";
+import { parseDrops } from "./drops.ts";
 import { type PlanPaths, specPrompt, ticketPrompt } from "./prompts.ts";
 import { lastChanges, planScope } from "./scope.ts";
 import { planTickets } from "./ticket-events.ts";
@@ -77,19 +90,18 @@ export async function runPlan(input: PlanInput): Promise<number> {
   }
   const onBoard = readBoard(boardLog);
   const boardIds = onBoard.plans.get(root)?.tickets ?? [];
-  const numbersOnBoard = new Set(
-    boardIds.map((id) => Number(id.split("/")[1])),
-  );
+  const numberOf = (id: string): number => Number(id.split("/")[1]);
+  const numbersOnBoard = new Set(boardIds.map(numberOf));
   const offset = Math.max(0, ...numbersOnBoard);
-  const held = boardIds.filter(
-    (id) => onBoard.tickets.get(id)?.archived === false,
+  // Open tickets are ready or blocked. Only a plan changes them; every other ticket stays as it is (#st-plan-extend).
+  const openNumbers = new Set(
+    boardIds
+      .filter((id) => isOpen(onBoard.tickets.get(id) as BoardTicket))
+      .map(numberOf),
   );
-  if (held.length > 0) {
-    err(
-      `werk: refused: ${root} has ${held.length} ticket(s) on the board. Archive them before a new plan.`,
-    );
-    return 1;
-  }
+  const archivedNumbers = new Set(
+    boardIds.filter((id) => onBoard.tickets.get(id)?.archived).map(numberOf),
+  );
 
   const scope = planScope(map, root);
   const planId = `plan-${root}-${Date.now()}`;
@@ -157,17 +169,28 @@ export async function runPlan(input: PlanInput): Promise<number> {
 
   const specDir = join(store, "specs", root);
   const ticketsDir = join(store, "tickets", root);
-  rmSync(specDir, { recursive: true, force: true });
   mkdirSync(specDir, { recursive: true });
   mkdirSync(ticketsDir, { recursive: true });
-  // The text of a ticket the board still holds stays; every other file of an earlier run goes.
+  // The text of a ticket the board holds stays; every other file of an earlier run goes.
   clearTicketFolder(ticketsDir, numbersOnBoard);
   const paths: PlanPaths = {
     spec: join(specDir, "spec.md"),
     specAnswers: join(specDir, "spec-answers.json"),
     ticketAnswers: join(specDir, "ticket-answers.json"),
+    ticketDrops: join(specDir, "ticket-drops.json"),
     ticketsDir,
   };
+  // The spec of an earlier plan stays and the writer updates it. The answers and the drops belong to one run.
+  const extending = existsSync(paths.spec) || boardIds.length > 0;
+  for (const file of [
+    paths.specAnswers,
+    paths.ticketAnswers,
+    paths.ticketDrops,
+  ])
+    rmSync(file, { force: true });
+  const filesBefore = new Map(
+    readTicketFiles(ticketsDir).map((f) => [f.name, f.text]),
+  );
 
   const titles = buildRuleTitles(map);
   const writer = async (
@@ -225,7 +248,7 @@ export async function runPlan(input: PlanInput): Promise<number> {
   let failure = await writer(
     "spec-writer",
     "spec",
-    specPrompt(root, scopeText, paths),
+    specPrompt(root, scopeText, paths, extending),
     [paths.spec, paths.specAnswers],
   );
   if (failure !== null) return endPlan("failed", failure);
@@ -242,35 +265,105 @@ export async function runPlan(input: PlanInput): Promise<number> {
   failure = await writer(
     "ticket-writer",
     "tickets",
-    ticketPrompt(root, scopeText, paths, offset + 1),
-    [paths.ticketAnswers, join(ticketsDir, "*")],
+    ticketPrompt(root, scopeText, paths, offset + 1, {
+      open: [...openNumbers].sort((a, b) => a - b),
+      fixed: [...numbersOnBoard]
+        .filter((n) => !openNumbers.has(n))
+        .sort((a, b) => a - b),
+    }),
+    [paths.ticketAnswers, paths.ticketDrops, join(ticketsDir, "*")],
   );
   if (failure !== null) return endPlan("failed", failure);
   failure = propose("ticket-writer", paths.ticketAnswers);
   if (failure !== null) return endPlan("failed", failure);
 
   // The checks read the map again: the answers are ghosts now, and a ghost counts as no decided card.
-  // A file of a ticket the board holds is not this run's output.
-  const files = readTicketFiles(ticketsDir).filter(
-    (f) => Number(ticketNumber(f.name) ?? 0) > offset,
-  );
-  const verdict = checkTickets(
-    files,
-    decidedUnder(readMap(logPath).map, root),
-    stories,
-  );
-  for (const line of formatVerdict(verdict)) out(line);
-  const plan = planTickets(root, files, verdict);
-  let problems = verdict.failures.length + plan.unplanned.length;
-  for (const line of plan.unplanned) err(`werk: ${line}`);
-  for (const { type, ...ticket } of plan.planned) {
-    const result = appendBoardEvent(boardLog, { type, ...ticket });
-    if (!result.ok) {
-      problems += 1;
-      err(
-        `werk: ticket ${ticket.id} is not planned: ${result.violation.detail}`,
-      );
+  let problems = 0;
+  const problem = (line: string): void => {
+    problems += 1;
+    err(`werk: ${line}`);
+  };
+
+  // The open tickets that the new spec no longer needs are archived, with the writer's reason (#st-plan-archive).
+  const dropped = new Map<number, string>();
+  const dropsText = readText(paths.ticketDrops);
+  const drops = dropsText === null ? null : parseDrops(dropsText);
+  if (drops?.ok === false)
+    problem(`the ticket-writer's drops file is bad: ${drops.error}`);
+  for (const { ticket: number, why } of drops?.ok ? drops.drops : []) {
+    // A listed ticket that is not open is ignored (#st-plan-extend-drops).
+    if (openNumbers.has(number)) dropped.set(number, why);
+  }
+
+  // A file of a ticket that is not open stays as it was.
+  const ticketFiles = (): { name: string; text: string }[] =>
+    readTicketFiles(ticketsDir);
+  const numberOfFile = (name: string): number => Number(ticketNumber(name));
+  for (const file of ticketFiles()) {
+    const before = filesBefore.get(file.name);
+    const n = numberOfFile(file.name);
+    if (before === undefined || file.text === before) continue;
+    if (numbersOnBoard.has(n) && !openNumbers.has(n)) {
+      writeFileSync(join(ticketsDir, file.name), before);
+      problem(`ticket ${n} is not open, so its file stays as it was`);
     }
+  }
+
+  // The set holds the new files and every ticket that stays on the board, and no archived or dropped ticket.
+  const setFiles = (): { name: string; text: string }[] =>
+    ticketFiles().filter((f) => {
+      const n = numberOfFile(f.name);
+      return !archivedNumbers.has(n) && !dropped.has(n);
+    });
+  const decided = decidedUnder(readMap(logPath).map, root);
+  const run = (files: { name: string; text: string }[]): Verdict =>
+    checkTickets(files, decided, stories);
+  let verdict = run(setFiles());
+  // A rewrite that fails its own checks is undone, so the board and the file agree.
+  const rejected = new Set<number>();
+  for (const failure of verdict.failures.slice(0, verdict.ownFailures)) {
+    const before = filesBefore.get(failure.ticket);
+    const n = numberOfFile(failure.ticket);
+    if (before === undefined || !openNumbers.has(n) || rejected.has(n))
+      continue;
+    rejected.add(n);
+    writeFileSync(join(ticketsDir, failure.ticket), before);
+  }
+  const files = setFiles();
+  if (rejected.size > 0) verdict = run(files);
+  for (const line of formatVerdict(verdict)) out(line);
+
+  const cites = new Set(
+    files.flatMap((f) =>
+      (/^cites:[ \t]*(.*)$/m.exec(f.text)?.[1] ?? "")
+        .split(",")
+        .map((c) => c.trim().replace(/^#/, ""))
+        .filter((c) => c !== ""),
+    ),
+  );
+  const versions = versionsOf(citedChanges(entries, cites), [...cites]);
+  const plan = planTickets(root, files, verdict, versions, {
+    numbers: numbersOnBoard,
+    open: new Set([...openNumbers].filter((n) => !dropped.has(n))),
+  });
+  problems += verdict.failures.length + plan.unplanned.length;
+  for (const line of plan.unplanned) err(`werk: ${line}`);
+  for (const [number, why] of dropped) {
+    const id = `${root}/${String(number).padStart(2, "0")}`;
+    const result = appendBoardEvent(boardLog, {
+      type: "ticket.archived",
+      id,
+      actor: "plan",
+      reason: why,
+    });
+    if (!result.ok)
+      problem(`ticket ${id} is not archived: ${result.violation.detail}`);
+  }
+  for (const { type, ...ticket } of plan.planned) {
+    if (rejected.has(Number(ticket.id.split("/")[1]))) continue;
+    const result = appendBoardEvent(boardLog, { type, ...ticket });
+    if (!result.ok)
+      problem(`ticket ${ticket.id} is not planned: ${result.violation.detail}`);
   }
   return problems === 0
     ? endPlan("ok")

@@ -7,6 +7,7 @@ const paths = {
   specAnswers: "/s/spec-answers.json",
   ticketAnswers: "/s/ticket-answers.json",
   ticketsDir: "/t",
+  ticketDrops: "/s/ticket-drops.json",
 };
 const scope = { first: ["card A"], second: ["card B"] };
 
@@ -75,4 +76,32 @@ test("a role with no model, advisor or text adds none of those flags", () => {
     "--agents",
   ])
     expect(args).not.toContain(flag);
+});
+
+test("a spec prompt over a subtree that has a spec tells the writer to update it and keep the story numbers", () => {
+  expect(specPrompt("app", scope, paths)).not.toContain("update it in place");
+  const text = specPrompt("app", scope, paths, true);
+  expect(text).toContain("update it in place");
+  expect(text).toContain("Keep the number of every story");
+});
+
+test("a ticket prompt lists the open tickets, the fixed ones and the drops file", () => {
+  const text = ticketPrompt("app", scope, paths, 5, {
+    open: [2, 3],
+    fixed: [1, 4],
+  });
+  expect(text).toContain("Open tickets, ready or blocked: 02, 03");
+  expect(text).toContain("Other tickets: 01, 04");
+  expect(text).toContain("/s/ticket-drops.json");
+  expect(text).toContain("Number the first ticket 5");
+});
+
+test("a ticket prompt with no tickets on the board has no earlier-plans section", () => {
+  expect(ticketPrompt("app", scope, paths)).not.toContain("earlier plans");
+  expect(
+    ticketPrompt("app", scope, paths, 1, { open: [], fixed: [] }),
+  ).not.toContain("earlier plans");
+  expect(
+    ticketPrompt("app", scope, paths, 2, { open: [], fixed: [1] }),
+  ).toContain("Open tickets, ready or blocked: none");
 });

@@ -90,6 +90,10 @@ export function summariseEvent(event: unknown): string | null {
       ].find((v): v is string => typeof v === "string");
       return `overseer${note === undefined ? "" : `: ${oneLine(note)}`}`;
     }
+    case "werk_overseer": {
+      const act = typeof event.act === "string" ? event.act : "act";
+      return `overseer ${act}${typeof event.text === "string" ? `: ${oneLine(event.text)}` : ""}`;
+    }
     default:
       return typeof event.type === "string" ? event.type : null;
   }

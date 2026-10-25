@@ -216,17 +216,6 @@ test("a writer that runs past the wall-clock limit is stopped", async () => {
   expect(result.stderr).toContain("wall-clock limit");
 });
 
-test("a plan over a subtree that has tickets on the board is refused with no event", async () => {
-  seed(decided("app"));
-  project.install(script(goodSpec(), tickets(["01-a.md", good])));
-  await werk("plan", "app");
-  const before = readLines("board.jsonl").length;
-  const again = await werk("plan", "app");
-  expect(again.code).toBe(1);
-  expect(again.stderr).toContain("Archive them");
-  expect(readLines("board.jsonl")).toHaveLength(before);
-});
-
 test("a plan with no card, or a bad flag, is refused", async () => {
   expect((await werk("plan", "nothing")).code).toBe(1);
   expect((await werk("plan")).code).toBe(2);
@@ -263,4 +252,218 @@ test("a plan after the old tickets are archived keeps their files and continues 
   expect(existsSync(join(project.dir, ".werk/tickets/app/01-a.md"))).toBe(true);
   expect(board().tickets.get("app/01")?.archived).toBe(true);
   expect(board().tickets.get("app/02")?.column).toBe("ready");
+});
+
+const SPEC_TWO =
+  "## Problem\n\nP.\n\n## User stories\n\n1. As a person, I want it.\n2. As a person, I want more.\n";
+const first = (n: number) =>
+  ticket({ title: `Ticket ${n}`, cites: "app", stories: "1" });
+
+/** A first plan with tickets 01, 02 and 03, then 01 built to done. The second plan is the script of the test. */
+async function plannedTwice(second: {
+  spec?: Step[];
+  tickets: Step[];
+}): Promise<{ code: number; stderr: string }> {
+  seed(decided("app"));
+  const answers = edit("specs/app/ticket-answers.json", "[]");
+  project.install({
+    roles: {
+      "spec-writer": {
+        replies: [
+          goodSpec(),
+          second.spec ?? [
+            edit("specs/app/spec.md", SPEC_TWO),
+            edit("specs/app/spec-answers.json", "[]"),
+            RESULT,
+          ],
+        ],
+      },
+      "ticket-writer": {
+        replies: [
+          tickets(
+            ["01-a.md", first(1)],
+            ["02-b.md", first(2)],
+            ["03-c.md", first(3)],
+          ),
+          [...second.tickets, answers, RESULT],
+        ],
+      },
+    },
+  });
+  expect((await werk("plan", "app")).code).toBe(0);
+  const boardLog = join(project.dir, ".werk", "board.jsonl");
+  for (const event of [
+    { type: "ticket.moved", id: "app/01", to: "building", actor: "you" },
+    { type: "ticket.moved", id: "app/01", to: "merging", actor: "loop" },
+    { type: "ticket.merge", id: "app/01" },
+  ])
+    appendFileSync(boardLog, `${JSON.stringify(event)}\n`);
+  const again = await werk("plan", "app");
+  return { code: again.code, stderr: again.stderr };
+}
+
+test("a second plan changes ticket 02 in place, adds ticket 04, archives a ticket the spec drops, and leaves a done ticket alone", async () => {
+  const rewritten = ticket({
+    title: "Ticket 2, changed",
+    cites: "app",
+    stories: "1",
+  });
+  const added = ticket({ title: "Ticket 4", cites: "app", stories: "2" });
+  const result = await plannedTwice({
+    tickets: [
+      edit("tickets/app/02-b.md", rewritten),
+      edit("tickets/app/04-d.md", added),
+      edit(
+        "specs/app/ticket-drops.json",
+        JSON.stringify([{ ticket: 3, why: "the spec no longer needs it" }]),
+      ),
+    ],
+  });
+  expect(result.stderr).toBe("");
+  expect(result.code).toBe(0);
+  const b = board();
+  expect(b.tickets.get("app/02")).toMatchObject({
+    title: "Ticket 2, changed",
+    column: "ready",
+  });
+  expect(b.tickets.get("app/04")).toMatchObject({
+    title: "Ticket 4",
+    column: "ready",
+  });
+  expect(b.tickets.get("app/03")).toMatchObject({
+    archived: true,
+    archive: { by: "plan", reason: "the spec no longer needs it" },
+  });
+  expect(b.tickets.get("app/01")).toMatchObject({
+    title: "Ticket 1",
+    column: "done",
+  });
+  expect(b.plans.get("app")?.tickets).toEqual([
+    "app/01",
+    "app/02",
+    "app/03",
+    "app/04",
+  ]);
+  expect(
+    readFileSync(join(project.dir, ".werk/tickets/app/01-a.md"), "utf8"),
+  ).toBe(first(1));
+  expect(
+    readFileSync(join(project.dir, ".werk/specs/app/spec.md"), "utf8"),
+  ).toBe(SPEC_TWO);
+});
+
+test("a second plan puts no second ticket set on the board", async () => {
+  await plannedTwice({ tickets: [] });
+  expect([...board().tickets.keys()].sort()).toEqual([
+    "app/01",
+    "app/02",
+    "app/03",
+  ]);
+});
+
+test("a second plan records the cited versions again and clears the mark of a ticket it keeps", async () => {
+  seed(decided("app"));
+  project.install({
+    roles: {
+      "spec-writer": {
+        replies: [
+          goodSpec(),
+          [
+            edit("specs/app/spec.md", SPEC),
+            edit("specs/app/spec-answers.json", "[]"),
+            RESULT,
+          ],
+        ],
+      },
+      "ticket-writer": {
+        replies: [
+          tickets(["01-a.md", good]),
+          [edit("specs/app/ticket-answers.json", "[]"), RESULT],
+        ],
+      },
+    },
+  });
+  await werk("plan", "app");
+  const boardLog = join(project.dir, ".werk", "board.jsonl");
+  const mark = {
+    type: "ticket.marked",
+    id: "app/01",
+    card: "app",
+    kind: "reopened",
+    version: 99,
+  };
+  appendFileSync(boardLog, `${JSON.stringify(mark)}\n`);
+  expect(board().tickets.get("app/01")?.column).toBe("blocked");
+  const again = await werk("plan", "app");
+  expect(again.stderr).toBe("");
+  expect(board().tickets.get("app/01")).toMatchObject({
+    column: "ready",
+    marks: [],
+  });
+});
+
+test("a second plan restores the file of a ticket that is not open, and reports it", async () => {
+  const result = await plannedTwice({
+    tickets: [
+      edit(
+        "tickets/app/01-a.md",
+        ticket({ title: "Tampered", cites: "app", stories: "1" }),
+      ),
+    ],
+  });
+  expect(result.code).toBe(1);
+  expect(result.stderr).toContain("ticket 1 is not open");
+  expect(
+    readFileSync(join(project.dir, ".werk/tickets/app/01-a.md"), "utf8"),
+  ).toBe(first(1));
+  expect(board().tickets.get("app/01")?.title).toBe("Ticket 1");
+});
+
+test("a rewrite that fails its own checks is undone, and the ticket keeps its old words", async () => {
+  const result = await plannedTwice({
+    tickets: [
+      edit(
+        "tickets/app/02-b.md",
+        ticket({
+          title: "Bad",
+          cites: "app",
+          stories: "1",
+          what: "Edit src/loop.ts.",
+        }),
+      ),
+    ],
+  });
+  expect(result.code).toBe(1);
+  expect(result.stderr).not.toBe("");
+  expect(board().tickets.get("app/02")?.title).toBe("Ticket 2");
+  expect(
+    readFileSync(join(project.dir, ".werk/tickets/app/02-b.md"), "utf8"),
+  ).toBe(first(2));
+});
+
+test("a drop of a ticket that is not open is ignored and archives nothing", async () => {
+  const notOpen = await plannedTwice({
+    tickets: [
+      edit(
+        "tickets/app/04-d.md",
+        ticket({ title: "Ticket 4", cites: "app", stories: "2" }),
+      ),
+      edit(
+        "specs/app/ticket-drops.json",
+        JSON.stringify([{ ticket: 1, why: "x" }]),
+      ),
+    ],
+  });
+  expect(notOpen.stderr).toBe("");
+  expect(notOpen.code).toBe(0);
+  expect(notOpen.stderr).not.toContain("not open");
+  expect(board().tickets.get("app/01")?.archived).toBe(false);
+});
+
+test("a bad drops file fails the plan", async () => {
+  const result = await plannedTwice({
+    tickets: [edit("specs/app/ticket-drops.json", "{")],
+  });
+  expect(result.code).toBe(1);
+  expect(result.stderr).toContain("drops file is bad");
 });

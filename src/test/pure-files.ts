@@ -43,6 +43,9 @@ export const PURE_FILES: readonly string[] = [
   "src/plan/prompts.ts",
   "src/plan/agent-args.ts",
   "src/plan/ticket-events.ts",
+  "src/plan/cited-changes.ts",
+  "src/plan/drops.ts",
+  "src/board/cite-marks.ts",
   "src/tickets/ticket-parse.ts",
   "src/tickets/own-checks.ts",
   "src/tickets/set-checks.ts",
@@ -87,5 +90,8 @@ export const PURE_FILES: readonly string[] = [
   "src/chat/crash-rules.ts",
   "client/lib/context-pie.ts",
   "src/chat/start-line.ts",
+  "src/overseer/process-table.ts",
+  "src/overseer/verdicts.ts",
+  "src/overseer/overseer.ts",
   "client/lib/word-menu.ts",
 ];

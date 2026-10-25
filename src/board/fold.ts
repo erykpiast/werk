@@ -33,6 +33,7 @@ export type BoardRule =
   | "archived"
   | "not-archived"
   | "not-ready"
+  | "marked"
   | "unknown-session";
 
 export type BoardViolation = { rule: BoardRule; detail: string };
@@ -48,6 +49,12 @@ export type Build = {
   result?: string;
 };
 
+/** A change to a cited card after the ticket was planned (#st-ticket-watch). */
+export type CitedMark = { card: string; kind: string; version: number };
+
+/** Who archived a ticket and why, when the archive states a reason (#st-plan-archive). */
+export type Archive = { by: string; reason: string };
+
 export type Pass = { n: number; result: string };
 export type HeldOut = { result: "green" | "red" };
 
@@ -59,8 +66,16 @@ export type Ticket = {
   title: string;
   column: Column;
   archived: boolean;
-  /** Why a blocked ticket is blocked. */
+  /** Why a blocked ticket is blocked: the failed set check, then each changed cited card. */
   reason: string;
+  /** The part of the reason that a failed set check or an agent gave. */
+  checkReason: string;
+  /** The version of each cited card when the plan put the ticket on the board (#st-ticket-watch). */
+  cited: Record<string, number>;
+  /** The cited cards that changed since those versions. A plan over the subtree clears them. */
+  marks: CitedMark[];
+  /** Set while the ticket is archived and the archive gave a reason. */
+  archive?: Archive;
   /** Ticket ids that must be done before this one builds. */
   blockedBy: string[];
   branch?: string;
@@ -92,6 +107,8 @@ export type Plan = {
   gates: Record<string, "waiting" | "passed">;
   /** The merge-loop process that holds the run, from "run started" to "run ended". */
   runPid?: number;
+  /** The decided cards of the subtree that no open ticket cites, from the latest cards-cited check (#st-ticket-watch). */
+  uncited: string[];
   tickets: string[];
 };
 
@@ -146,7 +163,7 @@ const ARCHIVABLE: readonly Column[] = ["ready", "blocked", "building"];
 function ensurePlan(board: Board, id: string): Plan {
   let plan = board.plans.get(id);
   if (!plan) {
-    plan = { id, gates: {}, tickets: [] };
+    plan = { id, gates: {}, uncited: [], tickets: [] };
     board.plans.set(id, plan);
   }
   return plan;
@@ -175,6 +192,31 @@ function openBlockers(board: Board, ticket: Ticket): string[] {
   );
 }
 
+/** The versions a plan records for the cards a ticket cites. Absent means none. */
+function citedOf(rec: Rec): Record<string, number> | undefined {
+  const value = rec.cited;
+  if (value === undefined) return {};
+  if (!isRecord(value)) return undefined;
+  const cited: Record<string, number> = {};
+  for (const [card, version] of Object.entries(value)) {
+    if (!Number.isInteger(version) || (version as number) < 0) return undefined;
+    cited[card] = version as number;
+  }
+  return cited;
+}
+
+/** The reason a blocked ticket shows: the check's own reason, then one clause for each changed cited card. */
+function reasonOf(ticket: Ticket): string {
+  return [
+    ticket.checkReason,
+    ...ticket.marks.map(
+      (m) => `cited card #${m.card} changed after the plan: ${m.kind}`,
+    ),
+  ]
+    .filter((part) => part !== "")
+    .join("; ");
+}
+
 function planned(board: Board, rec: Rec): BoardViolation | null {
   const id = str(rec, "id");
   if (id === undefined || !TICKET_ID.test(id))
@@ -183,6 +225,8 @@ function planned(board: Board, rec: Rec): BoardViolation | null {
     return { rule: "duplicate-ticket", detail: `ticket ${id} is on the board` };
   const blockedBy = strList(rec, "blocked_by") ?? [];
   const reason = str(rec, "reason") ?? "";
+  const cited = citedOf(rec);
+  if (cited === undefined) return bad("cited maps card ids to whole numbers");
   const [planId, number] = id.split("/") as [string, string];
   const ticket: Ticket = {
     id,
@@ -192,6 +236,9 @@ function planned(board: Board, rec: Rec): BoardViolation | null {
     column: reason === "" ? "ready" : "blocked",
     archived: false,
     reason,
+    checkReason: reason,
+    cited,
+    marks: [],
     blockedBy,
     builds: [],
     passes: [],
@@ -243,12 +290,90 @@ function moved(board: Board, rec: Rec): BoardViolation | null {
       rule: "no-reason",
       detail: "a ticket moved to blocked states its blocking reason",
     };
+  if (to === "ready" && ticket.marks.length > 0)
+    return {
+      rule: "marked",
+      detail: `ticket ${ticket.id} waits for a plan to check ${ticket.marks.map((m) => `#${m.card}`).join(", ")}`,
+    };
   if (from === "ready") leaveReady(board, ticket.id);
   if (to === "ready") board.readyOrder.push(ticket.id);
   ticket.column = to;
   // A move back to ready may carry the reason it came back, such as a build red at the retry cap
   // (#st-build-ticket-hand-off).
-  ticket.reason = to === "blocked" || to === "ready" ? (reason ?? "") : "";
+  ticket.checkReason = to === "blocked" || to === "ready" ? (reason ?? "") : "";
+  ticket.reason = reasonOf(ticket);
+  return null;
+}
+
+/** An open ticket is ready or blocked and not archived (#st-plan-extend). */
+export const isOpen = (ticket: Ticket): boolean =>
+  !ticket.archived &&
+  (ticket.column === "ready" || ticket.column === "blocked");
+
+/** A plan rewrites an open ticket in place, records the versions of its cited cards, and clears its marks. */
+function replanned(board: Board, rec: Rec): BoardViolation | null {
+  const ticket = ticketOf(board, rec);
+  if (isViolation(ticket)) return ticket;
+  if (!isOpen(ticket))
+    return {
+      rule: "bad-move",
+      detail: `ticket ${ticket.id} is not open, so a plan leaves it as it is`,
+    };
+  const cited = citedOf(rec);
+  if (cited === undefined) return bad("cited maps card ids to whole numbers");
+  const reason = str(rec, "reason") ?? "";
+  const title = str(rec, "title");
+  if (title === undefined) return bad("replanned needs title");
+  ticket.title = title;
+  ticket.blockedBy = strList(rec, "blocked_by") ?? [];
+  ticket.cited = cited;
+  ticket.marks = [];
+  ticket.checkReason = reason;
+  ticket.reason = reason;
+  const column: Column = reason === "" ? "ready" : "blocked";
+  if (ticket.column === "ready" && column === "blocked")
+    leaveReady(board, ticket.id);
+  if (ticket.column === "blocked" && column === "ready")
+    board.readyOrder.push(ticket.id);
+  ticket.column = column;
+  return null;
+}
+
+/** The watcher found a change to a card that an open ticket cites: the ticket goes to blocked (#st-ticket-watch). */
+function marked(board: Board, rec: Rec): BoardViolation | null {
+  const ticket = ticketOf(board, rec);
+  if (isViolation(ticket)) return ticket;
+  if (!isOpen(ticket))
+    return {
+      rule: "bad-move",
+      detail: `ticket ${ticket.id} is not open, so a changed card does not mark it`,
+    };
+  const card = str(rec, "card");
+  const kind = str(rec, "kind");
+  const version = rec.version;
+  if (
+    card === undefined ||
+    kind === undefined ||
+    !Number.isInteger(version) ||
+    !(card in ticket.cited)
+  )
+    return bad("marked needs a cited card, kind and version");
+  ticket.marks = [
+    ...ticket.marks.filter((m) => m.card !== card),
+    { card, kind, version: version as number },
+  ];
+  if (ticket.column === "ready") leaveReady(board, ticket.id);
+  ticket.column = "blocked";
+  ticket.reason = reasonOf(ticket);
+  return null;
+}
+
+function cardsChecked(board: Board, rec: Rec): BoardViolation | null {
+  const planId = planOf(rec);
+  if (typeof planId !== "string") return planId;
+  const uncited = strList(rec, "uncited");
+  if (uncited === undefined) return bad("cards checked needs an uncited list");
+  ensurePlan(board, planId).uncited = uncited;
   return null;
 }
 
@@ -281,7 +406,10 @@ function archived(board: Board, rec: Rec): BoardViolation | null {
       rule: "bad-move",
       detail: `a ticket in ${ticket.column} cannot be archived`,
     };
+  const reason = str(rec, "reason");
   ticket.archived = true;
+  if (reason !== undefined)
+    ticket.archive = { by: str(rec, "actor") ?? "agent", reason };
   return null;
 }
 
@@ -294,6 +422,7 @@ function restored(board: Board, rec: Rec): BoardViolation | null {
       detail: `ticket ${ticket.id} is not archived`,
     };
   ticket.archived = false;
+  delete ticket.archive;
   return null;
 }
 
@@ -472,6 +601,8 @@ const TICKET_EVENTS: Record<
 > = {
   "ticket.planned": planned,
   "ticket.moved": moved,
+  "ticket.replanned": replanned,
+  "ticket.marked": marked,
   "ticket.reordered": reordered,
   "ticket.archived": archived,
   "ticket.restored": restored,
@@ -507,6 +638,7 @@ export function applyBoardEvent(
   const handler = TICKET_EVENTS[type];
   if (handler) return handler(board, event);
   if (RUN_EVENTS.has(type)) return runEvent(board, type, event);
+  if (type === "plan.cards_checked") return cardsChecked(board, event);
   if (PLAN_EVENTS.has(type)) return planRunEvent(board, type, event);
   return bad(`unknown event type ${type}`);
 }
