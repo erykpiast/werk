@@ -5,6 +5,8 @@
  * with the same step function, so the fold and a write never disagree.
  */
 
+import { checkLink, sameLine } from "./link-rules.ts";
+
 export type Kind = "card" | "option" | "source";
 export type Status = "open" | "proto" | "decided";
 export type LinkType =
@@ -46,7 +48,10 @@ export type RuleName =
   | "unknown-card"
   | "second-parent"
   | "cycle"
-  | "option-link";
+  | "option-link"
+  | "link-why"
+  | "lineage"
+  | "no-link";
 
 export type Violation = { rule: RuleName; detail: string };
 export type Problem = Violation & { line: number };
@@ -122,64 +127,28 @@ function isViolation(value: unknown): value is Violation {
   return isRecord(value) && "rule" in value;
 }
 
-function parentOf(map: FoldedMap, id: string): string | undefined {
-  return map.parents.get(id);
-}
-
-/** Whether `ancestor` is `id` itself or sits above it in the refines tree. */
-function isAtOrAbove(map: FoldedMap, ancestor: string, id: string): boolean {
-  const seen = new Set<string>();
-  for (
-    let at: string | undefined = id;
-    at !== undefined;
-    at = parentOf(map, at)
-  ) {
-    if (at === ancestor) return true;
-    if (seen.has(at)) return false;
-    seen.add(at);
-  }
-  return false;
+function sameLink(a: Edge, b: Edge): boolean {
+  return a.from === b.from && a.to === b.to && a.type === b.type;
 }
 
 function addEdge(map: FoldedMap, edge: Edge): void {
   const from = map.nodes.get(edge.from);
   const to = map.nodes.get(edge.to);
   if (edge.type === "refines") map.parents.set(edge.from, edge.to);
-  if (from?.proposed || to?.proposed) map.ghostEdges.push(edge);
-  else map.edges.push(edge);
+  const held = from?.proposed || to?.proposed;
+  const list = held ? map.ghostEdges : map.edges;
+  // Linking the same pair again replaces the reason (#vi-prop-linkwhy).
+  const at = list.findIndex((other) => sameLink(other, edge));
+  if (at === -1) list.push(edge);
+  else list[at] = edge;
 }
 
-/** Checks a link against the map. */
-function checkEdge(map: FoldedMap, edge: Edge): Violation | null {
-  const from = map.nodes.get(edge.from);
-  if (!from) {
-    return { rule: "unknown-card", detail: `no card "${edge.from}"` };
-  }
-  if (!map.nodes.has(edge.to)) {
-    return { rule: "unknown-card", detail: `no card "${edge.to}"` };
-  }
-  if (from.kind === "option" && edge.type !== "alternative_to") {
-    return {
-      rule: "option-link",
-      detail: `option "${edge.from}" links by alternative_to only, not ${edge.type}`,
-    };
-  }
-  if (edge.type === "refines") {
-    const parent = parentOf(map, edge.from);
-    if (parent !== undefined) {
-      return {
-        rule: "second-parent",
-        detail: `"${edge.from}" already has the parent "${parent}"`,
-      };
-    }
-    if (isAtOrAbove(map, edge.from, edge.to)) {
-      return {
-        rule: "cycle",
-        detail: `"${edge.from}" refines "${edge.to}", which sits at or below it`,
-      };
-    }
-  }
-  return null;
+/** A move that turns a depends_on link into a link to an ancestor or descendant removes it (#vi-prop-nolineage). */
+function dropLineageLinks(map: FoldedMap): void {
+  const keep = (edge: Edge) =>
+    edge.type !== "depends_on" || !sameLine(map, edge.from, edge.to);
+  map.edges = map.edges.filter(keep);
+  map.ghostEdges = map.ghostEdges.filter(keep);
 }
 
 function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
@@ -239,9 +208,32 @@ function applyEdgeAdded(map: FoldedMap, fields: Fields): Violation | null {
   const why = optional(fields, "why");
   if (isViolation(why)) return why;
   const edge: Edge = { from, to, type: link, why: why ?? "" };
-  const violation = checkEdge(map, edge);
+  const violation = checkLink(map, edge);
   if (violation) return violation;
   addEdge(map, edge);
+  if (link === "refines") dropLineageLinks(map);
+  return null;
+}
+
+function applyEdgeRemoved(map: FoldedMap, fields: Fields): Violation | null {
+  const { from, to, link } = fields;
+  if (typeof from !== "string" || typeof to !== "string") {
+    return bad('"from" and "to" must be text');
+  }
+  if (!oneOf(link, LINK_TYPES)) {
+    return bad(`"link" must be one of ${LINK_TYPES.join(", ")}`);
+  }
+  const gone: Edge = { from, to, type: link, why: "" };
+  const before = map.edges.length + map.ghostEdges.length;
+  map.edges = map.edges.filter((edge) => !sameLink(edge, gone));
+  map.ghostEdges = map.ghostEdges.filter((edge) => !sameLink(edge, gone));
+  if (map.edges.length + map.ghostEdges.length === before) {
+    return {
+      rule: "no-link",
+      detail: `no ${link} link from "${from}" to "${to}"`,
+    };
+  }
+  if (link === "refines") map.parents.delete(from);
   return null;
 }
 
@@ -256,6 +248,8 @@ export function applyEvent(map: FoldedMap, event: unknown): Violation | null {
       return applyProposed(map, event);
     case "edge.added":
       return applyEdgeAdded(map, event);
+    case "edge.removed":
+      return applyEdgeRemoved(map, event);
     default:
       return bad(`unknown event type ${JSON.stringify(event.type)}`);
   }

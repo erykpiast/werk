@@ -14,6 +14,7 @@ const link = (from: string, to: string, type = "refines") => ({
   from,
   to,
   link: type,
+  ...(type === "depends_on" ? { why: "takes the grid" } : {}),
 });
 const entries = (...events: unknown[]): LogEntry[] =>
   events.map((event, i) => ({ line: i + 1, event }));
@@ -177,6 +178,79 @@ describe("the rules", () => {
         link: "refines",
         why: 1,
       }),
+    ).toEqual(["bad-event"]);
+  });
+});
+
+describe("depends_on links", () => {
+  const dep = (from: string, to: string, why?: string) => ({
+    type: "edge.added",
+    from,
+    to,
+    link: "depends_on",
+    ...(why === undefined ? {} : { why }),
+  });
+  const unlink = (from: string, to: string, link = "depends_on") => ({
+    type: "edge.removed",
+    from,
+    to,
+    link,
+  });
+
+  test("linking the same pair again replaces the reason", () => {
+    const map = fold(
+      entries(node("a"), node("b"), dep("a", "b", "one"), dep("a", "b", "two")),
+    );
+    expect(map.problems).toEqual([]);
+    expect(map.ghostEdges).toEqual([
+      { from: "a", to: "b", type: "depends_on", why: "two" },
+    ]);
+  });
+
+  test("a link without a reason is refused", () => {
+    expect(rules(node("a"), node("b"), dep("a", "b"))).toEqual(["link-why"]);
+  });
+
+  test("a link on a ghost is held, and the live edges leave it out", () => {
+    const map = fold(entries(node("a"), node("b"), dep("a", "b", "w")));
+    expect(map.edges).toEqual([]);
+    expect(map.ghostEdges).toHaveLength(1);
+  });
+
+  test("a move that turns a link into a lineage link removes it", () => {
+    const map = fold(
+      entries(node("a"), node("b"), dep("b", "a", "w"), link("b", "a")),
+    );
+    expect(map.problems).toEqual([]);
+    expect(map.ghostEdges.map((e) => e.type)).toEqual(["refines"]);
+  });
+
+  test("unlink removes the link and a refines unlink frees the parent", () => {
+    const map = fold(
+      entries(
+        node("a"),
+        node("b"),
+        dep("a", "b", "w"),
+        unlink("a", "b"),
+        link("b", "a"),
+        unlink("b", "a", "refines"),
+      ),
+    );
+    expect(map.problems).toEqual([]);
+    expect(map.ghostEdges).toEqual([]);
+    expect(map.parents.has("b")).toBe(false);
+  });
+
+  test("unlink of a link that is not there is refused", () => {
+    expect(rules(node("a"), node("b"), unlink("a", "b"))).toEqual(["no-link"]);
+  });
+
+  test("a bad unlink event is refused", () => {
+    expect(
+      rules({ type: "edge.removed", from: 1, to: "b", link: "refines" }),
+    ).toEqual(["bad-event"]);
+    expect(
+      rules({ type: "edge.removed", from: "a", to: "b", link: "x" }),
     ).toEqual(["bad-event"]);
   });
 });
