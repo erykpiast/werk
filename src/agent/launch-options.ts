@@ -43,6 +43,8 @@ const SONNET_ROLES = new Set([
   "classifier",
 ]);
 /** The roles that can write the map. */
+/** The roles whose contract the instruction text would contradict. */
+const NO_TEXT = new Set(["sample", "diagram-scout", "diagram-updater"]);
 const MAP_WRITERS = new Set([
   "chat",
   "builder",
@@ -72,8 +74,13 @@ export function buildLaunchOptions(input: LaunchInput): LaunchOptions {
     model: model === "" ? undefined : model,
     advisor,
   };
-  if (!MAP_WRITERS.has(input.role)) return options;
+  if (NO_TEXT.has(input.role)) return options;
   const titles = titleSection(input.buildRuleTitles);
+  if (!MAP_WRITERS.has(input.role)) {
+    // Every other stage agent still learns the build rules of the project.
+    if (titles !== "") options.appendSystemPrompt = titles.trimStart();
+    return options;
+  }
   if (input.projectIsWerk) {
     // The instruction file of werk's own checkout already holds the text and the subagents.
     if (titles !== "") options.appendSystemPrompt = titles.trimStart();

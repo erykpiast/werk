@@ -87,8 +87,6 @@ Example of a good card:
 
 When the person reads your reply in a chat pane, they act in the map, not in a terminal. Name a map operation by its plain name, not by its command line. Write "Next: decide #checkout-retry", not the full command. Still run the full command yourself. Write a full command line only when the person must run it in a terminal.
 
-A line like \`[the map is now at #id — title]\` names the card the person is looking at. Unless they name another id, "this card" means that one.
-
 ## Do not touch the product diagram
 
 If the project has a product diagram file, it is kept in step with the decided cards by a background job. Do not edit it and do not start agents for it.
@@ -106,9 +104,5 @@ Classify a module before you decide what to test. Ask one question: does a wrong
 
 - A pure module gets a high line-coverage threshold, because its tests are cheap and its bugs never show themselves. Use the project's own threshold. If it has none, record one card saying the threshold needs deciding once for the whole project. Do not pick a number yourself.
 - An I/O module gets a list of named behaviours and no percentage, because covering a line needs a fake of the live thing, and a percentage rewards the fake. Write each behaviour as a responsibility, not a location: "a crash never loses the message in flight" stays true after a rewrite.
-
-## Images
-
-Read an image with the Read tool. It gives you the image directly. Use a subagent only when you will read more than about ten images in one session, or you need only a short text fact from an image.
 `;
 }

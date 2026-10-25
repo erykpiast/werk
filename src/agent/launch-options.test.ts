@@ -61,15 +61,23 @@ describe("buildLaunchOptions", () => {
     expect(o.advisor).toBe(advisor);
   });
 
-  test("a role with no map writes gets no instruction text", () => {
+  test("a role with no map writes gets no instruction text, only the build-rule titles", () => {
     for (const role of [
       "grader",
       "reviewer-tests",
       "classifier",
       "heldout-binder",
-      "sample",
-      "diagram-updater",
     ]) {
+      const o = buildLaunchOptions({ ...base, role });
+      expect(o.appendSystemPrompt).toContain("Build rules of this project");
+      expect(o.appendSystemPrompt).not.toContain("# werk: the decision map");
+      expect(o.agents).toBeUndefined();
+      expect(o.env.WERK_AGENT_ROLE).toBe(role);
+    }
+  });
+
+  test("a sample or diagram role gets neither text nor titles", () => {
+    for (const role of ["sample", "diagram-scout", "diagram-updater"]) {
       const o = buildLaunchOptions({ ...base, role });
       expect(o.appendSystemPrompt).toBeUndefined();
       expect(o.agents).toBeUndefined();
