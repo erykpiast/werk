@@ -5,6 +5,7 @@
  */
 import { randomBytes } from "node:crypto";
 import { dirname, join } from "node:path";
+import { pipelineLogBeside } from "../pipeline/log-store.ts";
 import { type DevClient, startDevClient } from "./client-dev.ts";
 import { type ClientServer, noClient } from "./client-server.ts";
 import { createHandler, type Handler } from "./handler.ts";
@@ -32,6 +33,8 @@ type Live = {
   /** Vite, in dev. */
   dev?: DevClient;
   watch: LogWatch;
+  /** The pipeline log. Its growth sends the measure signal (#werk-write-measure-signal). */
+  measureWatch: LogWatch;
   /** Long-lived child processes. A hot reload never starts a second set. */
   children: Set<Bun.Subprocess>;
   lock: Lock;
@@ -133,6 +136,9 @@ export async function serve(options: ServeOptions): Promise<number> {
     live.watch = watchLog(options.logPath, () =>
       broadcast(live.clients, "changed"),
     );
+    live.measureWatch = watchLog(pipelineLogBeside(options.logPath), () =>
+      broadcast(live.clients, "measure"),
+    );
     if (options.dev) {
       live.dev = await startDevClient({
         configFile: VITE_CONFIG,
@@ -157,6 +163,7 @@ export async function serve(options: ServeOptions): Promise<number> {
     });
   } catch (error) {
     live.watch?.close();
+    live.measureWatch?.close();
     await live.dev?.close();
     lock.release();
     throw error;
@@ -171,6 +178,7 @@ export async function serve(options: ServeOptions): Promise<number> {
     for (const child of live.children) child.kill();
     live.server.stop(true);
     live.watch.close();
+    live.measureWatch.close();
     void live.dev?.close();
     lock.release();
     delete globals[KEY];

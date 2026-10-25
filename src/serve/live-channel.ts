@@ -1,7 +1,7 @@
 /** The live channel: one event stream for each open page. Its signals carry no data (#werk-write-changed). */
 export type Clients = Set<ReadableStreamDefaultController<Uint8Array>>;
 
-export type LiveEvent = "changed" | "reload";
+export type LiveEvent = "changed" | "measure" | "reload";
 
 const encoder = new TextEncoder();
 
