@@ -164,3 +164,122 @@ test("the browser server refuses to start when the fake agent is not first", asy
     startBrowserServer({ env: { PATH: "/usr/bin:/bin" } }),
   ).rejects.toThrow(/fake agent is not first/);
 });
+
+/** The page address of the project that the app opened, with no view suffix. */
+async function projectBase(page: import("@playwright/test").Page, url: string) {
+  await page.goto(url);
+  await expect(page).toHaveURL(/\/p\/[^/]+/);
+  const here = new URL(page.url());
+  return here.origin + here.pathname.replace(/\/(map|board).*$/, "");
+}
+
+test("an address with an unknown card id says the card is not in the map", async ({
+  page,
+  app,
+}) => {
+  const base = await projectBase(page, app.url);
+  await page.goto(`${base}/map/nobody`);
+  await expect(
+    leftPane(page).getByText("The map has no card nobody."),
+  ).toBeVisible();
+});
+
+test("on a deep card the breadcrumbs stay one line, and hover shows the whole path", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  const add = (id: string, parent: string) =>
+    expect(
+      app.werk("add", id, "--title", `Level ${id}`, "--parent", parent).code,
+    ).toBe(0);
+  add("a", "root");
+  add("b", "a");
+  add("c", "b");
+  add("d", "c");
+  expect(app.werk("accept", "d", "--actor", "you").code).toBe(0);
+
+  const base = await projectBase(page, app.url);
+  await page.goto(`${base}/map/d`);
+  const crumbs = page.getByRole("navigation", { name: "Breadcrumbs" });
+  await expect(
+    crumbs.locator("[data-slot=crumb-line] [data-slot=crumb-current]"),
+  ).toHaveText("Level d");
+  const line = crumbs.locator("[data-slot=crumb-line]");
+  const before = await line.boundingBox();
+  expect(before?.height).toBeLessThan(40);
+  await expect(line).toContainText("…");
+
+  await line.hover({ force: true });
+  const overlay = crumbs.locator("[data-slot=crumb-overlay]");
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toContainText(ROOT_TITLE);
+  await expect(overlay).toContainText("Level a");
+  expect((await line.boundingBox())?.height).toBe(before?.height);
+  await evidence(page, "breadcrumbs-overlay");
+
+  await overlay.getByRole("button", { name: "Level b" }).click();
+  await expect(page).toHaveURL(/\/map\/b$/);
+});
+
+test("typing a card's exact id with # and pressing Enter opens that card", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  expect(
+    app.werk(
+      "add",
+      "seats",
+      "--title",
+      "We charge per seat",
+      "--parent",
+      "root",
+    ).code,
+  ).toBe(0);
+  expect(app.werk("accept", "seats", "--actor", "you").code).toBe(0);
+  await page.goto(app.url);
+  const box = page.getByRole("searchbox", { name: "Search the map" });
+  await box.fill("#seats");
+  await expect(
+    page.getByRole("list", { name: "Search results" }),
+  ).toBeVisible();
+  await evidence(page, "search-results");
+  await box.press("Enter");
+  await expect(page).toHaveURL(/\/map\/seats$/);
+  await expect(
+    leftPane(page).getByRole("heading", {
+      level: 1,
+      name: "We charge per seat",
+    }),
+  ).toBeVisible();
+  await expect(box).toHaveValue("");
+
+  await box.fill("qqq");
+  await expect(page.getByRole("list", { name: "Search results" })).toHaveCount(
+    0,
+  );
+  await box.fill("seat");
+  await box.press("Escape");
+  await expect(box).toHaveValue("");
+});
+
+test("the Board tab opens the board address and Back returns to the map", async ({
+  page,
+  app,
+}) => {
+  await page.goto(app.url);
+  await expect(leftPane(page).getByRole("heading", { level: 1 })).toBeVisible();
+  const views = page.getByRole("navigation", { name: "Views" });
+  await views.getByRole("button", { name: "Board" }).click();
+  await expect(page).toHaveURL(/\/board$/);
+  await expect(views.getByRole("button", { name: "Board" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await page.goBack();
+  await expect(page).toHaveURL(/\/map$/);
+  await expect(
+    leftPane(page).getByRole("heading", { level: 1, name: ROOT_TITLE }),
+  ).toBeVisible();
+});

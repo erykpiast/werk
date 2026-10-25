@@ -5,11 +5,19 @@
  * A reload signal stashes the composer draft and reloads the page (#werk-client-reload).
  */
 
+import type { SearchRow } from "./card-search";
 import { CHAT_EVENTS } from "./chat-store";
+import type { CountRollup } from "./counts";
 import { apiOf } from "./project-route";
 
 /** What the server renders for the open card. The id is null for an empty map. */
 export type OpenView = { id: string | null; html?: string };
+
+/** What the header reads: one row per node and the counts of each card (#vi-jump, #vi-counts-header). */
+export type HeaderIndex = {
+  entries: (SearchRow & { parent: string | null })[];
+  rollups: Record<string, CountRollup>;
+};
 
 type Source = {
   addEventListener(
@@ -24,6 +32,8 @@ export type MapStoreDeps = {
   connect: (url: string) => Source;
   /** Puts the server's HTML for the open card on the page. */
   show: (view: OpenView) => void;
+  /** Called with the header's index each time the open card is read, when given. */
+  index?: (index: HeaderIndex) => void;
   reload: () => void;
   stashDraft: () => void;
   /** The chat parts that the live channel carries, with their JSON data (#werk-progress). */
@@ -49,15 +59,22 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
   const refresh = async () => {
     const mine = ++latest;
     try {
-      const res = await deps.fetch(
-        apiOf(
-          project,
-          card === null ? "/open" : `/open?card=${encodeURIComponent(card)}`,
+      const [res, indexRes] = await Promise.all([
+        deps.fetch(
+          apiOf(
+            project,
+            card === null ? "/open" : `/open?card=${encodeURIComponent(card)}`,
+          ),
         ),
-      );
+        deps.index ? deps.fetch(apiOf(project, "/index")) : null,
+      ]);
       if (!res.ok) return;
       const view = (await res.json()) as OpenView;
-      if (mine === latest) deps.show(view);
+      const index =
+        indexRes?.ok === true ? ((await indexRes.json()) as HeaderIndex) : null;
+      if (mine !== latest) return;
+      if (index) deps.index?.(index);
+      deps.show(view);
     } catch {
       // The next connect or signal reads again.
     }
