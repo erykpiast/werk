@@ -16,6 +16,7 @@ import { askRoute, chatRoute } from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
 import { chooseFolder } from "./folder-dialog.ts";
 import type { Route } from "./handler.ts";
+import { imageRoute } from "./image-route.ts";
 import { live } from "./live-channel.ts";
 import { renderOpenCard } from "./open-card.ts";
 import { cardRead, headerRead, shapeRead } from "./read-api.ts";
@@ -117,6 +118,7 @@ async function projectRoute(
   if (rest === "/live") return live(context);
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
   if (rest === "/ask") return askRoute(context, req);
+  if (rest === "/image") return imageRoute(context, req, url);
   if (rest === "/graph") {
     if (url.searchParams.get("shape") !== "1") {
       return json({ error: "the graph is read with shape=1" }, 400);
@@ -164,7 +166,8 @@ export function createRoute(ctx: RouteContext): Route {
       if (
         rest !== "" &&
         (req.method === "GET" ||
-          (req.method === "POST" && (rest === "/chat" || rest === "/ask")))
+          (req.method === "POST" &&
+            (rest === "/chat" || rest === "/ask" || rest === "/image")))
       ) {
         return projectRoute(ctx, req, name, rest);
       }

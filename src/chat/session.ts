@@ -8,6 +8,7 @@ import type { FoldedMap } from "../map/fold.ts";
 import { buildRuleTitles } from "./build-rules.ts";
 import { cardLine } from "./card-line.ts";
 import { chatArgs } from "./child-args.ts";
+import { imageHeader } from "./image-rules.ts";
 import {
   type Answer,
   type Ask,
@@ -252,8 +253,9 @@ export function createSession(deps: SessionDeps): ChatSession {
       child ??= launch();
       const opening = cardLine(deps.readMap(), sent.card, announced);
       announced = opening.announced;
-      const content =
-        opening.text === "" ? sent.text : `${opening.text}\n\n${sent.text}`;
+      const content = [opening.text, imageHeader(sent.images ?? []), sent.text]
+        .filter((part) => part !== "")
+        .join("\n\n");
       startedAt = Date.now();
       child.stdin.write(
         `${JSON.stringify({ type: "user", message: { role: "user", content } })}\n`,

@@ -10,6 +10,8 @@ export type Sent = {
   text: string;
   /** The card the person had open, or null for the whole tree. */
   card: string | null;
+  /** The absolute paths of the stored images, in the order of their tokens. */
+  images?: string[];
 };
 
 export type Queue = { active: Sent | null; waiting: Sent[] };
