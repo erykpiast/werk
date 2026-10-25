@@ -20,7 +20,6 @@ function whoMissing(card: MapNode): string | null {
 }
 
 function basisMissing(map: FoldedMap, card: MapNode): string | null {
-  if (card.noBasis !== null) return null;
   const targets: MapNode[] = [];
   const parent = map.parents.get(card.id);
   const parentNode = parent === undefined ? undefined : map.nodes.get(parent);
@@ -35,17 +34,17 @@ function basisMissing(map: FoldedMap, card: MapNode): string | null {
   const holds = (target: MapNode) =>
     target.status === "decided" &&
     !target.marks.some((mark) => mark.kind === "stale");
-  if (usable.some(holds)) return null;
-  const waiver = `or waive it: werk edit ${card.id} --no-basis "<reason>"`;
-  if (usable.length === 0) {
-    return `basis: no decided depends_on target or parent. Fix: werk link ${card.id} <card> --type depends_on --why "<what it takes>", ${waiver}`;
+  const waiting = usable.filter((target) => !holds(target));
+  if (waiting.length > 0) {
+    const state = (target: MapNode) =>
+      target.status === "decided" ? "stale" : target.status;
+    const names = waiting
+      .map((target) => `${target.id} (${state(target)})`)
+      .join(", ");
+    return `basis: the card waits on ${names}. Fix: decide the open basis again`;
   }
-  const state = (target: MapNode) =>
-    target.status === "decided" ? "stale" : target.status;
-  const names = usable
-    .map((target) => `${target.id} (${state(target)})`)
-    .join(", ");
-  return `basis: the card waits on ${names}. Fix: decide the open basis again, ${waiver}`;
+  if (card.noBasis !== null || usable.length > 0) return null;
+  return `basis: no decided depends_on target or parent. Fix: werk link ${card.id} <card> --type depends_on --why "<what it takes>", or waive it: werk edit ${card.id} --no-basis "<reason>"`;
 }
 
 function optionMissing(map: FoldedMap, card: MapNode): string | null {

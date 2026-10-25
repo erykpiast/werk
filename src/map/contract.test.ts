@@ -127,13 +127,23 @@ describe("missing facts", () => {
     expect(facts(real, "x")).toContain("basis");
   });
 
-  test("a basis waiver satisfies the basis even when the basis is open", () => {
+  test("a basis waiver does not lift an open basis", () => {
     const map = build(card("p"), card("c", { parent: "p" }), {
       type: "node.edited",
       id: "c",
       noBasis: "root of a tree",
     });
-    expect(facts(map, "c")).not.toContain("basis");
+    expect(checkDecide(map, "c")?.detail).toContain("p (open)");
+  });
+
+  test("one open depends_on target blocks a card with a decided parent", () => {
+    const map = build(
+      ...base,
+      card("o"),
+      card("c", { parent: "root" }),
+      link("c", "o", "depends_on"),
+    );
+    expect(checkDecide(map, "c")?.detail).toContain("o (open)");
   });
 });
 
