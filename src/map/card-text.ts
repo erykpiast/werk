@@ -31,6 +31,13 @@ export function renderCard(map: FoldedMap, id: string): string | null {
     `${node.kind} ${node.id}  [${node.status}]${node.proposed ? "  proposed" : ""}${node.pending ? "  pending change" : ""}`,
     node.title,
   ];
+  if (node.pointer) {
+    const { speaker, at, conversation, session, message, start, end } =
+      node.pointer;
+    lines.push(
+      `said by ${speaker} at ${at}: conversation ${conversation}, session ${session}, message ${message}, span ${start}..${end}`,
+    );
+  }
   if (node.why !== "") lines.push(`why: ${node.why}`);
   if (node.body !== "") lines.push("", node.body);
   const facts = [

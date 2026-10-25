@@ -15,6 +15,8 @@ export const PURE_FILES: readonly string[] = [
   "src/map/review-rules.ts",
   "src/map/stale-list.ts",
   "src/map/find-search.ts",
+  "src/map/quote-match.ts",
+  "src/map/quote-rules.ts",
   "src/map/thread.ts",
   "src/cli/args.ts",
   "src/serve/trust.ts",

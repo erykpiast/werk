@@ -9,6 +9,7 @@ import { checkDecide } from "./contract.ts";
 import { applyOps, checkOps, type Pending, parseOps } from "./edit-diff.ts";
 import type { FoldedMap, MapNode, Violation } from "./fold.ts";
 import { actorRefusal } from "./ghost-rules.ts";
+import { excerptFrozenDetail } from "./quote-rules.ts";
 import { outRefusal } from "./removal-rules.ts";
 
 const bad = (detail: string): Violation => ({ rule: "bad-event", detail });
@@ -20,6 +21,9 @@ function target(map: FoldedMap, id: string): MapNode | Violation {
     return (
       outRefusal(map, id) ?? { rule: "unknown-card", detail: `no card "${id}"` }
     );
+  }
+  if (node.kind === "excerpt") {
+    return { rule: "excerpt", detail: excerptFrozenDetail(id) };
   }
   if (node.proposed) {
     return {
