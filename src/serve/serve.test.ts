@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import {
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -50,6 +51,9 @@ function holder() {
 
 const url = (port: number, path: string) => `http://127.0.0.1:${port}${path}`;
 
+/** The API path of the test project, which its folder name "project" names. */
+const api = (path: string) => `/api/projects/project${path}`;
+
 async function tokenOf(port: number): Promise<string> {
   const html = await (await fetch(url(port, "/"))).text();
   return /name="werk-token" content="([^"]+)"/.exec(html)?.[1] ?? "";
@@ -93,30 +97,55 @@ test("the read API answers one card and a shape with no body", async () => {
   project.start(["bun", CLI, "serve", "--port", "0"]);
   const { port } = await holder();
 
-  const card = await (await fetch(url(port, "/api/card/root"))).json();
+  const card = await (await fetch(url(port, api("/card/root")))).json();
   expect(card).toMatchObject({
     found: true,
     card: { id: "root", body: "SECRET BODY" },
   });
-  expect(await (await fetch(url(port, "/api/card/nobody"))).json()).toEqual({
+  expect(await (await fetch(url(port, api("/card/nobody")))).json()).toEqual({
     found: false,
   });
-  expect((await fetch(url(port, "/api/card/bad%20id"))).status).toBe(400);
-  const shape = await (await fetch(url(port, "/api/graph?shape=1"))).text();
+  expect((await fetch(url(port, api("/card/bad%20id")))).status).toBe(400);
+  const shape = await (await fetch(url(port, api("/graph?shape=1")))).text();
   expect(JSON.parse(shape).nodes[0].id).toBe("root");
   expect(shape).not.toContain("SECRET BODY");
-  expect((await fetch(url(port, "/api/graph"))).status).toBe(400);
+  expect((await fetch(url(port, api("/graph")))).status).toBe(400);
 });
 
-test("a second serve on the same project waits, then refuses with the first server's pid and port", async () => {
+test("a server of another per-user folder waits for the project, then refuses with the first server's pid and port", async () => {
   project.start(["bun", CLI, "serve", "--port", "0"]);
   const first = await holder();
   const started = Date.now();
-  const second = await project.run(["bun", CLI, "serve", "--port", "0"]);
+  const second = await project.run(["bun", CLI, "serve", "--port", "0"], {
+    WERK_HOME: join(scratch, "other-home"),
+  });
   expect(Date.now() - started).toBeGreaterThanOrEqual(4000);
   expect(second.code).toBe(1);
   expect(second.stderr).toContain(`waiting for pid ${first.pid}`);
   expect(second.stderr).toContain(`on port ${first.port} (pid ${first.pid})`);
+}, 20000);
+
+test("a server with WERK_LOG runs beside a first server, with its locks beside the log it names", async () => {
+  project.start(["bun", CLI, "serve", "--port", "0"]);
+  const first = await holder();
+  const other = join(scratch, "other");
+  mkdirSync(other);
+  writeFileSync(join(other, "log.jsonl"), "");
+  const second = project.start(["bun", CLI, "serve", "--port", "0"], {
+    WERK_HOME: "",
+    WERK_LOG: join(other, "log.jsonl"),
+  });
+  const lock = await until(() => {
+    const read = JSON.parse(
+      readFileSync(join(other, "server", "serve.lock"), "utf8"),
+    );
+    return read.port > 0 ? (read as { pid: number; port: number }) : undefined;
+  });
+  expect(lock.pid).not.toBe(first.pid);
+  expect(lock.port).not.toBe(first.port);
+  expect(existsSync(join(other, "serve.lock"))).toBe(true);
+  expect(second.exitCode).toBeNull();
+  expect((await holder()).pid).toBe(first.pid);
 }, 20000);
 
 test("a stale lock from a killed server is taken over", async () => {
@@ -161,8 +190,8 @@ test("an edit to a route handler in a copy of the app is live with no restart", 
 
   const routes = join(app, "src", "serve", "routes.ts");
   const edited = readFileSync(routes, "utf8").replace(
-    'if (url.pathname === "/api/live") return live(ctx);',
-    'if (url.pathname === "/api/live") return live(ctx);\n    if (url.pathname === "/api/ping") return new Response("pong");',
+    'if (pathname === "/api/projects") {',
+    'if (pathname === "/api/ping") return new Response("pong");\n    if (pathname === "/api/projects") {',
   );
   expect(edited).toContain("/api/ping");
   writeFileSync(routes, edited);
@@ -181,7 +210,7 @@ test("a hot reload keeps the token and the open live connections", async () => {
   project.start(["bun", copyApp(app), "serve", "--port", "0"]);
   const { port } = await holder();
   const token = await tokenOf(port);
-  const live = await fetch(url(port, "/api/live"));
+  const live = await fetch(url(port, api("/live")));
   const reader = (live.body as ReadableStream<Uint8Array>).getReader();
   await reader.read();
 

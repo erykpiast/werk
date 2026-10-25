@@ -26,7 +26,7 @@ function setup(initial: OpenView = { id: "root", html: "one" }) {
     stashDraft: () => void stashes++,
   };
   return {
-    store: createMapStore(deps),
+    store: createMapStore(deps, "my project"),
     settled: () => Bun.sleep(20),
     reads,
     shown,
@@ -61,7 +61,10 @@ test("a bare changed signal reads the open card again", async () => {
   t.emit("changed");
   await t.settled();
   expect(t.shown.at(-1)?.html).toBe("changed");
-  expect(t.reads).toEqual(["/api/open", "/api/open"]);
+  expect(t.reads).toEqual([
+    "/api/projects/my%20project/open",
+    "/api/projects/my%20project/open",
+  ]);
 });
 
 test("a reload signal stashes the draft, then reloads, and reads nothing", () => {
@@ -86,19 +89,22 @@ test("a failed read shows nothing, and the next signal reads again", async () =>
   const shown: OpenView[] = [];
   let ok = false;
   const listeners = new Map<string, () => void>();
-  const store = createMapStore({
-    fetch: async () =>
-      ok
-        ? Response.json({ id: "root", html: "back" })
-        : new Response("nope", { status: 500 }),
-    connect: () => ({
-      addEventListener: (type, l) => void listeners.set(type, l),
-      close() {},
-    }),
-    show: (v) => void shown.push(v),
-    reload() {},
-    stashDraft() {},
-  });
+  const store = createMapStore(
+    {
+      fetch: async () =>
+        ok
+          ? Response.json({ id: "root", html: "back" })
+          : new Response("nope", { status: 500 }),
+      connect: () => ({
+        addEventListener: (type, l) => void listeners.set(type, l),
+        close() {},
+      }),
+      show: (v) => void shown.push(v),
+      reload() {},
+      stashDraft() {},
+    },
+    "my project",
+  );
   store.start();
   listeners.get("open")?.();
   await Bun.sleep(20);
@@ -118,18 +124,21 @@ test("a read that throws is dropped, and stop closes the channel once", async ()
   expect(t.counts().closed).toBe(true);
 
   const shown: OpenView[] = [];
-  const store = createMapStore({
-    fetch: async () => {
-      throw new Error("offline");
+  const store = createMapStore(
+    {
+      fetch: async () => {
+        throw new Error("offline");
+      },
+      connect: () => ({
+        addEventListener: (type, l) => void (type === "open" && l()),
+        close() {},
+      }),
+      show: (v) => void shown.push(v),
+      reload() {},
+      stashDraft() {},
     },
-    connect: () => ({
-      addEventListener: (type, l) => void (type === "open" && l()),
-      close() {},
-    }),
-    show: (v) => void shown.push(v),
-    reload() {},
-    stashDraft() {},
-  });
+    "my project",
+  );
   store.start();
   await Bun.sleep(20);
   expect(shown).toEqual([]);

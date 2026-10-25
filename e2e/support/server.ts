@@ -7,7 +7,7 @@ import { type ChildProcess, spawn, spawnSync } from "node:child_process";
 import { cpSync, mkdtempSync, rmSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { copyApp } from "../../src/test-env/app-copy.ts";
 import { cleanEnv, fakeIsFirst } from "../../src/test-env/env.ts";
 
@@ -22,7 +22,12 @@ export type ServerOptions = {
 };
 
 export type BrowserServer = {
+  /** The address of the project page. */
   url: string;
+  /** The server's address, with no project in it. */
+  origin: string;
+  /** The per-user folder of this server: the stored project list and the lock of the one server. */
+  home: string;
   /** The project directory: a copy of the fixture. */
   dir: string;
   /** The root of the app that runs: the checkout, or its copy. */
@@ -57,7 +62,12 @@ async function until(check: () => Promise<boolean>, what: string, ms = 30000) {
 export async function startBrowserServer(
   options: ServerOptions = {},
 ): Promise<BrowserServer> {
-  const env = { ...cleanEnv(process.env), ...options.env };
+  const env = {
+    ...cleanEnv(process.env),
+    // WERK_OPEN names a program that opens no window, so no spec starts a real browser.
+    WERK_OPEN: "true",
+    ...options.env,
+  };
   if (!fakeIsFirst(env.PATH)) {
     throw new Error(
       "werk: the fake agent is not first in the program search list; the browser server does not start",
@@ -66,12 +76,21 @@ export async function startBrowserServer(
   const root = mkdtempSync(join(tmpdir(), "werk-e2e-"));
   const dir = join(root, "project");
   cpSync(FIXTURE, dir, { recursive: true });
+  // A project is a folder with a git repository (#werk-projects).
+  const init = spawnSync("git", ["init", "-q", "-b", "main"], {
+    cwd: dir,
+    env,
+  });
+  if (init.status !== 0)
+    throw new Error(`werk: git init failed: ${init.stderr}`);
+  const home = join(root, "home");
   const appDir = options.appCopy ? join(root, "app") : CHECKOUT;
   const cli = options.appCopy
     ? copyApp(appDir)
     : join(CHECKOUT, "src", "cli.ts");
   const port = await freePort();
-  const url = `http://127.0.0.1:${port}`;
+  const origin = `http://127.0.0.1:${port}`;
+  const url = `${origin}/p/${basename(dir)}`;
   let child: ChildProcess | undefined;
   let output = "";
 
@@ -86,12 +105,14 @@ export async function startBrowserServer(
 
   return {
     url,
+    origin,
+    home,
     dir,
     appDir,
     async start() {
       const running = spawn("bun", [cli, "serve", "--port", String(port)], {
         cwd: dir,
-        env: { ...env, WERK_DEV: "1" },
+        env: { ...env, WERK_DEV: "1", WERK_HOME: home },
       });
       child = running;
       for (const stream of [running.stdout, running.stderr]) {
@@ -103,7 +124,7 @@ export async function startBrowserServer(
         if (running.exitCode !== null) {
           throw new Error(`werk: the server exited early:\n${output}`);
         }
-        const res = await fetch(`${url}/api/graph?shape=1`).catch(() => null);
+        const res = await fetch(`${origin}/api/projects`).catch(() => null);
         return res?.ok === true;
       }, "the server to answer");
     },

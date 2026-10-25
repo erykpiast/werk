@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { takeLock } from "./lock.ts";
+import { liveHolder, takeLock } from "./lock.ts";
 
 let dir: string;
 let path: string;
@@ -108,4 +108,13 @@ test("a release removes the lock of this server and leaves another server's lock
   writeFileSync(path, JSON.stringify({ pid: 7, port: 1 }));
   taken.lock.release();
   expect(existsSync(path)).toBe(false);
+});
+
+test("a live holder is found, and a dead one, a bad file and no file are not", () => {
+  writeFileSync(path, JSON.stringify({ pid: 11, port: 4000 }));
+  expect(liveHolder(path, () => true)).toEqual({ pid: 11, port: 4000 });
+  expect(liveHolder(path, () => false)).toBeNull();
+  writeFileSync(path, "{oops");
+  expect(liveHolder(path, () => true)).toBeNull();
+  expect(liveHolder(join(dir, "none.lock"), () => true)).toBeNull();
 });

@@ -51,7 +51,7 @@ async function until(
 test("a log write sends a bare changed signal to an open page, and another write sends another", async () => {
   project.start(["bun", CLI, "serve", "--port", "0"]);
   const p = await port();
-  const res = await fetch(`http://127.0.0.1:${p}/api/live`);
+  const res = await fetch(`http://127.0.0.1:${p}/api/projects/project/live`);
   const reader = (res.body as ReadableStream<Uint8Array>).getReader();
   await until(reader, ": live");
 
@@ -73,11 +73,11 @@ test("a read of the map sends no signal", async () => {
   project.start(["bun", CLI, "serve", "--port", "0"]);
   const p = await port();
   const reader = (
-    (await fetch(`http://127.0.0.1:${p}/api/live`))
+    (await fetch(`http://127.0.0.1:${p}/api/projects/project/live`))
       .body as ReadableStream<Uint8Array>
   ).getReader();
   await until(reader, ": live");
-  await fetch(`http://127.0.0.1:${p}/api/graph?shape=1`);
+  await fetch(`http://127.0.0.1:${p}/api/projects/project/graph?shape=1`);
   expect(await until(reader, "event:")).not.toContain("event:");
   await reader.cancel();
 });
@@ -86,7 +86,7 @@ test("an append to the pipeline log sends a measure signal and no changed signal
   project.start(["bun", CLI, "serve", "--port", "0"]);
   const p = await port();
   const reader = (
-    (await fetch(`http://127.0.0.1:${p}/api/live`))
+    (await fetch(`http://127.0.0.1:${p}/api/projects/project/live`))
       .body as ReadableStream<Uint8Array>
   ).getReader();
   await until(reader, ": live");

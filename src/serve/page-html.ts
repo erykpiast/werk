@@ -15,3 +15,12 @@ export function injectToken(html: string, token: string): string {
   }
   return `<!doctype html><head>${meta}</head>${html.replace(/^<!doctype html>/i, "")}`;
 }
+
+/** The token that a page carries, or null when it has none. The reverse of injectToken. */
+export function tokenOf(html: string): string | null {
+  const found = /<meta name="werk-token" content="([^"]*)">/.exec(html);
+  if (!found) return null;
+  return (found[1] as string).replace(/&#(\d+);/g, (_m, code: string) =>
+    String.fromCharCode(Number(code)),
+  );
+}

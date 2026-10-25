@@ -1,0 +1,32 @@
+/** The address of a project in the page, and the choice of a project when the address names none (#werk-projects-names). */
+
+export type ProjectInfo = { name: string; missing: boolean };
+
+const PREFIX = "/p/";
+
+/** The project that a page address names, or null when it names none. */
+export function projectOf(pathname: string): string | null {
+  if (!pathname.startsWith(PREFIX)) return null;
+  const segment = pathname.slice(PREFIX.length).replace(/\/.*$/, "");
+  if (segment === "") return null;
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return null;
+  }
+}
+
+/** The page address of a project. */
+export function pageOf(name: string): string {
+  return `${PREFIX}${encodeURIComponent(name)}`;
+}
+
+/** The path of a project's API route. Every route of the map names its project. */
+export function apiOf(name: string, rest: string): string {
+  return `/api/projects/${encodeURIComponent(name)}${rest}`;
+}
+
+/** The first project that can open, or null when the list has none. */
+export function firstOpenable(projects: readonly ProjectInfo[]): string | null {
+  return projects.find((p) => !p.missing)?.name ?? null;
+}

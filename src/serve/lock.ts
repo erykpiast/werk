@@ -60,6 +60,17 @@ function readHolder(path: string): Holder | null | "gone" {
   }
 }
 
+/** The holder of a lock file when it parses and its pid is alive. Anything else gives null. */
+export function liveHolder(
+  path: string,
+  isAlive: (pid: number) => boolean = pidAlive,
+): Holder | null {
+  const holder = readHolder(path);
+  return holder === "gone" || holder === null || !isAlive(holder.pid)
+    ? null
+    : holder;
+}
+
 export function refusal(holder: Holder): string {
   return [
     `werk: another werk is already serving this repository on port ${holder.port} (pid ${holder.pid}).`,
