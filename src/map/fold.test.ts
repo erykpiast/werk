@@ -190,12 +190,6 @@ describe("depends_on links", () => {
     link: "depends_on",
     ...(why === undefined ? {} : { why }),
   });
-  const unlink = (from: string, to: string, link = "depends_on") => ({
-    type: "edge.removed",
-    from,
-    to,
-    link,
-  });
 
   test("linking the same pair again replaces the reason", () => {
     const map = fold(
@@ -215,42 +209,5 @@ describe("depends_on links", () => {
     const map = fold(entries(node("a"), node("b"), dep("a", "b", "w")));
     expect(map.edges).toEqual([]);
     expect(map.ghostEdges).toHaveLength(1);
-  });
-
-  test("a move that turns a link into a lineage link removes it", () => {
-    const map = fold(
-      entries(node("a"), node("b"), dep("b", "a", "w"), link("b", "a")),
-    );
-    expect(map.problems).toEqual([]);
-    expect(map.ghostEdges.map((e) => e.type)).toEqual(["refines"]);
-  });
-
-  test("unlink removes the link and a refines unlink frees the parent", () => {
-    const map = fold(
-      entries(
-        node("a"),
-        node("b"),
-        dep("a", "b", "w"),
-        unlink("a", "b"),
-        link("b", "a"),
-        unlink("b", "a", "refines"),
-      ),
-    );
-    expect(map.problems).toEqual([]);
-    expect(map.ghostEdges).toEqual([]);
-    expect(map.parents.has("b")).toBe(false);
-  });
-
-  test("unlink of a link that is not there is refused", () => {
-    expect(rules(node("a"), node("b"), unlink("a", "b"))).toEqual(["no-link"]);
-  });
-
-  test("a bad unlink event is refused", () => {
-    expect(
-      rules({ type: "edge.removed", from: 1, to: "b", link: "refines" }),
-    ).toEqual(["bad-event"]);
-    expect(
-      rules({ type: "edge.removed", from: "a", to: "b", link: "x" }),
-    ).toEqual(["bad-event"]);
   });
 });

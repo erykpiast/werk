@@ -5,7 +5,7 @@
  * with the same step function, so the fold and a write never disagree.
  */
 
-import { checkLink, sameLine } from "./link-rules.ts";
+import { checkLink } from "./link-rules.ts";
 
 export type Kind = "card" | "option" | "source";
 export type Status = "open" | "proto" | "decided";
@@ -50,8 +50,7 @@ export type RuleName =
   | "cycle"
   | "option-link"
   | "link-why"
-  | "lineage"
-  | "no-link";
+  | "lineage";
 
 export type Violation = { rule: RuleName; detail: string };
 export type Problem = Violation & { line: number };
@@ -143,14 +142,6 @@ function addEdge(map: FoldedMap, edge: Edge): void {
   else list[at] = edge;
 }
 
-/** A move that turns a depends_on link into a link to an ancestor or descendant removes it (#vi-prop-nolineage). */
-function dropLineageLinks(map: FoldedMap): void {
-  const keep = (edge: Edge) =>
-    edge.type !== "depends_on" || !sameLine(map, edge.from, edge.to);
-  map.edges = map.edges.filter(keep);
-  map.ghostEdges = map.ghostEdges.filter(keep);
-}
-
 function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
   const { id, kind, title, status } = fields;
   if (typeof id !== "string" || id === "") return bad('"id" must be text');
@@ -211,29 +202,6 @@ function applyEdgeAdded(map: FoldedMap, fields: Fields): Violation | null {
   const violation = checkLink(map, edge);
   if (violation) return violation;
   addEdge(map, edge);
-  if (link === "refines") dropLineageLinks(map);
-  return null;
-}
-
-function applyEdgeRemoved(map: FoldedMap, fields: Fields): Violation | null {
-  const { from, to, link } = fields;
-  if (typeof from !== "string" || typeof to !== "string") {
-    return bad('"from" and "to" must be text');
-  }
-  if (!oneOf(link, LINK_TYPES)) {
-    return bad(`"link" must be one of ${LINK_TYPES.join(", ")}`);
-  }
-  const gone: Edge = { from, to, type: link, why: "" };
-  const before = map.edges.length + map.ghostEdges.length;
-  map.edges = map.edges.filter((edge) => !sameLink(edge, gone));
-  map.ghostEdges = map.ghostEdges.filter((edge) => !sameLink(edge, gone));
-  if (map.edges.length + map.ghostEdges.length === before) {
-    return {
-      rule: "no-link",
-      detail: `no ${link} link from "${from}" to "${to}"`,
-    };
-  }
-  if (link === "refines") map.parents.delete(from);
   return null;
 }
 
@@ -248,8 +216,6 @@ export function applyEvent(map: FoldedMap, event: unknown): Violation | null {
       return applyProposed(map, event);
     case "edge.added":
       return applyEdgeAdded(map, event);
-    case "edge.removed":
-      return applyEdgeRemoved(map, event);
     default:
       return bad(`unknown event type ${JSON.stringify(event.type)}`);
   }

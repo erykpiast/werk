@@ -154,14 +154,9 @@ test("linking the same pair again replaces the reason shown, and a link on a gho
   expect(shown).toContain("second");
   expect(shown).not.toContain("first");
   expect(shown).toContain("[held]");
-  const gone = await werk("unlink", "a", "b", "--type", "depends_on");
-  expect(gone.stdout.trim()).toBe("unlinked");
-  expect((await werk("show", "a")).stdout).not.toContain("depends_on");
-  expect((await werk("unlink", "a", "b", "--type", "depends_on")).code).toBe(1);
 });
 
-test("link and unlink reject a missing type or a wrong count of ids", async () => {
+test("link rejects a missing type or a wrong count of ids", async () => {
   expect((await werk("link", "a", "b")).code).toBe(2);
   expect((await werk("link", "a", "--type", "refines")).code).toBe(2);
-  expect((await werk("unlink", "a", "b", "--why", "x")).code).toBe(2);
 });
