@@ -3,14 +3,12 @@
  * never hydrates it (#werk-stack-hydration, #vi-onview).
  */
 import type { FoldedMap } from "../map/fold.ts";
+import { escapeHtml } from "../md/escape.ts";
+import { renderInline, renderMarkdown, renderTitle } from "../md/markdown.ts";
 
 const ROOT_ID = "root";
 
 export type OpenCard = { id: string; html: string };
-
-function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-}
 
 /** The card with the id root, else the first card that refines no other card, else null. */
 export function openCardId(map: FoldedMap): string | null {
@@ -32,15 +30,19 @@ export function renderOpenCard(map: FoldedMap): OpenCard | null {
   const id = openCardId(map);
   const node = id === null ? undefined : map.nodes.get(id);
   if (id === null || !node) return null;
-  const parts = [`<h1>${escapeHtml(node.title)}</h1>`];
-  if (node.why !== "")
-    parts.push(`<p data-part="why">${escapeHtml(node.why)}</p>`);
+  const known = (ref: string) => map.nodes.has(ref);
+  const parts = [`<h1>${renderTitle(node.title)}</h1>`];
+  if (node.why !== "") {
+    parts.push(`<p data-part="why">${renderInline(node.why, known)}</p>`);
+  }
   if (node.body !== "") {
-    parts.push(`<p data-part="body">${escapeHtml(node.body)}</p>`);
+    parts.push(
+      `<div data-part="body">${renderMarkdown(node.body, known)}</div>`,
+    );
   }
   const subs = subCardIds(map, id).map((child) => {
     const title = map.nodes.get(child)?.title ?? "";
-    return `<li data-card-id="${escapeHtml(child)}">${escapeHtml(title)}</li>`;
+    return `<li data-card-id="${escapeHtml(child)}">${renderTitle(title)}</li>`;
   });
   if (subs.length > 0) {
     parts.push(`<ul aria-label="Sub-cards">${subs.join("")}</ul>`);

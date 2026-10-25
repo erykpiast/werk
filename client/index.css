@@ -87,3 +87,55 @@ body,
   padding: 0.75rem;
   border-left: 1px solid var(--color-border);
 }
+
+.card-ref {
+  font-family: ui-monospace, monospace;
+}
+
+.code-box {
+  position: relative;
+  margin: 0.5rem 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-muted);
+}
+
+.code-box pre {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  overflow-x: auto;
+}
+
+.code-box code,
+code {
+  font-family: ui-monospace, monospace;
+}
+
+.code-tag {
+  position: absolute;
+  top: 0.125rem;
+  right: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--color-muted-foreground);
+}
+
+.tok-comment {
+  color: #6b7280;
+}
+.tok-string {
+  color: #047857;
+}
+.tok-key {
+  color: #1d4ed8;
+}
+.tok-number,
+.tok-literal {
+  color: #b45309;
+}
+.tok-keyword,
+.tok-flag {
+  color: #7c3aed;
+}
+.tok-variable {
+  color: #be123c;
+}
