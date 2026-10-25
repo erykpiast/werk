@@ -1,4 +1,5 @@
 /** The follow-up ticket of the small gaps that a last counted pass leaves (#st-grade-defer). Pure. */
+import { MAX_SIZE } from "../tickets/own-checks.ts";
 import type { GradeLine } from "./grade.ts";
 
 export type FollowupSource = {
@@ -23,6 +24,23 @@ export function nextNumber(taken: Iterable<string>): string | null {
   return null;
 }
 
+const PATH_IN_TOKEN =
+  /[\w.~*-]*\/(?:[\w.~*-]+\/)*([\w.*-]*\.[A-Za-z0-9]{1,5})/g;
+/** Room that the header and the fixed text of a follow-up take from the size limit. */
+const FIXED_ROOM = 800;
+
+/** One gap on one line, with each file path cut to its bare file name, and cut to `max` characters. A ticket names no file paths (#st-ticket). */
+export function quotableGap(gap: string, max: number): string {
+  const flat = gap
+    .split(/\s+/)
+    .filter((word) => word !== "")
+    .map((word) =>
+      word.includes("://") ? word : word.replace(PATH_IN_TOKEN, "$1"),
+    )
+    .join(" ");
+  return flat.length <= max ? flat : `${flat.slice(0, max - 3)}...`;
+}
+
 /** The ticket file: it cites the cards of the gaps, quotes each gap as the grader wrote it, and checks as its source does. */
 export function followupText(
   source: FollowupSource,
@@ -33,8 +51,12 @@ export function followupText(
       gaps.flatMap((gap) => (gap.card === undefined ? [] : [gap.card])),
     ),
   ];
+  const room = Math.max(
+    80,
+    Math.floor((MAX_SIZE - FIXED_ROOM) / Math.max(1, gaps.length)) - 100,
+  );
   const quote = (gap: GradeLine) =>
-    `${gap.card === undefined ? gap.id : `#${gap.card}`}: "${gap.gap.replace(/\s*\n\s*/g, " ")}"`;
+    `${gap.card === undefined ? gap.id : `#${gap.card}`}: "${quotableGap(gap.gap, room)}"`;
   const lines = [
     `title: ${followupTitle(source)}`,
     `cites: ${cites.join(", ")}`,
@@ -44,9 +66,7 @@ export function followupText(
     ``,
     `## What to build`,
     ``,
-    `Ticket ${source.id} merged with small gaps that the grader found on its last pass. Close each gap. The grader wrote them as follows.`,
-    ``,
-    ...gaps.map((gap) => `- ${quote(gap)}`),
+    `Ticket ${source.id} merged with small gaps that the grader found on its last pass. Close each gap that the acceptance criteria quote.`,
     ``,
     `## Acceptance criteria`,
     ``,

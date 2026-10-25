@@ -2,7 +2,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { appendBoardEvent, readBoard } from "../board/log-store.ts";
+import { ownChecks } from "../tickets/own-checks.ts";
 import { ticketFileNumbers } from "../tickets/read-folder.ts";
+import { parseTicket } from "../tickets/ticket-parse.ts";
 import {
   type FollowupSource,
   followupText,
@@ -12,7 +14,7 @@ import {
 import { ticketPath } from "./gather.ts";
 import type { GradeLine } from "./grade.ts";
 
-/** The id of the follow-up ticket, or null when the plan has no free number or the board refuses it. */
+/** The id of the follow-up ticket, or null when the plan has no free number, the ticket fails its own checks, or the board refuses it. A follow-up is held to the same checks as any ticket (#st-ticket-partial). */
 export function fileFollowup(
   mapLog: string,
   boardLog: string,
@@ -29,8 +31,11 @@ export function fileFollowup(
   const number = nextNumber([...held, ...files]);
   if (number === null) return null;
   const id = `${plan}/${number}`;
+  const text = followupText(source, gaps);
+  const parsed = parseTicket(`${number}.md`, text);
+  if (parsed === null || ownChecks(parsed).length > 0) return null;
   mkdirSync(folder, { recursive: true });
-  writeFileSync(ticketPath(mapLog, plan, number), followupText(source, gaps));
+  writeFileSync(ticketPath(mapLog, plan, number), text);
   const planned = appendBoardEvent(boardLog, {
     type: "ticket.planned",
     id,

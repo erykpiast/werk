@@ -1,6 +1,12 @@
 import { expect, test } from "bun:test";
+import { ownChecks } from "../tickets/own-checks.ts";
 import { parseTicket } from "../tickets/ticket-parse.ts";
-import { followupText, followupTitle, nextNumber } from "./followup-ticket.ts";
+import {
+  followupText,
+  followupTitle,
+  nextNumber,
+  quotableGap,
+} from "./followup-ticket.ts";
 import type { GradeLine } from "./grade.ts";
 
 const source = {
@@ -40,9 +46,24 @@ test("the follow-up cites each gap's card once, quotes each gap, and checks as i
   expect(ticket?.headers.cites?.value).toBe("a");
   expect(ticket?.headers.touches?.value).toBe("composer");
   expect(ticket?.headers.blocked_by?.value).toBe("");
-  expect(text).toContain('- #a: "an empty list is sent"');
-  expect(text).toContain('- #a: "two lines"');
-  expect(text).toContain('- scope: "an extra menu"');
+  expect(text).toContain('#a: "an empty list is sent"');
+  expect(text).toContain('#a: "two lines"');
+  expect(text).toContain('scope: "an extra menu"');
   expect(text).toContain("## Checks\n\n- `make test`\n- `make lint`");
   expect(text).toContain("r/01");
+});
+
+test("a quoted gap loses its file paths and stays within the size limit, so the follow-up passes its own checks", () => {
+  expect(quotableGap("see src/build/grade.ts:12 and (src/a/b.ts).", 500)).toBe(
+    "see grade.ts:12 and (b.ts).",
+  );
+  expect(quotableGap("see https://x.com/a/b.js", 500)).toBe(
+    "see https://x.com/a/b.js",
+  );
+  const gaps = Array.from({ length: 6 }, (_, i) =>
+    gap(`c${i}`, `src/build/grade.ts:${i} ${"word ".repeat(400)}`),
+  );
+  const ticket = parseTicket("02.md", followupText(source, gaps));
+  if (ticket === null) throw new Error("the follow-up did not parse");
+  expect(ownChecks(ticket)).toEqual([]);
 });
