@@ -42,9 +42,9 @@ const SONNET_ROLES = new Set([
   "heldout-author",
   "classifier",
 ]);
-/** The roles that can write the map. */
 /** The roles whose contract the instruction text would contradict. */
 const NO_TEXT = new Set(["sample", "diagram-scout", "diagram-updater"]);
+/** The roles that can write the map, and so card text. See #werk-wording-check-writers. */
 const MAP_WRITERS = new Set([
   "chat",
   "builder",
@@ -55,7 +55,7 @@ const MAP_WRITERS = new Set([
 function modelFor(role: string, chat: ModelChoice | undefined): ModelChoice {
   if (OPUS_ROLES.has(role)) return { model: OPUS, advisor: null };
   if (role === "builder") return { model: SONNET, advisor: OPUS };
-  // A reviewer's role name carries its quality area, as reviewer-<area>.
+  // A reviewer's role name carries its quality area (#st-build-seam-role-env-reviewer-area).
   if (SONNET_ROLES.has(role) || role.startsWith("reviewer-"))
     return { model: SONNET, advisor: null };
   return chat ?? { model: "", advisor: null };
