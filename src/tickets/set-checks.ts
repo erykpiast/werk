@@ -57,6 +57,15 @@ function onCycles(edges: Map<string, string[]>): Set<string> {
   return cyclic;
 }
 
+/** The decided cards that no ticket cites (#st-ticket-set-checks). */
+export function uncitedCards(
+  tickets: readonly Ticket[],
+  decided: readonly string[],
+): string[] {
+  const cited = new Set(tickets.flatMap((t) => field(t, "cites").map(cardOf)));
+  return decided.filter((id) => !cited.has(id));
+}
+
 /** Runs the set checks on the tickets that passed their own checks. */
 export function setChecks(
   tickets: readonly Ticket[],
@@ -65,8 +74,7 @@ export function setChecks(
 ): Failure[] {
   const failures: Failure[] = [];
 
-  const cited = new Set(tickets.flatMap((t) => field(t, "cites").map(cardOf)));
-  const uncited = decided.filter((id) => !cited.has(id));
+  const uncited = uncitedCards(tickets, decided);
   if (uncited.length > 0) {
     failures.push({
       ticket: SET,

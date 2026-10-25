@@ -16,6 +16,7 @@ test("a valid ticket is planned under the plan id and its two-digit number", () 
       id: "app/01",
       title: "A person can reopen a card",
       blocked_by: [],
+      cited: { "map-reopen": 0 },
     },
   ]);
   expect(result.unplanned).toEqual([]);

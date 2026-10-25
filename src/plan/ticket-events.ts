@@ -9,12 +9,21 @@ import {
 } from "../tickets/ticket-parse.ts";
 
 export type PlannedTicket = {
-  type: "ticket.planned";
+  /** A ticket the board does not hold is planned. An open one is replanned in place (#st-plan-extend). */
+  type: "ticket.planned" | "ticket.replanned";
   id: string;
   title: string;
   blocked_by: string[];
+  /** The version of each cited card, as the plan read it (#st-ticket-watch). */
+  cited: Record<string, number>;
   /** Present when a failed set check names the ticket. The ticket then starts in blocked. */
   reason?: string;
+};
+
+/** The numbers of the plan's tickets that are already on the board, and which of them are open. */
+export type OnBoard = {
+  numbers: ReadonlySet<number>;
+  open: ReadonlySet<number>;
 };
 
 export type TicketPlan = {
@@ -26,10 +35,18 @@ export type TicketPlan = {
 const idOf = (planId: string, number: number): string =>
   `${planId}/${String(number).padStart(2, "0")}`;
 
+const NOTHING: OnBoard = { numbers: new Set(), open: new Set() };
+
+/**
+ * `files` is the whole set of the plan: new files and the files of the tickets that stay. A ticket on the board
+ * that is not open gets no event, because only the merge loop moves it (#st-plan-extend).
+ */
 export function planTickets(
   planId: string,
   files: readonly { name: string; text: string }[],
   verdict: Verdict,
+  versions: Readonly<Record<string, number>> = {},
+  board: OnBoard = NOTHING,
 ): TicketPlan {
   const failedOwn = new Set(
     verdict.failures.slice(0, verdict.ownFailures).map((f) => f.ticket),
@@ -73,11 +90,18 @@ export function planTickets(
       .filter((n) => held.has(Number(n)))
       .map((n) => idOf(planId, Number(n)));
     const reason = reasons.get(ticket.file)?.join("; ");
+    if (board.numbers.has(number) && !board.open.has(number)) continue;
+    const cited: Record<string, number> = {};
+    for (const item of listOf(ticket.headers.cites?.value)) {
+      const card = item.startsWith("#") ? item.slice(1) : item;
+      cited[card] = versions[card] ?? 0;
+    }
     planned.push({
-      type: "ticket.planned",
+      type: board.open.has(number) ? "ticket.replanned" : "ticket.planned",
       id: idOf(planId, number),
       title: ticket.headers.title?.value ?? "",
       blocked_by: blockers,
+      cited,
       ...(reason === undefined ? {} : { reason }),
     });
   }

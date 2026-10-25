@@ -9,6 +9,15 @@ export type PlanPaths = {
   ticketAnswers: string;
   /** The folder that holds one file per ticket. */
   ticketsDir: string;
+  /** The list of open tickets that the new spec no longer needs. */
+  ticketDrops: string;
+};
+
+/** The tickets of earlier plans over the subtree, by number. Open means ready or blocked (#st-plan-extend). */
+export type OnBoardNumbers = {
+  open: readonly number[];
+  /** Every other ticket on the board: building, merging, done or archived. Its file never changes. */
+  fixed: readonly number[];
 };
 
 export type ScopeText = {
@@ -29,18 +38,27 @@ function scopeSection(scope: ScopeText): string {
 const ANSWERS_RULES = (file: string) =>
   `Answer every question yourself from the cards above. A question that no card settles is a new decision. Write each such decision as a record in the JSON list in ${file}: {"slug": "short-lower-case-words", "title": "...", "why": "...", "body": "..."}. The title is one plain sentence about the rule. The why names the question it settles. Write [] when the cards settle everything. Write the file in every case. Never write to the map yourself.`;
 
+const pad = (n: number): string => String(n).padStart(2, "0");
+
+const numbers = (list: readonly number[]): string =>
+  list.length === 0 ? "none" : list.map(pad).join(", ");
+
 export function specPrompt(
   root: string,
   scope: ScopeText,
   paths: PlanPaths,
+  extending = false,
 ): string {
+  const update = extending
+    ? `\n\nA spec for this subtree exists already at ${paths.spec}. Read it and update it in place. Keep the number of every story that still holds, and number each new story after the highest number. Drop a story only when the cards no longer ask for it.`
+    : "";
   return `Write one spec for the decided subtree of the card #${root}.
 
 ${scopeSection(scope)}
 
 ## Your task
 
-Write the spec to ${paths.spec}. It has these sections: Problem, User stories, Test seams. The User stories section is a numbered list, one story per line, in the form "1. As a person, I want ..., so that ...". Each story ends with the cards it comes from in parentheses. Name the test seams: where a test can reach the product, and what a test fake stands in for.
+Write the spec to ${paths.spec}.${update} It has these sections: Problem, User stories, Test seams. The User stories section is a numbered list, one story per line, in the form "1. As a person, I want ..., so that ...". Each story ends with the cards it comes from in parentheses. Name the test seams: where a test can reach the product, and what a test fake stands in for.
 
 ${ANSWERS_RULES(paths.specAnswers)}
 
@@ -52,14 +70,25 @@ export function ticketPrompt(
   scope: ScopeText,
   paths: PlanPaths,
   firstNumber = 1,
+  board?: OnBoardNumbers,
 ): string {
+  const earlier =
+    board === undefined || board.open.length + board.fixed.length === 0
+      ? ""
+      : `
+
+## Tickets of earlier plans
+
+Open tickets, ready or blocked: ${numbers(board.open)}. To change one, rewrite its file in place under the same file name. A file you do not write stays as it is. When an open ticket delivers nothing in the spec, list it in ${paths.ticketDrops} as a JSON list of {"ticket": 3, "why": "..."} and the plan archives it with that reason.
+Other tickets: ${numbers(board.fixed)}. Never change their files.
+Your new tickets cover only the scope that these tickets do not cover.`;
   return `Split the spec of the card #${root} into tickets.
 
-${scopeSection(scope)}
+${scopeSection(scope)}${earlier}
 
 ## Your task
 
-Read the spec in ${paths.spec}. Write one file for each ticket in ${paths.ticketsDir}. A file name starts with the ticket number, from ${firstNumber} to 99, for example ${String(firstNumber).padStart(2, "0")}-login.md. Number the first ticket ${firstNumber}. Leave every file that is already in the folder as it is. A ticket is a narrow, complete slice through every layer that the change touches. It can be shown working on its own and fits one fresh context.
+Read the spec in ${paths.spec}. Write one file for each ticket in ${paths.ticketsDir}. A file name starts with the ticket number, from ${firstNumber} to 99, for example ${String(firstNumber).padStart(2, "0")}-login.md. Number the first ticket ${firstNumber}. A ticket is a narrow, complete slice through every layer that the change touches. It can be shown working on its own and fits one fresh context.
 
 Every ticket has this format, in this order. The first five lines are header lines. Cites holds card ids. Blocked_by and stories hold ticket numbers and story numbers, separated by commas. Touches holds the names of the modules the ticket changes, as concept names. A ticket names no file path anywhere. A check line is "make <target>".
 
@@ -85,5 +114,5 @@ Every story of the spec is delivered by at least one ticket. Every decided card 
 
 ${ANSWERS_RULES(paths.ticketAnswers)}
 
-Use only the tools you have. Write only the ticket files in ${paths.ticketsDir} and ${paths.ticketAnswers}.`;
+Use only the tools you have. Write only the ticket files in ${paths.ticketsDir}, ${paths.ticketAnswers} and ${paths.ticketDrops}.`;
 }

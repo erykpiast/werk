@@ -4,6 +4,7 @@
  * page never touches it (#werk-projects, #werk-projects-background).
  */
 import { dirname, join } from "node:path";
+import { runCiteWatch } from "../board/cite-watch.ts";
 import { boardLogBeside } from "../board/log-store.ts";
 import type { ChatSession } from "../chat/session.ts";
 import { pipelineLogBeside } from "../pipeline/log-store.ts";
@@ -55,6 +56,15 @@ export type OpenOptions = {
   port?: number;
 };
 
+/** Marks the tickets whose cited cards changed. A failed read waits for the next change of the log (#st-ticket-watch). */
+function watchCitedCards(logPath: string): void {
+  try {
+    runCiteWatch(logPath);
+  } catch {
+    // The watcher is a derived check. A log that cannot be read now is read at the next change.
+  }
+}
+
 /** Takes the project's lock and starts watching its log. A refused lock gives the refusal message. */
 export async function openContext(
   folder: string,
@@ -72,7 +82,11 @@ export async function openContext(
   if (options.port) lock.setPort(options.port);
   const clients: Clients = new Set();
   try {
-    const watch = watchLog(logPath, () => broadcast(clients, "changed"));
+    watchCitedCards(logPath);
+    const watch = watchLog(logPath, () => {
+      watchCitedCards(logPath);
+      broadcast(clients, "changed");
+    });
     let measureWatch: LogWatch;
     let boardWatch: LogWatch;
     try {

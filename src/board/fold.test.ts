@@ -405,3 +405,209 @@ describe("target and plan run events", () => {
     ).toEqual(["bad-event", "bad-event", "bad-event"]);
   });
 });
+
+describe("cited cards and plans that extend", () => {
+  test("a planned ticket records the version of each card it cites", () => {
+    const board = foldBoard(entries(plan("r/01", { cited: { a: 3, b: 0 } })));
+    expect(board.tickets.get("r/01")?.cited).toEqual({ a: 3, b: 0 });
+    expect(rules(plan("r/01", { cited: { a: -1 } }))).toEqual(["bad-event"]);
+    expect(rules(plan("r/01", { cited: "a" }))).toEqual(["bad-event"]);
+  });
+
+  test("a replan changes an open ticket in place, keeps its id and clears its marks", () => {
+    const board = foldBoard(
+      entries(
+        plan("r/01", { cited: { a: 1 } }),
+        plan("r/02"),
+        {
+          type: "ticket.marked",
+          id: "r/01",
+          card: "a",
+          kind: "reopened",
+          version: 5,
+        },
+        {
+          type: "ticket.replanned",
+          id: "r/01",
+          title: "new",
+          blocked_by: ["r/02"],
+          cited: { a: 5 },
+        },
+      ),
+    );
+    expect(board.problems).toEqual([]);
+    const ticket = board.tickets.get("r/01");
+    expect(ticket).toMatchObject({
+      title: "new",
+      column: "ready",
+      reason: "",
+      blockedBy: ["r/02"],
+      cited: { a: 5 },
+      marks: [],
+    });
+    expect(columnsOf(board).ready).toEqual(["r/02", "r/01"]);
+  });
+
+  test("a replan with a reason blocks a ready ticket, and one without frees a blocked ticket", () => {
+    const blocked = foldBoard(
+      entries(plan("r/01"), {
+        type: "ticket.replanned",
+        id: "r/01",
+        title: "t",
+        reason: "blocked_by: blocker 9 is not in the set",
+      }),
+    );
+    expect(blocked.tickets.get("r/01")?.column).toBe("blocked");
+    expect(columnsOf(blocked).ready).toEqual([]);
+    const freed = foldBoard(
+      entries(plan("r/01", { reason: "x" }), {
+        type: "ticket.replanned",
+        id: "r/01",
+        title: "t",
+      }),
+    );
+    expect(freed.tickets.get("r/01")?.column).toBe("ready");
+    expect(columnsOf(freed).ready).toEqual(["r/01"]);
+  });
+
+  test("a replan is refused for a ticket that is not open, or unknown, or without a title", () => {
+    const replan = { type: "ticket.replanned", id: "r/01", title: "t" };
+    expect(rules(plan("r/01"), move("r/01", "building"), replan)).toEqual([
+      "bad-move",
+    ]);
+    expect(
+      rules(plan("r/01"), { type: "ticket.archived", id: "r/01" }, replan),
+    ).toEqual(["bad-move"]);
+    expect(rules(replan)).toEqual(["unknown-ticket"]);
+    expect(rules(plan("r/01"), { ...replan, title: undefined })).toEqual([
+      "bad-event",
+    ]);
+    expect(rules(plan("r/01"), { ...replan, cited: 3 })).toEqual(["bad-event"]);
+  });
+
+  test("a mark moves an open ticket to blocked and names the card and the change", () => {
+    const board = foldBoard(
+      entries(
+        plan("r/01", { cited: { a: 1 } }),
+        plan("r/02", { reason: "set check", cited: { a: 1 } }),
+        {
+          type: "ticket.marked",
+          id: "r/01",
+          card: "a",
+          kind: "reopened",
+          version: 4,
+        },
+        {
+          type: "ticket.marked",
+          id: "r/02",
+          card: "a",
+          kind: "retitled",
+          version: 4,
+        },
+      ),
+    );
+    expect(board.problems).toEqual([]);
+    expect(columnsOf(board)).toMatchObject({
+      ready: [],
+      blocked: ["r/01", "r/02"],
+    });
+    expect(board.tickets.get("r/01")?.reason).toBe(
+      "cited card #a changed after the plan: reopened",
+    );
+    expect(board.tickets.get("r/02")?.reason).toBe(
+      "set check; cited card #a changed after the plan: retitled",
+    );
+  });
+
+  test("a second mark on one card replaces the first, and a mark for an uncited card is refused", () => {
+    const mark = (version: number, kind: string, card = "a") => ({
+      type: "ticket.marked",
+      id: "r/01",
+      card,
+      kind,
+      version,
+    });
+    const board = foldBoard(
+      entries(
+        plan("r/01", { cited: { a: 1 } }),
+        mark(4, "reopened"),
+        mark(6, "decided"),
+      ),
+    );
+    expect(board.tickets.get("r/01")?.marks).toEqual([
+      { card: "a", kind: "decided", version: 6 },
+    ]);
+    expect(rules(plan("r/01", { cited: { a: 1 } }), mark(4, "x", "z"))).toEqual(
+      ["bad-event"],
+    );
+    expect(
+      rules(plan("r/01", { cited: { a: 1 } }), {
+        ...mark(4, "x"),
+        version: "4",
+      }),
+    ).toEqual(["bad-event"]);
+  });
+
+  test("a building ticket is not marked, and nothing but a plan frees a marked ticket", () => {
+    const mark = {
+      type: "ticket.marked",
+      id: "r/01",
+      card: "a",
+      kind: "reopened",
+      version: 4,
+    };
+    expect(
+      rules(plan("r/01", { cited: { a: 1 } }), move("r/01", "building"), mark),
+    ).toEqual(["bad-move"]);
+    expect(
+      rules(
+        plan("r/01", { cited: { a: 1 } }),
+        mark,
+        move("r/01", "ready", "agent"),
+      ),
+    ).toEqual(["marked"]);
+  });
+
+  test("an archive keeps the reason and who gave it, and a restore ends it", () => {
+    const archive = {
+      type: "ticket.archived",
+      id: "r/01",
+      actor: "plan",
+      reason: "the spec drops it",
+    };
+    const archived = foldBoard(entries(plan("r/01"), archive));
+    expect(archived.tickets.get("r/01")?.archive).toEqual({
+      by: "plan",
+      reason: "the spec drops it",
+    });
+    const restored = foldBoard(
+      entries(plan("r/01"), archive, {
+        type: "ticket.restored",
+        ticket: "r/01",
+      }),
+    );
+    expect(restored.tickets.get("r/01")?.archive).toBeUndefined();
+    expect(restored.tickets.get("r/01")?.column).toBe("ready");
+    const bare = foldBoard(
+      entries(plan("r/01"), { type: "ticket.archived", id: "r/01" }),
+    );
+    expect(bare.tickets.get("r/01")?.archive).toBeUndefined();
+  });
+
+  test("the cards-cited check of a plan is reported on the plan", () => {
+    const board = foldBoard(
+      entries(plan("r/01"), {
+        type: "plan.cards_checked",
+        plan: "r",
+        uncited: ["x"],
+      }),
+    );
+    expect(board.plans.get("r")?.uncited).toEqual(["x"]);
+    expect(rules({ type: "plan.cards_checked", plan: "r" })).toEqual([
+      "bad-event",
+    ]);
+    expect(rules({ type: "plan.cards_checked", uncited: [] })).toEqual([
+      "bad-event",
+    ]);
+  });
+});
