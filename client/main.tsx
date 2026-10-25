@@ -220,7 +220,6 @@ async function start() {
   );
   const showBoard = () => {
     if (boardRoot || !body) return;
-    lastHtml = null;
     const host = document.createElement("div");
     body.replaceChildren(host);
     boardRoot = createRoot(host);
@@ -235,9 +234,6 @@ async function start() {
     boardState = { board: null, lines: null };
     body?.replaceChildren();
   };
-  /** The HTML last put on the page for the open card. An identical read changes nothing, so a card's open question stays. */
-  let lastHtml: string | null = null;
-
   /** Opens an address and adds one history entry (#vi-routes). */
   const go = (path: string) => {
     if (location.pathname === path) return;
@@ -323,10 +319,7 @@ async function start() {
         openId = shown.id;
         renderHeader();
         const html = shown.html ?? "<p>The map has no cards yet.</p>";
-        if (body && html !== lastHtml) {
-          body.innerHTML = html;
-          lastHtml = html;
-        }
+        if (body) body.innerHTML = html;
       },
       board: () => {
         if (view === "board") void boardStore.refresh();
