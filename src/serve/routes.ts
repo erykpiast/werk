@@ -18,6 +18,7 @@ import { askRoute, chatRoute, clearRoute, modelRoute } from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
 import { chooseFolder } from "./folder-dialog.ts";
 import type { Route } from "./handler.ts";
+import { renderHome } from "./home-page.ts";
 import { imageRoute } from "./image-route.ts";
 import { live } from "./live-channel.ts";
 import { renderOpenCard } from "./open-card.ts";
@@ -150,6 +151,10 @@ async function projectRoute(
   if (rest === "/open") {
     const wanted = url.searchParams.get("card");
     const { map } = readMap(context.logPath);
+    if (url.searchParams.get("home") === "1") {
+      const html = renderHome(map);
+      return json(html === null ? { id: null } : { id: null, html });
+    }
     return json(
       renderOpenCard(map, wanted === null ? undefined : wanted) ?? { id: null },
     );

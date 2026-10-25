@@ -61,7 +61,7 @@ test("each view has its own address, and a card id keeps its colon", () => {
   expect(viewPageOf("werk", "map", "a:b")).toBe("/p/werk/map/a%3Ab");
   expect(viewOf("/p/werk/board")).toBe("board");
   expect(viewOf("/p/werk/map/a%3Ab")).toBe("map");
-  expect(viewOf("/p/werk")).toBe("map");
+  expect(viewOf("/p/werk")).toBe("home");
 });
 
 test("an old address with a hash names its card", () => {
@@ -69,4 +69,12 @@ test("an old address with a hash names its card", () => {
   expect(cardOfHash("")).toBeNull();
   expect(cardOfHash("#/x")).toBeNull();
   expect(cardOfHash("#%E0%A4%A")).toBeNull();
+});
+
+test("an address with no view suffix is the home view, and the map address names a card page", () => {
+  expect(viewOf("/p/werk")).toBe("home");
+  expect(viewOf("/p/werk/")).toBe("home");
+  expect(viewOf("/p/werk/map")).toBe("map");
+  expect(viewOf("/p/werk/map/a")).toBe("map");
+  expect(viewPageOf("werk", "home")).toBe("/p/werk");
 });

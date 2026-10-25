@@ -46,8 +46,10 @@ export type MapStoreDeps = {
 
 export type MapStore = {
   start(): void;
-  /** Opens the page of this card, or the open card of the map for null (#vi-onview). */
+  /** Opens the page of this card, or the page of the root for null (#vi-onview). */
   open(card: string | null): void;
+  /** Opens the home view, the root and the build rules side by side (#vi-home-howwhat). */
+  openHome(): void;
   stop(): void;
 };
 
@@ -56,6 +58,7 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
   let source: Source | undefined;
   let latest = 0;
   let card: string | null = null;
+  let home = false;
 
   /** Reads the open card again. A read that a later read overtakes is dropped. */
   const refresh = async () => {
@@ -65,7 +68,11 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
         deps.fetch(
           apiOf(
             project,
-            card === null ? "/open" : `/open?card=${encodeURIComponent(card)}`,
+            home
+              ? "/open?home=1"
+              : card === null
+                ? "/open"
+                : `/open?card=${encodeURIComponent(card)}`,
           ),
         ),
         deps.index ? deps.fetch(apiOf(project, "/index")) : null,
@@ -104,6 +111,11 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
     },
     open(next) {
       card = next;
+      home = false;
+      void refresh();
+    },
+    openHome() {
+      home = true;
       void refresh();
     },
     stop() {
