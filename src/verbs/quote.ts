@@ -1,4 +1,4 @@
-// `quote` cites the words of a conversation as an excerpt (#werk-cli-recall, #werk-excerpt-event-quoted).
+// `quote` cites the words of a conversation as an excerpt (#werk-cli-recall-quote-form, #werk-excerpt-event-shape, #werk-excerpt-event-type).
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { cardId, parseArgs } from "../cli/args.ts";
