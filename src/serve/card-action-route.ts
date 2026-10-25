@@ -42,6 +42,7 @@ export async function cardActionRoute(
       ? { type: "node.accepted", id: card, actor: "you" }
       : {
           type: "node.removed",
+          actor: "you",
           id: card,
           ...(reparent === true ? { reparent: true } : {}),
         };

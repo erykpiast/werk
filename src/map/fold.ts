@@ -138,6 +138,7 @@ export type RuleName =
   | "lineage"
   | "not-ghost"
   | "accept-actor"
+  | "removal-actor"
   | "frozen"
   | "cover"
   | "ghost-parent"

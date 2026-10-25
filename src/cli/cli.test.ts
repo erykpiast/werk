@@ -332,15 +332,21 @@ test("remove takes the subtree and restore undoes it", async () => {
   await werk("add", "r", "--title", "R");
   await werk("add", "c", "--title", "C", "--parent", "r");
   await werk("accept", "c", "--actor", "you");
-  expect((await werk("remove", "r")).stdout.trim()).toBe("removed");
+  expect((await werk("remove", "r", "--actor", "you")).stdout.trim()).toBe(
+    "removed",
+  );
   expect((await werk("show", "c")).code).toBe(1);
   const again = await werk("add", "r", "--title", "New");
   expect(again.code).toBe(1);
   expect(again.stderr).toContain("restore");
-  expect((await werk("restore", "c")).code).toBe(1);
-  expect((await werk("restore", "r")).stdout.trim()).toBe("restored");
+  expect((await werk("restore", "c", "--actor", "you")).code).toBe(1);
+  expect((await werk("restore", "r", "--actor", "you")).stdout.trim()).toBe(
+    "restored",
+  );
   expect((await werk("show", "c")).code).toBe(0);
-  expect((await werk("remove", "r", "--reparent")).code).toBe(1);
+  expect((await werk("remove", "r", "--actor", "you", "--reparent")).code).toBe(
+    1,
+  );
   expect((await werk("remove")).code).toBe(2);
   expect((await werk("restore")).code).toBe(2);
 });
@@ -402,11 +408,11 @@ test("remove takes an option only when the decided card keeps an option", async 
   await accept("r:o1", "--actor", "you");
   await werk("kill", "r", "--revisit");
   expect((await werk("status", "r", "decided")).code).toBe(0);
-  const refused = await werk("remove", "r:o1");
+  const refused = await werk("remove", "r:o1", "--actor", "you");
   expect(refused.code).toBe(1);
   expect(refused.stderr).toContain("option");
   await werk("add", "r:o2", "--kind", "option", "--title", "O2");
   await werk("link", "r:o2", "r", "--type", "alternative_to");
   await accept("r:o2", "--actor", "you");
-  expect((await werk("remove", "r:o1")).code).toBe(0);
+  expect((await werk("remove", "r:o1", "--actor", "you")).code).toBe(0);
 });

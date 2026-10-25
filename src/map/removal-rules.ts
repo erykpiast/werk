@@ -7,6 +7,19 @@
 import type { Edge, FoldedMap, MapNode, Violation } from "./fold.ts";
 import { actorRefusal } from "./ghost-rules.ts";
 
+/** The refusal for a removal or a restore that does not state that the person asked for it. */
+export function removalActorRefusal(
+  actor: unknown,
+  verb: "remove" | "restore",
+): Violation | null {
+  return actor === "you"
+    ? null
+    : {
+        rule: "removal-actor",
+        detail: `a ${verb} must state that the person asked for it`,
+      };
+}
+
 /** Whether a node went out in a removal that is not undone. */
 export function isOut(map: FoldedMap, id: string): boolean {
   return map.removals.some((removal) =>
