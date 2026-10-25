@@ -439,9 +439,14 @@ test("the home shows the requirements and the build rules in two equal columns",
     how.getByRole("heading", { level: 1, name: "How it is built" }),
   ).toBeVisible();
   await expect(how.locator("a.tile")).toContainText("A build rule");
-  const left = await what.boundingBox();
-  const right = await how.boundingBox();
-  expect(Math.abs((left?.width ?? 0) - (right?.width ?? 1))).toBeLessThan(2);
+  // The columns settle after the live refetch, so poll until the layout is stable.
+  await expect
+    .poll(async () => {
+      const left = await what.boundingBox();
+      const right = await how.boundingBox();
+      return Math.abs((left?.width ?? 0) - (right?.width ?? 1));
+    })
+    .toBeLessThan(2);
   await evidence(page, "home-two-columns");
 
   await how.locator("a.tile").click();
