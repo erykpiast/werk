@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { renderCard } from "./card-text.ts";
+import { renderCard, rootCardId } from "./card-text.ts";
 import { fold } from "./fold.ts";
 
 const ev = (event: unknown, line: number) => ({ line, event });
@@ -81,4 +81,87 @@ test("a card prints its waiver reasons and every form of kill criterion", () => 
   expect(text).toContain(
     "kill: install time > 4 min over 7 days, sample 100, from posthog",
   );
+});
+
+const fx = await import("./mark-fixtures.ts");
+
+test("a card's rollup line counts the card and its whole refines subtree", () => {
+  const map = fx.build(
+    fx.decided("r"),
+    fx.open("a", { parent: "r" }),
+    fx.open("b", { parent: "r", status: "proto" }),
+    fx.decided("g"),
+    fx.link("g", "a", "refines"),
+  );
+  const text = renderCard(map, "r") ?? "";
+  expect(text.match(/^rollup:.*$/gm)).toEqual([
+    "rollup: 4 cards: 1 open, 1 proto, 2 decided",
+  ]);
+});
+
+test("each incoming refines link shows the child's own rollup", () => {
+  const map = fx.build(
+    fx.open("p"),
+    fx.open("c", { parent: "p" }),
+    fx.open("g1", { parent: "c" }),
+    fx.decided("g2"),
+    fx.link("g2", "c", "refines"),
+  );
+  const text = renderCard(map, "p") ?? "";
+  expect(text).toContain("rollup: 4 cards: 3 open, 0 proto, 1 decided");
+  expect(text).toContain(
+    "<- refines        c  Title c  (rollup: 3 cards: 2 open, 0 proto, 1 decided)",
+  );
+});
+
+const quote = (extra: Record<string, unknown> = {}) => ({
+  type: "excerpt.quoted",
+  id: "x:ex0",
+  title: "seats are the unit",
+  card: "x",
+  conversation: "pricing",
+  session: "s1",
+  message: 2,
+  start: 0,
+  end: 18,
+  speaker: "agent",
+  said_at: "10:02",
+  ...extra,
+});
+
+test("a card prints its options, excerpts and a proposed source with their words", () => {
+  const map = fx.build(
+    fx.open("y"),
+    fx.open("x"),
+    fx.link("x", "y"),
+    fx.ghost("x:opt0", { kind: "option", title: "Per call", why: "Too noisy" }),
+    fx.link("x:opt0", "x", "alternative_to"),
+    quote(),
+    fx.ghost("x:src0", { kind: "source", title: "Survey", why: "70% agree" }),
+    fx.link("x", "x:src0", "supported_by"),
+  );
+  const text = renderCard(map, "x") ?? "";
+  const at = (s: string) => text.indexOf(s);
+  expect(text).toContain("why: x takes y");
+  expect(at("Options:")).toBeGreaterThan(at("-> depends_on"));
+  expect(text).toContain(
+    "x:opt0  Per call  proposed\n      why not: Too noisy",
+  );
+  expect(text).toContain("Say:\n  agent: seats are the unit");
+  expect(text).toContain(
+    "Ev:\n  x:src0  Survey  proposed\n      finding: 70% agree",
+  );
+});
+
+test("a card with no options prints no Options section", () => {
+  const map = fx.build(fx.open("x"), quote());
+  const text = renderCard(map, "x") ?? "";
+  expect(text).toContain("Say:");
+  expect(text).not.toContain("Options:");
+});
+
+test("the root card is the first real card that refines no other", () => {
+  const map = fx.build(fx.open("r"), fx.open("c", { parent: "r" }));
+  expect(rootCardId(map)).toBe("r");
+  expect(rootCardId(fx.build())).toBeNull();
 });

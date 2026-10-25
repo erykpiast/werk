@@ -83,9 +83,10 @@ test("show takes #id and id as the same card, and a title that starts with a has
   expect((current().events()[0] as { id: string }).id).toBe("hashed");
 });
 
-test("show names an unknown card and refuses a call with no id", async () => {
+test("show names an unknown card, refuses an empty map and refuses a bad call", async () => {
   expect((await werk("show", "nope")).code).toBe(1);
-  expect((await werk("show")).code).toBe(2);
+  expect((await werk("show")).code).toBe(1);
+  expect((await werk("show", "a", "b")).code).toBe(2);
   expect((await werk("show", "--x", "1")).code).toBe(2);
 });
 
