@@ -366,3 +366,53 @@ describe("a log with bad lines", () => {
     expect(emptyBoard().tickets.size).toBe(0);
   });
 });
+
+describe("target and plan run events", () => {
+  test("the latest target event is the target", () => {
+    const board = foldBoard(
+      entries(
+        { type: "project.target", path: "/a" },
+        { type: "project.target", path: "/b" },
+      ),
+    );
+    expect(board.target).toBe("/b");
+    expect(rules({ type: "project.target" })).toEqual(["bad-event"]);
+  });
+
+  test("a plan run folds from started through its steps to ended", () => {
+    const board = foldBoard(
+      entries(
+        { type: "plan.started", plan: "r", pid: 4 },
+        { type: "plan.step", plan: "r", step: "spec-writer", log: "a.jsonl" },
+        { type: "plan.step", plan: "r", step: "ticket-writer" },
+        { type: "plan.ended", plan: "r", result: "failed", reason: "why" },
+      ),
+    );
+    expect(board.problems).toEqual([]);
+    expect(board.plans.get("r")?.run).toEqual({
+      state: "ended",
+      steps: [
+        { step: "spec-writer", log: "a.jsonl" },
+        { step: "ticket-writer" },
+      ],
+      result: "failed",
+      reason: "why",
+    });
+  });
+
+  test("a plan step or end with no running plan, or a missing field, is refused", () => {
+    expect(rules({ type: "plan.step", plan: "r", step: "x" })).toEqual([
+      "bad-event",
+    ]);
+    expect(rules({ type: "plan.started", plan: "r" })).toEqual(["bad-event"]);
+    expect(
+      rules(
+        { type: "plan.started", plan: "r", pid: 1 },
+        { type: "plan.step", plan: "r" },
+        { type: "plan.ended", plan: "r" },
+        { type: "plan.ended", plan: "r", result: "ok" },
+        { type: "plan.step", plan: "r", step: "late" },
+      ),
+    ).toEqual(["bad-event", "bad-event", "bad-event"]);
+  });
+});

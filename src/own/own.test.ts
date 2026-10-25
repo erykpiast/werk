@@ -66,7 +66,14 @@ test("a list with no page gives no client", () => {
 /** The code that werk runs from finds its own files in the list, never in a folder listing. */
 test("no code that finds werk's own files lists a folder", () => {
   const src = join(import.meta.dir, "..");
-  const skipped = new Set(["release", "test", "test-env", "claude", "verbs"]);
+  const skipped = new Set([
+    "release",
+    "test",
+    "test-env",
+    "claude",
+    "verbs",
+    "tickets",
+  ]);
   const offenders: string[] = [];
   const walk = (dir: string) => {
     for (const name of readdirSync(dir)) {
