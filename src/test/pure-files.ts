@@ -5,4 +5,5 @@ export const PURE_FILES: readonly string[] = [
   "src/map/fold.ts",
   "src/map/card-text.ts",
   "src/cli/args.ts",
+  "src/agent/launch-options.ts",
 ];
