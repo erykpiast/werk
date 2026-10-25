@@ -3,13 +3,7 @@
  * becomes a ghost card under the subtree root (#st-spec, #st-spec-linked, #st-spec-answers, #st-ticket-partial).
  * The files go to werk's store for the project, never to the target repository (#st-build-target).
  */
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
 import {
@@ -29,6 +23,7 @@ import {
 } from "../pipeline/log-store.ts";
 import { checkTickets, formatVerdict } from "../tickets/check-folder.ts";
 import { decidedUnder } from "../tickets/decided-cards.ts";
+import { readTicketFiles } from "../tickets/read-folder.ts";
 import { storiesOf } from "../tickets/spec-stories.ts";
 import { parseAnswers, proposalEvent } from "./answers.ts";
 import { type PlanPaths, specPrompt, ticketPrompt } from "./prompts.ts";
@@ -248,12 +243,7 @@ export async function runPlan(input: PlanInput): Promise<number> {
   if (failure !== null) return endPlan("failed", failure);
 
   // The checks read the map again: the answers are ghosts now, and a ghost counts as no decided card.
-  const files = readdirSync(ticketsDir)
-    .filter((name) => name.endsWith(".md"))
-    .map((name) => ({
-      name,
-      text: readFileSync(join(ticketsDir, name), "utf8"),
-    }));
+  const files = readTicketFiles(ticketsDir);
   const verdict = checkTickets(
     files,
     decidedUnder(readMap(logPath).map, root),
