@@ -1,7 +1,8 @@
 /** Files the follow-up ticket of the small gaps: a ticket file, a planned event that waits for the source, and a link (#st-grade-defer). */
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { appendBoardEvent, readBoard } from "../board/log-store.ts";
+import { ticketFileNumbers } from "../tickets/read-folder.ts";
 import {
   type FollowupSource,
   followupText,
@@ -24,9 +25,7 @@ export function fileFollowup(
     .filter((ticket) => ticket.plan === plan)
     .map((ticket) => ticket.number);
   const folder = dirname(ticketPath(mapLog, plan, "01"));
-  const files = existsSync(folder)
-    ? readdirSync(folder).flatMap((name) => /^\d+/.exec(name)?.[0] ?? [])
-    : [];
+  const files = ticketFileNumbers(folder);
   const number = nextNumber([...held, ...files]);
   if (number === null) return null;
   const id = `${plan}/${number}`;
