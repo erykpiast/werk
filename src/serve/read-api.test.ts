@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
 import { applyEvent, emptyMap, type FoldedMap } from "../map/fold.ts";
+import { emptyRollup } from "../map/rollup.ts";
 import { cardRead, shapeRead } from "./read-api.ts";
 
 /** A map built from the events that the add verb writes. */
@@ -48,13 +49,7 @@ test("the shape holds ids, kinds, statuses, edges and rollups, and no body", () 
   const shape = shapeRead(mapOf());
   expect(shape.nodes.map((n) => n.id)).toEqual(["root", "a", "b"]);
   expect(shape.edges).toHaveLength(2);
-  expect(shape.rollups.root).toEqual({
-    cards: 0,
-    open: 0,
-    proto: 0,
-    decided: 0,
-    stale: 0,
-  });
+  expect(shape.rollups.root).toEqual(emptyRollup());
   expect(JSON.stringify(shape)).not.toContain("SECRET BODY");
   expect(JSON.stringify(shape)).not.toContain("Why ");
 });
@@ -76,18 +71,15 @@ test("a real card counts in the rollup of every ancestor, and a ghost counts in 
   map.edges.push({ from: "a", to: "root", type: "refines", why: "" });
   const shape = shapeRead(map);
   expect(shape.rollups.root).toEqual({
+    ...emptyRollup(),
     cards: 2,
     open: 1,
-    proto: 0,
     decided: 1,
-    stale: 0,
   });
   expect(shape.rollups.a).toEqual({
+    ...emptyRollup(),
     cards: 1,
-    open: 0,
-    proto: 0,
     decided: 1,
-    stale: 0,
   });
   expect(shape.edges.some((edge) => !edge.held)).toBe(true);
 });

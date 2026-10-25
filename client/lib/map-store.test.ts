@@ -143,3 +143,17 @@ test("a read that throws is dropped, and stop closes the channel once", async ()
   await Bun.sleep(20);
   expect(shown).toEqual([]);
 });
+
+test("opening a card reads that card's page, and opening null reads the open card again", async () => {
+  const t = setup();
+  t.store.start();
+  t.store.open("a:b");
+  await t.settled();
+  expect(t.reads.at(-1)).toBe("/api/projects/my%20project/open?card=a%3Ab");
+  t.emit("changed");
+  await t.settled();
+  expect(t.reads.at(-1)).toBe("/api/projects/my%20project/open?card=a%3Ab");
+  t.store.open(null);
+  await t.settled();
+  expect(t.reads.at(-1)).toBe("/api/projects/my%20project/open");
+});

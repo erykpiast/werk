@@ -1,5 +1,13 @@
 import { expect, test } from "bun:test";
-import { apiOf, firstOpenable, pageOf, projectOf } from "./project-route";
+import {
+  apiOf,
+  cardOf,
+  cardOfHref,
+  cardPageOf,
+  firstOpenable,
+  pageOf,
+  projectOf,
+} from "./project-route";
 
 test("a page address names its project, also when the name holds a space or a bracket", () => {
   expect(projectOf("/p/werk")).toBe("werk");
@@ -27,4 +35,19 @@ test("the first project that can open is chosen, and a list of missing ones give
   ).toBe("b");
   expect(firstOpenable([{ name: "a", missing: true }])).toBeNull();
   expect(firstOpenable([])).toBeNull();
+});
+
+test("a card page address round-trips an id with a colon, and an address with no card names none", () => {
+  const address = cardPageOf("api (work)", "pr-iface:opt0");
+  expect(projectOf(address)).toBe("api (work)");
+  expect(cardOf(address)).toBe("pr-iface:opt0");
+  expect(cardOf("/p/werk")).toBeNull();
+  expect(cardOf("/p/werk/map/%E0%A4%A")).toBeNull();
+});
+
+test("only an in-page card link names a card", () => {
+  expect(cardOfHref("/map/a%3Ab")).toBe("a:b");
+  expect(cardOfHref("/map/a/b")).toBeNull();
+  expect(cardOfHref("https://example.com/map/a")).toBeNull();
+  expect(cardOfHref("/map/%E0%A4%A")).toBeNull();
 });

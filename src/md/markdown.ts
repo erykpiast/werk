@@ -13,7 +13,8 @@ const MARK = "\u0000";
 const REF = /(?<![\w/#:&-])(?<!&#38;)(#?)([A-Za-z0-9][A-Za-z0-9._:-]*)/g;
 const SAFE_HREF = /^(?:https?:\/\/|mailto:|\/|#)/i;
 
-function cardHref(id: string): string {
+/** The address of a card page. */
+export function cardHref(id: string): string {
   return `/map/${encodeURIComponent(id)}`;
 }
 

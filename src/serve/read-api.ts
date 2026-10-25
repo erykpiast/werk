@@ -3,6 +3,7 @@
  * without a single card body (#werk-stack-api).
  */
 import type { Edge, FoldedMap, LinkType, Mark, Status } from "../map/fold.ts";
+import { type Rollup, rollups } from "../map/rollup.ts";
 
 export type Neighbour = {
   id: string;
@@ -23,9 +24,6 @@ export type CardRead = {
   marks: Mark[];
   neighbours: Neighbour[];
 };
-
-/** The cards of a refines subtree, the card itself included, by status and by stale mark (#rollup). */
-export type Rollup = Record<Status, number> & { cards: number; stale: number };
 
 export type Shape = {
   nodes: {
@@ -67,27 +65,6 @@ export function cardRead(map: FoldedMap, id: string): CardRead | null {
 
 /** Everything the tree, the rollup bars and the graph need, and no body. */
 export function shapeRead(map: FoldedMap): Shape {
-  const rollups: Record<string, Rollup> = {};
-  for (const node of map.nodes.values()) {
-    if (node.kind === "card") {
-      rollups[node.id] = { cards: 0, open: 0, proto: 0, decided: 0, stale: 0 };
-    }
-  }
-  for (const node of map.nodes.values()) {
-    if (node.kind !== "card" || node.proposed) continue;
-    const stale = node.marks.some((mark) => mark.kind === "stale") ? 1 : 0;
-    for (
-      let up: string | undefined = node.id;
-      up !== undefined;
-      up = map.parents.get(up)
-    ) {
-      const rollup = rollups[up];
-      if (!rollup) continue;
-      rollup.cards += 1;
-      rollup[node.status] += 1;
-      rollup.stale += stale;
-    }
-  }
   return {
     nodes: [...map.nodes.values()].map((node) => ({
       id: node.id,
@@ -110,6 +87,6 @@ export function shapeRead(map: FoldedMap): Shape {
         held: true,
       })),
     ],
-    rollups,
+    rollups: rollups(map),
   };
 }

@@ -121,7 +121,11 @@ async function projectRoute(
     return json(shapeRead(readMap(context.logPath).map));
   }
   if (rest === "/open") {
-    return json(renderOpenCard(readMap(context.logPath).map) ?? { id: null });
+    const wanted = url.searchParams.get("card");
+    const { map } = readMap(context.logPath);
+    return json(
+      renderOpenCard(map, wanted === null ? undefined : wanted) ?? { id: null },
+    );
   }
   const card = /^\/card\/([^/]*)$/.exec(rest);
   if (card) {

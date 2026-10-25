@@ -24,9 +24,9 @@ test("the card root opens, with its escaped title and why", () => {
   const map = mapOf(card("root", "A <b> & C", 'say "hi"'), accept("root"));
   const open = renderOpenCard(map);
   expect(open?.id).toBe("root");
-  expect(open?.html).toContain("<h1>A &#60;b&#62; &#38; C</h1>");
+  expect(open?.html).toContain("A &#60;b&#62; &#38; C</h1>");
   expect(open?.html).toContain("say &#34;hi&#34;");
-  expect(open?.html).not.toContain("<ul");
+  expect(open?.html).not.toContain("tile-grid");
 });
 
 test("without a root, the first card that refines no card opens, and its sub-cards list by title", () => {
@@ -37,7 +37,8 @@ test("without a root, the first card that refines no card opens, and its sub-car
   );
   const open = renderOpenCard(map);
   expect(open?.id).toBe("top");
-  expect(open?.html).toContain('<li data-card-id="kid">Kid &#60;1&#62;</li>');
+  expect(open?.html).toContain('data-card-id="kid"');
+  expect(open?.html).toContain("Kid &#60;1&#62;");
 });
 
 test("the why and body render Markdown, and a reference links only to a card in the map", () => {
@@ -47,9 +48,23 @@ test("the why and body render Markdown, and a reference links only to a card in 
     card("kid", "Kid", "", { parent: "root" }),
   );
   const html = renderOpenCard(map)?.html ?? "";
-  expect(html).toContain("<h1>Run <code>make</code></h1>");
+  expect(html).toContain("Run <code>make</code></h1>");
   expect(html).toContain(
     '<a class="card-ref" href="/map/kid">#kid</a> and #gone',
   );
   expect(html).toContain("<ul><li><strong>a</strong></li></ul>");
+});
+
+test("a named card opens in place of the root, and an unknown id says so", () => {
+  const map = mapOf(
+    card("root", "Root"),
+    accept("root"),
+    card("kid", "Kid", "", { parent: "root" }),
+    accept("kid"),
+  );
+  expect(renderOpenCard(map, "kid")?.html).toContain("<h1");
+  expect(renderOpenCard(map, "kid")?.html).toContain("Kid");
+  const missing = renderOpenCard(map, "<gone>");
+  expect(missing?.id).toBe("<gone>");
+  expect(missing?.html).toContain("The map has no card &#60;gone&#62;.");
 });

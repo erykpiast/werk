@@ -26,6 +26,8 @@ export type MapStoreDeps = {
 
 export type MapStore = {
   start(): void;
+  /** Opens the page of this card, or the open card of the map for null (#vi-onview). */
+  open(card: string | null): void;
   stop(): void;
 };
 
@@ -33,12 +35,18 @@ export type MapStore = {
 export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
   let source: Source | undefined;
   let latest = 0;
+  let card: string | null = null;
 
   /** Reads the open card again. A read that a later read overtakes is dropped. */
   const refresh = async () => {
     const mine = ++latest;
     try {
-      const res = await deps.fetch(apiOf(project, "/open"));
+      const res = await deps.fetch(
+        apiOf(
+          project,
+          card === null ? "/open" : `/open?card=${encodeURIComponent(card)}`,
+        ),
+      );
       if (!res.ok) return;
       const view = (await res.json()) as OpenView;
       if (mine === latest) deps.show(view);
@@ -57,6 +65,10 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
         deps.stashDraft();
         deps.reload();
       });
+    },
+    open(next) {
+      card = next;
+      void refresh();
     },
     stop() {
       source?.close();

@@ -1,10 +1,10 @@
 /**
- * The open card of the left pane, rendered to HTML on the server. The page swaps this HTML in and
+ * The open card of the left pane, rendered to HTML on the server (#vi-onview-root). The page swaps this HTML in and
  * never hydrates it (#werk-stack-hydration, #vi-onview).
  */
 import type { FoldedMap } from "../map/fold.ts";
 import { escapeHtml } from "../md/escape.ts";
-import { renderInline, renderMarkdown, renderTitle } from "../md/markdown.ts";
+import { renderCardPage } from "./card-page.ts";
 
 const ROOT_ID = "root";
 
@@ -17,35 +17,19 @@ export function openCardId(map: FoldedMap): string | null {
   return cards.find((card) => !map.parents.has(card.id))?.id ?? null;
 }
 
-/** The ids of the cards that refine the card directly, in the order of the map. */
-function subCardIds(map: FoldedMap, id: string): string[] {
-  return [...map.edges, ...map.ghostEdges]
-    .filter((e) => e.type === "refines" && e.to === id)
-    .map((e) => e.from)
-    .filter((child) => map.nodes.get(child)?.kind === "card");
-}
-
-/** The open card with its title, why, body and the titles of its sub-cards, or null for an empty map. */
-export function renderOpenCard(map: FoldedMap): OpenCard | null {
-  const id = openCardId(map);
+/** The page of the card with this id, the page of the open card when none is named, or null for an empty map. */
+export function renderOpenCard(
+  map: FoldedMap,
+  wanted?: string,
+): OpenCard | null {
+  if (wanted !== undefined && !map.nodes.has(wanted)) {
+    return {
+      id: wanted,
+      html: `<article class="card-page"><p class="not-found">The map has no card ${escapeHtml(wanted)}.</p></article>`,
+    };
+  }
+  const id = wanted ?? openCardId(map);
   const node = id === null ? undefined : map.nodes.get(id);
   if (id === null || !node) return null;
-  const known = (ref: string) => map.nodes.has(ref);
-  const parts = [`<h1>${renderTitle(node.title)}</h1>`];
-  if (node.why !== "") {
-    parts.push(`<p data-part="why">${renderInline(node.why, known)}</p>`);
-  }
-  if (node.body !== "") {
-    parts.push(
-      `<div data-part="body">${renderMarkdown(node.body, known)}</div>`,
-    );
-  }
-  const subs = subCardIds(map, id).map((child) => {
-    const title = map.nodes.get(child)?.title ?? "";
-    return `<li data-card-id="${escapeHtml(child)}">${renderTitle(title)}</li>`;
-  });
-  if (subs.length > 0) {
-    parts.push(`<ul aria-label="Sub-cards">${subs.join("")}</ul>`);
-  }
-  return { id, html: `<article>${parts.join("")}</article>` };
+  return { id, html: renderCardPage(map, node) };
 }

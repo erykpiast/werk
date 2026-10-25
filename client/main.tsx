@@ -4,7 +4,14 @@ import { Composer } from "./app/composer";
 import { addProjectFromDialog } from "./lib/add-project";
 import { stashDraft } from "./lib/draft";
 import { createMapStore } from "./lib/map-store";
-import { firstOpenable, pageOf, projectOf } from "./lib/project-route";
+import {
+  cardOf,
+  cardOfHref,
+  cardPageOf,
+  firstOpenable,
+  pageOf,
+  projectOf,
+} from "./lib/project-route";
 import "./index.css";
 
 /**
@@ -66,7 +73,7 @@ async function start() {
     }
     return;
   }
-  createMapStore(
+  const store = createMapStore(
     {
       fetch: async (url) => {
         const res = await fetch(url);
@@ -95,7 +102,28 @@ async function start() {
         ),
     },
     project,
-  ).start();
+  );
+  store.open(cardOf(location.pathname));
+  store.start();
+  // A card link is /map/<id>. A click opens that card's page and adds one history entry (#vi-routes).
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element | null;
+    const copy = target?.closest<HTMLElement>("[data-copy]");
+    if (copy) {
+      void navigator.clipboard?.writeText(`#${copy.dataset.copy ?? ""}`);
+      return;
+    }
+    const link = target?.closest<HTMLAnchorElement>("a[href^='/map/']");
+    const card = link ? cardOfHref(link.getAttribute("href") ?? "") : null;
+    if (card === null || event.metaKey || event.ctrlKey || event.shiftKey)
+      return;
+    event.preventDefault();
+    history.pushState(null, "", cardPageOf(project, card));
+    store.open(card);
+  });
+  window.addEventListener("popstate", () =>
+    store.open(cardOf(location.pathname)),
+  );
 }
 
 void start();

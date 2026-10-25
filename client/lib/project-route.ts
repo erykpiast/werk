@@ -30,3 +30,30 @@ export function apiOf(name: string, rest: string): string {
 export function firstOpenable(projects: readonly ProjectInfo[]): string | null {
   return projects.find((p) => !p.missing)?.name ?? null;
 }
+
+/** The card that a page address names after the project, or null for the open card of the map. */
+export function cardOf(pathname: string): string | null {
+  const found = /^\/p\/[^/]+\/map\/([^/]+)$/.exec(pathname);
+  if (!found) return null;
+  try {
+    return decodeURIComponent(found[1] as string);
+  } catch {
+    return null;
+  }
+}
+
+/** The page address of a card in a project. A card link in the page is /map/<id> and the page rewrites it to this. */
+export function cardPageOf(project: string, card: string): string {
+  return `${pageOf(project)}/map/${encodeURIComponent(card)}`;
+}
+
+/** The card id of an in-page card link, or null for any other link. */
+export function cardOfHref(href: string): string | null {
+  const found = /^\/map\/([^/?#]+)$/.exec(href);
+  if (!found) return null;
+  try {
+    return decodeURIComponent(found[1] as string);
+  } catch {
+    return null;
+  }
+}

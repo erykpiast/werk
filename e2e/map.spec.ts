@@ -33,6 +33,40 @@ test("the left pane opens the title of the root card", async ({
   await evidence(page, "root-card");
 });
 
+test("the root page lists real sub-cards as tiles before ghosts, and a tile opens its card's page", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  const add = (id: string, title: string) =>
+    expect(app.werk("add", id, "--title", title, "--parent", "root").code).toBe(
+      0,
+    );
+  add("ghost", "A ghost card");
+  add("real", "A real card");
+  expect(app.werk("accept", "real", "--actor", "you").code).toBe(0);
+
+  await page.goto(app.url);
+  const tiles = leftPane(page).locator("a.tile");
+  await expect(tiles).toHaveCount(2);
+  await expect(tiles.nth(0)).toContainText("A real card");
+  await expect(tiles.nth(1)).toContainText("A ghost card");
+  await expect(
+    leftPane(page).getByText("this card and everything below it, 2 cards"),
+  ).toBeVisible();
+  await evidence(page, "root-tiles");
+
+  await tiles.nth(0).click();
+  await expect(
+    leftPane(page).getByRole("heading", { level: 1, name: "A real card" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/map\/real$/);
+  await page.goBack();
+  await expect(
+    leftPane(page).getByRole("heading", { level: 1, name: ROOT_TITLE }),
+  ).toBeVisible();
+});
+
 test("a card added from the command line appears with no reload", async ({
   page,
   app,
