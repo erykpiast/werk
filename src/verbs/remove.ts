@@ -3,15 +3,17 @@ import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 import { appendEvents, logPathFor } from "../map/log-store.ts";
 
-const USAGE = "usage: remove <id> [--reparent]";
+const USAGE = "usage: remove <id> [--reparent] [--propose]";
 
 registerVerb({
   name: "remove",
-  summary: "Remove a card with its subtree, or only the card with --reparent",
+  summary:
+    "Remove a card with its subtree, or only the card with --reparent; --propose stages it",
   run: ({ args, cwd, env, out, err }) => {
     const reparent = args.includes("--reparent");
+    const propose = args.includes("--propose");
     const parsed = parseArgs(
-      args.filter((arg) => arg !== "--reparent"),
+      args.filter((arg) => arg !== "--reparent" && arg !== "--propose"),
       { flags: [] },
     );
     if (!parsed.ok || parsed.positional.length !== 1) {
@@ -21,7 +23,7 @@ registerVerb({
       return 2;
     }
     const event: Record<string, unknown> = {
-      type: "node.removed",
+      type: propose ? "removal.proposed" : "node.removed",
       id: cardId(parsed.positional[0] as string),
     };
     if (reparent) event.reparent = true;
@@ -32,7 +34,7 @@ registerVerb({
       );
       return 1;
     }
-    out("removed");
+    out(propose ? "removal proposed" : "removed");
     return 0;
   },
 });

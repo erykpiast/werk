@@ -106,6 +106,7 @@ export function applyQuoted(
     unchallenged: null,
     kill: [],
     pending: null,
+    removal: null,
     pointer,
   });
   map.threads.set(excerpt, []);

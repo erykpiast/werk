@@ -1,4 +1,5 @@
 import { useEffect, useRef, useSyncExternalStore } from "react";
+import type { SearchRow } from "../lib/card-search";
 import type { ChatStore } from "../lib/chat-store";
 import { AskBar } from "./ask-bar";
 import { ChatHead } from "./chat-head";
@@ -6,7 +7,13 @@ import { ChatLog } from "./chat-log";
 import { Composer } from "./composer";
 
 /** The right pane: the log, the header row, then the composer (#werk-head-bottom). */
-export function ChatPane({ store }: { store: ChatStore }) {
+export function ChatPane({
+  store,
+  cards,
+}: {
+  store: ChatStore;
+  cards: () => readonly SearchRow[];
+}) {
   const state = useSyncExternalStore(store.subscribe, store.get);
   const log = useRef<HTMLDivElement>(null);
   // A new part of the reply keeps the end of the log in sight.
@@ -24,6 +31,7 @@ export function ChatPane({ store }: { store: ChatStore }) {
       <ChatHead state={state} store={store} />
       <Composer
         images={store}
+        menu={{ commands: store.commands, cards }}
         onSend={(text, images) => void store.send(text, images)}
       />
     </div>

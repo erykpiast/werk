@@ -12,6 +12,7 @@ import {
   type Projects,
   removeProject,
 } from "../projects/projects.ts";
+import { cardActionRoute } from "./card-action-route.ts";
 import { askRoute, chatRoute, clearRoute, modelRoute } from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
 import { chooseFolder } from "./folder-dialog.ts";
@@ -117,9 +118,19 @@ async function projectRoute(
   const url = new URL(req.url);
   if (rest === "/live") return live(context);
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
+  if (rest === "/commands") {
+    return json({ commands: context.chat?.commands() ?? [] });
+  }
   if (rest === "/ask") return askRoute(context, req);
   if (rest === "/model") return modelRoute(context, ctx.env, req);
   if (rest === "/clear") return clearRoute(context, ctx.env, req);
+  if (rest === "/accept" || rest === "/remove") {
+    return cardActionRoute(
+      context.logPath,
+      rest.slice(1) as "accept" | "remove",
+      req,
+    );
+  }
   if (rest === "/image") return imageRoute(context, req, url);
   if (rest === "/graph") {
     if (url.searchParams.get("shape") !== "1") {
@@ -173,7 +184,9 @@ export function createRoute(ctx: RouteContext): Route {
               rest === "/ask" ||
               rest === "/image" ||
               rest === "/model" ||
-              rest === "/clear")))
+              rest === "/clear" ||
+              rest === "/accept" ||
+              rest === "/remove")))
       ) {
         return projectRoute(ctx, req, name, rest);
       }

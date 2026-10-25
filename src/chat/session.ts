@@ -31,6 +31,7 @@ import {
 } from "./permission.ts";
 import { appendAsk, keepAllow, readAllow } from "./permission-store.ts";
 import { feed, initialReply, type Part } from "./reply-stream.ts";
+import { commandsOf } from "./start-line.ts";
 import {
   emptyQueue,
   enqueue,
@@ -109,6 +110,8 @@ export type ChatSession = {
   setModel(pick: ModelPick): Promise<Refusal>;
   /** Drops the session and the transcript and restarts the child. The map is untouched. */
   clear(): Promise<Refusal>;
+  /** The command names that the most recent agent named when it started, or none before a first start. */
+  commands(): string[];
   /** Ends the child. Every open turn ends with the exit. */
   stop(): Promise<void>;
 };
@@ -146,6 +149,7 @@ export function createSession(deps: SessionDeps): ChatSession {
   const kept: ChatEvent[] = [];
   /** The asks that wait for the person, by the id of the control request. */
   const asks = new Map<string, Ask>();
+  let commandNames: string[] = [];
 
   const emit = (event: ChatEvent) => {
     if (
@@ -292,6 +296,8 @@ export function createSession(deps: SessionDeps): ChatSession {
     } catch {
       return;
     }
+    const named = commandsOf(event);
+    if (named) commandNames = named;
     const ask = parseAsk(event);
     if (ask) {
       asks.set(ask.id, ask);
@@ -422,6 +428,7 @@ export function createSession(deps: SessionDeps): ChatSession {
       ...queue.waiting.map((w) => w.turn),
     ],
     history: () => [...kept],
+    commands: () => [...commandNames],
     answer(id, answer) {
       const ask = asks.get(id);
       if (!ask || !child) return { ok: false, reason: "no such open ask" };

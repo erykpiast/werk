@@ -5,6 +5,11 @@ import { Composer } from "./app/composer";
 import { Counts, Crumbs, SearchBox, Tabs } from "./app/header";
 import { Switcher } from "./app/switcher";
 import { addProjectFromDialog } from "./lib/add-project";
+import {
+  removeFactsOf,
+  removeQuestion,
+  sendCardAction,
+} from "./lib/card-actions";
 import { createChatStore } from "./lib/chat-store";
 import { countsOf } from "./lib/counts";
 import { pathTo } from "./lib/crumbs";
@@ -222,7 +227,7 @@ async function start() {
   );
   chatReact?.render(
     <StrictMode>
-      <ChatPane store={chat} />
+      <ChatPane store={chat} cards={() => index?.entries ?? []} />
     </StrictMode>,
   );
   const store = createMapStore(
@@ -283,12 +288,65 @@ async function start() {
   }
   route();
   store.start();
+  /** Asks the server to append the event. The page redraws when the live channel signals the change. */
+  const act = async (
+    kind: "accept" | "remove",
+    request: { card: string; reparent?: boolean },
+  ) => {
+    const refused = await sendCardAction(
+      { fetch: (url, init) => fetch(url, init), token: token() },
+      project,
+      kind,
+      request,
+    ).catch((error) => String(error));
+    if (refused !== null) say(refused);
+  };
+  /** The one confirmation of the ✕, drawn under the card's buttons (#vi-remove-btn). */
+  const askRemove = (button: HTMLElement) => {
+    const host = button.closest(".hero");
+    if (!host) return;
+    host.querySelector(".remove-confirm")?.remove();
+    const question = removeQuestion(removeFactsOf(button.dataset));
+    const panel = document.createElement("div");
+    panel.className = "remove-confirm";
+    panel.setAttribute("role", "alertdialog");
+    const text = document.createElement("p");
+    text.textContent = question.text;
+    panel.append(text);
+    const choose = (label: string, handler: () => void) => {
+      const choice = document.createElement("button");
+      choice.type = "button";
+      choice.textContent = label;
+      choice.addEventListener("click", handler);
+      panel.append(choice);
+    };
+    for (const { label, reparent } of question.choices) {
+      choose(label, () => {
+        panel.remove();
+        void act("remove", {
+          card: button.dataset.card ?? "",
+          ...(reparent ? { reparent } : {}),
+        });
+      });
+    }
+    choose("Cancel", () => panel.remove());
+    host.querySelector(".card-actions")?.after(panel);
+  };
   // A card link is /map/<id>. A click opens that card's page and adds one history entry (#vi-routes).
   document.addEventListener("click", (event) => {
     const target = event.target as Element | null;
     const copy = target?.closest<HTMLElement>("[data-copy]");
     if (copy) {
       void navigator.clipboard?.writeText(`#${copy.dataset.copy ?? ""}`);
+      return;
+    }
+    const action = target?.closest<HTMLElement>("[data-action]");
+    if (action?.dataset.action === "accept") {
+      void act("accept", { card: action.dataset.card ?? "" });
+      return;
+    }
+    if (action?.dataset.action === "remove") {
+      askRemove(action);
       return;
     }
     const link = target?.closest<HTMLAnchorElement>("a[href^='/map/']");

@@ -16,7 +16,15 @@ import {
   EXCERPT_ADD_REFUSAL,
   excerptFrozenDetail,
 } from "./quote-rules.ts";
-import { isOut, outRefusal, removeCard, restoreCard } from "./removal-rules.ts";
+import {
+  acceptRemoval,
+  discardRemoval,
+  isOut,
+  outRefusal,
+  proposeRemoval,
+  removeCard,
+  restoreCard,
+} from "./removal-rules.ts";
 import { applyReopen } from "./reopen-rules.ts";
 import { applyReview } from "./review-rules.ts";
 
@@ -110,6 +118,8 @@ export type MapNode = {
   kill: Criterion[];
   /** The latest proposed change to the title, the why or the body, until it is accepted or discarded. */
   pending: Pending | null;
+  /** A proposed removal of this card, until it is accepted or discarded (#werk-remove-red). */
+  removal: { reparent: boolean } | null;
   /** Set on an excerpt only. Its words are the title, and they never change (#werk-excerpt-event). */
   pointer?: Pointer;
 };
@@ -315,6 +325,7 @@ function applyProposed(
     unchallenged: null,
     kill: [],
     pending: null,
+    removal: null,
   });
   const thread = map.threads.get(id);
   if (thread) thread.push({ line, kind: "proposed-again" });
@@ -350,6 +361,11 @@ function applyEdgeAdded(map: FoldedMap, fields: Fields): Violation | null {
 function applyAccepted(map: FoldedMap, fields: Fields): Violation | null {
   if (typeof fields.id !== "string") return bad('"id" must be text');
   const node = map.nodes.get(fields.id);
+  if (node?.removal) {
+    return applyKept(map, ["option"], (trial) =>
+      acceptRemoval(trial, fields.id as string, fields.actor),
+    );
+  }
   return node && !node.proposed
     ? acceptChange(map, fields.id, fields.actor)
     : acceptGhost(map, fields.id, fields.actor);
@@ -358,6 +374,7 @@ function applyAccepted(map: FoldedMap, fields: Fields): Violation | null {
 function applyDiscarded(map: FoldedMap, fields: Fields): Violation | null {
   if (typeof fields.id !== "string") return bad('"id" must be text');
   const node = map.nodes.get(fields.id);
+  if (node?.removal) return discardRemoval(map, fields.id);
   return node && !node.proposed
     ? discardChange(map, fields.id)
     : discardGhost(map, fields.id);
@@ -520,6 +537,12 @@ export function applyEvent(
         : applyKept(map, ["option"], (trial) =>
             removeCard(trial, removal.id, removal.reparent),
           );
+    }
+    case "removal.proposed": {
+      const removal = removalFields(event);
+      return isViolation(removal)
+        ? removal
+        : proposeRemoval(map, removal.id, removal.reparent);
     }
     case "node.restored":
       return typeof event.id === "string"

@@ -134,3 +134,93 @@ test("Enter waits while an upload runs, then sends the stored name", async () =>
   expect(box.value).toBe("");
   expect(chips(el)).toHaveLength(0);
 });
+
+const CARDS = ["werk-pr", "pr-two", "other"].map((id) => ({
+  id,
+  kind: "card",
+  title: id === "other" ? "Plain" : `Title ${id}`,
+  why: "",
+  status: "decided" as const,
+  stale: false,
+  postponed: false,
+}));
+const menu = {
+  commands: async () => ["review", "recall", "compact"],
+  cards: () => CARDS,
+};
+
+async function typeInto(box: HTMLTextAreaElement, value: string) {
+  await act(async () => {
+    const set = Object.getOwnPropertyDescriptor(
+      HTMLTextAreaElement.prototype,
+      "value",
+    )?.set;
+    set?.call(box, value);
+    box.setSelectionRange(value.length, value.length);
+    box.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
+const key = (box: HTMLTextAreaElement, name: string) =>
+  act(async () => {
+    box.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: name,
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+  });
+
+test("a slash after a space opens the command menu, and Enter inserts the command", async () => {
+  const sent: string[] = [];
+  const el = await render(
+    <Composer menu={menu} onSend={(t) => sent.push(t)} />,
+  );
+  const box = el.querySelector("textarea") as HTMLTextAreaElement;
+  await typeInto(box, "hi /re");
+  const options = () =>
+    Array.from(el.querySelectorAll('[role="option"]')).map(
+      (o) => o.textContent,
+    );
+  expect(options()).toEqual(["/review", "/recall"]);
+  await key(box, "ArrowDown");
+  await key(box, "Enter");
+  expect(box.value).toBe("hi /recall ");
+  expect(options()).toEqual([]);
+  expect(sent).toEqual([]);
+});
+
+test("a hash word lists cards by id or title, and Tab inserts the id with its hash", async () => {
+  const el = await render(<Composer menu={menu} />);
+  const box = el.querySelector("textarea") as HTMLTextAreaElement;
+  await typeInto(box, "see #pr");
+  const options = Array.from(el.querySelectorAll('[role="option"]'));
+  expect(options.map((o) => o.querySelector("code")?.textContent)).toEqual([
+    "#pr-two",
+    "#werk-pr",
+  ]);
+  await key(box, "Tab");
+  expect(box.value).toBe("see #pr-two ");
+});
+
+test("a backtick before the hash opens no menu", async () => {
+  const el = await render(<Composer menu={menu} />);
+  const box = el.querySelector("textarea") as HTMLTextAreaElement;
+  await typeInto(box, "`#pr");
+  expect(el.querySelector('[role="listbox"]')).toBeNull();
+});
+
+test("Escape closes the menu and Enter then sends the message", async () => {
+  const sent: string[] = [];
+  const el = await render(
+    <Composer menu={menu} onSend={(t) => sent.push(t)} />,
+  );
+  const box = el.querySelector("textarea") as HTMLTextAreaElement;
+  await typeInto(box, "/re");
+  expect(el.querySelector('[role="listbox"]')).not.toBeNull();
+  await key(box, "Escape");
+  expect(el.querySelector('[role="listbox"]')).toBeNull();
+  await key(box, "Enter");
+  expect(sent).toEqual(["/re"]);
+});

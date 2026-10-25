@@ -53,6 +53,8 @@ export type ChatStore = {
   send(text: string, images?: string[]): Promise<void>;
   /** Uploads one pasted image. The answer is the stored name, or the reason the server refused. */
   upload(file: Blob): Promise<{ name: string } | { error: string }>;
+  /** The command names that the server holds, from the agent's start line. A failed read gives none. */
+  commands(): Promise<string[]>;
   /** The address of a stored image, for its thumbnail. */
   imageUrl(name: string): string;
   /** Sends the answer to an ask. The ask closes when the server says so, and not before. */
@@ -163,6 +165,18 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     },
     setModel: (model, advisor) => post("/model", { model, advisor }),
     clearContext: () => post("/clear", {}),
+    async commands() {
+      try {
+        const res = await deps.fetch(apiOf(project, "/commands"));
+        if (!res.ok) return [];
+        const { commands } = (await res.json()) as { commands?: unknown };
+        return Array.isArray(commands)
+          ? commands.filter((c): c is string => typeof c === "string")
+          : [];
+      } catch {
+        return [];
+      }
+    },
     pick: (id, question, selection) =>
       apply({ type: "pick", id, question, selection }),
     async answer(id, answer) {
