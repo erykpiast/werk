@@ -1018,3 +1018,226 @@ button.tag {
 [data-slot="word-menu"] [role="option"][aria-selected="true"] {
   background: var(--color-muted);
 }
+
+/* The board (#vi-board). The columns keep 200px and the board scrolls sideways (#werk-board-colwidth). */
+[data-slot="board-page"] {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  min-width: 0;
+}
+
+[data-slot="board"] {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
+[data-slot="column"] {
+  flex: 1 0 200px;
+  min-width: 200px;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  background: var(--color-muted);
+}
+
+[data-slot="column"] h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+[data-slot="column-count"] {
+  color: var(--color-muted-foreground);
+  font-weight: 400;
+}
+
+[data-slot="column-list"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* With the drawer open a column shows two cards, and the rest scroll inside it (#vi-board-details). */
+[data-slot="board"][data-drawer="open"] [data-slot="column-list"] {
+  max-height: 8.5rem;
+  overflow-y: auto;
+}
+
+[data-slot="ticket-card"] {
+  position: relative;
+  display: flex;
+  flex: none;
+  gap: 0.5rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 4rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-background);
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+[data-slot="ticket-card"][aria-pressed="true"] {
+  border-color: var(--color-primary);
+}
+
+/* The title is cut at its second line with an ellipsis (#vi-board-title-clamp). */
+[data-slot="ticket-title"] {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.25rem;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+
+/* Only the first line makes room for the dot (#vi-board-pulse-corner). */
+[data-slot="ticket-title"][data-running] {
+  text-indent: 1rem;
+}
+
+[data-slot="ticket-counts"] {
+  display: flex;
+  flex: none;
+  gap: 0.375rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+}
+
+[data-slot="live-dot"] {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--status-decided, #16a34a);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+[data-slot="live-dot"][data-corner] {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  margin-top: 0.375rem;
+}
+
+[data-slot="drawer"] {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+[data-slot="drawer"] > header {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-slot="drawer-bar"] {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+[data-slot="drawer-bar"] [data-slot="drawer-close"] {
+  margin-left: auto;
+}
+
+[data-slot="drawer-title"] {
+  margin: 0.25rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+[data-slot="drawer-body"] {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+}
+
+[data-slot="drawer-main"] {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+[data-slot="drawer-side"] {
+  position: relative;
+  flex: 0 0 14rem;
+  padding-top: 2rem;
+  font-size: 0.875rem;
+}
+
+[data-slot="drawer-side"][data-mode="rail"] {
+  flex-basis: 2.5rem;
+  min-height: 3rem;
+}
+
+[data-slot="drawer-side"] [data-slot="side-toggle"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 0.5rem;
+}
+
+[data-slot="drawer-side"] h4 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+}
+
+[data-slot="drawer-side"] ul {
+  margin: 0;
+}
+
+[data-slot="live-log"] {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+}
+
+[data-slot="live-log-bar"] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-slot="live-log-lines"] {
+  height: 10rem;
+  overflow-y: auto;
+  padding: 0.25rem 0.5rem;
+  font-family: ui-monospace, monospace;
+}
+
+[data-slot="live-log"][data-expanded] [data-slot="live-log-lines"] {
+  height: 20rem;
+}
+
+[data-slot="log-line"] {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+[data-slot="log-line"] time {
+  flex: 0 0 11.5rem;
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+[data-slot="ticket-text"] {
+  font-size: 0.9rem;
+}

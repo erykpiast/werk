@@ -1,7 +1,7 @@
 /** The live channel: one event stream for each open page. A map signal carries no data (#werk-write-changed). The chat parts carry JSON (#werk-progress). */
 export type Clients = Set<ReadableStreamDefaultController<Uint8Array>>;
 
-export type LiveEvent = "changed" | "measure" | "reload";
+export type LiveEvent = "changed" | "measure" | "board" | "reload";
 
 const encoder = new TextEncoder();
 

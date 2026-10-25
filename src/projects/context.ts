@@ -4,6 +4,7 @@
  * page never touches it (#werk-projects, #werk-projects-background).
  */
 import { dirname, join } from "node:path";
+import { boardLogBeside } from "../board/log-store.ts";
 import type { ChatSession } from "../chat/session.ts";
 import { pipelineLogBeside } from "../pipeline/log-store.ts";
 import { broadcast, type Clients } from "../serve/live-channel.ts";
@@ -18,6 +19,8 @@ export type Context = {
   watch: LogWatch;
   /** The pipeline log. Its growth sends the measure signal (#werk-write-measure-signal). */
   measureWatch: LogWatch;
+  /** The board log. Its growth sends the board signal (#vi-board-redraw-signal). */
+  boardWatch: LogWatch;
   lock: Lock;
   /** The conversation of the project. It starts with the first message. */
   chat?: ChatSession;
@@ -71,10 +74,19 @@ export async function openContext(
   try {
     const watch = watchLog(logPath, () => broadcast(clients, "changed"));
     let measureWatch: LogWatch;
+    let boardWatch: LogWatch;
     try {
       measureWatch = watchLog(pipelineLogBeside(logPath), () =>
         broadcast(clients, "measure"),
       );
+      try {
+        boardWatch = watchLog(boardLogBeside(logPath), () =>
+          broadcast(clients, "board"),
+        );
+      } catch (error) {
+        measureWatch.close();
+        throw error;
+      }
     } catch (error) {
       watch.close();
       throw error;
@@ -85,6 +97,7 @@ export async function openContext(
       clients,
       watch,
       measureWatch,
+      boardWatch,
       lock,
       runningTurns: () => context.chat?.running() ?? [],
       background: () => context.chat?.background() ?? 0,
@@ -103,6 +116,7 @@ export function closeContext(context: Context): void {
   void context.chat?.stop();
   context.watch.close();
   context.measureWatch.close();
+  context.boardWatch.close();
   for (const client of context.clients) {
     try {
       client.close();

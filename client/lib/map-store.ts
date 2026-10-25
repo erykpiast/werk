@@ -38,6 +38,8 @@ export type MapStoreDeps = {
   stashDraft: () => void;
   /** The chat parts that the live channel carries, with their JSON data (#werk-progress). */
   chat?: (type: string, data: string) => void;
+  /** Called on each board signal of the channel (#vi-board-redraw-signal). */
+  board?: () => void;
   /** Called each time the channel connects, so the chat can read what it missed. */
   connected?: () => void;
 };
@@ -94,6 +96,7 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
         );
       }
       source.addEventListener("changed", () => void refresh());
+      source.addEventListener("board", () => deps.board?.());
       source.addEventListener("reload", () => {
         deps.stashDraft();
         deps.reload();

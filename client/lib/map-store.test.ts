@@ -179,3 +179,32 @@ test("with an index dep, each read also reads the header index and hands it over
   await Bun.sleep(20);
   expect(order).toEqual(["index", "show"]);
 });
+
+test("a board signal calls the board reader and reads no card", async () => {
+  let boards = 0;
+  const listeners = new Map<string, (event: { data?: unknown }) => void>();
+  const reads: string[] = [];
+  const store = createMapStore(
+    {
+      fetch: async (url) => {
+        reads.push(url);
+        return Response.json({ id: "root", html: "one" });
+      },
+      connect: () => ({
+        addEventListener: (type, listener) =>
+          void listeners.set(type, listener),
+        close: () => {},
+      }),
+      show: () => {},
+      board: () => void boards++,
+      reload: () => {},
+      stashDraft: () => {},
+    },
+    "p",
+  );
+  store.start();
+  listeners.get("board")?.({});
+  await Bun.sleep(10);
+  expect(boards).toBe(1);
+  expect(reads).toEqual([]);
+});
