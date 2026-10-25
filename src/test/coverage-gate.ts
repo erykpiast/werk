@@ -6,7 +6,13 @@ import { existsSync } from "node:fs";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { formatLine, judge, ownTestPath, uniqueFiles } from "./coverage-report";
+import {
+  formatLine,
+  hasExecutableCode,
+  judge,
+  ownTestPath,
+  uniqueFiles,
+} from "./coverage-report";
 import { PURE_FILES } from "./pure-files";
 
 const root = join(import.meta.dir, "..", "..");
@@ -35,8 +41,18 @@ async function ownLcov(file: string): Promise<string | null> {
   }
 }
 
+async function check(file: string) {
+  const source = await readFile(join(root, file), "utf8").catch(() => null);
+  if (source !== null && !hasExecutableCode(source)) {
+    return { file, percent: 100, pass: true, note: "no executable lines" };
+  }
+  return judge(file, await ownLcov(file));
+}
+
+// Files named on the command line replace the list. The gate's own test uses this.
+const listed = process.argv.slice(2);
 const results = await Promise.all(
-  uniqueFiles(PURE_FILES).map(async (file) => judge(file, await ownLcov(file))),
+  uniqueFiles(listed.length > 0 ? listed : PURE_FILES).map(check),
 );
 for (const result of results) console.log(formatLine(result));
 process.exit(results.every((r) => r.pass) ? 0 : 1);

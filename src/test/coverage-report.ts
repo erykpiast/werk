@@ -16,6 +16,17 @@ export function ownTestPath(file: string): string {
   return `${file.slice(0, dot)}.test${file.slice(dot)}`;
 }
 
+/** Whether source code has any statement that runs: types, interfaces and bare exports do not. */
+export function hasExecutableCode(source: string): boolean {
+  const js = new Bun.Transpiler({ loader: "ts" }).transformSync(source);
+  return (
+    js
+      .replace(/\/\/.*$|\/\*[\s\S]*?\*\//gm, "")
+      .replace(/\bexport\s*\{\s*\}\s*;?/g, "")
+      .trim() !== ""
+  );
+}
+
 /** The pure files with each file once, in the order of its first entry. */
 export function uniqueFiles(files: readonly string[]): string[] {
   return [...new Set(files)];

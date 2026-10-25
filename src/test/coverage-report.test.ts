@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import {
   formatLine,
+  hasExecutableCode,
   judge,
   lineCounts,
   ownTestPath,
@@ -71,4 +72,14 @@ test("a line shows its percentage and its verdict", () => {
   expect(formatLine({ file: "src/a.ts", percent: 100, pass: true })).toBe(
     "ok   100.0%  src/a.ts",
   );
+});
+
+test("type declarations have no executable code and statements do", () => {
+  expect(
+    hasExecutableCode("export type A = { a: 1 };\nexport interface B {}"),
+  ).toBe(false);
+  expect(
+    hasExecutableCode("import type { A } from './a';\nexport type B = A;"),
+  ).toBe(false);
+  expect(hasExecutableCode("export const a = 1;")).toBe(true);
 });
