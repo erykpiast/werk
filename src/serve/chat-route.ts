@@ -4,6 +4,7 @@
  * (#werk-chat, #werk-serve-trust).
  */
 import { join, resolve } from "node:path";
+import { findImage } from "../chat/attachments.ts";
 import { parseAnswer } from "../chat/permission.ts";
 import { createSession } from "../chat/session.ts";
 import { readMap } from "../map/log-store.ts";
@@ -14,6 +15,7 @@ import { broadcastData } from "./live-channel.ts";
 const REPO = join(import.meta.dirname, "..", "..");
 const TURN_NAME = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/;
 const MAX_TEXT = 200_000;
+const MAX_IMAGES = 50;
 
 /** The conversation of the project. It is made at the first use and kept on the context. */
 function sessionOf(context: Context, env: Record<string, string | undefined>) {
@@ -47,7 +49,7 @@ export async function chatRoute(
   } catch {
     return refuse("send a JSON body");
   }
-  const { text, card, turn } = (body ?? {}) as Record<string, unknown>;
+  const { text, card, turn, images } = (body ?? {}) as Record<string, unknown>;
   if (
     typeof text !== "string" ||
     text.trim() === "" ||
@@ -61,10 +63,23 @@ export async function chatRoute(
   if (card !== null && card !== undefined && typeof card !== "string") {
     return refuse("the card must be an id or null");
   }
+  const paths: string[] = [];
+  if (images !== undefined) {
+    if (!Array.isArray(images) || images.length > MAX_IMAGES) {
+      return refuse("images must be a list of stored image names");
+    }
+    for (const name of images) {
+      const path =
+        typeof name === "string" ? findImage(context.logPath, name) : null;
+      if (path === null) return refuse(`${String(name)} is not a stored image`);
+      paths.push(path);
+    }
+  }
   const result = sessionOf(context, env).send({
     turn,
     text,
     card: typeof card === "string" ? card : null,
+    images: paths,
   });
   if (result === "duplicate") {
     return Response.json(

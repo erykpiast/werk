@@ -22,7 +22,10 @@ export function ChatPane({ store }: { store: ChatStore }) {
       </div>
       <AskBar state={state} store={store} />
       <ChatHead state={state} />
-      <Composer onSend={(text) => void store.send(text)} />
+      <Composer
+        images={store}
+        onSend={(text, images) => void store.send(text, images)}
+      />
     </div>
   );
 }
