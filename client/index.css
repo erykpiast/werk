@@ -152,6 +152,54 @@ body,
   white-space: pre-wrap;
 }
 
+[data-slot="ask-bar"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+[data-slot="ask"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ca8a04;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+}
+
+[data-slot="ask-call"] {
+  max-height: 10rem;
+  margin: 0;
+  padding: 0.375rem 0.5rem;
+  overflow: auto;
+  border-radius: var(--radius);
+  background: var(--color-muted);
+  white-space: pre-wrap;
+}
+
+[data-slot="ask-reason"],
+[data-slot="ask-description"] {
+  color: var(--color-muted-foreground);
+}
+
+[data-slot="ask-buttons"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+[data-slot="ask-question"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 [data-slot="chat-head"] {
   display: flex;
   align-items: center;

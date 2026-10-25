@@ -1,6 +1,6 @@
 /**
  * The command line of the chat agent: the flags of the long-lived stream-json child, then the launch
- * options of the chat role (#werk-chat-stdin, #werk-invoke, #werk-perm-mode, #werk-advisor).
+ * options of the chat role (#werk-chat-stdin, #werk-invoke, #werk-perm-mode, #werk-perm-native, #werk-advisor).
  */
 import type { LaunchOptions } from "../agent/launch-options.ts";
 
@@ -20,7 +20,13 @@ export const ALLOWED_TOOLS = [
   "Bash(rm -f /tmp/:*)",
 ];
 
-export function chatArgs(options: LaunchOptions): string[] {
+/** The updates that Always allow stored, as the flags of the next child (#werk-perm-native). */
+export type StoredAllow = { tools: string[]; dirs: string[] };
+
+export function chatArgs(
+  options: LaunchOptions,
+  stored: StoredAllow = { tools: [], dirs: [] },
+): string[] {
   const args = [
     "--output-format",
     "stream-json",
@@ -30,9 +36,12 @@ export function chatArgs(options: LaunchOptions): string[] {
     "--include-partial-messages",
     "--permission-mode",
     "auto",
+    "--permission-prompt-tool",
+    "stdio",
     "--allowedTools",
-    ALLOWED_TOOLS.join(","),
+    [...ALLOWED_TOOLS, ...stored.tools].join(","),
   ];
+  for (const dir of stored.dirs) args.push("--add-dir", dir);
   if (options.model) args.push("--model", options.model);
   if (options.advisor) args.push("--advisor", options.advisor);
   if (options.appendSystemPrompt) {

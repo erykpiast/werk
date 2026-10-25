@@ -8,6 +8,8 @@ import {
   formatTokens,
   headOf,
   type Item,
+  pickedOf,
+  picksToSend,
   reduce,
   rowsOf,
   toolSummary,
@@ -239,4 +241,91 @@ test("the end line shows duration and cost, or why the agent exited", () => {
   ).toBe("the agent exited: boom");
   expect(formatTokens(950)).toBe("950 tokens");
   expect(formatTokens(1500)).toBe("1.5k tokens");
+});
+
+const permission = {
+  id: "a1",
+  turn: "t",
+  tool: "Bash",
+  input: { command: "ls" },
+  reason: "rule",
+  suggestion: null,
+  questions: null,
+};
+const form = {
+  ...permission,
+  id: "q1",
+  tool: "AskUserQuestion",
+  questions: [
+    {
+      question: "Which?",
+      header: null,
+      multiSelect: false,
+      options: [{ label: "A", description: "" }],
+    },
+    {
+      question: "Also?",
+      header: null,
+      multiSelect: true,
+      options: [{ label: "B", description: "" }],
+    },
+  ],
+};
+
+test("asks stack in the order they arrive and close by id", () => {
+  const open = run(
+    { type: "ask", ask: permission },
+    { type: "ask", ask: form },
+    { type: "ask", ask: permission },
+  );
+  expect(open.asks.map((a) => a.id)).toEqual(["a1", "q1"]);
+  const rest = reduce(open, { type: "ask-done", id: "a1" });
+  expect(rest.asks.map((a) => a.id)).toEqual(["q1"]);
+});
+
+test("the answer in flight disables the ask, and a replayed ask keeps that state", () => {
+  const sending = run(
+    { type: "ask", ask: permission },
+    { type: "ask-sending", id: "a1", sending: true },
+    { type: "ask", ask: permission },
+  );
+  expect(sending.asks[0]?.sending).toBe(true);
+  expect(
+    reduce(sending, { type: "ask-sending", id: "a1", sending: false }).asks[0]
+      ?.sending,
+  ).toBe(false);
+});
+
+test("the picks of a form stay in the state across turns and go when the ask closes", () => {
+  const picked = run(
+    { type: "ask", ask: form },
+    {
+      type: "pick",
+      id: "q1",
+      question: 0,
+      selection: { labels: ["A"], other: "" },
+    },
+    { type: "sent", turn: "later", text: "x" },
+  );
+  const ask = picked.asks[0];
+  if (!ask) throw new Error("no ask");
+  expect(pickedOf(picked, ask).map((s) => s.labels)).toEqual([["A"], []]);
+  expect(picksToSend(pickedOf(picked, ask))).toBeNull();
+  const full = reduce(picked, {
+    type: "pick",
+    id: "q1",
+    question: 1,
+    selection: { labels: [], other: " free " },
+  });
+  expect(picksToSend(pickedOf(full, ask))).toEqual([["A"], ["free"]]);
+  expect(reduce(full, { type: "ask-done", id: "q1" }).selections).toEqual({});
+  expect(
+    reduce(full, {
+      type: "pick",
+      id: "gone",
+      question: 0,
+      selection: { labels: [], other: "" },
+    }),
+  ).toBe(full);
+  expect(picksToSend([])).toBeNull();
 });

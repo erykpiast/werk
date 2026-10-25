@@ -96,7 +96,7 @@ async function until(check: () => boolean, ms = 10000) {
 }
 
 const names = (events: ChatEvent[]) =>
-  events.map((e) => `${e.name}:${e.data.turn}`);
+  events.map((e) => `${e.name}:${"turn" in e.data ? e.data.turn : e.data.id}`);
 
 async function withSession(
   session: ChatSession,
