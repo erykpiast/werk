@@ -209,9 +209,9 @@ describe("waivers and criteria", () => {
     }
   });
 
-  test("an edit of a decided card is frozen", () => {
+  test("an edit of a decided card that drops a fact is refused", () => {
     const map = build(...base, who("root", "you"));
-    expect(map.problems[0]?.rule).toBe("frozen");
+    expect(map.problems[0]?.rule).toBe("contract");
   });
 
   test("a criterion needs every field of its form, and a card", () => {

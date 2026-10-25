@@ -54,10 +54,10 @@ function checkTarget(
         : `no card "${id}"`,
     };
   }
-  if (node.kind !== "card" || node.proposed) {
+  if ((node.kind !== "card" && node.kind !== "option") || node.proposed) {
     return {
       rule: "remove-target",
-      detail: `"${id}" is not a card in the map; a ghost is discarded, and an option or evidence goes with its card`,
+      detail: `"${id}" is not a card or an option in the map; a ghost is discarded, and evidence goes with its card`,
     };
   }
   if (reparent && !map.parents.has(id)) {

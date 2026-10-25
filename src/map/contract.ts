@@ -78,14 +78,28 @@ function killMissing(card: MapNode): string | null {
   return `kill: no criterion on record. Fix: werk kill ${card.id} --revisit (or --manual "<test>", --no-metric "<reason>", or --metric --source --threshold --window --sample)`;
 }
 
+export type FactKey = "who" | "basis" | "option" | "kill";
+
+/** Each fact with its check, in the order of the contract. */
+const FACTS: [FactKey, (map: FoldedMap, card: MapNode) => string | null][] = [
+  ["who", (_map, card) => whoMissing(card)],
+  ["basis", basisMissing],
+  ["option", optionMissing],
+  ["kill", (_map, card) => killMissing(card)],
+];
+
+/** The facts a card holds now. */
+export function heldFacts(map: FoldedMap, card: MapNode): Set<FactKey> {
+  return new Set(
+    FACTS.filter(([, check]) => check(map, card) === null).map(([key]) => key),
+  );
+}
+
 /** The missing facts of a card, in the order of the contract. Empty when the card may be decided. */
 export function missingFacts(map: FoldedMap, card: MapNode): string[] {
-  return [
-    whoMissing(card),
-    basisMissing(map, card),
-    optionMissing(map, card),
-    killMissing(card),
-  ].filter((fact): fact is string => fact !== null);
+  return FACTS.map(([, check]) => check(map, card)).filter(
+    (fact): fact is string => fact !== null,
+  );
 }
 
 /** The violation a move to decided breaks, or null when every fact holds. */
@@ -104,4 +118,40 @@ export function checkDecide(map: FoldedMap, id: string): Violation | null {
     rule: "contract",
     detail: `"${id}" is missing ${missing.length} ${missing.length === 1 ? "fact" : "facts"}:\n${missing.map((fact) => `  - ${fact}`).join("\n")}`,
   };
+}
+
+/**
+ * Applies a change to a copy of the map and keeps it only when no decided card loses a fact
+ * of `keys` that it held before (#werk-contract-amend-scope). A card that lacks a fact
+ * already is not refused, so the change that adds the fact goes through.
+ */
+export function applyKept(
+  map: FoldedMap,
+  keys: readonly FactKey[],
+  apply: (trial: FoldedMap) => Violation | null,
+): Violation | null {
+  const held = new Map<string, Set<FactKey>>();
+  for (const card of map.nodes.values()) {
+    if (card.kind === "card" && card.status === "decided") {
+      held.set(card.id, heldFacts(map, card));
+    }
+  }
+  const trial = structuredClone(map);
+  const violation = apply(trial);
+  if (violation) return violation;
+  for (const [id, before] of held) {
+    const card = trial.nodes.get(id);
+    if (!card) continue;
+    const now = heldFacts(trial, card);
+    const lost = keys.filter((key) => before.has(key) && !now.has(key));
+    if (lost.length > 0) {
+      const fixes = missingFacts(trial, card).map((fact) => `  - ${fact}`);
+      return {
+        rule: "contract",
+        detail: `"${id}" is decided and would lose ${lost.length === 1 ? "a fact" : "facts"} (${lost.join(", ")}):\n${fixes.join("\n")}`,
+      };
+    }
+  }
+  Object.assign(map, trial);
+  return null;
 }

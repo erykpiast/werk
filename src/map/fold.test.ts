@@ -353,7 +353,7 @@ describe("waivers, criteria and decide", () => {
     ]);
   });
 
-  test("a decide runs the contract, and a decided card is frozen against an edit", () => {
+  test("a decide runs the contract, and a decided card refuses an edit that drops a fact", () => {
     const decide = { type: "node.decided", id: "a" };
     expect(rules(node("a"), decide)).toEqual(["contract"]);
     expect(rules({ type: "node.decided" })).toEqual(["bad-event"]);
@@ -368,7 +368,7 @@ describe("waivers, criteria and decide", () => {
       ),
     );
     expect(map.nodes.get("a")?.status).toBe("decided");
-    expect(map.problems.map((p) => p.rule)).toEqual(["contract", "frozen"]);
+    expect(map.problems.map((p) => p.rule)).toEqual(["contract", "contract"]);
   });
 });
 

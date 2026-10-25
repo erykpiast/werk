@@ -5,7 +5,9 @@
  * with the same step function, so the fold and a write never disagree.
  */
 
-import { checkDecide } from "./contract.ts";
+import { acceptChange, discardChange, proposeChange } from "./change-rules.ts";
+import { applyKept, checkDecide } from "./contract.ts";
+import type { Pending } from "./edit-diff.ts";
 import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
 import { isOut, outRefusal, removeCard, restoreCard } from "./removal-rules.ts";
@@ -70,6 +72,8 @@ export type MapNode = {
   /** The reason no option was weighed, or null when none was waived. */
   unchallenged: string | null;
   kill: Criterion[];
+  /** The latest proposed change to the title, the why or the body, until it is accepted or discarded. */
+  pending: Pending | null;
 };
 
 export type Edge = { from: string; to: string; type: LinkType; why: string };
@@ -87,6 +91,7 @@ export type RuleName =
   | "not-ghost"
   | "accept-actor"
   | "frozen"
+  | "cover"
   | "ghost-parent"
   | "waiver"
   | "contract"
@@ -267,6 +272,7 @@ function applyProposed(
     noBasis: null,
     unchallenged: null,
     kill: [],
+    pending: null,
   });
   const thread = map.threads.get(id);
   if (thread) thread.push({ line, kind: "proposed-again" });
@@ -301,12 +307,18 @@ function applyEdgeAdded(map: FoldedMap, fields: Fields): Violation | null {
  */
 function applyAccepted(map: FoldedMap, fields: Fields): Violation | null {
   if (typeof fields.id !== "string") return bad('"id" must be text');
-  return acceptGhost(map, fields.id, fields.actor);
+  const node = map.nodes.get(fields.id);
+  return node && !node.proposed
+    ? acceptChange(map, fields.id, fields.actor)
+    : acceptGhost(map, fields.id, fields.actor);
 }
 
 function applyDiscarded(map: FoldedMap, fields: Fields): Violation | null {
   if (typeof fields.id !== "string") return bad('"id" must be text');
-  return discardGhost(map, fields.id);
+  const node = map.nodes.get(fields.id);
+  return node && !node.proposed
+    ? discardChange(map, fields.id)
+    : discardGhost(map, fields.id);
 }
 
 /** The id and the reparent flag of a removal event. */
@@ -378,16 +390,18 @@ function applyEdited(map: FoldedMap, fields: Fields): Violation | null {
         : `"${id}" changes its words only through a proposal`,
     };
   }
+  const set = (target: FoldedMap): null => {
+    const card = target.nodes.get(id) as MapNode;
+    if (who !== null) card.who = who;
+    if (noBasis !== null) card.noBasis = noBasis;
+    if (unchallenged !== null) card.unchallenged = unchallenged;
+    return null;
+  };
+  // A decided card takes a change of who or a waiver only when it keeps every fact it had.
   if (node.status === "decided") {
-    return {
-      rule: "frozen",
-      detail: `"${id}" is decided; a change to it goes through a proposal`,
-    };
+    return applyKept(map, ["who", "basis", "option", "kill"], set);
   }
-  if (who !== null) node.who = who;
-  if (noBasis !== null) node.noBasis = noBasis;
-  if (unchallenged !== null) node.unchallenged = unchallenged;
-  return null;
+  return set(map);
 }
 
 function applyCriterion(map: FoldedMap, fields: Fields): Violation | null {
@@ -443,6 +457,8 @@ export function applyEvent(
       return applyAccepted(map, event);
     case "node.discarded":
       return applyDiscarded(map, event);
+    case "change.proposed":
+      return proposeChange(map, event);
     case "node.edited":
       return applyEdited(map, event);
     case "criterion.added":
@@ -453,7 +469,9 @@ export function applyEvent(
       const removal = removalFields(event);
       return isViolation(removal)
         ? removal
-        : removeCard(map, removal.id, removal.reparent);
+        : applyKept(map, ["option"], (trial) =>
+            removeCard(trial, removal.id, removal.reparent),
+          );
     }
     case "node.restored":
       return typeof event.id === "string"

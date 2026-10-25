@@ -29,6 +29,10 @@ An added card is a ghost: dashed and grey, in no count, with every edge of its o
 - Link and status still work on a ghost. An edge on a ghost is held. Build the card in full (add, link, options, decided) and it commits as one unit.
 - At the end of the turn, say what waits for the person.
 
+## Change a card's words with a proposal
+
+Never rewrite a card in chat, and never edit its words directly. Stage the change with \`${werk} propose <id> --title "..." --why "..." --ops '[...]'\`. Each op is \`{"tag":"elaborated","old":"...","new":"..."}\`, \`{"tag":"new","new":"..."}\` or \`{"tag":"removed","old":"..."}\`. Every block of the current body, split at blank lines, must be the old of an op. Keep a block with an elaborated op whose old and new are equal. The proposal is refused and prints the blocks you left out. The person accepts it. On a decided card the accept keeps the card decided, and it waits while the card lacks a required fact.
+
 ## Removing a card is the person's call
 
 Propose a removal by saying which card should go and why. Do not remove it yourself. A ghost that you proposed and the person has not accepted can be discarded freely.
