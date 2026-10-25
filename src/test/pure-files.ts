@@ -8,6 +8,8 @@ export const PURE_FILES: readonly string[] = [
   "src/map/ghost-rules.ts",
   "src/map/thread.ts",
   "src/cli/args.ts",
+  "src/serve/trust.ts",
+  "src/serve/read-api.ts",
   "src/agent/launch-options.ts",
   "src/board/fold.ts",
   "src/board/resolve.ts",
