@@ -7,6 +7,8 @@ import type { LogEntry } from "../map/fold.ts";
 
 export const STEPS = [
   "plan",
+  "spec",
+  "tickets",
   "pass",
   "check",
   "grader",
@@ -15,6 +17,9 @@ export const STEPS = [
   "heldout",
 ] as const;
 export type Step = (typeof STEPS)[number];
+
+/** The steps of a plan. They belong to no build, so they carry no build and no pass. */
+const PLAN_STEPS: readonly string[] = ["plan", "spec", "tickets"];
 
 /** The cause names of #ms-fail. */
 export const CAUSES = [
@@ -95,9 +100,10 @@ export function checkPipelineEvent(event: unknown): string | null {
     return `step must be one of ${STEPS.join(", ")}`;
   if (str(event, "id") === undefined) return "event needs id";
   if (str(event, "at") === undefined) return "event needs at";
-  if (event.step !== "plan" && str(event, "build") === undefined)
+  const inPlan = PLAN_STEPS.includes(event.step as string);
+  if (!inPlan && str(event, "build") === undefined)
     return "a build step needs build";
-  if (event.step !== "plan" && !Number.isInteger(event.pass))
+  if (!inPlan && !Number.isInteger(event.pass))
     return "a build step needs the number of its pass";
   if (event.cause !== undefined && oneOf(CAUSES, event.cause) === undefined)
     return `cause must be one of ${CAUSES.join(", ")}`;
@@ -204,7 +210,7 @@ export function foldPipeline(entries: LogEntry[]): Pipeline {
       continue;
     }
     const rec = entry.event as Rec;
-    if (rec.step === "plan") continue;
+    if (PLAN_STEPS.includes(rec.step as string)) continue;
     const build = buildOf(pipeline, rec);
     if (rec.type === "step.started") applyStarted(build, rec);
     else applyEnded(build, rec);
