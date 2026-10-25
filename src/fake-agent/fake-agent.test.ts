@@ -317,3 +317,31 @@ test("a launch with a script but no role fails", async () => {
   expect(done.code).not.toBe(0);
   expect(done.stderr).toContain("no role");
 });
+
+test("a scripted result line is the end of the reply, and the fake prints no second one", async () => {
+  install({
+    roles: {
+      chat: {
+        replies: [
+          [
+            {
+              event: {
+                type: "result",
+                duration_ms: 1200,
+                total_cost_usd: 0.04,
+              },
+            },
+          ],
+        ],
+      },
+    },
+  });
+  const c = launch("chat");
+  c.say("hello");
+  await c.waitFor(1);
+  c.close();
+  const done = await c.finish();
+  expect(done.stdout).toEqual([
+    { type: "result", duration_ms: 1200, total_cost_usd: 0.04 },
+  ]);
+});

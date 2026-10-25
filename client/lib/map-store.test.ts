@@ -4,7 +4,7 @@ import { createMapStore, type MapStoreDeps, type OpenView } from "./map-store";
 /** A live channel that the test drives, and an open card that the test changes between reads. */
 function setup(initial: OpenView = { id: "root", html: "one" }) {
   let view = initial;
-  const listeners = new Map<string, () => void>();
+  const listeners = new Map<string, (event: { data?: unknown }) => void>();
   const reads: string[] = [];
   const shown: OpenView[] = [];
   let reloads = 0;
@@ -30,7 +30,7 @@ function setup(initial: OpenView = { id: "root", html: "one" }) {
     settled: () => Bun.sleep(20),
     reads,
     shown,
-    emit: (type: string) => listeners.get(type)?.(),
+    emit: (type: string) => listeners.get(type)?.({}),
     setView: (next: OpenView) => {
       view = next;
     },
@@ -88,7 +88,7 @@ test("a read that a later read overtakes is dropped", async () => {
 test("a failed read shows nothing, and the next signal reads again", async () => {
   const shown: OpenView[] = [];
   let ok = false;
-  const listeners = new Map<string, () => void>();
+  const listeners = new Map<string, (event: { data?: unknown }) => void>();
   const store = createMapStore(
     {
       fetch: async () =>
@@ -106,11 +106,11 @@ test("a failed read shows nothing, and the next signal reads again", async () =>
     "my project",
   );
   store.start();
-  listeners.get("open")?.();
+  listeners.get("open")?.({});
   await Bun.sleep(20);
   expect(shown).toEqual([]);
   ok = true;
-  listeners.get("changed")?.();
+  listeners.get("changed")?.({});
   await Bun.sleep(20);
   expect(shown).toEqual([{ id: "root", html: "back" }]);
 });
@@ -130,7 +130,7 @@ test("a read that throws is dropped, and stop closes the channel once", async ()
         throw new Error("offline");
       },
       connect: () => ({
-        addEventListener: (type, l) => void (type === "open" && l()),
+        addEventListener: (type, l) => void (type === "open" && l({})),
         close() {},
       }),
       show: (v) => void shown.push(v),

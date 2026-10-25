@@ -5,13 +5,17 @@
  * A reload signal stashes the composer draft and reloads the page (#werk-client-reload).
  */
 
+import { CHAT_EVENTS } from "./chat-store";
 import { apiOf } from "./project-route";
 
 /** What the server renders for the open card. The id is null for an empty map. */
 export type OpenView = { id: string | null; html?: string };
 
 type Source = {
-  addEventListener(type: string, listener: () => void): void;
+  addEventListener(
+    type: string,
+    listener: (event: { data?: unknown }) => void,
+  ): void;
   close(): void;
 };
 
@@ -22,6 +26,10 @@ export type MapStoreDeps = {
   show: (view: OpenView) => void;
   reload: () => void;
   stashDraft: () => void;
+  /** The chat parts that the live channel carries, with their JSON data (#werk-progress). */
+  chat?: (type: string, data: string) => void;
+  /** Called each time the channel connects, so the chat can read what it missed. */
+  connected?: () => void;
 };
 
 export type MapStore = {
@@ -51,7 +59,15 @@ export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
     start() {
       if (source) return;
       source = deps.connect(apiOf(project, "/live"));
-      source.addEventListener("open", () => void refresh());
+      source.addEventListener("open", () => {
+        void refresh();
+        deps.connected?.();
+      });
+      for (const type of CHAT_EVENTS) {
+        source.addEventListener(type, (event) =>
+          deps.chat?.(type, String(event.data ?? "")),
+        );
+      }
       source.addEventListener("changed", () => void refresh());
       source.addEventListener("reload", () => {
         deps.stashDraft();

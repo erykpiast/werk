@@ -93,8 +93,11 @@ async function playReply(
   reply: Reply,
 ): Promise<number | null> {
   const open = new Set<string>();
+  // A scripted result line is the end of the reply, with the duration and cost the script gives it.
+  let ended = false;
   for (const step of reply) {
     if ("event" in step) {
+      if (step.event.type === "result") ended = true;
       ctx.out(JSON.stringify(step.event));
     } else if ("edit" in step) {
       const target = resolveEdit(ctx.cwd, step.edit);
@@ -129,14 +132,16 @@ async function playReply(
   }
   // The input is closed: each ask that is still open is denied.
   for (const id of open) ctx.out(toolResult(id, false));
-  ctx.out(
-    JSON.stringify({
-      type: "result",
-      subtype: "success",
-      is_error: false,
-      result: "",
-    }),
-  );
+  if (!ended) {
+    ctx.out(
+      JSON.stringify({
+        type: "result",
+        subtype: "success",
+        is_error: false,
+        result: "",
+      }),
+    );
+  }
   return null;
 }
 

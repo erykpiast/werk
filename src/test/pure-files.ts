@@ -39,4 +39,10 @@ export const PURE_FILES: readonly string[] = [
   "src/projects/names.ts",
   "src/projects/list.ts",
   "client/lib/project-route.ts",
+  "src/chat/turn-queue.ts",
+  "src/chat/card-line.ts",
+  "src/chat/build-rules.ts",
+  "src/chat/reply-stream.ts",
+  "src/chat/child-args.ts",
+  "client/lib/chat-log.ts",
 ];

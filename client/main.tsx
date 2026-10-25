@@ -1,7 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { ChatPane } from "./app/chat-pane";
 import { Composer } from "./app/composer";
 import { addProjectFromDialog } from "./lib/add-project";
+import { createChatStore } from "./lib/chat-store";
 import { stashDraft } from "./lib/draft";
 import { createMapStore } from "./lib/map-store";
 import { firstOpenable, pageOf, projectOf } from "./lib/project-route";
@@ -13,14 +15,11 @@ import "./index.css";
  */
 const scope = document.querySelector("[data-slot=header-row-1]");
 const body = document.querySelector("[data-slot=body]");
-const composerRoot = document.getElementById("composer-root");
-if (composerRoot) {
-  createRoot(composerRoot).render(
-    <StrictMode>
-      <Composer />
-    </StrictMode>,
-  );
-}
+const chatRoot = document.getElementById("chat-root");
+const chatReact = chatRoot ? createRoot(chatRoot) : null;
+const token = () =>
+  document.querySelector<HTMLMetaElement>("meta[name=werk-token]")?.content ??
+  "";
 
 const say = (text: string) => {
   if (body) body.textContent = text;
@@ -32,12 +31,9 @@ function addProjectButton() {
   button.type = "button";
   button.textContent = "Add project…";
   button.addEventListener("click", () => {
-    const token =
-      document.querySelector<HTMLMetaElement>("meta[name=werk-token]")
-        ?.content ?? "";
     addProjectFromDialog({
       fetch: (url, init) => fetch(url, init),
-      token,
+      token: token(),
       confirm: (question) => window.confirm(question),
       go: (path) => location.assign(path),
     }).then(
@@ -59,6 +55,11 @@ async function start() {
       projects: { name: string; missing: boolean }[];
     };
     const first = firstOpenable(list.projects);
+    chatReact?.render(
+      <StrictMode>
+        <Composer />
+      </StrictMode>,
+    );
     if (first === null) {
       say("No project on the list. Add a folder that has a git repository.");
     } else {
@@ -66,6 +67,24 @@ async function start() {
     }
     return;
   }
+  // The card the left pane shows is the card a message names (#werk-card-blind).
+  let openId: string | null = null;
+  const chat = createChatStore(
+    {
+      fetch: (url, init) => fetch(url, init),
+      token: token(),
+      card: () => openId,
+      now: () => Date.now(),
+      newTurn: () =>
+        `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`,
+    },
+    project,
+  );
+  chatReact?.render(
+    <StrictMode>
+      <ChatPane store={chat} />
+    </StrictMode>,
+  );
   createMapStore(
     {
       fetch: async (url) => {
@@ -77,7 +96,10 @@ async function start() {
         return res;
       },
       connect: (url) => new EventSource(url),
+      chat: (type, data) => chat.receive(type, data),
+      connected: () => void chat.load(),
       show: (view) => {
+        openId = view.id;
         if (scope) {
           scope.textContent =
             view.id === null ? project : `${project} · #${view.id}`;
