@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test --parallel=4 --timeout=15000",
     "test:coverage": "bun test --parallel=4 --timeout=15000 --coverage --coverage-reporter=text --coverage-reporter=lcov && bun src/test/coverage-gate.ts",
-    "e2e": "playwright test --pass-with-no-tests"
+    "e2e": "playwright test --pass-with-no-tests",
+    "smoke": "bun src/release/build.ts dist/smoke --current && bun src/release/smoke.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",

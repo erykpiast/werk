@@ -5,7 +5,7 @@ PINNED_BUN := $(shell cat .bun-version)
 STAMP := node_modules/.install-stamp
 
 .DEFAULT_GOAL := help
-.PHONY: help bun-version install lint lint-fix typecheck test test-coverage e2e check dev release-build
+.PHONY: help bun-version install lint lint-fix typecheck test test-coverage e2e check dev smoke release-build
 
 help: bun-version ## List every target with its description
 	@grep -E '^[a-z0-9-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -58,6 +58,9 @@ check: bun-version $(STAMP) ## Run every check in the merge loop's order
 
 dev: bun-version $(STAMP) ## Start the dev server: Vite serves the client, and a client change reloads the page
 	bun run dev
+
+smoke: bun-version $(STAMP) ## Build the executable for this platform, start it once, and read its map
+	bun run smoke
 
 release-build: bun-version $(STAMP) ## Build one executable per platform with the client inside, and a checksum beside each
 	bun src/release/build.ts

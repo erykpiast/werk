@@ -1,0 +1,28 @@
+# Every push to the main line, and every pull request, runs all checks on a clean machine,
+# builds the executable for the runner's platform and starts it once (#werk-ci).
+# A red run blocks a release of that commit. It does not undo the merge.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # The pinned Bun version comes from the repository (#werk-devex-toolver).
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: make lint
+      - run: make typecheck
+      - run: make test
+      - run: make test-coverage
+      - run: make e2e
+      - run: make smoke

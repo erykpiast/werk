@@ -1,7 +1,8 @@
 /**
  * The release build: one executable for each of macOS and Linux on ARM and Intel, each with a
  * checksum beside it. No tag, tap or publish step runs here (#werk-dist).
- * Usage: bun src/release/build.ts [output folder]
+ * Usage: bun src/release/build.ts [output folder] [--current]
+ * --current builds only the platform of this machine.
  */
 import { createHash } from "node:crypto";
 import {
@@ -48,7 +49,18 @@ function filesUnder(dir: string): string[] {
     .sort();
 }
 
-export function build(outDir: string): string[] {
+/** The platform this machine runs, which a CI run builds and starts. */
+export function currentPlatform(): (typeof PLATFORMS)[number] {
+  const suffix = `${process.platform}-${process.arch}`;
+  const found = PLATFORMS.find((p) => p.suffix === suffix);
+  if (!found) throw new Error(`werk: no executable platform for ${suffix}`);
+  return found;
+}
+
+export function build(
+  outDir: string,
+  platforms: readonly (typeof PLATFORMS)[number][] = PLATFORMS,
+): string[] {
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
 
@@ -76,7 +88,7 @@ export function build(outDir: string): string[] {
   );
 
   const written: string[] = [];
-  for (const { target, suffix } of PLATFORMS) {
+  for (const { target, suffix } of platforms) {
     const file = join(outDir, `werk-${suffix}`);
     // Vite loads only in dev mode, so the executable does not carry it.
     run([
@@ -100,6 +112,10 @@ export function build(outDir: string): string[] {
 }
 
 if (import.meta.main) {
-  const files = build(process.argv[2] ?? join(REPO, "dist", "release"));
+  const args = process.argv.slice(2);
+  const files = build(
+    args.find((a) => !a.startsWith("--")) ?? join(REPO, "dist", "release"),
+    args.includes("--current") ? [currentPlatform()] : PLATFORMS,
+  );
   for (const file of files) console.log(`werk: built ${file}`);
 }
