@@ -1,14 +1,14 @@
-// `edit` sets who, or the body of an open card; a ghost's words are frozen (#werk-cli-edit, #werk-cli-retitle).
+// `edit` sets who; a card's words change only through a proposal, and a ghost's are frozen (#werk-cli-edit, #werk-cli-retitle).
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 import { appendEvents, logPathFor } from "../map/log-store.ts";
 
 const USAGE =
-  "usage: edit <id> [--who you|me|prototype] | edit <id> --body <text>";
+  "usage: edit <id> --who you|me|prototype (a change of words goes through propose)";
 
 registerVerb({
   name: "edit",
-  summary: "Set who decides a card, or edit its body",
+  summary: "Set who decides a card",
   run: ({ args, cwd, env, out, err }) => {
     const parsed = parseArgs(args, { flags: ["who", "body"] });
     if (!parsed.ok || parsed.positional.length !== 1) {

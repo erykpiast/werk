@@ -235,15 +235,14 @@ describe("ghost events", () => {
     expect(map.nodes.get("a")?.who).toBe("you");
   });
 
-  test("an edit of a real card sets its words", () => {
-    const map = fold(
-      entries(
+  test("an edit of the words of a real card refuses too", () => {
+    expect(
+      rules(
         node("a"),
         { type: "node.accepted", id: "a", actor: "you" },
         edit({ body: "b", why: "w" }),
       ),
-    );
-    expect(map.nodes.get("a")).toMatchObject({ body: "b", why: "w" });
+    ).toEqual(["frozen"]);
   });
 
   test("a bad edit, accept, discard or note is a bad-event or an unknown card", () => {

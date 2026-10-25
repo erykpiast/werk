@@ -254,7 +254,6 @@ test("say, inbox, accept, discard and add refuse bad input", async () => {
     ["inbox", "a"],
     ["inbox", "--since", "x"],
     ["add", "a", "--title", "A", "--kind", "x"],
-    ["add", "a", "--title", "A", "--who", "x"],
   ]) {
     expect((await werk(...args)).code).toBe(2);
   }

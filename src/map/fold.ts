@@ -280,14 +280,14 @@ function applyEdited(map: FoldedMap, fields: Fields): Violation | null {
   }
   const node = map.nodes.get(id);
   if (!node) return { rule: "unknown-card", detail: `no card "${id}"` };
-  if (node.proposed && (why !== null || body !== null)) {
+  if (why !== null || body !== null) {
     return {
       rule: "frozen",
-      detail: `"${id}" is a ghost and its words are frozen; discard it and propose it again`,
+      detail: node.proposed
+        ? `"${id}" is a ghost and its words are frozen; discard it and propose it again`
+        : `"${id}" changes its words only through a proposal`,
     };
   }
-  if (why !== null) node.why = why;
-  if (body !== null) node.body = body;
   if (who !== null) node.who = who;
   return null;
 }
