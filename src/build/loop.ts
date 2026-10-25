@@ -1,7 +1,7 @@
 /**
  * The builder loop of one ticket: a worktree off the main line's tip, a fresh agent per pass, the
- * checks as the verdict, and a hand-off by how the build ends (#st-build-ticket, #st-build-implement,
- * #lp-stateless, #st-build-ticket-hand-off, #werk-board-control-archive-ends-build).
+ * checks, the grader and the review as the verdict, and a hand-off by how the build ends (#st-build-ticket,
+ * #st-build-implement, #lp-stateless, #st-build-ticket-hand-off, #werk-board-control-archive-ends-build).
  */
 import { dirname, join, resolve } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
@@ -20,7 +20,13 @@ import type { Cause } from "../pipeline/fold.ts";
 import { pipelineLogBeside, writeDetailFile } from "../pipeline/log-store.ts";
 import { buildBrief, tailOf } from "./brief.ts";
 import { checkName, judgeCheck } from "./checks.ts";
-import { gatherTicket, ticketPath } from "./gather.ts";
+import { fileFollowup } from "./file-followup.ts";
+import {
+  gatherGrading,
+  gatherTicket,
+  ticketPath,
+  touchesOf,
+} from "./gather.ts";
 import {
   addWorktree,
   commitPass,
@@ -28,6 +34,13 @@ import {
   removeWorktree,
   type Worktree,
 } from "./git.ts";
+import type { Grade } from "./grade.ts";
+import {
+  type Grading,
+  type JudgeContext,
+  type Judged,
+  judgePass,
+} from "./judge-pass.ts";
 import { createRecorder, type Recorder } from "./recorder.ts";
 import { type ProcessResult, runProcess } from "./run-process.ts";
 import { costOf } from "./stream-cost.ts";
@@ -69,6 +82,8 @@ export type BuildResult = {
   passes: number;
   branch: string;
   reason?: string;
+  /** The follow-up ticket that holds the small gaps of a last counted pass. */
+  followup?: string;
 };
 
 /** A build that cannot start. Nothing was written. */
@@ -84,9 +99,12 @@ type PassFailure = {
 };
 
 type PassVerdict =
-  | { kind: "green"; flaky: string[] }
-  | { kind: "red"; failure: PassFailure }
+  | { kind: "green"; flaky: string[]; judged?: Judged }
+  | { kind: "red"; failure: PassFailure; judged?: Judged }
   | { kind: "archived" };
+
+/** The silence limit of a judge session (#lp-overseer-silence). */
+const JUDGE_SILENCE_MS = 60_000;
 
 /** Reads the board about once for each `pollMs`. An archive of the ticket aborts the signal. */
 function watchArchive(boardLog: string, ticket: string, pollMs: number) {
@@ -125,6 +143,8 @@ type Run = {
   ticket: string;
   buildId: string;
   signal: AbortSignal;
+  grading: Grading;
+  judging: JudgeContext;
   /** The text of the ticket, which the classifier reads with each ask. */
   ticketText: string;
   classify: (prompt: string) => Promise<string | null>;
@@ -217,6 +237,8 @@ async function runPass(
   brief: string,
   commands: readonly string[],
   launch: ReturnType<typeof buildLaunchOptions>,
+  previous: Grade | null,
+  lastCounted: boolean,
 ): Promise<PassVerdict> {
   const { options, tree, recorder, pipelineLog, boardLog, ticket, buildId } =
     run;
@@ -274,11 +296,22 @@ async function runPass(
   }
   commitPass(tree.dir, options.env, n);
   const finish = (verdict: PassVerdict): PassVerdict => {
+    const findings =
+      verdict.kind === "archived" ? null : (verdict.judged?.findings ?? null);
+    const recorded = findings === null ? {} : { findings };
     if (verdict.kind === "green") {
-      endPass("green", { cost, transcript: name });
+      endPass("green", { cost, transcript: name, ...recorded });
     } else if (verdict.kind === "red") {
       const { gate, reason, cause, file } = verdict.failure;
-      endPass("red", { cost, transcript: name, gate, reason, cause, file });
+      endPass("red", {
+        cost,
+        transcript: name,
+        gate,
+        reason,
+        cause,
+        file,
+        ...recorded,
+      });
     } else
       endPass("red", {
         cost,
@@ -304,7 +337,29 @@ async function runPass(
       failure: { gate, reason: broken, text: broken },
     });
   }
-  return finish(await runChecks(run, n, commands));
+  const checked = await runChecks(run, n, commands);
+  if (checked.kind !== "green") return finish(checked);
+  // Checks stop at the first red; the grader runs after green checks, the review after a green grade
+  // (#st-build-ticket-order).
+  const judged = await judgePass(
+    run.judging,
+    n,
+    run.grading,
+    previous,
+    lastCounted,
+  );
+  if (judged.kind === "archived") return finish({ kind: "archived" });
+  if (judged.kind === "green")
+    return finish({ ...checked, judged: judged.judged });
+  return finish({
+    kind: "red",
+    judged: judged.judged,
+    failure: {
+      gate: judged.gate,
+      reason: judged.reason,
+      text: judged.text,
+    },
+  });
 }
 
 export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
@@ -341,6 +396,11 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
 
   // The dead pass's worktree still holds the branch: its uncommitted edits are lost.
   if (resume !== undefined) releaseBranch(resolve(cwd), env, ticket.id);
+  const file = ticketPath(mapLog, ticket.plan, ticket.number);
+  const grading = gatherGrading(input, file, map);
+  if (grading === null)
+    throw new BuildRefused(`ticket ${ticket.id} has no readable ticket file`);
+
   const tree = addWorktree(resolve(cwd), env, ticket.id, options.mainLine);
   const moved =
     resume !== undefined
@@ -381,6 +441,19 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
     ticket: ticket.id,
     buildId,
     signal: watch.signal,
+    grading,
+    judging: {
+      dir: tree.dir,
+      base: tree.base,
+      env,
+      pipelineLog,
+      buildId,
+      ticket: ticket.id,
+      timeoutMs: options.agentMs,
+      silenceMs: JUDGE_SILENCE_MS,
+      signal: watch.signal,
+      launchFor: (role) => buildLaunchOptions({ ...launchInput, role }),
+    },
     ticketText: input.ticket,
     classify: classifier({
       command: options.command,
@@ -395,24 +468,27 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
       timeoutMs: options.classifyMs,
     }),
   };
-  const launch = buildLaunchOptions({
-    role: "builder",
+  const launchInput = {
     werk: selfCommandLine(),
     projectIsWerk: resolve(cwd) === REPO,
     buildRuleTitles: buildRuleTitles(map),
-  });
+  };
+  const launch = buildLaunchOptions({ ...launchInput, role: "builder" });
   const result = (
     outcome: BuildResult["outcome"],
     passes: number,
     reason?: string,
+    followup?: string,
   ): BuildResult => ({
     outcome,
     passes,
     branch: tree.branch,
     ...(reason === undefined ? {} : { reason }),
+    ...(followup === undefined ? {} : { followup }),
   });
   try {
     let failure: string | null = resume?.failure ?? null;
+    let previous: Grade | null = null;
     for (let n = (resume?.afterPass ?? 0) + 1; n <= options.cap; n++) {
       const brief = buildBrief({
         ...input,
@@ -421,7 +497,16 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
         base: tree.base,
         failure,
       });
-      const verdict = await runPass(run, n, brief, input.checks, launch);
+      // The last counted pass is the one that would use up the retry cap (#st-grade-defer).
+      const verdict = await runPass(
+        run,
+        n,
+        brief,
+        input.checks,
+        launch,
+        previous,
+        n === options.cap,
+      );
       if (verdict.kind === "archived" || watch.signal.aborted)
         return result("archived", n);
       appendBoardEvent(boardLog, {
@@ -430,6 +515,7 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
         n,
         result: verdict.kind,
       });
+      if (verdict.judged?.grade) previous = verdict.judged.grade;
       if (verdict.kind === "green") {
         const to = appendBoardEvent(boardLog, {
           type: "ticket.moved",
@@ -438,7 +524,22 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
           actor: "loop",
         });
         if (!to.ok) return result("archived", n);
-        return result("merging", n);
+        const deferred = verdict.judged?.deferred ?? [];
+        const followup =
+          deferred.length === 0
+            ? null
+            : fileFollowup(
+                mapLog,
+                boardLog,
+                {
+                  id: ticket.id,
+                  title: ticket.title,
+                  touches: touchesOf(input),
+                  checks: input.checks,
+                },
+                deferred,
+              );
+        return result("merging", n, undefined, followup ?? undefined);
       }
       failure = verdict.failure.text;
     }

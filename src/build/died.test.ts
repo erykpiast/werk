@@ -9,6 +9,7 @@ import type { Reply, Script } from "../fake-agent/script.ts";
 import { open } from "../map/mark-fixtures.ts";
 import { sweepDeadBuilds } from "../serve/dead-builds-watch.ts";
 import { createProject, type Project } from "../test-env/project.ts";
+import { withJudges } from "./judge-fixtures.ts";
 
 const CLI = join(import.meta.dir, "..", "cli.ts");
 const TICKET = `title: Make the check pass
@@ -38,9 +39,7 @@ const writeLines = (path: string, events: unknown[]) => {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, events.map((e) => `${JSON.stringify(e)}\n`).join(""));
 };
-const builder = (...replies: Reply[]): Script => ({
-  roles: { builder: { replies } },
-});
+const builder = (...replies: Reply[]): Script => withJudges(replies);
 const git = (...args: string[]) => project.run(["git", ...args]);
 
 /** A pid whose process has exited. */

@@ -6,6 +6,8 @@ import type { FoldedMap } from "../map/fold.ts";
 import { listOf, parseTicket } from "../tickets/ticket-parse.ts";
 import { type BriefInput, type CardBrief, storyLines } from "./brief.ts";
 import { checksOf } from "./checks.ts";
+import { closureOf, criteriaOf, lineSpecs } from "./grade-lines.ts";
+import type { Grading } from "./judge-pass.ts";
 
 /** The part of the brief that stays the same on every pass. */
 export type TicketInput = Pick<
@@ -22,7 +24,7 @@ export function ticketPath(
   return join(dirname(mapLog), "tickets", plan, `${number}.md`);
 }
 
-function cardBrief(map: FoldedMap, id: string): CardBrief | null {
+export function cardBrief(map: FoldedMap, id: string): CardBrief | null {
   const node = map.nodes.get(id);
   if (node === undefined || node.kind !== "card" || node.proposed) return null;
   const rejected = map.edges
@@ -60,4 +62,31 @@ export function gatherTicket(
       searchCards(map, { terms: [], status: null, under: null }),
     ),
   };
+}
+
+/** What the grader reads: the criteria, and the decided cards of the depends_on closure of the cited cards (#lp-prod-judge). */
+export function gatherGrading(
+  input: TicketInput,
+  file: string,
+  map: FoldedMap,
+): Grading | null {
+  const ticket = parseTicket(file, input.ticket);
+  if (ticket === null) return null;
+  const cites = listOf(ticket.headers.cites?.value).map((id) =>
+    id.startsWith("#") ? id.slice(1) : id,
+  );
+  const cards = closureOf(map, cites)
+    .map((id) => cardBrief(map, id))
+    .filter((card): card is CardBrief => card !== null);
+  return {
+    ticket: input.ticket,
+    stories: input.stories,
+    cards,
+    specs: lineSpecs(criteriaOf(ticket), cards),
+  };
+}
+
+/** The touches line of the ticket: the modules it changes. */
+export function touchesOf(input: TicketInput): string {
+  return parseTicket("", input.ticket)?.headers.touches?.value ?? "";
 }

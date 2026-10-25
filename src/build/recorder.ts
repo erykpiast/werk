@@ -13,6 +13,8 @@ export type EndInfo = {
   file?: string;
   /** The builder transcript of a pass, relative to the folder of the log (#ms-store-files). */
   transcript?: string;
+  /** The detail file that holds every finding of the review of a pass (#lp-prod-review). */
+  findings?: string;
   /** The ticket was archived during the step: the pass costs no retry. */
   archived?: boolean;
 };
@@ -60,6 +62,7 @@ export function createRecorder(
           ...(info.transcript === undefined
             ? {}
             : { transcript: info.transcript }),
+          ...(info.findings === undefined ? {} : { findings: info.findings }),
           ...(info.archived ? { archived: true } : {}),
         });
     },

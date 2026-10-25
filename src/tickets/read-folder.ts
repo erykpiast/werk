@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { ticketNumber } from "./ticket-parse.ts";
 
@@ -19,4 +19,11 @@ export function clearTicketFolder(
     if (digits === null || !keep.has(Number(digits)))
       rmSync(join(dir, name), { recursive: true, force: true });
   }
+}
+
+/** The number at the start of each file name in a ticket folder; a missing folder has none. */
+export function ticketFileNumbers(dir: string): string[] {
+  return existsSync(dir)
+    ? readdirSync(dir).flatMap((name) => ticketNumber(name) ?? [])
+    : [];
 }
