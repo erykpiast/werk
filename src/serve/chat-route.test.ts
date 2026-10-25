@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { ChatSession } from "../chat/session.ts";
 import type { Context } from "../projects/context.ts";
 import { createProject, type Project } from "../test-env/project.ts";
-import { clearRoute, modelRoute } from "./chat-route.ts";
+import { clearRoute, commandsRoute, modelRoute } from "./chat-route.ts";
 
 const CLI = join(import.meta.dir, "..", "cli.ts");
 
@@ -248,4 +248,19 @@ test("a crashed agent of one tab marks only that tab, and its next message start
     ).events.some((e) => e.name === "turn-end"),
   ).toBe(true);
   expect((await fetch(`${base}/chat?tab=..%2Fx`)).status).toBe(400);
+});
+
+test("the commands read answers the names of the first chat that has any, and an empty list with no chat", async () => {
+  const chat = (names: string[]) => ({ commands: () => names });
+  const none = { chats: new Map() } as unknown as Context;
+  expect(await commandsRoute(none).json()).toEqual({ commands: [] });
+  const some = {
+    chats: new Map([
+      ["main", chat([])],
+      ["A", chat(["review", "recall"])],
+    ]),
+  } as unknown as Context;
+  expect(await commandsRoute(some).json()).toEqual({
+    commands: ["review", "recall"],
+  });
 });

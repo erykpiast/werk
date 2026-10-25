@@ -63,11 +63,12 @@ export function tabsRoute(context: Context): Response {
   return Response.json({ tabs: [MAIN, ...others] });
 }
 
-/** The command names of one conversation's agent. */
-export function commandsRoute(context: Context, req: Request): Response {
-  const tab = tabOf(req);
-  if (typeof tab !== "string") return tab;
-  return Response.json({ commands: context.chats.get(tab)?.commands() ?? [] });
+/** The command names that the project's chats keep: the first chat that has any wins. */
+export function commandsRoute(context: Context): Response {
+  const named = [...context.chats.values()]
+    .map((chat) => chat.commands())
+    .find((names) => names.length > 0);
+  return Response.json({ commands: named ?? [] });
 }
 
 function refuse(message: string, status = 400): Response {
