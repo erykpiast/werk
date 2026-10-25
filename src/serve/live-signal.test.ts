@@ -1,27 +1,16 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import {
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
-import { tmpdir } from "node:os";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createProject, type Project } from "../test-env/project.ts";
-import { builtClient } from "./client-built.ts";
 
 const CLI = join(import.meta.dirname, "..", "cli.ts");
 
 let project: Project;
-let scratch: string;
 beforeEach(() => {
   project = createProject();
-  scratch = mkdtempSync(join(tmpdir(), "werk-client-"));
 });
 afterEach(async () => {
   await project.dispose();
-  rmSync(scratch, { recursive: true, force: true });
 });
 
 async function port(): Promise<number> {
@@ -90,32 +79,4 @@ test("a read of the map sends no signal", async () => {
   await fetch(`http://127.0.0.1:${p}/api/graph?shape=1`);
   expect(await until(reader, "event:")).not.toContain("event:");
   await reader.cancel();
-});
-
-test("the built client serves its page with the token and its files, and nothing outside its folder", async () => {
-  const out = join(scratch, "out");
-  mkdirSync(join(out, "assets"), { recursive: true });
-  writeFileSync(
-    join(out, "index.html"),
-    "<html><head></head><body>app</body></html>",
-  );
-  writeFileSync(join(out, "assets", "app.js"), "console.log(1)");
-  const client = builtClient(out);
-
-  const page = await (await client.page("tok")).text();
-  expect(page).toContain('<meta name="werk-token" content="tok">');
-  expect(page).toContain("app");
-
-  const asset = await client.asset(new Request("http://x/assets/app.js"));
-  expect(await asset?.text()).toBe("console.log(1)");
-  expect(
-    await client.asset(new Request("http://x/assets/missing.js")),
-  ).toBeNull();
-  expect(await client.asset(new Request("http://x/%2e%2e/secret"))).toBeNull();
-});
-
-test("a client that is not built answers 503 and still carries the token", async () => {
-  const res = await builtClient(join(scratch, "none")).page("tok");
-  expect(res.status).toBe(503);
-  expect(await res.text()).toContain('content="tok"');
 });

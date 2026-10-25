@@ -7,8 +7,19 @@
   </head>
   <body>
     <div id="screen">
-      <div id="left-pane-root"></div>
-      <div id="right-pane-root"></div>
+      <section id="left-pane" aria-label="Map pane">
+        <header>
+          <div data-slot="header-row-1">werk</div>
+          <div data-slot="header-row-2">
+            <div data-slot="header-left"></div>
+            <div data-slot="header-right"></div>
+          </div>
+        </header>
+        <div data-slot="body"><p>Loading the map…</p></div>
+      </section>
+      <aside id="right-pane" aria-label="Chat pane" data-slot="right-pane">
+        <div id="composer-root"></div>
+      </aside>
     </div>
     <script type="module" src="/main.tsx"></script>
   </body>

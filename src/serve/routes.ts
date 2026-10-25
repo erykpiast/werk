@@ -3,6 +3,7 @@ import { readMap } from "../map/log-store.ts";
 import type { ClientServer } from "./client-server.ts";
 import type { Route } from "./handler.ts";
 import { type Clients, live } from "./live-channel.ts";
+import { renderOpenCard } from "./open-card.ts";
 import { cardRead, shapeRead } from "./read-api.ts";
 
 export type RouteContext = {
@@ -31,6 +32,9 @@ export function createRoute(ctx: RouteContext): Route {
         return json({ error: "the graph is read with shape=1" }, 400);
       }
       return json(shapeRead(readMap(ctx.logPath).map));
+    }
+    if (url.pathname === "/api/open") {
+      return json(renderOpenCard(readMap(ctx.logPath).map) ?? { id: null });
     }
     const card = /^\/api\/card\/([^/]*)$/.exec(url.pathname);
     if (card) {

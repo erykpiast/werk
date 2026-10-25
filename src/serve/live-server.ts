@@ -5,9 +5,8 @@
  */
 import { randomBytes } from "node:crypto";
 import { dirname, join } from "node:path";
-import { builtClient } from "./client-built.ts";
 import { type DevClient, startDevClient } from "./client-dev.ts";
-import type { ClientServer } from "./client-server.ts";
+import { type ClientServer, noClient } from "./client-server.ts";
 import { createHandler, type Handler } from "./handler.ts";
 import {
   type RelayData,
@@ -23,7 +22,6 @@ import { judgeRequest } from "./trust.ts";
 
 const REPO = join(import.meta.dirname, "..", "..");
 const VITE_CONFIG = join(REPO, "vite.config.ts");
-const CLIENT_OUT = join(REPO, "dist", "client");
 
 type Live = {
   server: Bun.Server<RelayData>;
@@ -52,7 +50,7 @@ export type ServeOptions = {
   port: number;
   out: (text: string) => void;
   err: (text: string) => void;
-  /** Serve the client through Vite instead of from the build output. */
+  /** Serve the client through Vite. Without it the server has the API and the live channel only. */
   dev?: boolean;
   /** A parent that started this server. The server stops when it dies. */
   parentPid?: number;
@@ -141,7 +139,7 @@ export async function serve(options: ServeOptions): Promise<number> {
         onReload: () => broadcast(live.clients, "reload"),
       });
     }
-    live.client = live.dev ?? builtClient(CLIENT_OUT);
+    live.client = live.dev ?? noClient;
     live.handler = handlerFor(live, options.logPath);
     live.server = await listen(options.port, async (req, server) => {
       const { dev } = live;

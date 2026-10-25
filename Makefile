@@ -5,7 +5,7 @@ PINNED_BUN := $(shell cat .bun-version)
 STAMP := node_modules/.install-stamp
 
 .DEFAULT_GOAL := help
-.PHONY: help bun-version install lint lint-fix typecheck test test-coverage e2e build check dev
+.PHONY: help bun-version install lint lint-fix typecheck test test-coverage e2e check dev
 
 help: bun-version ## List every target with its description
 	@grep -E '^[a-z0-9-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -44,9 +44,6 @@ test: bun-version $(STAMP) ## Run the unit tests on four parallel workers
 
 test-coverage: bun-version $(STAMP) ## Run the unit tests with coverage, then the 90% gate on the pure files
 	bun run test:coverage
-
-build: bun-version $(STAMP) ## Build the client into dist/client
-	bun run build
 
 e2e: bun-version $(STAMP) ## Run the Playwright tests in Chromium, and install the browser when it is missing
 	bunx playwright install chromium

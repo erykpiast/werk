@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "WERK_DEV=1 bun src/cli.ts serve",
-    "build": "vite build",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
@@ -23,10 +22,8 @@
     "typescript": "7.0.2"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.5.0",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
-    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",

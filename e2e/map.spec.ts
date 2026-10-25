@@ -63,7 +63,6 @@ test("a card added while the server was stopped shows after the page reconnects"
 }) => {
   await page.goto(app.url);
   await expect(leftPane(page).getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByText("live", { exact: true })).toBeVisible();
 
   await app.stop();
   expect(
@@ -110,18 +109,18 @@ test("a client edit that can apply in place keeps the page and the draft", async
   await expect(leftPane(page).getByRole("heading", { level: 1 })).toBeVisible();
   await markLoaded(page);
 
-  const view = join(appCopy.appDir, "client", "app", "map-view.tsx");
+  const composerFile = join(appCopy.appDir, "client", "app", "composer.tsx");
   writeFileSync(
-    view,
-    readFileSync(view, "utf8").replace(
-      "{map.open.title}</h1>",
-      "{map.open.title} (edited)</h1>",
+    composerFile,
+    readFileSync(composerFile, "utf8").replace(
+      "Message the agent",
+      "Message the agent (edited)",
     ),
   );
 
-  await expect(
-    leftPane(page).getByRole("heading", { level: 1, name: /\(edited\)/ }),
-  ).toBeVisible({ timeout: 20000 });
+  await expect(page.getByPlaceholder("Message the agent (edited)")).toBeVisible(
+    { timeout: 20000 },
+  );
   expect(await stillLoaded(page)).toBe(true);
   await expect(composer).toHaveValue("typed before the edit");
 });
