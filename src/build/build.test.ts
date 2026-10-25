@@ -192,6 +192,10 @@ test("archiving the ticket during a pass stops the agent within about a second a
   expect(ticket()?.retries).toBe(0);
   expect(ticket()?.column).toBe("building");
   expect(ticket()?.builds[0]?.ended).toBe(true);
+  const archived = [...readPipeline(pipelinePath()).builds.values()][0];
+  expect(archived?.counted).toBe(0);
+  expect(archived?.passes[0]?.archived).toBe(true);
+  expect(archived?.passes[0]?.transcript).toBeDefined();
   const worktrees = await project.run(["git", "worktree", "list"]);
   expect(worktrees.stdout.trim().split("\n")).toHaveLength(1);
 });

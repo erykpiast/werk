@@ -182,3 +182,18 @@ test("an event is checked for its shape", () => {
   expect(checkPipelineEvent(end("pass", 1, "red"))).toBeNull();
   expect(checkPipelineEvent(start("pass", 1))).toBeNull();
 });
+
+test("an archived pass costs no retry and is not the last failure", () => {
+  const b = build([
+    start("pass", 1),
+    end("check", 1, "red", { gate: "unit test", archived: true }),
+    end("pass", 1, "red", { archived: true, transcript: "files/p1.jsonl" }),
+  ]);
+  expect(b?.passes[0]).toMatchObject({
+    archived: true,
+    counted: false,
+    transcript: "files/p1.jsonl",
+  });
+  expect(b?.counted).toBe(0);
+  expect(b?.last).toBeUndefined();
+});

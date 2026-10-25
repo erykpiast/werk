@@ -46,6 +46,10 @@ export type Pass = {
   file?: string;
   /** Checks that failed and then passed on a rerun, on a green pass too (#ms-fail-cause). */
   flaky: string[];
+  /** The transcript of the builder session, relative to the folder of the log (#ms-store-files). */
+  transcript?: string;
+  /** The ticket was archived during the pass. Such a pass costs no retry (#werk-board-control-archive-ends-build). */
+  archived: boolean;
   /** Whether the pass counts toward the retry cap. */
   counted: boolean;
 };
@@ -125,7 +129,7 @@ function buildOf(pipeline: Pipeline, rec: Rec): Build {
 function passOf(build: Build, n: number): Pass {
   let pass = build.passes.find((p) => p.n === n);
   if (!pass) {
-    pass = { n, result: "running", flaky: [], counted: false };
+    pass = { n, result: "running", flaky: [], archived: false, counted: false };
     build.passes.push(pass);
     build.passes.sort((a, b) => a.n - b.n);
   }
@@ -146,12 +150,18 @@ function failStep(pass: Pass, rec: Rec): void {
 
 function applyEnded(build: Build, rec: Rec): void {
   const pass = passOf(build, rec.pass as number);
+  if (rec.archived === true) pass.archived = true;
   if (rec.step === "pass") {
+    pass.transcript = str(rec, "transcript") ?? pass.transcript;
+    if (pass.archived) {
+      pass.result = "red";
+      return;
+    }
     pass.result = rec.result as Result;
     if (pass.result === "red") failStep(pass, rec);
     return;
   }
-  if (rec.result === "red") {
+  if (rec.result === "red" && rec.archived !== true) {
     failStep(pass, rec);
     return;
   }
@@ -177,10 +187,13 @@ function settle(build: Build): void {
   for (const pass of build.passes) {
     pass.counted =
       pass.result === "red" &&
+      !pass.archived &&
       !FREE_CAUSES.some((cause) => cause === pass.cause);
   }
   build.counted = build.passes.filter((p) => p.counted).length;
-  const red = [...build.passes].reverse().find((p) => p.result === "red");
+  const red = [...build.passes]
+    .reverse()
+    .find((p) => p.result === "red" && !p.archived);
   if (red) {
     build.last = {
       pass: red.n,

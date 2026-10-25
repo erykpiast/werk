@@ -140,7 +140,11 @@ async function runChecks(
     const end = run.recorder.start(n, "check", name);
     let result = await once(command);
     if (result.aborted) {
-      end("red", { gate: name, reason: "the ticket was archived" });
+      end("red", {
+        gate: name,
+        reason: "the ticket was archived",
+        archived: true,
+      });
       return { kind: "archived" };
     }
     let verdict = judge(result);
@@ -150,7 +154,11 @@ async function runChecks(
       reran = true;
       result = await once(command);
       if (result.aborted) {
-        end("red", { gate: name, reason: "the ticket was archived" });
+        end("red", {
+          gate: name,
+          reason: "the ticket was archived",
+          archived: true,
+        });
         return { kind: "archived" };
       }
       verdict = judge(result);
@@ -224,17 +232,28 @@ async function runPass(
     result: agent.aborted ? "archived" : "ended",
   });
   if (agent.aborted) {
-    endPass("red", { cost, reason: "the ticket was archived" });
+    endPass("red", {
+      cost,
+      transcript: name,
+      reason: "the ticket was archived",
+      archived: true,
+    });
     return { kind: "archived" };
   }
   commitPass(tree.dir, options.env, n);
   const finish = (verdict: PassVerdict): PassVerdict => {
     if (verdict.kind === "green") {
-      endPass("green", { cost });
+      endPass("green", { cost, transcript: name });
     } else if (verdict.kind === "red") {
       const { gate, reason, cause, file } = verdict.failure;
-      endPass("red", { cost, gate, reason, cause, file });
-    } else endPass("red", { cost, reason: "the ticket was archived" });
+      endPass("red", { cost, transcript: name, gate, reason, cause, file });
+    } else
+      endPass("red", {
+        cost,
+        transcript: name,
+        reason: "the ticket was archived",
+        archived: true,
+      });
     return verdict;
   };
   const broken =
