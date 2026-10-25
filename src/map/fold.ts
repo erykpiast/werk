@@ -7,12 +7,7 @@
 
 import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
-import {
-  isOut,
-  proposeRemoval,
-  removeCard,
-  restoreCard,
-} from "./removal-rules.ts";
+import { isOut, removeCard, restoreCard } from "./removal-rules.ts";
 
 export type Kind = "card" | "option" | "source" | "excerpt";
 export type Who = "you" | "me" | "prototype";
@@ -65,7 +60,6 @@ export type RuleName =
   | "accept-actor"
   | "frozen"
   | "ghost-parent"
-  | "remove-actor"
   | "remove-target"
   | "no-grandparent"
   | "not-removed"
@@ -105,8 +99,6 @@ export type FoldedMap = {
   removals: Removal[];
   /** Edges with an end that is out. Each returns when both ends are in the map (#werk-write-remove-links). */
   waiting: Edge[];
-  /** Removals that an agent proposed and the person has not accepted. */
-  pendingRemovals: Map<string, { reparent: boolean }>;
   problems: Problem[];
 };
 
@@ -122,7 +114,6 @@ export function emptyMap(): FoldedMap {
     threads: new Map(),
     removals: [],
     waiting: [],
-    pendingRemovals: new Map(),
     problems: [],
   };
 }
@@ -356,17 +347,11 @@ export function applyEvent(
       return applyDiscarded(map, event);
     case "node.edited":
       return applyEdited(map, event);
-    case "removal.proposed": {
-      const removal = removalFields(event);
-      return isViolation(removal)
-        ? removal
-        : proposeRemoval(map, removal.id, removal.reparent);
-    }
     case "node.removed": {
       const removal = removalFields(event);
       return isViolation(removal)
         ? removal
-        : removeCard(map, removal.id, removal.reparent, event.actor);
+        : removeCard(map, removal.id, removal.reparent);
     }
     case "node.restored":
       return typeof event.id === "string"

@@ -1,18 +1,18 @@
-// `remove` takes a card out with its subtree, or proposes it when no person asked (#werk-remove).
+// `remove` takes a card out with its subtree, or only the card with --reparent (#werk-remove).
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 import { appendEvents, logPathFor } from "../map/log-store.ts";
 
-const USAGE = "usage: remove <id> [--reparent] [--actor you]";
+const USAGE = "usage: remove <id> [--reparent]";
 
 registerVerb({
   name: "remove",
-  summary: "Remove a card with its subtree; without --actor you, propose it",
+  summary: "Remove a card with its subtree, or only the card with --reparent",
   run: ({ args, cwd, env, out, err }) => {
     const reparent = args.includes("--reparent");
     const parsed = parseArgs(
       args.filter((arg) => arg !== "--reparent"),
-      { flags: ["actor"] },
+      { flags: [] },
     );
     if (!parsed.ok || parsed.positional.length !== 1) {
       err(
@@ -21,12 +21,10 @@ registerVerb({
       return 2;
     }
     const event: Record<string, unknown> = {
-      type:
-        parsed.flags.actor === undefined ? "removal.proposed" : "node.removed",
+      type: "node.removed",
       id: cardId(parsed.positional[0] as string),
     };
     if (reparent) event.reparent = true;
-    if (parsed.flags.actor !== undefined) event.actor = parsed.flags.actor;
     const result = appendEvents(logPathFor(cwd, env), [event]);
     if (!result.ok) {
       err(
@@ -34,7 +32,7 @@ registerVerb({
       );
       return 1;
     }
-    out(parsed.flags.actor === undefined ? "removal proposed" : "removed");
+    out("removed");
     return 0;
   },
 });

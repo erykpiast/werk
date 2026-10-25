@@ -20,7 +20,6 @@ const accept = (id: string) => ({ type: "node.accepted", id, actor: "you" });
 const remove = (id: string, extra: Record<string, unknown> = {}) => ({
   type: "node.removed",
   id,
-  actor: "you",
   ...extra,
 });
 const restore = (id: string) => ({ type: "node.restored", id });
@@ -191,10 +190,9 @@ describe("remove", () => {
     expect(rules(orphan)).toEqual(["parent-out"]);
   });
 
-  test("refuses without the person, on a ghost, on evidence, and for a reparent with no parent", () => {
+  test("refuses on a ghost, on evidence, and for a reparent with no parent", () => {
     const map = build(
       ...tree,
-      { type: "node.removed", id: "p" },
       remove("ghost"),
       node("ghost"),
       remove("ghost"),
@@ -205,7 +203,6 @@ describe("remove", () => {
       remove("p"),
     );
     expect(rules(map)).toEqual([
-      "remove-actor",
       "unknown-card",
       "remove-target",
       "remove-target",
@@ -216,44 +213,13 @@ describe("remove", () => {
     expect(map.problems.at(-1)?.detail).toContain("restore");
   });
 
-  test("a removed card takes no note and its pending removal", () => {
-    const map = build(
-      ...tree,
-      { type: "removal.proposed", id: "c1" },
-      remove("p"),
-      { type: "note.added", id: "p", by: "me", text: "hi" },
-    );
-    expect(map.pendingRemovals.size).toBe(0);
+  test("a removed card takes no note", () => {
+    const map = build(...tree, remove("p"), {
+      type: "note.added",
+      id: "p",
+      by: "me",
+      text: "hi",
+    });
     expect(rules(map)).toEqual(["unknown-card"]);
-  });
-});
-
-describe("proposed removal", () => {
-  test("is pending until the person removes the card", () => {
-    const pending = build(...tree, { type: "removal.proposed", id: "p" });
-    expect(pending.nodes.has("p")).toBe(true);
-    expect(pending.pendingRemovals.get("p")).toEqual({ reparent: false });
-    const done = build(
-      ...tree,
-      { type: "removal.proposed", id: "p", reparent: true },
-      remove("p", { reparent: true }),
-    );
-    expect(done.pendingRemovals.size).toBe(0);
-  });
-
-  test("is checked like a removal", () => {
-    const map = build(
-      ...tree,
-      { type: "removal.proposed", id: "zz" },
-      { type: "removal.proposed", id: "root", reparent: true },
-      { type: "removal.proposed", id: 3 },
-      { type: "node.restored", id: 3 },
-    );
-    expect(rules(map)).toEqual([
-      "unknown-card",
-      "no-grandparent",
-      "bad-event",
-      "bad-event",
-    ]);
   });
 });

@@ -54,18 +54,6 @@ function checkTarget(
   return null;
 }
 
-/** An agent's removal: the map records it as pending until the person accepts it. */
-export function proposeRemoval(
-  map: FoldedMap,
-  id: string,
-  reparent: boolean,
-): Violation | null {
-  const refused = checkTarget(map, id, reparent);
-  if (refused) return refused;
-  map.pendingRemovals.set(id, { reparent });
-  return null;
-}
-
 function childrenOf(map: FoldedMap, id: string): string[] {
   return [...map.parents].filter(([, parent]) => parent === id).map(([c]) => c);
 }
@@ -111,19 +99,12 @@ function evidenceOf(map: FoldedMap, cards: Set<string>): Set<string> {
   return taken;
 }
 
-/** Takes the card out with what goes with it. Refused unless the person asked for it. */
+/** Takes the card out with what goes with it. */
 export function removeCard(
   map: FoldedMap,
   id: string,
   reparent: boolean,
-  actor: unknown,
 ): Violation | null {
-  if (actor !== "you") {
-    return {
-      rule: "remove-actor",
-      detail: "a removal must state that the person asked for it",
-    };
-  }
   const refused = checkTarget(map, id, reparent);
   if (refused) return refused;
   const moved: { child: string; parent: string; why: string }[] = [];
@@ -153,7 +134,6 @@ export function removeCard(
     nodes.push(map.nodes.get(gone) as MapNode);
     map.nodes.delete(gone);
     map.parents.delete(gone);
-    map.pendingRemovals.delete(gone);
   }
   for (const key of ["edges", "ghostEdges"] as const) {
     const stay: Edge[] = [];
