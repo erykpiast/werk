@@ -4,7 +4,7 @@
  */
 
 export type Probe =
-  | { ok: true; processes: number; cpuMs: number }
+  | { ok: true; processes: number; cpuMs: number; pids: number[] }
   | { ok: false; why: string };
 
 /** The CPU time of `ps` (`[dd-][hh:]mm:ss[.cc]`) in milliseconds, or null when it does not read. */
@@ -23,7 +23,7 @@ export function parseCpuTime(text: string): number | null {
 }
 
 /**
- * The probe of the output of `ps -A -o pid=,ppid=,time=`: the number and the summed CPU time of every
+ * The probe of the output of `ps -A -o pid=,ppid=,time=`: the pids, the number and the summed CPU time of every
  * descendant of `rootPid`, not the root itself. A table that holds no row, or a row that does not read,
  * is a failed read. A table without the root is a read that ran and found no process.
  */
@@ -57,7 +57,11 @@ export function childrenOf(table: string, rootPid: number): Probe {
     }
   }
   let cpuMs = 0;
-  for (const pid of family)
-    if (pid !== rootPid) cpuMs += rows.get(pid)?.cpuMs ?? 0;
-  return { ok: true, processes: family.size - 1, cpuMs };
+  const pids: number[] = [];
+  for (const pid of family) {
+    if (pid === rootPid) continue;
+    cpuMs += rows.get(pid)?.cpuMs ?? 0;
+    pids.push(pid);
+  }
+  return { ok: true, processes: pids.length, cpuMs, pids };
 }

@@ -21,17 +21,20 @@ let notes: [string, string][];
 let prompts: string[];
 let answers: (string | null)[];
 let probes: Probe[];
+let killed: number[][];
 
 const deps = (): Deps => ({
   now: () => clock,
   cancel: (reason) => cancelled.push(reason),
+  killProcesses: (pids) => killed.push(pids),
   reply: (line) => replies.push(line),
   note: (act, text) => notes.push([act, text]),
   classify: async (prompt) => {
     prompts.push(prompt);
     return answers.shift() ?? null;
   },
-  probe: async () => probes.shift() ?? { ok: true, processes: 0, cpuMs: 0 },
+  probe: async () =>
+    probes.shift() ?? { ok: true, processes: 0, cpuMs: 0, pids: [] },
 });
 const context: Context = {
   brief: "the brief",
@@ -78,6 +81,7 @@ beforeEach(() => {
   prompts = [];
   answers = [];
   probes = [];
+  killed = [];
 });
 
 test("a slow start with no event is never silence", async () => {
@@ -122,7 +126,7 @@ test("a tool call in flight is not silence while its CPU time grows", async () =
   const o = make();
   o.event(call("t1"));
   for (let i = 0; i < 20; i++) {
-    probes.push({ ok: true, processes: 2, cpuMs: 100 * (i + 1) });
+    probes.push({ ok: true, processes: 2, cpuMs: 100 * (i + 1), pids: [5, 6] });
     await advance(o, 10);
   }
   expect(cancelled).toEqual([]);
@@ -131,16 +135,17 @@ test("a tool call in flight is not silence while its CPU time grows", async () =
   expect(cancelled[0]).toContain("silent");
 });
 
-test("flat CPU time for the flat limit freezes the call", async () => {
+test("flat CPU time kills the child processes and leaves the session running", async () => {
   const o = make();
   o.event(call("t1"));
   for (let i = 0; i < 20; i++)
-    probes.push({ ok: true, processes: 1, cpuMs: 500 });
-  await advance(o, 200);
-  expect(cancelled).toHaveLength(1);
-  expect(cancelled[0]).toContain("frozen");
-  expect(cancelled[0]).toContain("Bash");
-  expect(cancelled[0]).toContain("CPU time");
+    probes.push({ ok: true, processes: 2, cpuMs: 500, pids: [7, 8] });
+  await advance(o, 100);
+  expect(killed[0]).toEqual([7, 8]);
+  expect(cancelled).toEqual([]);
+  expect(
+    notes.some(([act, text]) => act === "frozen" && text.includes("CPU time")),
+  ).toBe(true);
 });
 
 test("a call with no process and a quiet stream is frozen, and an event restarts the window", async () => {
@@ -157,7 +162,7 @@ test("a call with no process and a quiet stream is frozen, and an event restarts
 test("a failed probe cancels nothing, is recorded, and restarts the flat window", async () => {
   const o = make();
   o.event(call("t1"));
-  probes.push({ ok: true, processes: 1, cpuMs: 5 });
+  probes.push({ ok: true, processes: 1, cpuMs: 5, pids: [5] });
   await advance(o, 10);
   for (let i = 0; i < 12; i++) probes.push({ ok: false, why: "ps is gone" });
   await advance(o, 120);

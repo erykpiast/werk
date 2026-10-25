@@ -29,6 +29,8 @@ export type Deps = {
   now(): number;
   /** Stops the session. The reason goes to the next pass. */
   cancel(reason: string): void;
+  /** Kills the child processes of the agent, so the frozen call returns and the session goes on. */
+  killProcesses(pids: number[]): void;
   /** Writes one line to the input of the agent. */
   reply(line: string): void;
   /** Writes one act of the overseer to the session log. */
@@ -146,10 +148,16 @@ export function createOverseer(
     const flat = now - Math.max(lastCpuChange, lastEvent);
     if (flat < limits.flatMs) return;
     const names = [...inflight.values()].join(", ");
-    const evidence =
-      probe.processes === 0
-        ? `the call has no process and the stream was quiet for ${seconds(limits.flatMs)}`
-        : `the CPU time of its ${probe.processes} child processes stayed flat for ${seconds(limits.flatMs)}`;
+    if (probe.processes > 0) {
+      // The call returns to the agent as a failure, with the evidence, and the session goes on.
+      const evidence = `the CPU time of its ${probe.processes} child processes stayed flat for ${seconds(limits.flatMs)}`;
+      deps.note("frozen", `${names}: ${evidence}; its processes were killed`);
+      deps.killProcesses(probe.pids);
+      lastCpu = null;
+      lastCpuChange = now;
+      return;
+    }
+    const evidence = `the call has no process and the stream was quiet for ${seconds(limits.flatMs)}`;
     cancel(
       "frozen",
       `${names}: ${evidence}`,

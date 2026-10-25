@@ -30,6 +30,15 @@ export function watchAgent(setup: WatchSetup) {
     {
       now: Date.now,
       cancel: (reason) => control?.stop(reason),
+      killProcesses: (pids) => {
+        for (const pid of pids) {
+          try {
+            process.kill(pid, "SIGKILL");
+          } catch {
+            // The process is already gone.
+          }
+        }
+      },
       reply: (line) => control?.write(line),
       note: (act, text) =>
         appendFileSync(

@@ -21,6 +21,7 @@ test("childrenOf sums every descendant of the root, not the root", () => {
     ok: true,
     processes: 3,
     cpuMs: 6000,
+    pids: expect.arrayContaining([11, 12, 13]),
   });
 });
 
@@ -29,6 +30,7 @@ test("a table without the root is a read that found no process", () => {
     ok: true,
     processes: 0,
     cpuMs: 0,
+    pids: [],
   });
 });
 
