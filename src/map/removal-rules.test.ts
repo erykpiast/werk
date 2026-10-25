@@ -1,5 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { fold, type LogEntry } from "./fold.ts";
+import {
+  acceptRemoval,
+  discardRemoval,
+  removalActorRefusal,
+} from "./removal-rules.ts";
 
 const node = (id: string, extra: Record<string, unknown> = {}) => ({
   type: "node.proposed",
@@ -289,5 +294,24 @@ describe("a proposed removal", () => {
     expect(rules(build(...tree, { type: "removal.proposed" }))).toEqual([
       "bad-event",
     ]);
+  });
+});
+
+describe("the person's say-so and a missing proposal", () => {
+  test("a remove or a restore is refused unless the person asked for it", () => {
+    expect(removalActorRefusal("you", "remove")).toBeNull();
+    expect(removalActorRefusal(undefined, "remove")?.rule).toBe(
+      "removal-actor",
+    );
+    expect(removalActorRefusal("agent", "restore")?.detail).toContain(
+      "restore",
+    );
+  });
+
+  test("an accept or a discard of a card with no proposed removal is refused", () => {
+    const map = build(...tree);
+    expect(acceptRemoval(map, "p", "you")?.rule).toBe("not-removed");
+    expect(discardRemoval(map, "p")?.rule).toBe("not-removed");
+    expect(ids(map)).toContain("p");
   });
 });
