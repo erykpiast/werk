@@ -21,8 +21,7 @@ export function NextOffer({
 }
 
 /**
- * The lines under the chat log: the background agent while one runs, then the error of a dead agent
- * (#werk-mc-bg-line, #werk-mc-live-dead).
+ * The line under the chat log while a background agent runs (#werk-mc-bg-line).
  */
 export function StatusLines({ state }: { state: ChatState }) {
   return (
@@ -33,11 +32,6 @@ export function StatusLines({ state }: { state: ChatState }) {
           {state.background > 1 ? ` (${state.background} tasks)` : ""}
         </div>
       ) : null}
-      {state.dead === null ? null : (
-        <div data-slot="dead-bar" role="alert">
-          The agent died: {state.dead}
-        </div>
-      )}
     </>
   );
 }

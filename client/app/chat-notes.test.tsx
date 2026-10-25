@@ -59,14 +59,11 @@ test("a reply with no Next line shows no button", async () => {
   expect(el.querySelector("button")).toBeNull();
 });
 
-test("the background line shows while tasks run, and the dead bar shows the error", async () => {
+test("the background line shows while tasks run", async () => {
   const none = await render(<StatusLines state={emptyChat} />);
   expect(none.textContent).toBe("");
   await act(async () =>
-    root?.render(
-      <StatusLines state={{ ...emptyChat, background: 2, dead: "boom" }} />,
-    ),
+    root?.render(<StatusLines state={{ ...emptyChat, background: 2 }} />),
   );
   expect(host?.textContent).toContain("A background agent runs");
-  expect(host?.textContent).toContain("The agent died: boom");
 });
