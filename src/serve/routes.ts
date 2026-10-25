@@ -127,7 +127,7 @@ async function projectRoute(
   const url = new URL(req.url);
   if (rest === "/live") return live(context);
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
-  if (rest === "/commands") return commandsRoute(context, req);
+  if (rest === "/commands") return commandsRoute(context);
   if (rest === "/tabs") return tabsRoute(context);
   if (rest === "/ask") return askRoute(context, req);
   if (rest === "/model") return modelRoute(context, ctx.env, req);

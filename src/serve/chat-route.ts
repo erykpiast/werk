@@ -63,11 +63,18 @@ export function tabsRoute(context: Context): Response {
   return Response.json({ tabs: [MAIN, ...others] });
 }
 
-/** The command names of one conversation's agent. */
-export function commandsRoute(context: Context, req: Request): Response {
-  const tab = tabOf(req);
-  if (typeof tab !== "string") return tab;
-  return Response.json({ commands: context.chats.get(tab)?.commands() ?? [] });
+/** The command names from the start line of the project's most recently started agent (#werk-chat-cmdmenu-source). */
+export function commandsRoute(context: Context): Response {
+  let latest = 0;
+  let names: string[] = [];
+  for (const chat of context.chats.values()) {
+    const at = chat.commandsAt();
+    if (at > latest) {
+      latest = at;
+      names = chat.commands();
+    }
+  }
+  return Response.json({ commands: names });
 }
 
 function refuse(message: string, status = 400): Response {

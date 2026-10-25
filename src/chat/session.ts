@@ -97,6 +97,9 @@ export type SessionDeps = {
   emit: (event: ChatEvent) => void;
 };
 
+/** Counts the start lines that named commands, so the most recent start can be told across sessions. */
+let startCount = 0;
+
 export type ChatSession = {
   /** Takes a turn. A turn name that is already open is refused. */
   send(sent: Sent): "accepted" | "duplicate";
@@ -121,6 +124,8 @@ export type ChatSession = {
   dead(): string | null;
   /** The command names that the most recent agent named when it started, or none before a first start. */
   commands(): string[];
+  /** The order of that start among all agent starts in this process: 0 before a first start, higher for a later one. */
+  commandsAt(): number;
   /** Ends the child. Every open turn ends with the exit. */
   stop(): Promise<void>;
 };
@@ -159,6 +164,7 @@ export function createSession(deps: SessionDeps): ChatSession {
   /** The asks that wait for the person, by the id of the control request. */
   const asks = new Map<string, Ask>();
   let commandNames: string[] = [];
+  let commandsStart = 0;
   let tasks = 0;
   let deadError: string | null = null;
 
@@ -335,7 +341,10 @@ export function createSession(deps: SessionDeps): ChatSession {
       return;
     }
     const named = commandsOf(event);
-    if (named) commandNames = named;
+    if (named) {
+      commandNames = named;
+      commandsStart = ++startCount;
+    }
     const ask = parseAsk(event);
     if (ask) {
       asks.set(ask.id, ask);
@@ -484,6 +493,7 @@ export function createSession(deps: SessionDeps): ChatSession {
     background: () => tasks,
     dead: () => deadError,
     commands: () => [...commandNames],
+    commandsAt: () => commandsStart,
     answer(id, answer) {
       const ask = asks.get(id);
       if (!ask || !child) return { ok: false, reason: "no such open ask" };

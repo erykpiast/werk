@@ -199,7 +199,7 @@ export function createChatStore(
     clearContext: () => post("/clear", {}),
     async commands() {
       try {
-        const res = await deps.fetch(urlOf("/commands"));
+        const res = await deps.fetch(apiOf(project, "/commands"));
         if (!res.ok) return [];
         const { commands } = (await res.json()) as { commands?: unknown };
         return Array.isArray(commands)
