@@ -36,6 +36,14 @@ function refuse(message: string, status = 400): Response {
   return Response.json({ error: "bad-request", message }, { status });
 }
 
+/** A route that changes state answers only a POST, so a GET never reaches it by link or prefetch. */
+function notPost(): Response {
+  return Response.json(
+    { error: "method", message: "use POST" },
+    { status: 405, headers: { Allow: "POST" } },
+  );
+}
+
 export async function chatRoute(
   context: Context,
   env: Record<string, string | undefined>,
@@ -130,6 +138,7 @@ export async function modelRoute(
   env: Record<string, string | undefined>,
   req: Request,
 ): Promise<Response> {
+  if (req.method !== "POST") return notPost();
   let body: unknown;
   try {
     body = await req.json();
@@ -152,7 +161,9 @@ export async function modelRoute(
 export async function clearRoute(
   context: Context,
   env: Record<string, string | undefined>,
+  req: Request,
 ): Promise<Response> {
+  if (req.method !== "POST") return notPost();
   const done = await sessionOf(context, env).clear();
   if (done.ok) return Response.json({ cleared: true }, { status: 200 });
   return Response.json(

@@ -119,7 +119,7 @@ async function projectRoute(
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
   if (rest === "/ask") return askRoute(context, req);
   if (rest === "/model") return modelRoute(context, ctx.env, req);
-  if (rest === "/clear") return clearRoute(context, ctx.env);
+  if (rest === "/clear") return clearRoute(context, ctx.env, req);
   if (rest === "/image") return imageRoute(context, req, url);
   if (rest === "/graph") {
     if (url.searchParams.get("shape") !== "1") {
