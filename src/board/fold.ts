@@ -45,6 +45,8 @@ export type Build = {
   pid: number;
   /** The session log that holds the agent's lines. The board log holds none. */
   log: string;
+  /** The retry cap the build ran with, when the start records it (#st-build-died). */
+  cap?: number;
   ended: boolean;
   result?: string;
 };
@@ -434,7 +436,16 @@ function buildStarted(board: Board, rec: Rec): BoardViolation | null {
   const pid = rec.pid;
   if (session === undefined || log === undefined || !Number.isInteger(pid))
     return bad("build started needs session, pid and log");
-  ticket.builds.push({ session, pid: pid as number, log, ended: false });
+  const cap = rec.cap;
+  ticket.builds.push({
+    session,
+    pid: pid as number,
+    log,
+    ...(Number.isInteger(cap) && (cap as number) >= 1
+      ? { cap: cap as number }
+      : {}),
+    ended: false,
+  });
   const branch = str(rec, "branch");
   if (branch !== undefined) ticket.branch = branch;
   return null;

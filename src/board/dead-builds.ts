@@ -12,6 +12,8 @@ export type DeadBuild = {
   buildId: string;
   /** The number of the pass that died. */
   pass: number;
+  /** The retry cap the dead build ran with, when its start records it. */
+  cap?: number;
 };
 
 /** A session id is <build id>:p<n>. Anything else is not a pass of a build. */
@@ -33,7 +35,12 @@ export function deadBuilds(board: Board, isAlive: Alive): DeadBuild[] {
     if (last === undefined || last.ended || isAlive(last.pid)) continue;
     const parsed = parseSession(last.session);
     if (parsed === null) continue;
-    dead.push({ ticket: ticket.id, session: last.session, ...parsed });
+    dead.push({
+      ticket: ticket.id,
+      session: last.session,
+      ...parsed,
+      ...(last.cap === undefined ? {} : { cap: last.cap }),
+    });
   }
   return dead;
 }

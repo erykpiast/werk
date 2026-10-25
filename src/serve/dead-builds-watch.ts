@@ -25,6 +25,7 @@ export type DeadWatchOptions = {
   /** The map log of the project. */
   logPath: string;
   folder: string;
+  /** The cap for a build whose start records none. */
   cap?: number;
   isAlive?: (pid: number) => boolean;
   /** Starts the build process of a fresh pass, and calls `onExit` when that process exits. */
@@ -34,7 +35,6 @@ export type DeadWatchOptions = {
 /** Handles every dead build once. Returns the tickets it restarted or stopped. */
 export function sweepDeadBuilds(options: DeadWatchOptions): string[] {
   const boardLog = boardLogBeside(options.logPath);
-  const cap = options.cap ?? DEFAULT_CAP;
   const handled: string[] = [];
   const dead = deadBuilds(readBoard(boardLog), options.isAlive ?? pidAlive);
   for (const build of dead) {
@@ -63,7 +63,7 @@ export function sweepDeadBuilds(options: DeadWatchOptions): string[] {
       cost: NO_COST,
       reason: "died",
     });
-    const next = restartOf(build, cap);
+    const next = restartOf(build, build.cap ?? options.cap ?? DEFAULT_CAP);
     if (next.action === "stop") {
       appendBoardEvent(boardLog, {
         type: "ticket.moved",
@@ -88,15 +88,25 @@ export function spawnFreshPass(
 ): DeadWatchOptions["start"] {
   return (dead, onExit) => {
     const child = Bun.spawn(
-      [...selfCommand(), "build", dead.ticket, "--after-death", dead.session],
+      [
+        ...selfCommand(),
+        "build",
+        dead.ticket,
+        "--after-death",
+        dead.session,
+        ...(dead.cap === undefined ? [] : ["--cap", String(dead.cap)]),
+      ],
       {
         cwd: folder,
         env: { ...env, WERK_LOG: logPath } as Record<string, string>,
         stdin: "ignore",
         stdout: "ignore",
         stderr: "ignore",
+        // Its own process group: a Ctrl-C on the server must not kill the build (#st-build-died).
+        detached: true,
       },
     );
+    child.unref();
     void child.exited.then(onExit);
   };
 }

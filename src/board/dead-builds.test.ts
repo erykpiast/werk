@@ -85,3 +85,13 @@ test("the death text names the pass", () => {
     deathText({ ticket: "r/01", session: "b:p3", buildId: "b", pass: 3 }),
   ).toContain("Pass 3 died");
 });
+
+test("a dead build carries the cap its start recorded", () => {
+  const b = board(...building(), {
+    ...started("b:p2", 10),
+    cap: 2,
+  });
+  expect(deadBuilds(b, () => false)).toEqual([
+    { ticket: "r/01", session: "b:p2", buildId: "b", pass: 2, cap: 2 },
+  ]);
+});

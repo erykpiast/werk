@@ -216,6 +216,7 @@ async function runPass(
     session,
     pid: process.pid,
     log: transcript,
+    cap: options.cap,
     branch: tree.branch,
   });
   const agent = await runProcess({
