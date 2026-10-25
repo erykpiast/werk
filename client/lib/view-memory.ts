@@ -1,4 +1,4 @@
-/** Each project remembers the view in use and the card last open on the map, so a bare project address opens them again (#vi-tabs). */
+/** Each project remembers the view in use and the card last open on the map, so the map tab opens the last card again (#vi-tabs). */
 import type { View } from "./project-route";
 
 export type Remembered = { view: View; card: string | null };

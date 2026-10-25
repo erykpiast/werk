@@ -131,6 +131,17 @@ describe("moves", () => {
     expect(board.tickets.get("r/01")?.reason).toBe("");
   });
 
+  test("a move back to ready keeps the reason it carries", () => {
+    const board = foldBoard(
+      entries(
+        plan("r/01"),
+        move("r/01", "building"),
+        move("r/01", "ready", { reason: "red at the retry cap" }),
+      ),
+    );
+    expect(board.tickets.get("r/01")?.reason).toBe("red at the retry cap");
+  });
+
   test("bad moves are refused with their rule", () => {
     expect(rules(move("r/01", "ready"))).toEqual(["unknown-ticket"]);
     expect(rules(plan("r/01"), move("r/01", "ready"))).toEqual(["bad-move"]);

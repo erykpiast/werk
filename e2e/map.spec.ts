@@ -279,7 +279,7 @@ test("the Board tab opens the board address and Back returns to the map", async 
     "page",
   );
   await page.goBack();
-  await expect(page).toHaveURL(/\/map$/);
+  await expect(page).toHaveURL(/\/p\/[^/]+$/);
   await expect(
     leftPane(page).getByRole("heading", { level: 1, name: ROOT_TITLE }),
   ).toBeVisible();
@@ -400,4 +400,57 @@ test("a ✓ request without the token is refused", async ({ page, app }) => {
   expect(res.status()).toBe(403);
   await page.goto(`${app.url}/map/g`);
   await expect(leftPane(page).locator(".hero")).toHaveClass(/is-proposed/);
+});
+
+test("the home shows the requirements and the build rules in two equal columns", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  const add = (id: string, title: string, parent: string, why = "") =>
+    expect(
+      app.werk("add", id, "--title", title, "--parent", parent, "--why", why)
+        .code,
+    ).toBe(0);
+  add("req1", "A requirement", "root");
+  expect(app.werk("accept", "req1", "--actor", "you").code).toBe(0);
+
+  // With no build-rules card, the right column is the empty build-rules card.
+  await page.goto(app.url);
+  const what = page.locator("[data-slot=home-what]");
+  const how = page.locator("[data-slot=home-how]");
+  await expect(
+    what.getByRole("heading", { level: 1, name: ROOT_TITLE }),
+  ).toBeVisible();
+  await expect(what.locator("a.tile")).toContainText("A requirement");
+  await expect(
+    how.getByRole("heading", { level: 2, name: "Build rules" }),
+  ).toBeVisible();
+  await expect(how.locator("a.tile")).toHaveCount(0);
+
+  expect(
+    app.werk("add", "how", "--title", "How it is built", "--parent", "root")
+      .code,
+  ).toBe(0);
+  expect(app.werk("accept", "how", "--actor", "you").code).toBe(0);
+  add("rule1", "A build rule", "how");
+  expect(app.werk("accept", "rule1", "--actor", "you").code).toBe(0);
+  await expect(
+    how.getByRole("heading", { level: 1, name: "How it is built" }),
+  ).toBeVisible();
+  await expect(how.locator("a.tile")).toContainText("A build rule");
+  // The columns settle after the live refetch, so poll until the layout is stable.
+  await expect
+    .poll(async () => {
+      const left = await what.boundingBox();
+      const right = await how.boundingBox();
+      return Math.abs((left?.width ?? 0) - (right?.width ?? 1));
+    })
+    .toBeLessThan(2);
+  await evidence(page, "home-two-columns");
+
+  await how.locator("a.tile").click();
+  await expect(page).toHaveURL(/\/map\/rule1$/);
+  await page.goBack();
+  await expect(what).toBeVisible();
 });
