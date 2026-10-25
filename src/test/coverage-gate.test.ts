@@ -22,4 +22,5 @@ test("a listed file with code and no own test fails and names the test", async (
   const r = await run("src/test/fixtures/code-no-test.ts");
   expect(r.code).toBe(1);
   expect(r.out).toContain("src/test/fixtures/code-no-test.test.ts");
+  expect(r.out).toContain("0.0%");
 });
