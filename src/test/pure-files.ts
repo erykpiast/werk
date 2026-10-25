@@ -20,4 +20,8 @@ export const PURE_FILES: readonly string[] = [
   "src/tickets/decided-cards.ts",
   "src/tickets/spec-stories.ts",
   "src/tickets/check-folder.ts",
+  "src/serve/page-html.ts",
+  "src/serve/static-path.ts",
+  "client/lib/draft.ts",
+  "client/lib/scope.ts",
 ];

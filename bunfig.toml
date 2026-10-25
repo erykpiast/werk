@@ -1,3 +1,5 @@
 [test]
 timeout = 15000
-preload = ["./src/test-env/preload.ts"]
+preload = ["./src/test-env/preload.ts", "./src/test-env/dom.ts"]
+# The browser specs belong to Playwright (#werk-test-runner).
+pathIgnorePatterns = ["e2e/**"]

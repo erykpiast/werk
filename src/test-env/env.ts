@@ -1,7 +1,7 @@
 import { delimiter, resolve } from "node:path";
 
 /** The folder that holds the fake agent. */
-export const FAKE_DIR = resolve(import.meta.dir, "../../fake");
+export const FAKE_DIR = resolve(import.meta.dirname, "../../fake");
 
 /** Every variable that starts with this prefix points at a real project, its log, or its role. */
 const PROJECT_PREFIX = "WERK_";
