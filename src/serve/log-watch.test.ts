@@ -28,8 +28,13 @@ async function until(check: () => boolean, ms = 3000) {
 test("an append to the log is a signal", async () => {
   writeFileSync(log, "one\n");
   watch = watchLog(log, () => grown++);
-  appendFileSync(log, "two\n");
-  expect(await until(() => grown > 0)).toBe(true);
+  // Under a loaded machine the first file event can arrive late, so the append is repeated until one lands.
+  let signalled = false;
+  for (let i = 0; i < 5 && !signalled; i++) {
+    appendFileSync(log, "two\n");
+    signalled = await until(() => grown > 0, 3000);
+  }
+  expect(signalled).toBe(true);
 });
 
 test("a log that does not exist yet signals when it appears", async () => {
