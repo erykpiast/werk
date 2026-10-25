@@ -7,7 +7,12 @@ import type { FoldedMap, MapNode } from "../map/fold.ts";
 import type { Rollup } from "../map/rollup.ts";
 import { escapeHtml } from "../md/escape.ts";
 import { cardHref, renderTile, renderTitle } from "../md/markdown.ts";
-import { cardClasses, unchallengedRing, whoLabel } from "./card-look.ts";
+import {
+  cardClasses,
+  hasProposal,
+  unchallengedRing,
+  whoLabel,
+} from "./card-look.ts";
 import { cardsBelow, rollupBar } from "./rollup-html.ts";
 
 /** The count of evidence nodes that a card cites. */
@@ -24,6 +29,10 @@ export function renderCardTile(
 ): string {
   const known = (ref: string) => map.nodes.has(ref);
   const meta = [`<span class="card-id">#${escapeHtml(node.id)}</span>`];
+  if (hasProposal(node)) {
+    const kind = node.removal ? " tag-removal" : "";
+    meta.push(`<span class="tag tag-proposed${kind}">proposed</span>`);
+  }
   const below = rollup ? cardsBelow(rollup) : 0;
   if (below > 0) meta.push(`<span class="meta-below">${below} below</span>`);
   const evidence = evidenceCount(map, node.id);

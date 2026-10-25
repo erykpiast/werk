@@ -235,3 +235,59 @@ describe("remove", () => {
     expect(rules(map)).toEqual(["unknown-card"]);
   });
 });
+
+describe("a proposed removal", () => {
+  const propose = (id: string, extra: Record<string, unknown> = {}) => ({
+    type: "removal.proposed",
+    id,
+    ...extra,
+  });
+
+  test("marks the card and leaves it in the map until it is accepted", () => {
+    const map = build(...tree, propose("p"));
+    expect(map.problems).toEqual([]);
+    expect(map.nodes.get("p")?.removal).toEqual({ reparent: false });
+    expect(ids(map)).toContain("c1");
+  });
+
+  test("an accept takes the card out as it was proposed, with its subtree or without it", () => {
+    expect(ids(build(...tree, propose("p"), accept("p")))).toEqual([
+      "other",
+      "root",
+      "t",
+    ]);
+    const moved = build(...tree, propose("p", { reparent: true }), accept("p"));
+    expect(moved.problems).toEqual([]);
+    expect(moved.parents.get("c1")).toBe("root");
+    expect(ids(moved)).toContain("c2");
+    expect(ids(moved)).not.toContain("p");
+  });
+
+  test("a discard keeps the card, and an accept without the person is refused", () => {
+    const kept = build(...tree, propose("p"), {
+      type: "node.discarded",
+      id: "p",
+    });
+    expect(kept.nodes.get("p")?.removal).toBeNull();
+    expect(rules(kept)).toEqual([]);
+    const unasked = build(...tree, propose("p"), {
+      type: "node.accepted",
+      id: "p",
+    });
+    expect(rules(unasked)).toEqual(["accept-actor"]);
+    expect(unasked.nodes.get("p")?.removal).not.toBeNull();
+  });
+
+  test("a ghost, a missing card and a reparent of a root are refused", () => {
+    expect(
+      rules(build(...tree, node("g", { parent: "root" }), propose("g"))),
+    ).toEqual(["remove-target"]);
+    expect(rules(build(...tree, propose("nope")))).toEqual(["unknown-card"]);
+    expect(rules(build(...tree, propose("root", { reparent: true })))).toEqual([
+      "no-grandparent",
+    ]);
+    expect(rules(build(...tree, { type: "removal.proposed" }))).toEqual([
+      "bad-event",
+    ]);
+  });
+});

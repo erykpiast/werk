@@ -1,6 +1,11 @@
 import { expect, test } from "bun:test";
 import type { MapNode } from "../map/fold.ts";
-import { cardClasses, unchallengedRing, whoLabel } from "./card-look.ts";
+import {
+  cardClasses,
+  hasProposal,
+  unchallengedRing,
+  whoLabel,
+} from "./card-look.ts";
 
 const node = (extra: Partial<MapNode> = {}): MapNode => ({
   id: "a",
@@ -16,6 +21,7 @@ const node = (extra: Partial<MapNode> = {}): MapNode => ({
   unchallenged: null,
   kill: [],
   pending: null,
+  removal: null,
   ...extra,
 });
 const mark = (kind: "stale" | "paused" | "postponed") =>
@@ -57,4 +63,23 @@ test("the who label reads in words, and the ring shows only when no option was w
   expect(whoLabel(node({ who: "prototype" }))).toBe("build it first");
   expect(unchallengedRing(node())).toBe("");
   expect(unchallengedRing(node({ unchallenged: "none" }))).toContain("○");
+});
+
+test("a ghost, a pending edit and a pending removal each carry their own class", () => {
+  expect(cardClasses(node({ proposed: true }))).toContain("is-proposed");
+  const edit = cardClasses(node({ pending: { title: "B" } }));
+  expect(edit).toContain("has-edit");
+  expect(edit).not.toContain("is-proposed");
+  const removal = cardClasses(
+    node({ pending: { title: "B" }, removal: { reparent: false } }),
+  );
+  expect(removal).toContain("is-removal");
+  expect(removal).not.toContain("has-edit");
+});
+
+test("a proposal is a ghost, an edit or a removal", () => {
+  expect(hasProposal(node())).toBe(false);
+  expect(hasProposal(node({ proposed: true }))).toBe(true);
+  expect(hasProposal(node({ pending: {} }))).toBe(true);
+  expect(hasProposal(node({ removal: { reparent: true } }))).toBe(true);
 });

@@ -1,6 +1,8 @@
 /**
  * What a card looks like wherever it is drawn: the status edge, the stale tint, the postponed
  * stripes, the proposed border, and the who label with its ring (#vi-onview-look).
+ * A proposed card is a ghost: dashed, blue border and blue background. A card with a pending edit has a blue border,
+ * and a card with a pending removal uses the red of the stale look (#werk-remove-red, #al-diff-render).
  * The page of a card and its tile use the same marks, so a card reads the same in both.
  */
 import type { MapNode, Who } from "../map/fold.ts";
@@ -24,7 +26,14 @@ export function cardClasses(node: MapNode): string {
   if (node.marks.some((m) => m.kind === "stale")) classes.push("is-stale");
   if (isPostponed(node)) classes.push("is-postponed");
   if (node.proposed) classes.push("is-proposed");
+  if (node.removal) classes.push("is-removal");
+  else if (node.pending) classes.push("has-edit");
   return classes.join(" ");
+}
+
+/** Whether the card carries a proposal that a ✓ accepts: a ghost, an edit or a removal. */
+export function hasProposal(node: MapNode): boolean {
+  return node.proposed || node.pending !== null || node.removal !== null;
 }
 
 /** The who label, or null when the card has no decider yet. */

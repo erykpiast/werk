@@ -5,6 +5,7 @@
  * removed node sits in the waiting list until both of its ends are in the map again.
  */
 import type { Edge, FoldedMap, MapNode, Violation } from "./fold.ts";
+import { actorRefusal } from "./ghost-rules.ts";
 
 /** Whether a node went out in a removal that is not undone. */
 export function isOut(map: FoldedMap, id: string): boolean {
@@ -112,6 +113,46 @@ function evidenceOf(map: FoldedMap, cards: Set<string>): Set<string> {
     if (!cited) taken.add(source);
   }
   return taken;
+}
+
+/** Stages the removal of a card in the map. The card stays until the removal is accepted. */
+export function proposeRemoval(
+  map: FoldedMap,
+  id: string,
+  reparent: boolean,
+): Violation | null {
+  const refused = checkTarget(map, id, reparent);
+  if (refused) return refused;
+  (map.nodes.get(id) as MapNode).removal = { reparent };
+  return null;
+}
+
+/** Takes out the card that has a proposed removal, as it was proposed. Refused unless the person asked for it. */
+export function acceptRemoval(
+  map: FoldedMap,
+  id: string,
+  actor: unknown,
+): Violation | null {
+  const unasked = actorRefusal(actor);
+  if (unasked) return unasked;
+  const removal = map.nodes.get(id)?.removal;
+  if (!removal) {
+    return {
+      rule: "not-removed",
+      detail: `"${id}" has no proposed removal`,
+    };
+  }
+  return removeCard(map, id, removal.reparent);
+}
+
+/** Drops the proposed removal and leaves the card in the map. */
+export function discardRemoval(map: FoldedMap, id: string): Violation | null {
+  const node = map.nodes.get(id);
+  if (!node?.removal) {
+    return { rule: "not-removed", detail: `"${id}" has no proposed removal` };
+  }
+  node.removal = null;
+  return null;
 }
 
 /** Takes the card out with what goes with it. */

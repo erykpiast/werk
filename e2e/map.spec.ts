@@ -284,3 +284,120 @@ test("the Board tab opens the board address and Back returns to the map", async 
     leftPane(page).getByRole("heading", { level: 1, name: ROOT_TITLE }),
   ).toBeVisible();
 });
+
+const accepted = (
+  app: { werk: (...a: string[]) => { code: number } },
+  id: string,
+) => expect(app.werk("accept", id, "--actor", "you").code).toBe(0);
+
+test("a ghost shows dashed with the badge proposed, and its ✓ makes it a normal card with no reload", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  expect(
+    app.werk("add", "g", "--title", "A ghost card", "--parent", "root").code,
+  ).toBe(0);
+  await page.goto(`${app.url}/map/g`);
+  const hero = leftPane(page).locator(".hero");
+  await expect(hero).toHaveClass(/is-proposed/);
+  await expect(hero.locator(".tag-proposed")).toHaveText("proposed");
+  expect(await hero.evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe(
+    "dashed",
+  );
+  await evidence(page, "ghost-proposed");
+  await markLoaded(page);
+  await hero.getByRole("button", { name: "Accept the proposal" }).click();
+  await expect(hero).not.toHaveClass(/is-proposed/);
+  await expect(hero.locator(".tag-proposed")).toHaveCount(0);
+  expect(await stillLoaded(page)).toBe(true);
+});
+
+test("a pending edit shows one card with its added and removed words marked", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  expect(
+    app.werk(
+      "propose",
+      "root",
+      "--why",
+      "One repeating loop keeps the work in step.",
+    ).code,
+  ).toBe(0);
+  await page.goto(app.url);
+  const hero = leftPane(page).locator(".hero");
+  await expect(hero.locator("ins.diff-add")).toHaveText("loop");
+  await expect(hero.locator("del.diff-del")).toHaveText("pipeline");
+  await expect(hero).toHaveClass(/has-edit/);
+  await expect(hero).not.toHaveClass(/is-proposed/);
+  await evidence(page, "pending-edit");
+});
+
+test("the ✕ on a card with two children offers both answers, and moving up keeps the children", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  for (const [id, parent] of [
+    ["p", "root"],
+    ["a", "p"],
+    ["b", "p"],
+  ] as const) {
+    expect(
+      app.werk("add", id, "--title", `Card ${id}`, "--parent", parent).code,
+    ).toBe(0);
+  }
+  accepted(app, "a");
+  accepted(app, "b");
+  await page.goto(`${app.url}/map/p`);
+  const hero = leftPane(page).locator(".hero");
+  await hero.getByRole("button", { name: "Remove this card" }).click();
+  const dialog = hero.getByRole("alertdialog");
+  await expect(dialog).toContainText("3 cards leave the map");
+  await expect(dialog).toContainText("2 children move up to");
+  await evidence(page, "remove-confirm");
+  await dialog.getByRole("button", { name: /move up/ }).click();
+  await expect(
+    leftPane(page).getByRole("heading", { level: 1, name: "Card p" }),
+  ).toHaveCount(0);
+  await page.goto(`${app.url}/map/root`);
+  await expect(leftPane(page).locator("a.tile")).toHaveCount(2);
+});
+
+test("a proposed removal shows red, and its ✓ takes the card out", async ({
+  page,
+  app,
+  evidence,
+}) => {
+  expect(
+    app.werk("add", "c", "--title", "A doomed card", "--parent", "root").code,
+  ).toBe(0);
+  accepted(app, "c");
+  expect(app.werk("remove", "c", "--propose").code).toBe(0);
+  await page.goto(`${app.url}/map/c`);
+  const hero = leftPane(page).locator(".hero");
+  await expect(hero).toHaveClass(/is-removal/);
+  await expect(
+    hero.getByRole("button", { name: "Accept the proposal" }),
+  ).toHaveClass(/is-removal/);
+  await evidence(page, "removal-proposed");
+  await hero.getByRole("button", { name: "Accept the proposal" }).click();
+  await page.goto(`${app.url}/map/root`);
+  await expect(leftPane(page).locator("a.tile")).toHaveCount(0);
+});
+
+test("a ✓ request without the token is refused", async ({ page, app }) => {
+  expect(
+    app.werk("add", "g", "--title", "A ghost card", "--parent", "root").code,
+  ).toBe(0);
+  const origin = new URL(app.url).origin;
+  const name = new URL(app.url).pathname.split("/").pop();
+  const res = await page.request.post(`${origin}/api/projects/${name}/accept`, {
+    data: { card: "g" },
+  });
+  expect(res.status()).toBe(403);
+  await page.goto(`${app.url}/map/g`);
+  await expect(leftPane(page).locator(".hero")).toHaveClass(/is-proposed/);
+});
