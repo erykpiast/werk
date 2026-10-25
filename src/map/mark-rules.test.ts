@@ -131,15 +131,15 @@ describe("marking", () => {
     expect(node(map, "q").marks.map((m) => m.text)).toEqual(["two"]);
   });
 
-  test("stale wins over paused in either order", () => {
+  test("a stale and a paused mark sit side by side in either order", () => {
     const map = build(chain);
     markNextHop(map, "p", { ...cause, reason: "invalidated" });
     markDownstream(map, "p", cause);
-    expect(kinds(map, "q")).toEqual(["stale"]);
+    expect(kinds(map, "q").sort()).toEqual(["paused", "stale"]);
     const other = build(chain);
     markDownstream(other, "p", cause);
     markNextHop(other, "p", { ...cause, reason: "invalidated" });
-    expect(kinds(other, "q")).toEqual(["stale"]);
+    expect(kinds(other, "q").sort()).toEqual(["paused", "stale"]);
   });
 
   test("clearing a resume removes the own mark and the paused marks it caused only", () => {

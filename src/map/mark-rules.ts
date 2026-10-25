@@ -40,15 +40,14 @@ export function traceText(mark: Omit<Mark, "trace">): string {
   return lines.join("\n");
 }
 
-/** Puts a mark on a card. Stale wins: a stale mark drops a paused one, and a paused one is not added beside it. */
+/**
+ * Puts a mark on a card. A paused and a stale mark sit side by side, so a review that clears the
+ * stale one leaves the pause (#vi-prop-review-clears-stale). Stale wins only where the kind is
+ * shown (#pr-wf-paused).
+ */
 function addMark(node: MapNode, mark: Omit<Mark, "trace">): void {
-  if (mark.kind === "paused" && node.marks.some((m) => m.kind === "stale")) {
-    return;
-  }
   node.marks = node.marks.filter(
-    (m) =>
-      !(m.kind === mark.kind && m.origin === mark.origin) &&
-      !(mark.kind === "stale" && m.kind === "paused"),
+    (m) => !(m.kind === mark.kind && m.origin === mark.origin),
   );
   node.marks.push({ ...mark, trace: traceText(mark) });
 }

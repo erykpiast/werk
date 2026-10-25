@@ -91,7 +91,24 @@ describe("a confirm", () => {
       reopen("p", { reason: "postponed" }),
       reopen("x"),
     );
-    expect(kinds(map, "q")).toEqual(["stale"]);
+    expect(kinds(map, "q").sort()).toEqual(["paused", "stale"]);
+  });
+
+  test("leaves the paused mark when the review clears the stale one", () => {
+    const map = build(
+      decided("p"),
+      decided("r"),
+      decided("q"),
+      decided("x"),
+      link("r", "p"),
+      link("q", "r"),
+      link("q", "x"),
+      reopen("p", { reason: "postponed" }),
+      reopen("x"),
+      decide("x"),
+      review("q", { confirmed: ["r", "x"] }),
+    );
+    expect(kinds(map, "q")).toEqual(["paused"]);
   });
 });
 
