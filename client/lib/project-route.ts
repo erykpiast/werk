@@ -57,3 +57,31 @@ export function cardOfHref(href: string): string | null {
     return null;
   }
 }
+
+export type View = "map" | "board";
+
+/** The view that a page address names. An address with no view suffix is the map (#vi-routes). */
+export function viewOf(pathname: string): View {
+  return /^\/p\/[^/]+\/board\/?$/.test(pathname) ? "board" : "map";
+}
+
+/** The page address of a view. The map takes a card, and the board opens at the root (#vi-tabs). */
+export function viewPageOf(
+  project: string,
+  view: View,
+  card: string | null = null,
+): string {
+  if (view === "board") return `${pageOf(project)}/board`;
+  return card === null ? `${pageOf(project)}/map` : cardPageOf(project, card);
+}
+
+/** The card that an old address `/#id` names, or null for any other hash (#vi-routes). */
+export function cardOfHash(hash: string): string | null {
+  const found = /^#([^/?#]+)$/.exec(hash);
+  if (!found) return null;
+  try {
+    return decodeURIComponent(found[1] as string);
+  } catch {
+    return null;
+  }
+}

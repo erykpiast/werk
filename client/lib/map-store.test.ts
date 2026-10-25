@@ -157,3 +157,25 @@ test("opening a card reads that card's page, and opening null reads the open car
   await t.settled();
   expect(t.reads.at(-1)).toBe("/api/projects/my%20project/open");
 });
+
+test("with an index dep, each read also reads the header index and hands it over before the card", async () => {
+  const order: string[] = [];
+  const index = { entries: [], rollups: {} };
+  const store = createMapStore(
+    {
+      fetch: async (url) =>
+        url.endsWith("/index")
+          ? Response.json(index)
+          : Response.json({ id: "root", html: "x" }),
+      connect: () => ({ addEventListener: () => {}, close: () => {} }),
+      show: () => void order.push("show"),
+      index: () => void order.push("index"),
+      reload: () => {},
+      stashDraft: () => {},
+    },
+    "p",
+  );
+  store.open(null);
+  await Bun.sleep(20);
+  expect(order).toEqual(["index", "show"]);
+});

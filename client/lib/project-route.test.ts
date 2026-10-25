@@ -2,11 +2,14 @@ import { expect, test } from "bun:test";
 import {
   apiOf,
   cardOf,
+  cardOfHash,
   cardOfHref,
   cardPageOf,
   firstOpenable,
   pageOf,
   projectOf,
+  viewOf,
+  viewPageOf,
 } from "./project-route";
 
 test("a page address names its project, also when the name holds a space or a bracket", () => {
@@ -50,4 +53,20 @@ test("only an in-page card link names a card", () => {
   expect(cardOfHref("/map/a/b")).toBeNull();
   expect(cardOfHref("https://example.com/map/a")).toBeNull();
   expect(cardOfHref("/map/%E0%A4%A")).toBeNull();
+});
+
+test("each view has its own address, and a card id keeps its colon", () => {
+  expect(viewPageOf("werk", "board")).toBe("/p/werk/board");
+  expect(viewPageOf("werk", "map")).toBe("/p/werk/map");
+  expect(viewPageOf("werk", "map", "a:b")).toBe("/p/werk/map/a%3Ab");
+  expect(viewOf("/p/werk/board")).toBe("board");
+  expect(viewOf("/p/werk/map/a%3Ab")).toBe("map");
+  expect(viewOf("/p/werk")).toBe("map");
+});
+
+test("an old address with a hash names its card", () => {
+  expect(cardOfHash("#a%3Ab")).toBe("a:b");
+  expect(cardOfHash("")).toBeNull();
+  expect(cardOfHash("#/x")).toBeNull();
+  expect(cardOfHash("#%E0%A4%A")).toBeNull();
 });

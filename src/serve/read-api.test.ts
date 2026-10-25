@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { applyEvent, emptyMap, type FoldedMap } from "../map/fold.ts";
 import { emptyRollup } from "../map/rollup.ts";
-import { cardRead, shapeRead } from "./read-api.ts";
+import { cardRead, headerRead, shapeRead } from "./read-api.ts";
 
 /** A map built from the events that the add verb writes. */
 function mapOf(): FoldedMap {
@@ -82,4 +82,32 @@ test("a real card counts in the rollup of every ancestor, and a ghost counts in 
     decided: 1,
   });
   expect(shape.edges.some((edge) => !edge.held)).toBe(true);
+});
+
+test("the header index lists real nodes with parent, status and flags, and leaves a ghost out", () => {
+  const map = mapOf();
+  for (const node of map.nodes.values()) node.proposed = false;
+  const ghost = applyEvent(map, {
+    type: "node.proposed",
+    id: "g",
+    kind: "card",
+    title: "Ghost",
+    why: "",
+    status: "open",
+    parent: "root",
+  });
+  expect(ghost).toBeNull();
+  const index = headerRead(map);
+  expect(index.entries.map((e) => e.id)).toEqual(["root", "a", "b"]);
+  expect(index.entries[1]).toEqual({
+    id: "a",
+    kind: "card",
+    title: "Title a",
+    why: "Why a",
+    status: "open",
+    stale: false,
+    postponed: false,
+    parent: "root",
+  });
+  expect(index.rollups.root?.cards).toBe(3);
 });

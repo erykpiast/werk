@@ -2,18 +2,26 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ChatPane } from "./app/chat-pane";
 import { Composer } from "./app/composer";
+import { Counts, Crumbs, SearchBox, Tabs } from "./app/header";
 import { addProjectFromDialog } from "./lib/add-project";
 import { createChatStore } from "./lib/chat-store";
+import { countsOf } from "./lib/counts";
+import { pathTo } from "./lib/crumbs";
 import { stashDraft } from "./lib/draft";
-import { createMapStore } from "./lib/map-store";
+import { createMapStore, type HeaderIndex } from "./lib/map-store";
 import {
   cardOf,
+  cardOfHash,
   cardOfHref,
   cardPageOf,
   firstOpenable,
   pageOf,
   projectOf,
+  type View,
+  viewOf,
+  viewPageOf,
 } from "./lib/project-route";
+import { recall, remember } from "./lib/view-memory";
 import "./index.css";
 
 /**
@@ -21,6 +29,13 @@ import "./index.css";
  * only where state lives: the composer (#werk-stack-hydration).
  */
 const scope = document.querySelector("[data-slot=header-row-1]");
+const headerLeft = document.querySelector<HTMLElement>(
+  "[data-slot=header-left]",
+);
+const headerRight = document.querySelector<HTMLElement>(
+  "[data-slot=header-right]",
+);
+const leftPane = document.getElementById("left-pane");
 const body = document.querySelector("[data-slot=body]");
 const chatRoot = document.getElementById("chat-root");
 const chatReact = chatRoot ? createRoot(chatRoot) : null;
@@ -70,12 +85,74 @@ async function start() {
     if (first === null) {
       say("No project on the list. Add a folder that has a git repository.");
     } else {
-      location.replace(pageOf(first));
+      // An old address /#id opens that card (#vi-routes).
+      const old = cardOfHash(location.hash);
+      location.replace(old === null ? pageOf(first) : cardPageOf(first, old));
     }
     return;
   }
   // The card the left pane shows is the card a message names (#werk-card-blind).
+  // A view with no card in its address keeps the last card named (#vi-routes).
   let openId: string | null = null;
+  let view: View = viewOf(location.pathname);
+  let index: HeaderIndex | null = null;
+  const crumbHost = document.createElement("div");
+  crumbHost.dataset.slot = "crumb-host";
+  const name = document.createElement("span");
+  name.dataset.slot = "project-name";
+  name.textContent = project;
+  scope?.replaceChildren(name, crumbHost);
+  const crumbRoot = createRoot(crumbHost);
+  const leftRoot = headerLeft ? createRoot(headerLeft) : null;
+  const rightRoot = headerRight ? createRoot(headerRight) : null;
+
+  /** Opens an address and adds one history entry (#vi-routes). */
+  const go = (path: string) => {
+    if (location.pathname === path) return;
+    history.pushState(null, "", path);
+    route();
+  };
+  const openCard = (card: string) => go(cardPageOf(project, card));
+  const renderHeader = () => {
+    const rows = index?.entries ?? [];
+    const path = pathTo(rows, openId);
+    const isRoot = path.length <= 1;
+    crumbRoot.render(
+      <Crumbs
+        path={path}
+        paneWidth={leftPane?.clientWidth ?? 0}
+        onOpen={openCard}
+      />,
+    );
+    leftRoot?.render(
+      <Counts
+        counts={countsOf(
+          openId === null ? undefined : index?.rollups[openId],
+          isRoot ? null : openId,
+        )}
+      />,
+    );
+    rightRoot?.render(
+      <>
+        <Tabs
+          view={view}
+          onSelect={(next) =>
+            go(
+              viewPageOf(
+                project,
+                next,
+                next === "map" ? recall(localStorage, project).card : null,
+              ),
+            )
+          }
+        />
+        <SearchBox rows={rows} onOpen={openCard} />
+      </>,
+    );
+  };
+  if (leftPane) {
+    new ResizeObserver(() => renderHeader()).observe(leftPane);
+  }
   const chat = createChatStore(
     {
       fetch: (url, init) => fetch(url, init),
@@ -105,14 +182,16 @@ async function start() {
       connect: (url) => new EventSource(url),
       chat: (type, data) => chat.receive(type, data),
       connected: () => void chat.load(),
-      show: (view) => {
-        openId = view.id;
-        if (scope) {
-          scope.textContent =
-            view.id === null ? project : `${project} · #${view.id}`;
-        }
+      index: (next) => {
+        index = next;
+        renderHeader();
+      },
+      show: (shown) => {
+        if (view !== "map") return;
+        openId = shown.id;
+        renderHeader();
         if (body) {
-          body.innerHTML = view.html ?? "<p>The map has no cards yet.</p>";
+          body.innerHTML = shown.html ?? "<p>The map has no cards yet.</p>";
         }
       },
       reload: () => location.reload(),
@@ -125,7 +204,28 @@ async function start() {
     },
     project,
   );
-  store.open(cardOf(location.pathname));
+  /** Shows the view that the address names. */
+  const route = () => {
+    view = viewOf(location.pathname);
+    if (view === "map") {
+      const card = cardOf(location.pathname);
+      remember(localStorage, project, { view, card });
+      store.open(card);
+    } else {
+      remember(localStorage, project, { view, card: null });
+      if (body) {
+        body.innerHTML =
+          '<article class="board-page"><h1>Board</h1><p>The ticket board.</p></article>';
+      }
+    }
+    renderHeader();
+  };
+  // A bare project address opens the view the project remembers (#vi-tabs).
+  if (/^\/p\/[^/]+\/?$/.test(location.pathname)) {
+    const last = recall(localStorage, project);
+    history.replaceState(null, "", viewPageOf(project, last.view, last.card));
+  }
+  route();
   store.start();
   // A card link is /map/<id>. A click opens that card's page and adds one history entry (#vi-routes).
   document.addEventListener("click", (event) => {
@@ -140,12 +240,9 @@ async function start() {
     if (card === null || event.metaKey || event.ctrlKey || event.shiftKey)
       return;
     event.preventDefault();
-    history.pushState(null, "", cardPageOf(project, card));
-    store.open(card);
+    openCard(card);
   });
-  window.addEventListener("popstate", () =>
-    store.open(cardOf(location.pathname)),
-  );
+  window.addEventListener("popstate", route);
 }
 
 void start();

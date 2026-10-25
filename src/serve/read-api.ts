@@ -3,7 +3,7 @@
  * without a single card body (#werk-stack-api).
  */
 import type { Edge, FoldedMap, LinkType, Mark, Status } from "../map/fold.ts";
-import { type Rollup, rollups } from "../map/rollup.ts";
+import { isPostponed, type Rollup, rollups } from "../map/rollup.ts";
 
 export type Neighbour = {
   id: string;
@@ -89,4 +89,43 @@ export function shapeRead(map: FoldedMap): Shape {
     ],
     rollups: rollups(map),
   };
+}
+
+/** One row of the header's index: what the breadcrumbs, the search box and the counts strip read (#vi-jump). */
+export type HeaderEntry = {
+  id: string;
+  kind: string;
+  title: string;
+  /** The reason of a card or an option, the finding of an excerpt. */
+  why: string;
+  /** Null for an option, a source and an excerpt, which have no status. */
+  status: Status | null;
+  stale: boolean;
+  postponed: boolean;
+  /** The card that this card refines, or null for a root. */
+  parent: string | null;
+};
+
+export type HeaderIndex = {
+  entries: HeaderEntry[];
+  rollups: Record<string, Rollup>;
+};
+
+/** The index of the real nodes in map order, with their parents and rollups. A ghost is not in the map (#vi-jump). */
+export function headerRead(map: FoldedMap): HeaderIndex {
+  const entries: HeaderEntry[] = [];
+  for (const node of map.nodes.values()) {
+    if (node.proposed) continue;
+    entries.push({
+      id: node.id,
+      kind: node.kind,
+      title: node.title,
+      why: node.why,
+      status: node.kind === "card" ? node.status : null,
+      stale: node.marks.some((m) => m.kind === "stale"),
+      postponed: isPostponed(node),
+      parent: map.parents.get(node.id) ?? null,
+    });
+  }
+  return { entries, rollups: rollups(map) };
 }

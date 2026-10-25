@@ -18,7 +18,7 @@ import { chooseFolder } from "./folder-dialog.ts";
 import type { Route } from "./handler.ts";
 import { live } from "./live-channel.ts";
 import { renderOpenCard } from "./open-card.ts";
-import { cardRead, shapeRead } from "./read-api.ts";
+import { cardRead, headerRead, shapeRead } from "./read-api.ts";
 
 export type RouteContext = {
   token: string;
@@ -123,6 +123,7 @@ async function projectRoute(
     }
     return json(shapeRead(readMap(context.logPath).map));
   }
+  if (rest === "/index") return json(headerRead(readMap(context.logPath).map));
   if (rest === "/open") {
     const wanted = url.searchParams.get("card");
     const { map } = readMap(context.logPath);
