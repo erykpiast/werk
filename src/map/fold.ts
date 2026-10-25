@@ -12,6 +12,11 @@ import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
 import { clearResumed } from "./mark-rules.ts";
 import {
+  applyQuoted,
+  EXCERPT_ADD_REFUSAL,
+  excerptFrozenDetail,
+} from "./quote-rules.ts";
+import {
   acceptRemoval,
   discardRemoval,
   isOut,
@@ -84,6 +89,17 @@ export const CRITERION_FIELDS: Record<Criterion["form"], readonly string[]> = {
   revisit: [],
 };
 
+/** Where an excerpt's words sit in a conversation (#werk-excerpt-pointer). `end` is exclusive. */
+export type Pointer = {
+  conversation: string;
+  session: string;
+  message: number;
+  start: number;
+  end: number;
+  speaker: string;
+  at: string;
+};
+
 export type MapNode = {
   id: string;
   kind: Kind;
@@ -104,6 +120,8 @@ export type MapNode = {
   pending: Pending | null;
   /** A proposed removal of this card, until it is accepted or discarded (#werk-remove-red). */
   removal: { reparent: boolean } | null;
+  /** Set on an excerpt only. Its words are the title, and they never change (#werk-excerpt-event). */
+  pointer?: Pointer;
 };
 
 export type Edge = { from: string; to: string; type: LinkType; why: string };
@@ -123,6 +141,7 @@ export type RuleName =
   | "frozen"
   | "cover"
   | "ghost-parent"
+  | "excerpt"
   | "waiver"
   | "contract"
   | "reopen"
@@ -280,6 +299,7 @@ function applyProposed(
       detail: `the id "${id}" is taken by a removed card; restore it to bring it back`,
     };
   }
+  if (kind === "excerpt") return EXCERPT_ADD_REFUSAL;
   if (typeof parent === "string") {
     if (!map.nodes.has(parent)) {
       return { rule: "unknown-card", detail: `no card "${parent}"` };
@@ -421,6 +441,9 @@ function applyEdited(map: FoldedMap, fields: Fields): Violation | null {
   }
   const node = map.nodes.get(id);
   if (!node) return { rule: "unknown-card", detail: `no card "${id}"` };
+  if (node.kind === "excerpt" && (why !== null || body !== null)) {
+    return { rule: "excerpt", detail: excerptFrozenDetail(id) };
+  }
   if (why !== null || body !== null) {
     return {
       rule: "frozen",
@@ -493,6 +516,8 @@ export function applyEvent(
   switch (event.type) {
     case "node.proposed":
       return applyProposed(map, event, line);
+    case "excerpt.quoted":
+      return applyQuoted(map, event, addEdge);
     case "node.accepted":
       return applyAccepted(map, event);
     case "node.discarded":

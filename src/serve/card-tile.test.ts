@@ -22,23 +22,19 @@ test("the tile is one link: no link inside it, no body, and a leaf has no bar", 
 });
 
 test("a tile counts the evidence its card cites", () => {
-  const map = build(
-    open("root"),
-    {
-      type: "node.proposed",
-      id: "q",
-      kind: "excerpt",
-      title: "Said",
-      status: "open",
-    },
-    {
-      type: "edge.added",
-      from: "root",
-      to: "q",
-      link: "supported_by",
-      why: "root cites q",
-    },
-  );
+  const map = build(open("root"), {
+    type: "excerpt.quoted",
+    id: "q",
+    title: "Said",
+    card: "root",
+    conversation: "talk",
+    session: "s1",
+    message: 3,
+    start: 0,
+    end: 5,
+    speaker: "agent",
+    said_at: "10:02",
+  });
   const tile = renderCardTile(map, map.nodes.get("root") as never, undefined);
   expect(tile).toContain("1 evidence");
 });

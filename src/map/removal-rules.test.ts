@@ -22,6 +22,19 @@ const remove = (id: string, extra: Record<string, unknown> = {}) => ({
   id,
   ...extra,
 });
+const quoted = (id: string, card: string) => ({
+  type: "excerpt.quoted",
+  id,
+  title: "words",
+  card,
+  conversation: "c",
+  session: "s",
+  message: 0,
+  start: 0,
+  end: 5,
+  speaker: "agent",
+  said_at: "t",
+});
 const restore = (id: string) => ({ type: "node.restored", id });
 const build = (...events: unknown[]) =>
   fold(events.map((event, i): LogEntry => ({ line: i + 1, event })));
@@ -37,11 +50,10 @@ const tree = [
   node("c2", { parent: "p" }),
   node("other", { parent: "root" }),
   node("o", { kind: "option" }),
-  node("x", { kind: "excerpt" }),
   node("s", { kind: "source" }),
   node("t", { kind: "source" }),
   link("o", "p", "alternative_to"),
-  link("p", "x", "supported_by"),
+  quoted("x", "p"),
   link("p", "s", "supported_by"),
   link("p", "t", "supported_by"),
   link("other", "t", "supported_by"),

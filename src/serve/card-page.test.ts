@@ -96,22 +96,25 @@ test("options show their why-not, and evidence shows the words of its excerpt", 
     },
     link("opt", "root", "alternative_to"),
     {
-      type: "node.proposed",
+      type: "excerpt.quoted",
       id: "q",
-      kind: "excerpt",
-      title: "Said on day 3",
-      status: "open",
-      why: "the quote says",
-      body: "We should charge per **seat**.",
+      title: "We should charge per seat.",
+      card: "root",
+      conversation: "talk",
+      session: "s1",
+      message: 3,
+      start: 0,
+      end: 5,
+      speaker: "agent",
+      said_at: "10:02",
     },
-    link("root", "q", "supported_by"),
   );
   const html = page(map, "root");
   expect(html).toContain("<h2>Options</h2>");
   expect(html).toContain("rejected because it hides cost");
   expect(html).toContain("status-option");
   expect(html).toContain("<h2>Evidence and excerpts</h2>");
-  expect(html).toContain("We should charge per <strong>seat</strong>.");
+  expect(html).toContain("We should charge per seat.");
   expect(page(map, "q")).toContain("<h2>Cited by</h2>");
 });
 
