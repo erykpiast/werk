@@ -57,7 +57,7 @@ export type BriefInput = {
 
 const RULES = [
   "Do not weaken, skip, or delete a test to make a check pass.",
-  "You run headless. Ask no questions. If the ticket leaves something open, pick a reasonable reading and say so in one line at the end.",
+  "You run headless. Ask no questions.",
   "Propose a card for each decision that no cited card and no card of your search gives, at the moment you make it.",
 ];
 
