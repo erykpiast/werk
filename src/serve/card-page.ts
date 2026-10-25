@@ -14,11 +14,13 @@ import {
 } from "../md/markdown.ts";
 import {
   cardClasses,
+  hasProposal,
   POSTPONED_HINT,
   UNCHALLENGED_HINT,
   whoLabel,
 } from "./card-look.ts";
 import { renderCardTile } from "./card-tile.ts";
+import { diffBody, diffInline } from "./diff-html.ts";
 import { rollupBar, rollupFlags, rollupLine } from "./rollup-html.ts";
 
 /** The edges of the map, held ones last. */
@@ -91,13 +93,63 @@ function tagRow(node: MapNode): string {
   if (isPostponed(node)) {
     tags.push(tag("postponed", "tag-postponed", POSTPONED_HINT));
   }
-  if (node.proposed) tags.push(tag("proposed", "tag-proposed"));
+  if (hasProposal(node)) {
+    tags.push(
+      tag(
+        "proposed",
+        node.removal ? "tag-proposed tag-removal" : "tag-proposed",
+      ),
+    );
+  }
   if (node.unchallenged !== null) {
     tags.push(tag("no option weighed", "tag-unchallenged", UNCHALLENGED_HINT));
   }
   const who = whoLabel(node);
   if (who !== null) tags.push(tag(who, "tag-who"));
   return `<div class="tags">${tags.join(" ")}</div>`;
+}
+
+/** The cards of the refines subtree below a card, ghosts included, in the order that the tree holds them. */
+function descendants(map: FoldedMap, id: string): string[] {
+  const found: string[] = [];
+  for (const card of [id, ...found]) {
+    for (const [child, parent] of map.parents) {
+      if (parent === card) found.push(child);
+    }
+  }
+  return found;
+}
+
+/**
+ * The ✓ that accepts the proposal on the card, and the ✕ that removes it (#al-diff-cli-btn, #vi-remove-btn).
+ * The ✕ carries what its confirmation names: the cards that go with the whole subtree, the children
+ * that would move up, and the parent they move to (#vi-remove-btn-reparent). A proposed card is discarded,
+ * not removed, so it has no ✕.
+ */
+function actions(map: FoldedMap, node: MapNode): string {
+  const buttons: string[] = [];
+  if (hasProposal(node)) {
+    const kind = node.removal ? " is-removal" : "";
+    buttons.push(
+      `<button type="button" class="card-action card-accept${kind}" data-action="accept" data-card="${escapeHtml(node.id)}" title="Accept the proposal" aria-label="Accept the proposal">✓</button>`,
+    );
+  }
+  if ((node.kind === "card" || node.kind === "option") && !node.proposed) {
+    const below = descendants(map, node.id);
+    const children = [...map.parents].filter(([, p]) => p === node.id).length;
+    const parent = map.parents.get(node.id);
+    const parentNode = parent === undefined ? undefined : map.nodes.get(parent);
+    const up =
+      parentNode === undefined
+        ? ""
+        : ` data-parent="${escapeHtml(parentNode.id)}" data-parent-title="${escapeHtml(parentNode.title)}"`;
+    buttons.push(
+      `<button type="button" class="card-action card-remove" data-action="remove" data-card="${escapeHtml(node.id)}" data-cards="${below.length + 1}" data-children="${children}"${up} title="Remove this card" aria-label="Remove this card">✕</button>`,
+    );
+  }
+  return buttons.length === 0
+    ? ""
+    : `<div class="card-actions">${buttons.join("")}</div>`;
 }
 
 function hero(
@@ -107,14 +159,26 @@ function hero(
 ): string {
   const known = (ref: string) => map.nodes.has(ref);
   const depth = Math.min(depthOf(map, node.id), 2);
+  const { pending } = node;
+  const title =
+    pending?.title === undefined
+      ? renderTitle(node.title)
+      : diffInline(node.title, pending.title, renderTitle);
+  const why =
+    pending?.why === undefined
+      ? renderInline(node.why, known)
+      : diffInline(node.why, pending.why, (text) => renderInline(text, known));
   const parts = [
+    actions(map, node),
     tagRow(node),
-    `<h1 class="title title-depth-${depth}">${renderTitle(node.title)}</h1>`,
+    `<h1 class="title title-depth-${depth}">${title}</h1>`,
   ];
-  if (node.why !== "") {
-    parts.push(`<p data-part="why">${renderInline(node.why, known)}</p>`);
+  if (node.why !== "" || pending?.why !== undefined) {
+    parts.push(`<p data-part="why">${why}</p>`);
   }
-  if (node.body !== "") {
+  if (pending?.ops !== undefined) {
+    parts.push(`<div data-part="body">${diffBody(pending.ops, known)}</div>`);
+  } else if (node.body !== "") {
     parts.push(
       `<div data-part="body">${renderMarkdown(node.body, known)}</div>`,
     );

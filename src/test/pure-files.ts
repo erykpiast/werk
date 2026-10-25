@@ -34,6 +34,7 @@ export const PURE_FILES: readonly string[] = [
   "src/serve/open-card.ts",
   "src/serve/card-page.ts",
   "src/serve/card-tile.ts",
+  "src/serve/diff-html.ts",
   "src/serve/card-look.ts",
   "src/serve/rollup-html.ts",
   "src/map/rollup.ts",
@@ -56,4 +57,5 @@ export const PURE_FILES: readonly string[] = [
   "client/lib/chat-log.ts",
   "src/chat/permission.ts",
   "client/lib/ask.ts",
+  "client/lib/card-actions.ts",
 ];

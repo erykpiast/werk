@@ -133,17 +133,25 @@ function lcsTable(a: string[], b: string[]): (i: number, j: number) => number {
   return at;
 }
 
-/** Old and new text as one line: removed words in [- -], added words in {+ +}, shared words plain. */
-export function wordDiff(before: string, after: string): string {
+/** One run of words in a word diff: shared by both texts, only in the old text, or only in the new. */
+export type Segment = { kind: "same" | "removed" | "added"; text: string };
+
+/** The word diff of two texts as runs, a removed run before the added run that replaces it. */
+export function wordSegments(before: string, after: string): Segment[] {
   const a = before.split(/\s+/).filter((word) => word !== "");
   const b = after.split(/\s+/).filter((word) => word !== "");
   const shared = lcsTable(a, b);
-  const parts: string[] = [];
+  const runs: Segment[] = [];
   let removed: string[] = [];
   let added: string[] = [];
+  let same: string[] = [];
   const close = () => {
-    if (removed.length > 0) parts.push(`[-${removed.join(" ")}-]`);
-    if (added.length > 0) parts.push(`{+${added.join(" ")}+}`);
+    if (same.length > 0) runs.push({ kind: "same", text: same.join(" ") });
+    if (removed.length > 0) {
+      runs.push({ kind: "removed", text: removed.join(" ") });
+    }
+    if (added.length > 0) runs.push({ kind: "added", text: added.join(" ") });
+    same = [];
     removed = [];
     added = [];
   };
@@ -151,21 +159,37 @@ export function wordDiff(before: string, after: string): string {
   let j = 0;
   while (i < a.length || j < b.length) {
     if (i < a.length && j < b.length && a[i] === b[j]) {
-      close();
-      parts.push(a[i] as string);
+      if (removed.length > 0 || added.length > 0) close();
+      same.push(a[i] as string);
       i++;
       j++;
-    } else if (
-      j >= b.length ||
-      (i < a.length && shared(i + 1, j) >= shared(i, j + 1))
-    ) {
-      removed.push(a[i++] as string);
     } else {
-      added.push(b[j++] as string);
+      if (same.length > 0) close();
+      if (
+        j >= b.length ||
+        (i < a.length && shared(i + 1, j) >= shared(i, j + 1))
+      ) {
+        removed.push(a[i++] as string);
+      } else {
+        added.push(b[j++] as string);
+      }
     }
   }
   close();
-  return parts.join(" ");
+  return runs;
+}
+
+/** Old and new text as one line: removed words in [- -], added words in {+ +}, shared words plain. */
+export function wordDiff(before: string, after: string): string {
+  return wordSegments(before, after)
+    .map(({ kind, text }) =>
+      kind === "removed"
+        ? `[-${text}-]`
+        : kind === "added"
+          ? `{+${text}+}`
+          : text,
+    )
+    .join(" ");
 }
 
 /** The body of a pending change, block by block in the order of the ops. */

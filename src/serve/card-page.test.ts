@@ -129,3 +129,72 @@ test("link lists give the id, the title and the reason of each link", () => {
   expect(up).toContain("<h2>Depend on this card</h2>");
   expect(up).toContain("Dependent");
 });
+
+const accepted = (id: string) => ({
+  type: "node.accepted",
+  id,
+  actor: "you",
+});
+
+test("a ghost's page has the proposed badge and a ✓, and no ✕", () => {
+  const map = build(open("root"), ghost("g", { parent: "root" }));
+  const html = page(map, "g");
+  expect(html).toContain('<span class="tag tag-proposed">proposed</span>');
+  expect(html).toContain('data-action="accept" data-card="g"');
+  expect(html).not.toContain('data-action="remove"');
+});
+
+test("a pending edit shows one card with its words marked, and no before and after sections", () => {
+  const map = build(
+    open("root", { title: "Root", why: "old why", body: "- a\n- b" }),
+    {
+      type: "change.proposed",
+      id: "root",
+      why: "new why",
+      ops: [{ tag: "elaborated", old: "- a\n- b", new: "- a\n- b\n- c" }],
+    },
+  );
+  const html = page(map, "root");
+  expect(html).toContain('<del class="diff-del">old</del>');
+  expect(html).toContain('<ins class="diff-add">new</ins>');
+  expect(html).toContain('<li><ins class="diff-add">c</ins></li>');
+  expect(html).toContain("has-edit");
+  expect(html).not.toContain("is-proposed");
+  expect(html).not.toMatch(/before|after/i);
+  expect(html).toContain('data-action="accept"');
+});
+
+test("a pending removal is drawn in red with a red ✓", () => {
+  const map = build(open("root"), open("c", { parent: "root" }), {
+    type: "removal.proposed",
+    id: "c",
+  });
+  const html = page(map, "c");
+  expect(html).toContain("is-removal");
+  expect(html).toContain("tag-proposed tag-removal");
+  expect(html).toContain("card-accept is-removal");
+});
+
+test("the ✕ carries the counts of both answers and the parent's name", () => {
+  const map = build(
+    open("root", { title: "The root" }),
+    open("p", { parent: "root" }),
+    open("a", { parent: "p" }),
+    open("b", { parent: "p" }),
+    accepted("root"),
+  );
+  const html = page(map, "p");
+  expect(html).toContain(
+    'data-action="remove" data-card="p" data-cards="3" data-children="2"',
+  );
+  expect(html).toContain('data-parent="root" data-parent-title="The root"');
+  expect(page(map, "root")).not.toContain("data-parent=");
+  expect(page(map, "a")).toContain('data-cards="1" data-children="0"');
+});
+
+test("a tile of a card with a proposal carries the badge", () => {
+  const map = build(open("root"), ghost("g", { parent: "root" }));
+  expect(page(map, "root")).toContain(
+    '<span class="tag tag-proposed">proposed</span>',
+  );
+});

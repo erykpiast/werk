@@ -76,3 +76,18 @@ test("the token never appears in a refusal or a log line", async () => {
   await handler(req({ method: "POST", token: "SECRET-TOKEN" }));
   expect(logged.join()).not.toContain("SECRET-TOKEN");
 });
+
+test("the accept and remove buttons' requests are refused without the token", async () => {
+  let ran = 0;
+  const handler = createHandler("t", () => {
+    ran += 1;
+    return new Response("ok");
+  });
+  for (const action of ["accept", "remove"]) {
+    const url = `http://localhost:4000/api/projects/demo/${action}`;
+    const headers = { host: "localhost:4000" };
+    const bare = new Request(url, { method: "POST", headers });
+    expect((await handler(bare)).status).toBe(403);
+  }
+  expect(ran).toBe(0);
+});
