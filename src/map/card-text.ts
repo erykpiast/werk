@@ -38,13 +38,12 @@ function row(
 
 /** The card that show prints when no id is given: the first card that refines no other. */
 export function rootCardId(map: FoldedMap): string | null {
-  let ghost: string | null = null;
   for (const node of map.nodes.values()) {
-    if (node.kind !== "card" || map.parents.has(node.id)) continue;
-    if (!node.proposed) return node.id;
-    ghost ??= node.id;
+    if (node.kind === "card" && !node.proposed && !map.parents.has(node.id)) {
+      return node.id;
+    }
   }
-  return ghost;
+  return null;
 }
 
 function section(
@@ -103,7 +102,15 @@ export function renderCard(map: FoldedMap, id: string): string | null {
   for (const { edge, held } of edges) {
     const source = edge.to === id ? map.nodes.get(edge.from) : undefined;
     if (source && !sectioned(edge)) {
-      links.push(row("<-", edge, source, held, all[source.id]));
+      links.push(
+        row(
+          "<-",
+          edge,
+          source,
+          held,
+          edge.type === "refines" ? all[source.id] : undefined,
+        ),
+      );
     }
   }
   if (links.length > 0) lines.push("", ...links);

@@ -165,3 +165,8 @@ test("the root card is the first real card that refines no other", () => {
   expect(rootCardId(map)).toBe("r");
   expect(rootCardId(fx.build())).toBeNull();
 });
+
+test("the root card is never an unaccepted ghost", () => {
+  const map = fold([ev({ ...base, id: "g", title: "Ghost" }, 1)]);
+  expect(rootCardId(map)).toBeNull();
+});
