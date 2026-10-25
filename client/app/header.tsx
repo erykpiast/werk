@@ -70,6 +70,7 @@ export function Counts({ counts }: { counts: readonly Count[] }) {
 }
 
 const TABS: { view: View; label: string }[] = [
+  { view: "home", label: "Home" },
   { view: "map", label: "Map" },
   { view: "board", label: "Board" },
 ];

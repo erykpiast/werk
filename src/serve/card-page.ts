@@ -252,6 +252,25 @@ function evidenceRow(map: FoldedMap, node: MapNode, held: boolean): string {
   return `<li class="evidence-row ${cardClasses(node)}" data-card-id="${escapeHtml(node.id)}"><a class="card-ref" href="${cardHref(node.id)}"><span class="link-label">${node.kind}</span> <span class="card-id">#${escapeHtml(node.id)}</span> ${renderTitle(node.title)}</a>${held ? PENDING_LINK : ""}${words}</li>`;
 }
 
+/** The tiles of the cards that refine the card, real ones first, under a heading that counts them (#vi-onview-subcards). */
+function subCardsSection(
+  map: FoldedMap,
+  id: string,
+  all: Record<string, Rollup>,
+): string {
+  const subs = realFirst(linked(map, id, "refines", "in")).filter(
+    ({ node: sub }) => sub.kind === "card",
+  );
+  if (subs.length === 0) return "";
+  const ghosts = subs.filter(({ node: sub }) => sub.proposed).length;
+  const count = `<span class="count">${subs.length}</span>${ghosts > 0 ? ` <span class="count-proposed">${ghosts} proposed</span>` : ""}`;
+  return section(
+    `Sub-cards ${count}`,
+    `<div class="tile-grid">${subs.map(({ node: sub }) => renderCardTile(map, sub, all[sub.id])).join("")}</div>`,
+    "sub-cards",
+  );
+}
+
 function sections(
   map: FoldedMap,
   node: MapNode,
@@ -275,11 +294,6 @@ function sections(
   const dependents = realFirst(linked(map, id, "depends_on", "in")).map(
     ({ node: other, edge }) => linkRow("Dependent", other, edge.why, known),
   );
-  const subs = realFirst(linked(map, id, "refines", "in")).filter(
-    ({ node: sub }) => sub.kind === "card",
-  );
-  const ghosts = subs.filter(({ node: sub }) => sub.proposed).length;
-  const count = `<span class="count">${subs.length}</span>${ghosts > 0 ? ` <span class="count-proposed">${ghosts} proposed</span>` : ""}`;
   return [
     traces(node),
     options.length === 0
@@ -294,13 +308,7 @@ function sections(
     linkList("Cited by", citedBy),
     linkList("Depends on", dependsOn),
     linkList("Depend on this card", dependents),
-    subs.length === 0
-      ? ""
-      : section(
-          `Sub-cards ${count}`,
-          `<div class="tile-grid">${subs.map(({ node: sub }) => renderCardTile(map, sub, all[sub.id])).join("")}</div>`,
-          "sub-cards",
-        ),
+    subCardsSection(map, id, all),
   ].join("");
 }
 
@@ -308,4 +316,10 @@ function sections(
 export function renderCardPage(map: FoldedMap, node: MapNode): string {
   const all = rollups(map);
   return `<article class="card-page">${hero(map, node, all[node.id])}${sections(map, node, all)}</article>`;
+}
+
+/** The column of one top card on the home view: its hero and its sub-cards, and no other section (#vi-home-howwhat). */
+export function renderCardColumn(map: FoldedMap, node: MapNode): string {
+  const all = rollups(map);
+  return `<article class="card-page">${hero(map, node, all[node.id])}${subCardsSection(map, node.id, all)}</article>`;
 }

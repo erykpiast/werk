@@ -129,6 +129,9 @@ function mountSwitcher(current: string | null): HTMLElement {
   return host;
 }
 
+/** The id that stands for the Home segment of the breadcrumbs. No card has an id with a space. */
+const HOME_CRUMB = "home page";
+
 async function start() {
   const project = projectOf(location.pathname);
   const switcher = mountSwitcher(project);
@@ -243,13 +246,17 @@ async function start() {
   const openCard = (card: string) => go(cardPageOf(project, card));
   const renderHeader = () => {
     const rows = index?.entries ?? [];
-    const path = pathTo(rows, openId);
-    const isRoot = path.length <= 1;
+    const cardPath = pathTo(rows, openId);
+    const isRoot = cardPath.length <= 1;
+    // Every path starts at Home (#vi-home-howwhat).
+    const path = [{ id: HOME_CRUMB, title: "Home" }, ...cardPath];
     crumbRoot.render(
       <Crumbs
         path={path}
         paneWidth={leftPane?.clientWidth ?? 0}
-        onOpen={openCard}
+        onOpen={(id) =>
+          id === HOME_CRUMB ? go(viewPageOf(project, "home")) : openCard(id)
+        }
       />,
     );
     leftRoot?.render(
@@ -315,7 +322,7 @@ async function start() {
         renderHeader();
       },
       show: (shown) => {
-        if (view !== "map") return;
+        if (view !== "map" && view !== "home") return;
         openId = shown.id;
         renderHeader();
         const html = shown.html ?? "<p>The map has no cards yet.</p>";
@@ -337,7 +344,10 @@ async function start() {
   /** Shows the view that the address names. */
   const route = () => {
     view = viewOf(location.pathname);
-    if (view === "map") {
+    if (view === "home") {
+      hideBoard();
+      store.openHome();
+    } else if (view === "map") {
       hideBoard();
       const card = cardOf(location.pathname);
       remember(localStorage, project, { view, card });
@@ -348,11 +358,6 @@ async function start() {
     }
     renderHeader();
   };
-  // A bare project address opens the view the project remembers (#vi-tabs).
-  if (/^\/p\/[^/]+\/?$/.test(location.pathname)) {
-    const last = recall(localStorage, project);
-    history.replaceState(null, "", viewPageOf(project, last.view, last.card));
-  }
   route();
   store.start();
   /** Asks the server to append the event. The page redraws when the live channel signals the change. */

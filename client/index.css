@@ -1241,3 +1241,14 @@ button.tag {
 [data-slot="ticket-text"] {
   font-size: 0.9rem;
 }
+
+/* The home view: two columns of equal width, the requirements and the build rules (#vi-home-howwhat). */
+.home {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.home-col {
+  min-width: 0;
+}
