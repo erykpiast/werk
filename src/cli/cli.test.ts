@@ -111,3 +111,52 @@ test("help lists the registered verbs", async () => {
   expect(result.stdout).toContain("help");
   expect((await werk("nope")).code).toBe(2);
 });
+
+test("link needs a reason for depends_on, refuses lineage, and appends nothing then", async () => {
+  await werk("add", "a", "--title", "A");
+  await werk("add", "a1", "--title", "A1", "--parent", "a");
+  await werk("add", "b", "--title", "B");
+  const before = current().events().length;
+  const noWhy = await werk("link", "a1", "b", "--type", "depends_on");
+  expect(noWhy.code).toBe(1);
+  const lineage = await werk(
+    "link",
+    "a1",
+    "a",
+    "--type",
+    "depends_on",
+    "--why",
+    "x",
+  );
+  expect(lineage.code).toBe(1);
+  expect(lineage.stderr).toContain("ancestor");
+  const option = await werk("add", "o", "--title", "O");
+  expect(option.code).toBe(0);
+  expect(current().events()).toHaveLength(before + 1);
+});
+
+test("linking the same pair again replaces the reason shown, and a link on a ghost shows as held", async () => {
+  await werk("add", "a", "--title", "A");
+  await werk("add", "b", "--title", "B");
+  for (const why of ["first", "second"]) {
+    const r = await werk(
+      "link",
+      "a",
+      "b",
+      "--type",
+      "depends_on",
+      "--why",
+      why,
+    );
+    expect(r.stdout.trim()).toBe("linked");
+  }
+  const shown = (await werk("show", "a")).stdout;
+  expect(shown).toContain("second");
+  expect(shown).not.toContain("first");
+  expect(shown).toContain("[held]");
+});
+
+test("link rejects a missing type or a wrong count of ids", async () => {
+  expect((await werk("link", "a", "b")).code).toBe(2);
+  expect((await werk("link", "a", "--type", "refines")).code).toBe(2);
+});

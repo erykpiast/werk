@@ -14,6 +14,7 @@ const link = (from: string, to: string, type = "refines") => ({
   from,
   to,
   link: type,
+  ...(type === "depends_on" ? { why: "takes the grid" } : {}),
 });
 const entries = (...events: unknown[]): LogEntry[] =>
   events.map((event, i) => ({ line: i + 1, event }));
@@ -178,5 +179,35 @@ describe("the rules", () => {
         why: 1,
       }),
     ).toEqual(["bad-event"]);
+  });
+});
+
+describe("depends_on links", () => {
+  const dep = (from: string, to: string, why?: string) => ({
+    type: "edge.added",
+    from,
+    to,
+    link: "depends_on",
+    ...(why === undefined ? {} : { why }),
+  });
+
+  test("linking the same pair again replaces the reason", () => {
+    const map = fold(
+      entries(node("a"), node("b"), dep("a", "b", "one"), dep("a", "b", "two")),
+    );
+    expect(map.problems).toEqual([]);
+    expect(map.ghostEdges).toEqual([
+      { from: "a", to: "b", type: "depends_on", why: "two" },
+    ]);
+  });
+
+  test("a link without a reason is refused", () => {
+    expect(rules(node("a"), node("b"), dep("a", "b"))).toEqual(["link-why"]);
+  });
+
+  test("a link on a ghost is held, and the live edges leave it out", () => {
+    const map = fold(entries(node("a"), node("b"), dep("a", "b", "w")));
+    expect(map.edges).toEqual([]);
+    expect(map.ghostEdges).toHaveLength(1);
   });
 });

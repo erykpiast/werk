@@ -4,7 +4,9 @@ export const PURE_FILES: readonly string[] = [
   "src/toolchain.ts",
   "src/map/fold.ts",
   "src/map/card-text.ts",
+  "src/map/link-rules.ts",
   "src/cli/args.ts",
   "src/serve/trust.ts",
   "src/serve/read-api.ts",
+  "src/agent/launch-options.ts",
 ];
