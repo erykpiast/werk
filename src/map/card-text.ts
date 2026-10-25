@@ -1,5 +1,6 @@
 /** The text that the show verb prints for one card. See #werk-cli-show. */
 import type { Edge, FoldedMap, MapNode } from "./fold.ts";
+import { threadLines } from "./thread.ts";
 
 function row(arrow: string, edge: Edge, other: MapNode, held: boolean): string {
   const proposed = other.proposed ? "  [proposed]" : "";
@@ -32,5 +33,7 @@ export function renderCard(map: FoldedMap, id: string): string | null {
     if (source) links.push(row("<-", edge, source, held));
   }
   if (links.length > 0) lines.push("", ...links);
+  const thread = map.threads.get(id) ?? [];
+  if (thread.length > 0) lines.push("", "thread:", ...threadLines(thread));
   return lines.join("\n");
 }

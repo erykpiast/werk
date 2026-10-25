@@ -1,11 +1,11 @@
 // `add` proposes a card as a ghost (#werk-cli-add, #werk-propose-new).
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
-import { STATUSES } from "../map/fold.ts";
+import { KINDS, STATUSES, WHOS } from "../map/fold.ts";
 import { appendEvents, logPathFor } from "../map/log-store.ts";
 
 const USAGE =
-  'usage: add <id> --title "..." [--why "..."] [--body "..."] [--parent <id>] [--status open|proto]';
+  'usage: add <id> --title "..." [--why "..."] [--body "..."] [--parent <id>] [--kind card|option|source] [--status open|proto] [--who you|me|prototype]';
 
 const TEXT_FLAGS = ["why", "body"] as const;
 
@@ -14,7 +14,7 @@ registerVerb({
   summary: "Propose a card as a ghost",
   run: ({ args, cwd, env, out, err }) => {
     const parsed = parseArgs(args, {
-      flags: ["title", "parent", "status", ...TEXT_FLAGS],
+      flags: ["title", "parent", "status", "kind", "who", ...TEXT_FLAGS],
       idFlags: ["parent"],
     });
     if (!parsed.ok) {
@@ -39,14 +39,26 @@ registerVerb({
       err(`werk: --status must be open or proto`);
       return 2;
     }
+    const kind = flags.kind ?? "card";
+    if (!["card", "option", "source"].includes(kind)) {
+      err(`werk: --kind must be ${KINDS.slice(0, 3).join(", ")}`);
+      return 2;
+    }
+    if (
+      flags.who !== undefined &&
+      !(WHOS as readonly string[]).includes(flags.who)
+    ) {
+      err(`werk: --who must be ${WHOS.join(", ")}`);
+      return 2;
+    }
     const event: Record<string, unknown> = {
       type: "node.proposed",
       id,
-      kind: "card",
+      kind,
       title: flags.title,
       status,
     };
-    for (const key of [...TEXT_FLAGS, "parent"] as const) {
+    for (const key of [...TEXT_FLAGS, "parent", "who"] as const) {
       if (flags[key] !== undefined) event[key] = flags[key];
     }
     const result = appendEvents(logPathFor(cwd, env), [event]);

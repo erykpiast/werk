@@ -5,9 +5,11 @@
  * with the same step function, so the fold and a write never disagree.
  */
 
+import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
 
-export type Kind = "card" | "option" | "source";
+export type Kind = "card" | "option" | "source" | "excerpt";
+export type Who = "you" | "me" | "prototype";
 export type Status = "open" | "proto" | "decided";
 export type LinkType =
   | "refines"
@@ -15,7 +17,8 @@ export type LinkType =
   | "supported_by"
   | "alternative_to";
 
-export const KINDS: readonly Kind[] = ["card", "option", "source"];
+export const KINDS: readonly Kind[] = ["card", "option", "source", "excerpt"];
+export const WHOS: readonly Who[] = ["you", "me", "prototype"];
 export const STATUSES: readonly Status[] = ["open", "proto", "decided"];
 export const LINK_TYPES: readonly LinkType[] = [
   "refines",
@@ -34,6 +37,7 @@ export type MapNode = {
   why: string;
   body: string;
   status: Status;
+  who: Who | null;
   /** A ghost: proposed, in no rollup, with every edge of its own held. */
   proposed: boolean;
   marks: Mark[];
@@ -50,10 +54,20 @@ export type RuleName =
   | "cycle"
   | "option-link"
   | "link-why"
-  | "lineage";
+  | "lineage"
+  | "not-ghost"
+  | "accept-actor"
+  | "frozen"
+  | "ghost-parent";
 
 export type Violation = { rule: RuleName; detail: string };
 export type Problem = Violation & { line: number };
+
+/** One line of a card's thread: a note, or the marker where its id was proposed again. */
+export type ThreadEntry = { line: number } & (
+  | { kind: "note"; by: string; text: string }
+  | { kind: "proposed-again" }
+);
 
 export type FoldedMap = {
   nodes: Map<string, MapNode>;
@@ -63,6 +77,8 @@ export type FoldedMap = {
   ghostEdges: Edge[];
   /** The parent of each card that has one, held or live. */
   parents: Map<string, string>;
+  /** The notes of each id ever proposed. A discard keeps them (#werk-propose-new-discard-thread). */
+  threads: Map<string, ThreadEntry[]>;
   problems: Problem[];
 };
 
@@ -75,6 +91,7 @@ export function emptyMap(): FoldedMap {
     edges: [],
     ghostEdges: [],
     parents: new Map(),
+    threads: new Map(),
     problems: [],
   };
 }
@@ -142,7 +159,11 @@ function addEdge(map: FoldedMap, edge: Edge): void {
   else list[at] = edge;
 }
 
-function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
+function applyProposed(
+  map: FoldedMap,
+  fields: Fields,
+  line: number,
+): Violation | null {
   const { id, kind, title, status } = fields;
   if (typeof id !== "string" || id === "") return bad('"id" must be text');
   if (typeof title !== "string") return bad('"title" must be text');
@@ -154,8 +175,12 @@ function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
   const why = optional(fields, "why");
   const body = optional(fields, "body");
   const parent = optional(fields, "parent");
-  for (const value of [why, body, parent]) {
+  const who = optional(fields, "who");
+  for (const value of [why, body, parent, who]) {
     if (isViolation(value)) return value;
+  }
+  if (who !== null && !oneOf(who, WHOS)) {
+    return bad(`"who" must be one of ${WHOS.join(", ")}`);
   }
   if (map.nodes.has(id)) {
     return { rule: "duplicate-id", detail: `the id "${id}" is taken` };
@@ -178,9 +203,13 @@ function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
     why: typeof why === "string" ? why : "",
     body: typeof body === "string" ? body : "",
     status,
+    who,
     proposed: true,
     marks: [],
   });
+  const thread = map.threads.get(id);
+  if (thread) thread.push({ line, kind: "proposed-again" });
+  else map.threads.set(id, []);
   // The parent is part of what was added: one event makes the card and its link (#pr-log-one-event).
   if (typeof parent === "string") {
     addEdge(map, { from: id, to: parent, type: "refines", why: "" });
@@ -209,11 +238,77 @@ function applyEdgeAdded(map: FoldedMap, fields: Fields): Violation | null {
  * Checks one event against the map and applies it when it holds every rule.
  * Returns the rule it breaks otherwise, and leaves the map as it was.
  */
-export function applyEvent(map: FoldedMap, event: unknown): Violation | null {
+function applyAccepted(map: FoldedMap, fields: Fields): Violation | null {
+  if (typeof fields.id !== "string") return bad('"id" must be text');
+  return acceptGhost(map, fields.id, fields.actor);
+}
+
+function applyDiscarded(map: FoldedMap, fields: Fields): Violation | null {
+  if (typeof fields.id !== "string") return bad('"id" must be text');
+  return discardGhost(map, fields.id);
+}
+
+function applyNote(
+  map: FoldedMap,
+  fields: Fields,
+  line: number,
+): Violation | null {
+  const { id, by, text } = fields;
+  if (typeof id !== "string") return bad('"id" must be text');
+  if (typeof by !== "string") return bad('"by" must be text');
+  if (typeof text !== "string" || text === "")
+    return bad('"text" must be text');
+  const thread = map.threads.get(id);
+  if (!thread || !map.nodes.has(id)) {
+    return { rule: "unknown-card", detail: `no card "${id}"` };
+  }
+  thread.push({ line, kind: "note", by, text });
+  return null;
+}
+
+function applyEdited(map: FoldedMap, fields: Fields): Violation | null {
+  const { id } = fields;
+  if (typeof id !== "string") return bad('"id" must be text');
+  const why = optional(fields, "why");
+  const body = optional(fields, "body");
+  const who = optional(fields, "who");
+  if (isViolation(why)) return why;
+  if (isViolation(body)) return body;
+  if (isViolation(who)) return who;
+  if (who !== null && !oneOf(who, WHOS)) {
+    return bad(`"who" must be one of ${WHOS.join(", ")}`);
+  }
+  const node = map.nodes.get(id);
+  if (!node) return { rule: "unknown-card", detail: `no card "${id}"` };
+  if (node.proposed && (why !== null || body !== null)) {
+    return {
+      rule: "frozen",
+      detail: `"${id}" is a ghost and its words are frozen; discard it and propose it again`,
+    };
+  }
+  if (why !== null) node.why = why;
+  if (body !== null) node.body = body;
+  if (who !== null) node.who = who;
+  return null;
+}
+
+export function applyEvent(
+  map: FoldedMap,
+  event: unknown,
+  line = 0,
+): Violation | null {
   if (!isRecord(event)) return bad("an event is a JSON object");
   switch (event.type) {
     case "node.proposed":
-      return applyProposed(map, event);
+      return applyProposed(map, event, line);
+    case "node.accepted":
+      return applyAccepted(map, event);
+    case "node.discarded":
+      return applyDiscarded(map, event);
+    case "node.edited":
+      return applyEdited(map, event);
+    case "note.added":
+      return applyNote(map, event, line);
     case "edge.added":
       return applyEdgeAdded(map, event);
     default:
@@ -228,7 +323,7 @@ export function fold(entries: readonly LogEntry[]): FoldedMap {
     const violation: Violation | null =
       entry.error !== undefined
         ? { rule: "bad-json", detail: entry.error }
-        : applyEvent(map, entry.event);
+        : applyEvent(map, entry.event, entry.line);
     if (violation) map.problems.push({ line: entry.line, ...violation });
   }
   return map;
