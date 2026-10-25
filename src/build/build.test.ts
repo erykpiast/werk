@@ -218,3 +218,120 @@ test("bad arguments exit 2", async () => {
   expect((await build("--cap", "0")).code).toBe(2);
   expect((await build("--nope", "1")).code).toBe(2);
 });
+
+const overseen = (...extra: string[]) =>
+  build("--silence-ms", "400", "--progress-ms", "10000", ...extra);
+const verdict = (text: string): Reply => [
+  { event: { type: "result", subtype: "success", result: text } },
+];
+const transcriptOf = (pass: number) => {
+  const file = readPipeline(pipelinePath()).builds.values().next().value
+    ?.passes[pass]?.transcript;
+  return readFileSync(join(dirname(pipelinePath()), file ?? "none"), "utf8");
+};
+const toolCall = {
+  event: {
+    type: "assistant",
+    message: {
+      content: [
+        {
+          type: "tool_use",
+          id: "t1",
+          name: "Bash",
+          input: { command: "make" },
+        },
+      ],
+    },
+  },
+};
+
+test("a builder that stalls after its first event is cancelled and the next brief says it was silent", async () => {
+  project.install(
+    builder(
+      [{ event: { type: "system", subtype: "init" } }, { pause: 20_000 }],
+      [edit("ok.txt", "done")],
+    ),
+  );
+  await seed();
+  const result = await overseen();
+  expect(result.stdout).toContain("merging after 2 passes");
+  expect(messages()[1]?.text).toContain("silent");
+  expect(ticket()?.passes.map((p) => p.result)).toEqual(["red", "green"]);
+  expect(transcriptOf(0)).toContain('"act":"silent"');
+});
+
+test("a slow start with no event before the limit is not cancelled for silence", async () => {
+  project.install(builder([{ pause: 900 }, edit("ok.txt", "done")]));
+  await seed();
+  const result = await overseen();
+  expect(result.stdout).toContain("merging after 1 pass");
+});
+
+test("a scripted ask is answered by the classifier and the answer is logged", async () => {
+  project.install({
+    roles: {
+      builder: {
+        replies: [
+          [
+            { ask: { id: "a1", tool: "Bash", input: { command: "rm -rf /" } } },
+            edit("ok.txt", "done"),
+          ],
+        ],
+      },
+      classifier: {
+        replies: [verdict('{"verdict":"deny","comment":"wipes the disk"}')],
+      },
+    },
+  });
+  await seed();
+  await overseen();
+  const log = transcriptOf(0);
+  expect(log).toContain('"act":"ask"');
+  expect(log).toContain("denied Bash rm -rf /: wipes the disk");
+  expect(log).toContain("The overseer denied this call: wipes the disk");
+  expect(launches().map((l) => l.role)).toEqual(["builder", "classifier"]);
+  expect(messages().map((m) => m.role)).toEqual(["builder", "classifier"]);
+});
+
+test("a classifier with no verdict makes the ask denied", async () => {
+  project.install({
+    roles: {
+      builder: {
+        replies: [
+          [
+            { ask: { id: "a1", tool: "Bash", input: { command: "ls" } } },
+            edit("ok.txt", "done"),
+          ],
+        ],
+      },
+      classifier: { replies: [verdict("hard to say")] },
+    },
+  });
+  await seed();
+  await overseen();
+  expect(transcriptOf(0)).toContain(
+    "denied Bash ls: the classifier gave no verdict",
+  );
+});
+
+test("a looping verdict cancels the pass and puts the reason in the next brief", async () => {
+  project.install({
+    roles: {
+      builder: {
+        replies: [[toolCall, { pause: 20_000 }], [edit("ok.txt", "done")]],
+      },
+      classifier: {
+        replies: [
+          verdict('{"verdict":"looping","reason":"make fails the same way"}'),
+        ],
+      },
+    },
+  });
+  await seed();
+  const result = await build("--silence-ms", "5000", "--progress-ms", "300");
+  expect(result.stdout).toContain("merging after 2 passes");
+  expect(messages().filter((m) => m.role === "builder")[1]?.text).toContain(
+    "make fails the same way",
+  );
+  expect(transcriptOf(0)).toContain('"act":"looping"');
+});

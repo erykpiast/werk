@@ -3,7 +3,6 @@
  * checks as the verdict, and a hand-off by how the build ends (#st-build-ticket, #st-build-implement,
  * #lp-stateless, #st-build-ticket-hand-off, #werk-board-control-archive-ends-build).
  */
-import { appendFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
 import {
@@ -15,6 +14,7 @@ import { resolveTicket } from "../board/resolve.ts";
 import { buildRuleTitles } from "../chat/build-rules.ts";
 import { ALLOWED_TOOLS, launchFlags } from "../chat/child-args.ts";
 import { appendEvents, readMap } from "../map/log-store.ts";
+import { classifier } from "../overseer/classifier.ts";
 import { selfCommandLine } from "../own/own.ts";
 import type { Cause } from "../pipeline/fold.ts";
 import { pipelineLogBeside, writeDetailFile } from "../pipeline/log-store.ts";
@@ -31,6 +31,7 @@ import {
 import { createRecorder, type Recorder } from "./recorder.ts";
 import { type ProcessResult, runProcess } from "./run-process.ts";
 import { costOf } from "./stream-cost.ts";
+import { watchAgent } from "./watch-agent.ts";
 
 const REPO = join(import.meta.dirname, "..", "..");
 
@@ -47,6 +48,12 @@ export type BuildOptions = {
   agentMs: number;
   /** The wall-clock limit of one check, in milliseconds. */
   checkMs: number;
+  /** The overseer's limits, in milliseconds (#lp-overseer). */
+  silenceMs: number;
+  flatMs: number;
+  progressMs: number;
+  /** The wait for one classifier answer. */
+  classifyMs: number;
   /** The time between two reads of the board, in milliseconds. */
   pollMs: number;
   /** The text of the spec that holds the stories, or null. */
@@ -97,6 +104,10 @@ const agentArgs = (options: ReturnType<typeof buildLaunchOptions>) => [
   "--output-format",
   "stream-json",
   "--verbose",
+  // The overseer answers each ask on stdin, and the partial messages keep its silence clock armed.
+  "--include-partial-messages",
+  "--permission-prompt-tool",
+  "stdio",
   "--permission-mode",
   "auto",
   "--allowedTools",
@@ -114,6 +125,9 @@ type Run = {
   ticket: string;
   buildId: string;
   signal: AbortSignal;
+  /** The text of the ticket, which the classifier reads with each ask. */
+  ticketText: string;
+  classify: (prompt: string) => Promise<string | null>;
 };
 
 const judge = (result: ProcessResult) =>
@@ -219,15 +233,29 @@ async function runPass(
     cap: options.cap,
     branch: tree.branch,
   });
+  const watch = watchAgent({
+    limits: {
+      silenceMs: options.silenceMs,
+      flatMs: options.flatMs,
+      progressMs: options.progressMs,
+      sampleMs: Math.min(5000, Math.max(50, options.flatMs / 4)),
+    },
+    context: { brief, ticket: run.ticketText, asks: true },
+    transcript,
+    classify: run.classify,
+  });
   const agent = await runProcess({
     argv: [options.command, ...agentArgs(launch)],
     cwd: tree.dir,
     env: { ...options.env, ...launch.env },
     stdin: `${JSON.stringify({ type: "user", message: { role: "user", content: brief } })}\n`,
+    keepStdin: true,
     timeoutMs: options.agentMs,
     signal: run.signal,
-    onStdout: (chunk) => appendFileSync(transcript, chunk),
+    control: watch.control,
+    onStdout: watch.onStdout,
   });
+  watch.end();
   const cost = costOf(agent.stdout);
   appendBoardEvent(boardLog, {
     type: "build.ended",
@@ -263,14 +291,17 @@ async function runPass(
   const broken =
     agent.spawnError !== undefined
       ? `the builder could not start: ${agent.spawnError}`
-      : agent.timedOut
-        ? `the builder session ran past its time limit of ${options.agentMs} ms`
-        : null;
+      : agent.stopped !== undefined
+        ? `The overseer cancelled the last pass: ${agent.stopped}`
+        : agent.timedOut
+          ? `the builder session ran past its time limit of ${options.agentMs} ms`
+          : null;
   if (broken !== null) {
     // A broken session still commits its edits, skips the checks and counts against the cap.
+    const gate = agent.stopped === undefined ? "builder" : "overseer";
     return finish({
       kind: "red",
-      failure: { gate: "builder", reason: broken, text: broken },
+      failure: { gate, reason: broken, text: broken },
     });
   }
   return finish(await runChecks(run, n, commands));
@@ -350,6 +381,19 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
     ticket: ticket.id,
     buildId,
     signal: watch.signal,
+    ticketText: input.ticket,
+    classify: classifier({
+      command: options.command,
+      cwd: tree.dir,
+      env: env,
+      launch: buildLaunchOptions({
+        role: "classifier",
+        werk: selfCommandLine(),
+        projectIsWerk: resolve(cwd) === REPO,
+        buildRuleTitles: [],
+      }),
+      timeoutMs: options.classifyMs,
+    }),
   };
   const launch = buildLaunchOptions({
     role: "builder",

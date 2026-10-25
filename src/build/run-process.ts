@@ -11,12 +11,28 @@ export type ProcessOptions = {
   signal?: AbortSignal;
   /** Called with each piece of output as it arrives, so a log can follow the child live. */
   onStdout?: (chunk: string) => void;
+  /** Keeps the input open after `stdin`, so the caller can answer the child later and then close it. */
+  keepStdin?: boolean;
+  /** Called once the child runs, with the handle that reaches it from outside. */
+  control?: (control: ProcessControl) => void;
+};
+
+export type ProcessControl = {
+  pid: number;
+  /** Writes text to the input of the child. */
+  write: (text: string) => void;
+  /** Closes the input of the child. */
+  close: () => void;
+  /** Stops the child. The reason comes back in the result. */
+  stop: (reason: string) => void;
 };
 
 export type ProcessResult = {
   exitCode: number | null;
   timedOut: boolean;
   aborted: boolean;
+  /** The reason that a caller gave when it stopped the child. */
+  stopped?: string;
   stdout: string;
   stderr: string;
   /** Set when the program could not start. */
@@ -65,6 +81,7 @@ export async function runProcess(
   }
   let timedOut = false;
   let aborted = false;
+  let stopped: string | undefined;
   const stop = () => child.kill();
   const timer = setTimeout(() => {
     timedOut = true;
@@ -77,10 +94,33 @@ export async function runProcess(
   if (options.signal?.aborted) onAbort();
   else options.signal?.addEventListener("abort", onAbort, { once: true });
 
+  options.control?.({
+    pid: child.pid,
+    write: (text) => {
+      try {
+        child.stdin.write(text);
+        void child.stdin.flush();
+      } catch {
+        // The child closed its input: there is nobody to answer.
+      }
+    },
+    close: () => {
+      try {
+        void child.stdin.end();
+      } catch {
+        // Already closed.
+      }
+    },
+    stop: (reason) => {
+      stopped ??= reason;
+      stop();
+    },
+  });
   try {
     // A child that exits before it reads its input closes the pipe: that is not an error here.
     if (options.stdin !== undefined) child.stdin.write(options.stdin);
-    await child.stdin.end();
+    if (options.keepStdin) void child.stdin.flush();
+    else await child.stdin.end();
   } catch {
     // The exit code tells what happened.
   }
@@ -92,9 +132,10 @@ export async function runProcess(
   clearTimeout(timer);
   options.signal?.removeEventListener("abort", onAbort);
   return {
-    exitCode: timedOut || aborted ? null : exitCode,
+    exitCode: timedOut || aborted || stopped !== undefined ? null : exitCode,
     timedOut,
     aborted,
+    ...(stopped === undefined ? {} : { stopped }),
     stdout,
     stderr,
   };

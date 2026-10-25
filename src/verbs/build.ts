@@ -7,7 +7,7 @@ import { parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 
 const USAGE =
-  "usage: build <ticket> [--spec <file>] [--cap <n>] [--base <branch>] [--agent-ms <n>] [--check-ms <n>] [--poll-ms <n>] [--after-death <session>]";
+  "usage: build <ticket> [--spec <file>] [--cap <n>] [--base <branch>] [--agent-ms <n>] [--check-ms <n>] [--poll-ms <n>] [--silence-ms <n>] [--flat-ms <n>] [--progress-ms <n>] [--classify-ms <n>] [--after-death <session>]";
 
 /** A flag that holds a whole number of at least one, or the default when it is absent. */
 function count(
@@ -30,6 +30,10 @@ registerVerb({
         "agent-ms",
         "check-ms",
         "poll-ms",
+        "silence-ms",
+        "flat-ms",
+        "progress-ms",
+        "classify-ms",
         "after-death",
       ],
     });
@@ -45,11 +49,20 @@ registerVerb({
     const agentMs = count(flags["agent-ms"], 30 * 60_000);
     const checkMs = count(flags["check-ms"], 10 * 60_000);
     const pollMs = count(flags["poll-ms"], 1000);
+    // The overseer's starting values (#lp-overseer-silence, #lp-overseer-inflight, #lp-overseer-progress).
+    const silenceMs = count(flags["silence-ms"], 60_000);
+    const flatMs = count(flags["flat-ms"], 60_000);
+    const progressMs = count(flags["progress-ms"], 5 * 60_000);
+    const classifyMs = count(flags["classify-ms"], 30_000);
     if (
       cap === undefined ||
       agentMs === undefined ||
       checkMs === undefined ||
-      pollMs === undefined
+      pollMs === undefined ||
+      silenceMs === undefined ||
+      flatMs === undefined ||
+      progressMs === undefined ||
+      classifyMs === undefined
     ) {
       err(`werk: every number flag is a whole number of at least 1\n${USAGE}`);
       return 2;
@@ -80,6 +93,10 @@ registerVerb({
         agentMs,
         checkMs,
         pollMs,
+        silenceMs,
+        flatMs,
+        progressMs,
+        classifyMs,
         spec,
         command: "claude",
         ...(dead
