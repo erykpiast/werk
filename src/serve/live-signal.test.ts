@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { appendPipelineEvent } from "../pipeline/log-store.ts";
 import { createProject, type Project } from "../test-env/project.ts";
 
 const CLI = join(import.meta.dirname, "..", "cli.ts");
@@ -78,5 +79,29 @@ test("a read of the map sends no signal", async () => {
   await until(reader, ": live");
   await fetch(`http://127.0.0.1:${p}/api/projects/project/graph?shape=1`);
   expect(await until(reader, "event:")).not.toContain("event:");
+  await reader.cancel();
+});
+
+test("an append to the pipeline log sends a measure signal and no changed signal", async () => {
+  project.start(["bun", CLI, "serve", "--port", "0"]);
+  const p = await port();
+  const reader = (
+    (await fetch(`http://127.0.0.1:${p}/api/projects/project/live`))
+      .body as ReadableStream<Uint8Array>
+  ).getReader();
+  await until(reader, ": live");
+
+  const path = join(project.dir, ".werk", "pipeline.jsonl");
+  expect(
+    appendPipelineEvent(path, {
+      type: "step.started",
+      step: "plan",
+      id: "p1",
+      at: "2026-01-01T00:00:00Z",
+    }).ok,
+  ).toBe(true);
+  const seen = await until(reader, "event: measure");
+  expect(seen).toContain("event: measure\ndata:\n\n");
+  expect(seen).not.toContain("event: changed");
   await reader.cancel();
 });

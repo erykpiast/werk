@@ -4,6 +4,7 @@
  * page never touches it (#werk-projects, #werk-projects-background).
  */
 import { dirname, join } from "node:path";
+import { pipelineLogBeside } from "../pipeline/log-store.ts";
 import { broadcast, type Clients } from "../serve/live-channel.ts";
 import { type Lock, takeLock } from "../serve/lock.ts";
 import { type LogWatch, watchLog } from "../serve/log-watch.ts";
@@ -14,6 +15,8 @@ export type Context = {
   /** The open live connections of pages that show this project. */
   clients: Clients;
   watch: LogWatch;
+  /** The pipeline log. Its growth sends the measure signal (#werk-write-measure-signal). */
+  measureWatch: LogWatch;
   lock: Lock;
   /** The names of the agent turns that run now. */
   runningTurns: () => string[];
@@ -60,6 +63,15 @@ export async function openContext(
   const clients: Clients = new Set();
   try {
     const watch = watchLog(logPath, () => broadcast(clients, "changed"));
+    let measureWatch: LogWatch;
+    try {
+      measureWatch = watchLog(pipelineLogBeside(logPath), () =>
+        broadcast(clients, "measure"),
+      );
+    } catch (error) {
+      watch.close();
+      throw error;
+    }
     return {
       ok: true,
       context: {
@@ -67,6 +79,7 @@ export async function openContext(
         logPath,
         clients,
         watch,
+        measureWatch,
         lock,
         runningTurns: () => [],
         stopTurns: async () => {},
@@ -81,6 +94,7 @@ export async function openContext(
 /** Ends the page connections of the project, stops its watch and lets go of its lock. */
 export function closeContext(context: Context): void {
   context.watch.close();
+  context.measureWatch.close();
   for (const client of context.clients) {
     try {
       client.close();

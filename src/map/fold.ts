@@ -10,7 +10,10 @@ import { applyKept, checkDecide } from "./contract.ts";
 import type { Pending } from "./edit-diff.ts";
 import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
+import { clearResumed } from "./mark-rules.ts";
 import { isOut, outRefusal, removeCard, restoreCard } from "./removal-rules.ts";
+import { applyReopen } from "./reopen-rules.ts";
+import { applyReview } from "./review-rules.ts";
 
 export type Kind = "card" | "option" | "source" | "excerpt";
 export type Who = "you" | "me" | "prototype";
@@ -31,8 +34,25 @@ export const LINK_TYPES: readonly LinkType[] = [
   "alternative_to",
 ];
 
-/** A stale, paused or postponed mark. Later tickets derive them (#pr-log-fold-marks). */
-export type Mark = { kind: "stale" | "paused" | "postponed"; trace: string };
+/** The reasons a reopen carries (#pr-wf-paused). A mark from an amend says "amended" instead. */
+export const REOPEN_REASONS = ["postponed", "invalidated", "rejected"] as const;
+export type ReopenReason = (typeof REOPEN_REASONS)[number];
+
+/**
+ * A stale, paused or postponed mark, derived in the order of the events (#pr-log-fold-marks).
+ * `link` is the last hop from the marked card toward the origin, and `via` the cards between,
+ * nearest to the origin first (#vi-prop-trace-reason). `trace` is the printed form.
+ */
+export type Mark = {
+  kind: "stale" | "paused" | "postponed";
+  origin: string;
+  reason: ReopenReason | "amended";
+  at: string;
+  text: string;
+  link: Edge | null;
+  via: string[];
+  trace: string;
+};
 
 /** One kill criterion: what must become true to revisit a decision (#kill-shape). */
 export type Criterion =
@@ -95,6 +115,8 @@ export type RuleName =
   | "ghost-parent"
   | "waiver"
   | "contract"
+  | "reopen"
+  | "review"
   | "remove-target"
   | "no-grandparent"
   | "not-removed"
@@ -441,6 +463,7 @@ function applyDecided(map: FoldedMap, fields: Fields): Violation | null {
   const violation = checkDecide(map, id);
   if (violation) return violation;
   (map.nodes.get(id) as MapNode).status = "decided";
+  clearResumed(map, id);
   return null;
 }
 
@@ -477,6 +500,10 @@ export function applyEvent(
       return typeof event.id === "string"
         ? restoreCard(map, event.id)
         : bad('"id" must be text');
+    case "node.reopened":
+      return applyReopen(map, event);
+    case "node.reviewed":
+      return applyReview(map, event);
     case "note.added":
       return applyNote(map, event, line);
     case "edge.added":

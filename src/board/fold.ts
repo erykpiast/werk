@@ -5,6 +5,10 @@
  * the same step function (#st-ticket-restore).
  */
 import type { LogEntry } from "../map/fold.ts";
+import {
+  buildFollowupRecord,
+  type FollowupRecord,
+} from "./followup-records.ts";
 
 export const COLUMNS = [
   "blocked",
@@ -67,6 +71,8 @@ export type Ticket = {
   steps: string[];
   heldout: HeldOut[];
   followups: string[];
+  /** Follow-up requests recorded on the finished ticket (#werk-cli-followup-event). */
+  followupRecords: FollowupRecord[];
 };
 
 export type Plan = {
@@ -181,6 +187,7 @@ function planned(board: Board, rec: Rec): BoardViolation | null {
     steps: [],
     heldout: [],
     followups: [],
+    followupRecords: [],
   };
   board.tickets.set(id, ticket);
   ensurePlan(board, planId).tickets.push(id);
@@ -357,6 +364,20 @@ function followup(board: Board, rec: Rec): BoardViolation | null {
   return null;
 }
 
+function followupRecorded(board: Board, rec: Rec): BoardViolation | null {
+  const ticket = ticketOf(board, rec);
+  if (isViolation(ticket)) return ticket;
+  if (ticket.column !== "done" || ticket.archived)
+    return {
+      rule: "bad-move",
+      detail: `ticket ${ticket.id} is not done; a follow-up needs a finished build`,
+    };
+  const record = buildFollowupRecord(ticket.followupRecords, rec);
+  if ("rule" in record) return record;
+  ticket.followupRecords.push(record);
+  return null;
+}
+
 function planOf(rec: Rec): string | BoardViolation {
   return str(rec, "plan") ?? bad("event needs plan");
 }
@@ -407,6 +428,7 @@ const TICKET_EVENTS: Record<
   "ticket.steps": steps,
   "ticket.heldout": heldout,
   "ticket.followup": followup,
+  "ticket.followup_recorded": followupRecorded,
 };
 
 const RUN_EVENTS = new Set([
