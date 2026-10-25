@@ -13,6 +13,7 @@ export type Step =
         suggestions?: Record<string, unknown>[];
       };
     }
+  | { stderr: string }
   | { crash: number };
 
 export type Reply = Step[];
@@ -24,7 +25,7 @@ export type Script = { roles: Record<string, RoleScript> };
 
 export type Pick = { reply: Reply; exit: number } | { error: string };
 
-const STEP_KEYS = ["event", "edit", "pause", "ask", "crash"] as const;
+const STEP_KEYS = ["event", "edit", "pause", "ask", "stderr", "crash"] as const;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -58,6 +59,9 @@ function checkStep(step: unknown, where: string): Step {
     ) {
       throw new Error(`${where}: ask needs an id and a tool, both text`);
     }
+  }
+  if ("stderr" in step && typeof step.stderr !== "string") {
+    throw new Error(`${where}: stderr must be text`);
   }
   if ("crash" in step && typeof step.crash !== "number") {
     throw new Error(`${where}: crash must be an exit code`);
@@ -114,4 +118,18 @@ export function pickReply(
 /** A chat role plays one reply per message, so its reply is picked by turn. */
 export function isChatRole(role: string): boolean {
   return role === "chat";
+}
+
+/**
+ * True when the agent reports its session before the reply plays. A reply that opens with a crash,
+ * an error text or an error result is a launch that failed before it reached its session.
+ */
+export function opensSession(reply: Reply): boolean {
+  const first = reply[0];
+  if (first === undefined) return true;
+  if ("crash" in first || "stderr" in first) return false;
+  if ("event" in first) {
+    return !(first.event.type === "result" && first.event.is_error === true);
+  }
+  return true;
 }

@@ -61,4 +61,8 @@ export const PURE_FILES: readonly string[] = [
   "client/lib/ask.ts",
   "src/chat/image-rules.ts",
   "client/lib/image-chips.ts",
+  "src/chat/model-pick.ts",
+  "src/chat/context-fill.ts",
+  "src/chat/crash-rules.ts",
+  "client/lib/context-pie.ts",
 ];

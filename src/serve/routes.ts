@@ -12,7 +12,7 @@ import {
   type Projects,
   removeProject,
 } from "../projects/projects.ts";
-import { askRoute, chatRoute } from "./chat-route.ts";
+import { askRoute, chatRoute, clearRoute, modelRoute } from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
 import { chooseFolder } from "./folder-dialog.ts";
 import type { Route } from "./handler.ts";
@@ -118,6 +118,8 @@ async function projectRoute(
   if (rest === "/live") return live(context);
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
   if (rest === "/ask") return askRoute(context, req);
+  if (rest === "/model") return modelRoute(context, ctx.env, req);
+  if (rest === "/clear") return clearRoute(context, ctx.env);
   if (rest === "/image") return imageRoute(context, req, url);
   if (rest === "/graph") {
     if (url.searchParams.get("shape") !== "1") {
@@ -167,7 +169,11 @@ export function createRoute(ctx: RouteContext): Route {
         rest !== "" &&
         (req.method === "GET" ||
           (req.method === "POST" &&
-            (rest === "/chat" || rest === "/ask" || rest === "/image")))
+            (rest === "/chat" ||
+              rest === "/ask" ||
+              rest === "/image" ||
+              rest === "/model" ||
+              rest === "/clear")))
       ) {
         return projectRoute(ctx, req, name, rest);
       }

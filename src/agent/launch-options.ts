@@ -7,7 +7,7 @@ import { instructionsText } from "./instructions.ts";
 import { type SubagentDefinition, subagentDefinitions } from "./subagents.ts";
 
 export const OPUS = "claude-opus-5-5";
-export const SONNET = "claude-sonnet-5-5";
+export const SONNET = "claude-sonnet-5-5[1m]";
 
 /** A model and its optional advisor, the pair the chat header selects. */
 export type ModelChoice = { model: string; advisor: string | null };

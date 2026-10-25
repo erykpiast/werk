@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { createProject, type Project } from "../test-env/project.ts";
 
 const CLI = join(import.meta.dir, "..", "cli.ts");
@@ -63,7 +63,17 @@ async function serving() {
       headers: { "content-type": "application/json", ...headers },
       body: typeof body === "string" ? body : JSON.stringify(body),
     });
-  return { origin, send };
+  const post = (
+    path: string,
+    body: unknown,
+    headers = { "x-werk-token": token },
+  ) =>
+    fetch(`${origin}/api/projects/project/${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...headers },
+      body: JSON.stringify(body),
+    });
+  return { origin, send, post };
 }
 
 test("a send without the token, or from a foreign Host, is refused and starts no agent", async () => {
@@ -123,4 +133,45 @@ test("a send streams its reply on the live channel, and a page that joins late r
     "chat",
     "turn-end",
   ]);
+});
+
+test("a restarted server shows the saved model and fill before any message", async () => {
+  writeFileSync(
+    join(dirname(project.logPath), "chat-model.json"),
+    JSON.stringify({
+      model: "opus",
+      advisor: null,
+      used: 150_000,
+      window: 200_000,
+    }),
+  );
+  const { origin } = await serving();
+  const read = (await (
+    await fetch(`${origin}/api/projects/project/chat`)
+  ).json()) as { settings: unknown };
+  expect(read.settings).toEqual({
+    model: "opus",
+    advisor: null,
+    used: 150_000,
+    window: 200_000,
+  });
+  expect(project.launches()).toEqual([]);
+});
+
+test("a model switch needs the token and one of the three choices", async () => {
+  const { origin, post } = await serving();
+  expect(
+    (await post("model", { model: "opus", advisor: null }, {} as never)).status,
+  ).toBe(403);
+  expect((await post("model", { model: "haiku", advisor: null })).status).toBe(
+    400,
+  );
+  expect((await post("model", { model: "opus", advisor: null })).status).toBe(
+    200,
+  );
+  const read = (await (
+    await fetch(`${origin}/api/projects/project/chat`)
+  ).json()) as { settings: { model: string } };
+  expect(read.settings.model).toBe("opus");
+  expect((await post("clear", {})).status).toBe(200);
 });

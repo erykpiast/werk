@@ -1,9 +1,15 @@
 import { readFileSync } from "node:fs";
 import { resolveEdit, writeEdit } from "./edit.ts";
-import { appendRecord, countLaunches, logPathFor } from "./launch-log.ts";
+import {
+  appendRecord,
+  countLaunches,
+  countMessages,
+  logPathFor,
+} from "./launch-log.ts";
 import { LineReader } from "./lines.ts";
 import {
   isChatRole,
+  opensSession,
   type Pick,
   parseScript,
   pickReply,
@@ -129,6 +135,8 @@ async function playReply(
           },
         }),
       );
+    } else if ("stderr" in step) {
+      ctx.err(step.stderr);
     } else {
       return step.crash;
     }
@@ -181,6 +189,17 @@ async function turn(
   return crash ?? picked.exit;
 }
 
+/** The line that names the session: the resumed id, or a new one for each launch. */
+function initEvent(argv: string[], launches: number) {
+  const at = argv.indexOf("--resume");
+  const resumed = at >= 0 ? argv[at + 1] : undefined;
+  return {
+    type: "system",
+    subtype: "init",
+    session_id: resumed ?? `fake-session-${launches}`,
+  };
+}
+
 /** Runs one launch of the fake agent. Returns the exit code. */
 export async function run(ctx: RunContext): Promise<number> {
   const scriptPath = ctx.env[SCRIPT_VAR];
@@ -217,7 +236,11 @@ export async function run(ctx: RunContext): Promise<number> {
       const line = await reader.nextWhere((l) => !isControlResponse(l));
       if (line === null) return exit;
       appendRecord(log, { kind: "message", role, text: messageText(line) });
-      const result = await turn(ctx, reader, pickReply(script, role, n));
+      const picked = pickReply(script, role, countMessages(log, role) - 1);
+      if (n === 0 && "reply" in picked && opensSession(picked.reply)) {
+        ctx.out(JSON.stringify(initEvent(ctx.argv, countLaunches(log, role))));
+      }
+      const result = await turn(ctx, reader, picked);
       if (typeof result === "string") return fail(result);
       if (result !== exit) return result;
     }

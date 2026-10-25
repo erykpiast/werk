@@ -7,6 +7,7 @@ import {
   type Action,
   type ChatState,
   emptyChat,
+  type ModelSettings,
   reduce,
   type Selection,
 } from "./chat-log";
@@ -22,6 +23,8 @@ export const CHAT_EVENTS = [
   "turn-end",
   "ask",
   "ask-done",
+  "model",
+  "cleared",
 ] as const;
 
 /** The answer of the person to an open ask. */
@@ -54,6 +57,13 @@ export type ChatStore = {
   imageUrl(name: string): string;
   /** Sends the answer to an ask. The ask closes when the server says so, and not before. */
   answer(id: string, answer: AskAnswer): Promise<void>;
+  /** Switches the model. The answer is null, or the reason the server refused. */
+  setModel(
+    model: ModelSettings["model"],
+    advisor: ModelSettings["advisor"],
+  ): Promise<string | null>;
+  /** Drops the session and the transcript. The answer is null, or the reason the server refused. */
+  clearContext(): Promise<string | null>;
   /** Keeps the picks of one question of a form. */
   pick(id: string, question: number, selection: Selection): void;
 };
@@ -72,6 +82,14 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     try {
       body = JSON.parse(data);
     } catch {
+      return;
+    }
+    if (type === "cleared") {
+      apply({ type: "cleared" });
+      return;
+    }
+    if (type === "model" && typeof body.window === "number") {
+      apply({ type: "model", settings: body as unknown as ModelSettings });
       return;
     }
     if (type === "ask-done" && typeof body.id === "string") {
@@ -104,6 +122,27 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     }
   };
 
+  /** A post to the project that changes the conversation. The answer is null, or the refusal's reason. */
+  const post = async (path: string, body: unknown): Promise<string | null> => {
+    try {
+      const res = await deps.fetch(apiOf(project, path), {
+        method: "POST",
+        headers: {
+          "x-werk-token": deps.token,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) return null;
+      const refusal = (await res.json().catch(() => ({}))) as {
+        message?: string;
+      };
+      return refusal.message ?? `the server answered ${res.status}`;
+    } catch (error) {
+      return String(error);
+    }
+  };
+
   return {
     get: () => state,
     subscribe(listener) {
@@ -114,12 +153,16 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     async load() {
       const res = await deps.fetch(apiOf(project, "/chat"));
       if (!res.ok) return;
-      const { events } = (await res.json()) as {
+      const { events, settings } = (await res.json()) as {
         events: { name: string; data: unknown }[];
+        settings?: ModelSettings;
       };
+      if (settings) apply({ type: "model", settings });
       for (const event of events)
         receive(event.name, JSON.stringify(event.data));
     },
+    setModel: (model, advisor) => post("/model", { model, advisor }),
+    clearContext: () => post("/clear", {}),
     pick: (id, question, selection) =>
       apply({ type: "pick", id, question, selection }),
     async answer(id, answer) {

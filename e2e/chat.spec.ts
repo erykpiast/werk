@@ -452,3 +452,55 @@ test("removing chip 1 of two renumbers the other to [Image #1]", async ({
     await expect(chips).not.toContainText("[Image #2]");
   });
 });
+
+const launched = (server: BrowserServer) =>
+  server.launches().flatMap((r) => (r.kind === "launch" ? [r.args] : []));
+
+test("the model switch restarts the agent, and the model survives a server restart", async ({
+  page,
+  evidence,
+}) => {
+  await withChat(
+    { roles: { chat: { replies: [[say("m1", "First answer")]] } } },
+    async (server) => {
+      await page.goto(server.url);
+      await send(page, "Hello");
+      await expect(chat(page).getByText("First answer")).toBeVisible();
+      await chat(page).getByLabel("Model").selectOption("opus");
+      await expect.poll(() => launched(server).length).toBe(2);
+      const [first, second] = launched(server) as [string[], string[]];
+      expect(second[second.indexOf("--model") + 1]).toBe("claude-opus-5-5");
+      expect(second[second.indexOf("--resume") + 1]).toBe("fake-session-1");
+      expect(first).not.toContain("--resume");
+      await server.stop();
+      await server.start();
+      await page.goto(server.url);
+      await expect(chat(page).getByLabel("Model")).toHaveValue("opus");
+      await evidence(page, "chat-model");
+    },
+  );
+});
+
+test("the pie opens a popover that clears the context and leaves the map as it is", async ({
+  page,
+}) => {
+  await withChat(
+    { roles: { chat: { replies: [[say("m1", "First answer")]] } } },
+    async (server) => {
+      await page.goto(server.url);
+      await send(page, "Hello");
+      await expect(chat(page).getByText("First answer")).toBeVisible();
+      await chat(page)
+        .getByRole("button", { name: /^Context/ })
+        .click();
+      await expect(chat(page).getByRole("dialog")).toContainText(
+        "of the context window is in use",
+      );
+      await chat(page).getByRole("button", { name: "Clear context" }).click();
+      await expect(chat(page).getByText("First answer")).toBeHidden();
+      await expect(page.getByRole("heading", { level: 1 })).toContainText(
+        "We build software with agents",
+      );
+    },
+  );
+});

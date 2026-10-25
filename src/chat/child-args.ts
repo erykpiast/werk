@@ -26,6 +26,7 @@ export type StoredAllow = { tools: string[]; dirs: string[] };
 export function chatArgs(
   options: LaunchOptions,
   stored: StoredAllow = { tools: [], dirs: [] },
+  resume: string | null = null,
 ): string[] {
   const args = [
     "--output-format",
@@ -42,6 +43,7 @@ export function chatArgs(
     [...ALLOWED_TOOLS, ...stored.tools].join(","),
   ];
   for (const dir of stored.dirs) args.push("--add-dir", dir);
+  if (resume !== null) args.push("--resume", resume);
   if (options.model) args.push("--model", options.model);
   if (options.advisor) args.push("--advisor", options.advisor);
   if (options.appendSystemPrompt) {

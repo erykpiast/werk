@@ -35,3 +35,10 @@ export function countLaunches(logPath: string, role: string): number {
     (r) => r.kind === "launch" && r.role === role,
   ).length;
 }
+
+/** How many messages the log holds for the role, over every launch of it. */
+export function countMessages(logPath: string, role: string): number {
+  return readRecords(logPath).filter(
+    (r) => r.kind === "message" && r.role === role,
+  ).length;
+}

@@ -64,17 +64,34 @@ export type PendingAsk = {
   sending: boolean;
 };
 
+/** The model, the advisor and the context fill that the header shows (#werk-model-persist). */
+export type ModelSettings = {
+  model: "sonnet" | "opus";
+  advisor: "opus" | null;
+  used: number;
+  window: number;
+};
+
 export type ChatState = {
   turns: Turn[];
+  /** Null until the server has said what it saved. */
+  settings: ModelSettings | null;
   /** The open asks, oldest first. */
   asks: PendingAsk[];
   /** The picks of each open question form, kept here so a redraw never clears them (#werk-mc-askqa). */
   selections: Record<string, Selection[]>;
 };
 
-export const emptyChat: ChatState = { turns: [], asks: [], selections: {} };
+export const emptyChat: ChatState = {
+  turns: [],
+  settings: null,
+  asks: [],
+  selections: {},
+};
 
 export type Action =
+  | { type: "model"; settings: ModelSettings }
+  | { type: "cleared" }
   | { type: "sent"; turn: string; text: string }
   | { type: "turn-start"; turn: string; at: number }
   | {
@@ -151,6 +168,11 @@ function upsert(items: Item[], next: Item): Item[] {
 
 export function reduce(state: ChatState, action: Action): ChatState {
   switch (action.type) {
+    case "model":
+      return { ...state, settings: action.settings };
+    case "cleared":
+      // Only the chat forgets. The model and the map stay.
+      return { ...emptyChat, settings: state.settings };
     case "ask": {
       // A replay of the history names an ask that is open already, and keeps its state.
       if (state.asks.some((a) => a.id === action.ask.id)) return state;
