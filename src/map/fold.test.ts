@@ -291,6 +291,87 @@ describe("ghost events", () => {
   });
 });
 
+describe("waivers, criteria and decide", () => {
+  const edit = (fields: Record<string, unknown>) => ({
+    type: "node.edited",
+    id: "a",
+    ...fields,
+  });
+  const kill = (fields: Record<string, unknown>) => ({
+    type: "criterion.added",
+    id: "a",
+    ...fields,
+  });
+
+  test("a waiver is stored with its reason, and an empty reason is refused", () => {
+    const map = fold(
+      entries(node("a"), edit({ noBasis: "root", unchallenged: "no choice" })),
+    );
+    expect(map.nodes.get("a")).toMatchObject({
+      noBasis: "root",
+      unchallenged: "no choice",
+    });
+    expect(rules(node("a"), edit({ noBasis: "" }))).toEqual(["waiver"]);
+    expect(rules(node("a"), edit({ unchallenged: " " }))).toEqual(["waiver"]);
+    expect(rules(node("a"), edit({ noBasis: 3 }))).toEqual(["bad-event"]);
+  });
+
+  test("each form of criterion is stored, and a missing part is refused", () => {
+    const map = fold(
+      entries(
+        node("a"),
+        kill({ form: "revisit" }),
+        kill({ form: "manual", test: "use it" }),
+        kill({ form: "no-metric", reason: "cheap" }),
+        kill({
+          form: "metric",
+          source: "s",
+          metric: "m",
+          threshold: "t",
+          window: "w",
+          sample: "n",
+        }),
+      ),
+    );
+    expect(map.problems).toEqual([]);
+    expect(map.nodes.get("a")?.kill.map((c) => c.form)).toEqual([
+      "revisit",
+      "manual",
+      "no-metric",
+      "metric",
+    ]);
+    expect(
+      rules(
+        node("a"),
+        kill({ form: "metric", metric: "m" }),
+        kill({ form: "x" }),
+      ),
+    ).toEqual(["bad-event", "bad-event"]);
+    expect(rules(kill({ form: "revisit" }))).toEqual(["unknown-card"]);
+    expect(rules({ type: "criterion.added", form: "revisit" })).toEqual([
+      "bad-event",
+    ]);
+  });
+
+  test("a decide runs the contract, and a decided card is frozen against an edit", () => {
+    const decide = { type: "node.decided", id: "a" };
+    expect(rules(node("a"), decide)).toEqual(["contract"]);
+    expect(rules({ type: "node.decided" })).toEqual(["bad-event"]);
+    const map = fold(
+      entries(
+        node("a"),
+        edit({ who: "me", noBasis: "root" }),
+        kill({ form: "revisit" }),
+        decide,
+        decide,
+        edit({ who: "you" }),
+      ),
+    );
+    expect(map.nodes.get("a")?.status).toBe("decided");
+    expect(map.problems.map((p) => p.rule)).toEqual(["contract", "frozen"]);
+  });
+});
+
 describe("removal events", () => {
   const accepted = (id: string) => ({
     type: "node.accepted",
@@ -311,6 +392,23 @@ describe("removal events", () => {
       ),
     );
     expect(back.removals).toEqual([]);
+  });
+
+  test("a kill criterion and a decide on a removed node name the restore", () => {
+    const removed = [...base, { type: "node.removed", id: "p" }];
+    const out = fold(
+      entries(
+        ...removed,
+        { type: "criterion.added", id: "c", form: "revisit" },
+        { type: "node.decided", id: "c" },
+      ),
+    );
+    expect(out.problems.map((p) => p.detail)).toEqual([
+      '"c" is removed with "p"; restore "p" first',
+      '"c" is removed with "p"; restore "p" first',
+    ]);
+    const own = fold(entries(...removed, { type: "node.decided", id: "p" }));
+    expect(own.problems[0]?.detail).toBe('"p" is removed; restore "p" first');
   });
 
   test("a removal event that is not well formed is refused", () => {

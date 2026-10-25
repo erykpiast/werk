@@ -13,6 +13,21 @@ export function isOut(map: FoldedMap, id: string): boolean {
   );
 }
 
+/** The refusal for a new write that names a node that is out, or null when the node is in. */
+export function outRefusal(map: FoldedMap, id: string): Violation | null {
+  const removal = map.removals.find((entry) =>
+    entry.nodes.some((node) => node.id === id),
+  );
+  if (!removal) return null;
+  return {
+    rule: "unknown-card",
+    detail:
+      removal.id === id
+        ? `"${id}" is removed; restore "${id}" first`
+        : `"${id}" is removed with "${removal.id}"; restore "${removal.id}" first`,
+  };
+}
+
 function isLive(edge: Edge, map: FoldedMap): boolean {
   return map.nodes.has(edge.from) && map.nodes.has(edge.to);
 }

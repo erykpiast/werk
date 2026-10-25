@@ -5,6 +5,8 @@ export type ArgSpec = {
   flags: readonly string[];
   /** The flags whose value is a card id. They lose one leading hash sign (#werk-cli-hash-id). */
   idFlags?: readonly string[];
+  /** Flags that take no value. A switch that is given has the value "". */
+  switches?: readonly string[];
 };
 
 export type Parsed =
@@ -27,10 +29,15 @@ export function parseArgs(argv: readonly string[], spec: ArgSpec): Parsed {
     }
     const eq = arg.indexOf("=");
     const name = arg.slice(2, eq === -1 ? undefined : eq);
-    if (!spec.flags.includes(name))
+    const isSwitch = spec.switches?.includes(name) === true;
+    if (!isSwitch && !spec.flags.includes(name))
       return { ok: false, error: `unknown flag --${name}` };
     if (name in flags)
       return { ok: false, error: `flag --${name} is given twice` };
+    if (isSwitch) {
+      flags[name] = "";
+      continue;
+    }
     let value: string | undefined;
     if (eq !== -1) value = arg.slice(eq + 1);
     else {

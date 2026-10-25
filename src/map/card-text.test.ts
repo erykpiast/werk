@@ -52,3 +52,33 @@ test("a card with no notes prints no thread section", () => {
   const map = fold([ev({ ...base, id: "x", title: "X" }, 1)]);
   expect(renderCard(map, "x")).not.toContain("thread:");
 });
+
+test("a card prints its waiver reasons and every form of kill criterion", () => {
+  const events = [
+    { ...base, id: "a", title: "A" },
+    { type: "node.edited", id: "a", noBasis: "root of a tree" },
+    { type: "node.edited", id: "a", unchallenged: "no real choice" },
+    { type: "criterion.added", id: "a", form: "revisit" },
+    { type: "criterion.added", id: "a", form: "manual", test: "use it" },
+    { type: "criterion.added", id: "a", form: "no-metric", reason: "cheap" },
+    {
+      type: "criterion.added",
+      id: "a",
+      form: "metric",
+      source: "posthog",
+      metric: "install time",
+      threshold: "> 4 min",
+      window: "7 days",
+      sample: "100",
+    },
+  ];
+  const text = renderCard(fold(events.map((e, i) => ev(e, i + 1))), "a") ?? "";
+  expect(text).toContain("basis waived: root of a tree");
+  expect(text).toContain("option waived: no real choice");
+  expect(text).toContain("kill: revisit at any time");
+  expect(text).toContain("kill: manual test: use it");
+  expect(text).toContain("kill: no metric: cheap");
+  expect(text).toContain(
+    "kill: install time > 4 min over 7 days, sample 100, from posthog",
+  );
+});

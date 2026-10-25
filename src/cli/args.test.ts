@@ -43,4 +43,16 @@ describe("parseArgs", () => {
       error: "flag --title needs a value",
     });
   });
+
+  test("a switch takes no value and does not eat the next argument", () => {
+    const parsed = parseArgs(["x", "--revisit", "y"], {
+      flags: [],
+      switches: ["revisit"],
+    });
+    expect(parsed).toEqual({
+      ok: true,
+      positional: ["x", "y"],
+      flags: { revisit: "" },
+    });
+  });
 });
