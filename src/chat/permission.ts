@@ -186,7 +186,7 @@ export type Reply =
   | { ok: true; line: string; logged: Logged; widened: string[] }
   | { ok: false; message: string };
 
-function line(request: string, response: Json): string {
+export function controlLine(request: string, response: Json): string {
   return `${JSON.stringify({
     type: "control_response",
     response: { subtype: "success", request_id: request, response },
@@ -206,7 +206,10 @@ export function reply(ask: Ask, answer: Answer): Reply {
       }
       return {
         ok: true,
-        line: line(ask.id, { behavior: "allow", updatedInput: ask.input }),
+        line: controlLine(ask.id, {
+          behavior: "allow",
+          updatedInput: ask.input,
+        }),
         logged: "allow",
         widened: [],
       };
@@ -217,7 +220,7 @@ export function reply(ask: Ask, answer: Answer): Reply {
       }
       return {
         ok: true,
-        line: line(ask.id, {
+        line: controlLine(ask.id, {
           behavior: "allow",
           updatedInput: ask.input,
           updatedPermissions: ask.suggestions,
@@ -230,7 +233,7 @@ export function reply(ask: Ask, answer: Answer): Reply {
     case "decline":
       return {
         ok: true,
-        line: line(ask.id, {
+        line: controlLine(ask.id, {
           behavior: "deny",
           message:
             answer.decision === "deny"
@@ -246,7 +249,7 @@ export function reply(ask: Ask, answer: Answer): Reply {
       }
       return {
         ok: true,
-        line: line(ask.id, {
+        line: controlLine(ask.id, {
           behavior: "deny",
           message: answerText(ask.questions, answer.picks),
         }),
