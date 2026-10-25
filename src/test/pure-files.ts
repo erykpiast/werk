@@ -48,6 +48,7 @@ export const PURE_FILES: readonly string[] = [
   "client/lib/card-search.ts",
   "client/lib/counts.ts",
   "client/lib/view-memory.ts",
+  "client/lib/switcher.ts",
   "src/projects/names.ts",
   "src/projects/list.ts",
   "client/lib/project-route.ts",
@@ -60,4 +61,6 @@ export const PURE_FILES: readonly string[] = [
   "src/chat/permission.ts",
   "client/lib/ask.ts",
   "client/lib/card-actions.ts",
+  "src/chat/image-rules.ts",
+  "client/lib/image-chips.ts",
 ];

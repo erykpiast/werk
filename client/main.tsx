@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { ChatPane } from "./app/chat-pane";
 import { Composer } from "./app/composer";
 import { Counts, Crumbs, SearchBox, Tabs } from "./app/header";
+import { Switcher } from "./app/switcher";
 import { addProjectFromDialog } from "./lib/add-project";
 import {
   removeFactsOf,
@@ -26,6 +27,7 @@ import {
   viewOf,
   viewPageOf,
 } from "./lib/project-route";
+import { rowsOf } from "./lib/switcher";
 import { recall, remember } from "./lib/view-memory";
 import "./index.css";
 
@@ -52,43 +54,100 @@ const say = (text: string) => {
   if (body) body.textContent = text;
 };
 
+type Listed = {
+  name: string;
+  folder: string;
+  missing: boolean;
+  dev: boolean;
+  running: string[];
+};
+
+const readList = async (): Promise<Listed[]> =>
+  (
+    (await (await fetch("/api/projects")).json()) as {
+      projects: Listed[];
+    }
+  ).projects;
+
 /** Adds a project through the folder dialog (#werk-projects-add). */
-function addProjectButton() {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.textContent = "Add project…";
-  button.addEventListener("click", () => {
-    addProjectFromDialog({
-      fetch: (url, init) => fetch(url, init),
-      token: token(),
-      confirm: (question) => window.confirm(question),
-      go: (path) => location.assign(path),
-    }).then(
-      (error) => {
-        if (error !== null) say(error);
-      },
-      (error) => say(String(error)),
+function addProject() {
+  addProjectFromDialog({
+    fetch: (url, init) => fetch(url, init),
+    token: token(),
+    confirm: (question) => window.confirm(question),
+    go: (path) => location.assign(path),
+  }).then(
+    (error) => {
+      if (error !== null) say(error);
+    },
+    (error) => say(String(error)),
+  );
+}
+
+/** Mounts the project switcher at the left of header row 1, and keeps its list current (#werk-projects-switcher). */
+function mountSwitcher(current: string | null): HTMLElement {
+  const host = document.createElement("div");
+  host.dataset.slot = "switcher-host";
+  const root = createRoot(host);
+  let list: Listed[] = [];
+  const draw = () =>
+    root.render(
+      <Switcher
+        current={current}
+        rows={rowsOf(list, null)}
+        running={(name) => list.find((p) => p.name === name)?.running ?? []}
+        onOpen={(name) => location.assign(pageOf(name))}
+        onRemove={(name, confirm) => {
+          void fetch(
+            `/api/projects/${encodeURIComponent(name)}${confirm ? "?confirm=1" : ""}`,
+            { method: "DELETE", headers: { "x-werk-token": token() } },
+          ).then(async (res) => {
+            if (res.ok && name === current) location.assign("/");
+            else await refresh();
+          });
+        }}
+        onAdd={addProject}
+      />,
     );
-  });
-  scope?.after(button);
+  const refresh = async () => {
+    try {
+      list = await readList();
+      draw();
+    } catch {
+      // The server is restarting. The next refresh draws the list.
+    }
+  };
+  draw();
+  void refresh();
+  // The busy dots follow the agent turns that run in each project.
+  setInterval(() => void refresh(), 3000);
+  return host;
 }
 
 async function start() {
-  addProjectButton();
   const project = projectOf(location.pathname);
+  const switcher = mountSwitcher(project);
   if (project === null) {
+    scope?.replaceChildren(switcher);
     // An address with no project goes to the first project that can open.
-    const list = (await (await fetch("/api/projects")).json()) as {
-      projects: { name: string; missing: boolean }[];
-    };
-    const first = firstOpenable(list.projects);
+    const first = firstOpenable(await readList());
     chatReact?.render(
       <StrictMode>
         <Composer />
       </StrictMode>,
     );
     if (first === null) {
-      say("No project on the list. Add a folder that has a git repository.");
+      // An empty list opens one page with the same action as the switcher's last row.
+      if (body) {
+        body.innerHTML =
+          "<p>No project on the list. Add a folder that has a git repository.</p>";
+        const add = document.createElement("button");
+        add.type = "button";
+        add.dataset.slot = "start-add";
+        add.textContent = "Add project…";
+        add.addEventListener("click", addProject);
+        body.append(add);
+      }
     } else {
       // An old address /#id opens that card (#vi-routes).
       const old = cardOfHash(location.hash);
@@ -103,10 +162,7 @@ async function start() {
   let index: HeaderIndex | null = null;
   const crumbHost = document.createElement("div");
   crumbHost.dataset.slot = "crumb-host";
-  const name = document.createElement("span");
-  name.dataset.slot = "project-name";
-  name.textContent = project;
-  scope?.replaceChildren(name, crumbHost);
+  scope?.replaceChildren(switcher, crumbHost);
   const crumbRoot = createRoot(crumbHost);
   const leftRoot = headerLeft ? createRoot(headerLeft) : null;
   const rightRoot = headerRight ? createRoot(headerRight) : null;

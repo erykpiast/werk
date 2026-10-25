@@ -41,3 +41,17 @@ test("the page of a project opens its map, and an address with no project opens 
   await expect(page).toHaveURL(/\/p\//);
   await expect(page.getByRole("region", { name: "Map pane" })).toBeVisible();
 });
+
+test("the switcher shows the open project and ends its menu with Add project…", async ({
+  page,
+  app,
+}) => {
+  await page.goto(app.origin);
+  await expect(page).toHaveURL(/\/p\//);
+  const button = page.locator("[data-slot=switcher-button]");
+  await expect(button).toContainText("▾");
+  await button.click();
+  await expect(
+    page.locator("[data-slot=switcher-menu]").getByText("+ Add project…"),
+  ).toBeVisible();
+});

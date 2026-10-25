@@ -46,7 +46,12 @@ export type ChatStore = {
   receive(type: string, data: string): void;
   /** Reads the events that the server kept, for a page that joins late. */
   load(): Promise<void>;
-  send(text: string): Promise<void>;
+  /** Sends a message with the stored names of its images, in the order of their tokens. */
+  send(text: string, images?: string[]): Promise<void>;
+  /** Uploads one pasted image. The answer is the stored name, or the reason the server refused. */
+  upload(file: Blob): Promise<{ name: string } | { error: string }>;
+  /** The address of a stored image, for its thumbnail. */
+  imageUrl(name: string): string;
   /** Sends the answer to an ask. The ask closes when the server says so, and not before. */
   answer(id: string, answer: AskAnswer): Promise<void>;
   /** Keeps the picks of one question of a form. */
@@ -135,7 +140,28 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
       }
       apply({ type: "ask-sending", id, sending: false });
     },
-    async send(text) {
+    async upload(file) {
+      try {
+        const res = await deps.fetch(apiOf(project, "/image"), {
+          method: "POST",
+          headers: { "x-werk-token": deps.token, "content-type": file.type },
+          body: file,
+        });
+        const body = (await res.json().catch(() => ({}))) as {
+          name?: string;
+          message?: string;
+        };
+        if (res.ok && typeof body.name === "string") return { name: body.name };
+        return {
+          error: body.message ?? `the server answered ${res.status}`,
+        };
+      } catch (error) {
+        return { error: String(error) };
+      }
+    },
+    imageUrl: (name) =>
+      `${apiOf(project, "/image")}?name=${encodeURIComponent(name)}`,
+    async send(text, images = []) {
       const turn = deps.newTurn();
       apply({ type: "sent", turn, text });
       let problem: string | null = null;
@@ -146,7 +172,7 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
             "x-werk-token": deps.token,
             "content-type": "application/json",
           },
-          body: JSON.stringify({ text, card: deps.card(), turn }),
+          body: JSON.stringify({ text, card: deps.card(), turn, images }),
         });
         if (!res.ok) {
           const refusal = (await res.json().catch(() => ({}))) as {

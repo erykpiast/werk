@@ -362,3 +362,93 @@ test("a question form sends its picks as one line, and Escape denies a permissio
     },
   );
 });
+
+const PNG_BASE64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+/** Pastes one image into the composer, as a clipboard with one file. */
+async function pasteImage(page: Page, bytes: "png" | number) {
+  await page.getByRole("textbox", { name: "Message" }).focus();
+  await page.evaluate(
+    ({ base64, size }) => {
+      const png = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+      const data = new Uint8Array(size ?? png.length);
+      data.set(png);
+      const transfer = new DataTransfer();
+      transfer.items.add(new File([data], "shot.png", { type: "image/png" }));
+      const event = new ClipboardEvent("paste", {
+        clipboardData: transfer,
+        bubbles: true,
+        cancelable: true,
+      });
+      document.querySelector("textarea")?.dispatchEvent(event);
+    },
+    { base64: PNG_BASE64, size: bytes === "png" ? null : bytes },
+  );
+}
+
+test("a pasted image shows a chip with a thumbnail, and the agent gets its path", async ({
+  page,
+}) => {
+  await withChat(
+    { roles: { chat: { replies: [[say("m1", "Seen")]] } } },
+    async (server) => {
+      await page.goto(server.url);
+      await pasteImage(page, "png");
+      const composer = page.getByRole("textbox", { name: "Message" });
+      await expect(composer).toHaveValue("[Image #1]");
+      const chip = page.getByRole("list", { name: "Attached images" });
+      await expect(chip).toContainText("[Image #1]");
+      const thumb = chip.getByRole("img");
+      await expect(thumb).toBeVisible();
+      await expect
+        .poll(() => thumb.evaluate((img: HTMLImageElement) => img.naturalWidth))
+        .toBeGreaterThan(0);
+      await composer.pressSequentially(" why is it red?");
+      await composer.press("Enter");
+      await expect(chat(page).getByText("Seen")).toBeVisible();
+      const [text] = messages(server);
+      expect(text).toMatch(/\[Image #1\] = .*\.werk\/attachments\/.+\.png/);
+      expect(text).toContain("Open each image above with Read");
+      expect(text).toMatch(/\[Image #1\] why is it red\?$/);
+      expect(text).not.toContain(PNG_BASE64);
+    },
+  );
+});
+
+test("a 25 MB image shows its refusal on the chip and is not sent", async ({
+  page,
+}) => {
+  await withChat(
+    { roles: { chat: { replies: [[say("m1", "Ok")]] } } },
+    async (server) => {
+      await page.goto(server.url);
+      await pasteImage(page, 25 * 1024 * 1024);
+      const chip = page.getByRole("list", { name: "Attached images" });
+      await expect(chip.getByRole("alert")).toContainText("20 MB");
+      await send(page, "hello");
+      await expect(chat(page).getByText("Ok")).toBeVisible();
+      const [text] = messages(server);
+      expect(text).not.toContain("[Image");
+      expect(text).toMatch(/hello$/);
+    },
+  );
+});
+
+test("removing chip 1 of two renumbers the other to [Image #1]", async ({
+  page,
+}) => {
+  await withChat({}, async (server) => {
+    await page.goto(server.url);
+    await pasteImage(page, "png");
+    await pasteImage(page, "png");
+    const composer = page.getByRole("textbox", { name: "Message" });
+    await expect(composer).toHaveValue("[Image #1][Image #2]");
+    const chips = page.getByRole("list", { name: "Attached images" });
+    await expect(chips.getByRole("img")).toHaveCount(2);
+    await chips.getByRole("button", { name: "Remove [Image #1]" }).click();
+    await expect(composer).toHaveValue("[Image #1]");
+    await expect(chips).toContainText("[Image #1]");
+    await expect(chips).not.toContainText("[Image #2]");
+  });
+});
