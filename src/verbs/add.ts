@@ -1,13 +1,13 @@
 // `add` proposes a card, an option or a source as a ghost (#werk-cli-add, #werk-propose-new).
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
-import { KINDS, STATUSES, WHOS } from "../map/fold.ts";
+import { KINDS, STATUSES } from "../map/fold.ts";
 import { appendEvents, logPathFor } from "../map/log-store.ts";
 
 const USAGE =
-  'usage: add <id> --title "..." [--why "..."] [--body "..."] [--parent <id>] [--kind card|option|source] [--status open|proto] [--who you|me|prototype] [--why_not "..."] [--url ...] [--finding ...]';
+  'usage: add <id> --title "..." [--why "..."] [--body "..."] [--parent <id>] [--kind card|option|source] [--status open|proto]';
 
-const TEXT_FLAGS = ["why", "body", "who", "why_not", "url", "finding"] as const;
+const TEXT_FLAGS = ["why", "body"] as const;
 
 registerVerb({
   name: "add",
@@ -42,13 +42,6 @@ registerVerb({
     }
     if (!(STATUSES as readonly string[]).includes(status)) {
       err(`werk: --status must be open or proto`);
-      return 2;
-    }
-    if (
-      flags.who !== undefined &&
-      !(WHOS as readonly string[]).includes(flags.who)
-    ) {
-      err(`werk: --who must be one of ${WHOS.join(", ")}`);
       return 2;
     }
     const event: Record<string, unknown> = {

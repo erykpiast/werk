@@ -7,7 +7,6 @@
 
 export type Kind = "card" | "option" | "source";
 export type Status = "open" | "proto" | "decided";
-export type Who = "you" | "me" | "prototype";
 export type LinkType =
   | "refines"
   | "depends_on"
@@ -16,7 +15,6 @@ export type LinkType =
 
 export const KINDS: readonly Kind[] = ["card", "option", "source"];
 export const STATUSES: readonly Status[] = ["open", "proto", "decided"];
-export const WHOS: readonly Who[] = ["you", "me", "prototype"];
 export const LINK_TYPES: readonly LinkType[] = [
   "refines",
   "depends_on",
@@ -34,12 +32,8 @@ export type MapNode = {
   why: string;
   body: string;
   status: Status;
-  who: Who | null;
   /** A ghost: proposed, in no rollup, with every edge of its own held. */
   proposed: boolean;
-  whyNot: string | null;
-  url: string | null;
-  finding: string | null;
   marks: Mark[];
 };
 
@@ -200,15 +194,8 @@ function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
   const why = optional(fields, "why");
   const body = optional(fields, "body");
   const parent = optional(fields, "parent");
-  const whyNot = optional(fields, "why_not");
-  const url = optional(fields, "url");
-  const finding = optional(fields, "finding");
-  const who = fields.who;
-  for (const value of [why, body, parent, whyNot, url, finding]) {
+  for (const value of [why, body, parent]) {
     if (isViolation(value)) return value;
-  }
-  if (who !== undefined && !oneOf(who, WHOS)) {
-    return bad(`"who" must be one of ${WHOS.join(", ")}`);
   }
   if (map.nodes.has(id)) {
     return { rule: "duplicate-id", detail: `the id "${id}" is taken` };
@@ -231,11 +218,7 @@ function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
     why: typeof why === "string" ? why : "",
     body: typeof body === "string" ? body : "",
     status,
-    who: oneOf(who, WHOS) ? who : null,
     proposed: true,
-    whyNot: typeof whyNot === "string" ? whyNot : null,
-    url: typeof url === "string" ? url : null,
-    finding: typeof finding === "string" ? finding : null,
     marks: [],
   });
   // The parent is part of what was added: one event makes the card and its link (#pr-log-one-event).

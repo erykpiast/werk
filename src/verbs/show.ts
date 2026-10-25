@@ -1,4 +1,4 @@
-// `show` prints one card with its words, status, links and rollup (#werk-cli-show).
+// `show` prints one card with its words, status and links (#werk-cli-show).
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 import { renderCard } from "../map/card-text.ts";
@@ -6,7 +6,7 @@ import { logPathFor, readMap } from "../map/log-store.ts";
 
 registerVerb({
   name: "show",
-  summary: "Print one card with its links and rollup",
+  summary: "Print one card with its links",
   run: ({ args, cwd, env, out, err }) => {
     const parsed = parseArgs(args, { flags: [] });
     if (!parsed.ok || parsed.positional.length !== 1) {

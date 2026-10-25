@@ -51,20 +51,12 @@ describe("fold", () => {
           kind: "option",
           why: "w",
           body: "b",
-          who: "me",
-          why_not: "n",
-          url: "u",
-          finding: "f",
         }),
       ),
     );
     expect(map.nodes.get("o")).toMatchObject({
       why: "w",
       body: "b",
-      who: "me",
-      whyNot: "n",
-      url: "u",
-      finding: "f",
       marks: [],
     });
   });
@@ -168,10 +160,9 @@ describe("the rules", () => {
       rules(
         node("a", { kind: "x" }),
         node("a", { status: "x" }),
-        node("a", { who: "x" }),
         node("a", { why: 1 }),
       ),
-    ).toEqual(["bad-event", "bad-event", "bad-event", "bad-event"]);
+    ).toEqual(["bad-event", "bad-event", "bad-event"]);
     expect(
       rules({ type: "edge.added", from: 1, to: "a", link: "refines" }),
     ).toEqual(["bad-event"]);
