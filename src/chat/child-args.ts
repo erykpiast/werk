@@ -44,11 +44,17 @@ export function chatArgs(
   ];
   for (const dir of stored.dirs) args.push("--add-dir", dir);
   if (resume !== null) args.push("--resume", resume);
-  if (options.model) args.push("--model", options.model);
-  if (options.advisor) args.push("--advisor", options.advisor);
+  return [...args, ...launchFlags(options)];
+}
+
+/** The flags that the launch options of a role set: model, advisor, added prompt and subagents. */
+export function launchFlags(options: LaunchOptions): string[] {
+  const flags: string[] = [];
+  if (options.model) flags.push("--model", options.model);
+  if (options.advisor) flags.push("--advisor", options.advisor);
   if (options.appendSystemPrompt) {
-    args.push("--append-system-prompt", options.appendSystemPrompt);
+    flags.push("--append-system-prompt", options.appendSystemPrompt);
   }
-  if (options.agents) args.push("--agents", JSON.stringify(options.agents));
-  return args;
+  if (options.agents) flags.push("--agents", JSON.stringify(options.agents));
+  return flags;
 }

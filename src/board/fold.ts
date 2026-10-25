@@ -234,7 +234,9 @@ function moved(board: Board, rec: Rec): BoardViolation | null {
   if (from === "ready") leaveReady(board, ticket.id);
   if (to === "ready") board.readyOrder.push(ticket.id);
   ticket.column = to;
-  ticket.reason = to === "blocked" ? (reason as string) : "";
+  // A move back to ready may carry the reason it came back, such as a build red at the retry cap
+  // (#st-build-ticket-hand-off).
+  ticket.reason = to === "blocked" || to === "ready" ? (reason ?? "") : "";
   return null;
 }
 
