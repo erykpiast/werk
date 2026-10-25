@@ -10,10 +10,11 @@ const markLoaded = (page: import("@playwright/test").Page) =>
   page.evaluate(() => {
     (window as unknown as { loaded: boolean }).loaded = true;
   });
+/** A page that is navigating has lost its marker, so a destroyed context counts as a reload. */
 const stillLoaded = (page: import("@playwright/test").Page) =>
-  page.evaluate(
-    () => (window as unknown as { loaded?: boolean }).loaded === true,
-  );
+  page
+    .evaluate(() => (window as unknown as { loaded?: boolean }).loaded === true)
+    .catch(() => false);
 
 const leftPane = (page: import("@playwright/test").Page) =>
   page.getByRole("region", { name: "Map pane" });

@@ -5,6 +5,8 @@
  */
 import { randomBytes } from "node:crypto";
 import { join } from "node:path";
+import { ownFiles } from "../own/own.ts";
+import { embeddedClient } from "../own/own-client.ts";
 import { serverLockPath } from "../projects/list-store.ts";
 import {
   addProject,
@@ -13,7 +15,7 @@ import {
   type Projects,
   setPort,
 } from "../projects/projects.ts";
-import { type DevClient, startDevClient } from "./client-dev.ts";
+import type { DevClient } from "./client-dev.ts";
 import { type ClientServer, noClient } from "./client-server.ts";
 import { createHandler, type Handler } from "./handler.ts";
 import {
@@ -154,12 +156,14 @@ export async function serve(options: ServeOptions): Promise<number> {
       return 1;
     }
     if (options.dev) {
+      // Vite loads only when dev mode asks for it: a release executable does not carry it.
+      const { startDevClient } = await import("./client-dev.ts");
       live.dev = await startDevClient({
         configFile: VITE_CONFIG,
         onReload: () => reloadAll(live.projects),
       });
     }
-    live.client = live.dev ?? noClient;
+    live.client = live.dev ?? embeddedClient(ownFiles().client) ?? noClient;
     live.handler = handlerFor(live, options.env);
     live.server = await listen(options.port, async (req, server) => {
       const { dev } = live;

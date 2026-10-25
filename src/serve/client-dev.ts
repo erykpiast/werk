@@ -6,7 +6,7 @@
  */
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import { createServer as createVite, type ViteDevServer } from "vite";
+import type { ViteDevServer } from "vite";
 import type { ClientServer } from "./client-server.ts";
 import { injectToken } from "./page-html.ts";
 
@@ -30,6 +30,8 @@ const SKIPPED_HEADERS = new Set(["host", "connection", "content-length"]);
 export async function startDevClient(
   options: DevClientOptions,
 ): Promise<DevClient> {
+  // Vite loads here, not at the top: a release executable does not carry it.
+  const { createServer: createVite } = await import("vite");
   const http = createServer();
   const vite = await createVite({
     configFile: options.configFile,

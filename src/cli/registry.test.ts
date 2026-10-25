@@ -1,7 +1,8 @@
 import { afterEach, expect, test } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { VERB_MODULE_NAMES } from "../own/verb-names.ts";
 import { loadVerbs } from "./load.ts";
 import { main } from "./main.ts";
 import { createRegistry, registry } from "./registry.ts";
@@ -31,20 +32,25 @@ test("registering a name twice keeps the later verb", () => {
   expect(r.list().map((v) => v.summary)).toEqual(["two"]);
 });
 
-test("a verb module dropped in the folder registers itself, with no edit to a list", async () => {
+test("a verb module in the file list registers itself, with no edit to a shared list", async () => {
   const dir = mkdtempSync(join(tmpdir(), "werk-verbs-"));
   dirs.push(dir);
+  const file = join(dir, "zzz-extra.ts");
   writeFileSync(
-    join(dir, "zzz-extra.ts"),
+    file,
     `import { registerVerb } from ${JSON.stringify(join(import.meta.dir, "registry.ts"))};
 registerVerb({ name: "zzz-extra", summary: "A verb added by its own module", run: () => 7 });`,
   );
-  writeFileSync(
-    join(dir, "zzz-extra.test.ts"),
-    'throw new Error("a test file is not a verb")',
-  );
-  expect(await loadVerbs(dir)).toEqual(["zzz-extra.ts"]);
+  const modules = [{ name: "zzz-extra.ts", load: () => import(file) }];
+  expect(await loadVerbs(modules)).toEqual(["zzz-extra.ts"]);
   expect(await main(["zzz-extra"], registry, io())).toBe(7);
+});
+
+test("the bundled list names every verb module and no test", () => {
+  const onDisk = readdirSync(join(import.meta.dir, "..", "verbs"))
+    .filter((name) => name.endsWith(".ts") && !name.endsWith(".test.ts"))
+    .sort();
+  expect([...VERB_MODULE_NAMES]).toEqual(onDisk);
 });
 
 test("the help output lists every registered verb", async () => {

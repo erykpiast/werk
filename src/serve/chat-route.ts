@@ -6,11 +6,11 @@
 import { join, resolve } from "node:path";
 import { createSession } from "../chat/session.ts";
 import { readMap } from "../map/log-store.ts";
+import { selfCommandLine } from "../own/own.ts";
 import type { Context } from "../projects/context.ts";
 import { broadcastData } from "./live-channel.ts";
 
 const REPO = join(import.meta.dirname, "..", "..");
-const CLI = join(REPO, "src", "cli.ts");
 const TURN_NAME = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/;
 const MAX_TEXT = 200_000;
 
@@ -20,7 +20,7 @@ function sessionOf(context: Context, env: Record<string, string | undefined>) {
     folder: context.folder,
     logPath: context.logPath,
     env,
-    werk: `"${process.execPath}" "${CLI}"`,
+    werk: selfCommandLine(),
     projectIsWerk: resolve(context.folder) === REPO,
     readMap: () => readMap(context.logPath).map,
     emit: (event) => broadcastData(context.clients, event.name, event.data),
