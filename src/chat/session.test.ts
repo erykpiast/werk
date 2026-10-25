@@ -140,6 +140,27 @@ test("a message reaches the agent with the description of the open card, and the
   );
 });
 
+test("the sent event carries the stored name of each image path, and none when a message has no images", async () => {
+  const { p, session, events } = open();
+  p.install({ roles: { chat: { replies: [[result], [result]] } } });
+  await withSession(session, async () => {
+    session.send({
+      turn: "a",
+      text: "A",
+      card: null,
+      images: ["/x/.werk/attachments/a.png"],
+    });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    session.send({ turn: "b", text: "B", card: null });
+    await until(() => events.filter((e) => e.name === "turn-end").length === 2);
+  });
+  const sent = events.filter((e) => e.name === "sent");
+  expect(sent.map((e) => (e.data as { images: string[] }).images)).toEqual([
+    ["a.png"],
+    [],
+  ]);
+});
+
 test("each part of a reply carries its turn, and a second message waits until the first reply ends", async () => {
   const { p, session, events } = open();
   p.install({
