@@ -8,7 +8,7 @@
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "bun test --parallel=4 --timeout=15000",
-    "test:coverage": "bun test --parallel=4 --timeout=15000 --coverage --coverage-reporter=text --coverage-reporter=lcov",
+    "test:coverage": "bun test --parallel=4 --timeout=15000 --coverage --coverage-reporter=text --coverage-reporter=lcov && bun src/test/coverage-gate.ts",
     "e2e": "playwright test --pass-with-no-tests"
   },
   "devDependencies": {

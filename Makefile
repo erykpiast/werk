@@ -42,7 +42,7 @@ typecheck: bun-version $(STAMP) ## Type-check all code with TypeScript 7 in stri
 test: bun-version $(STAMP) ## Run the unit tests on four parallel workers
 	bun run test
 
-test-coverage: bun-version $(STAMP) ## Run the unit tests with coverage
+test-coverage: bun-version $(STAMP) ## Run the unit tests with coverage, then the 90% gate on the pure files
 	bun run test:coverage
 
 e2e: bun-version $(STAMP) ## Run the Playwright tests (passes while no spec exists)
