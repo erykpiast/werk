@@ -105,3 +105,14 @@ test("the preview skips a line of the wrong shape and keeps the last 200 events,
     "result s204",
   ]);
 });
+
+test("a werk_overseer line says its act and its text", () => {
+  expect(
+    summariseEvent({
+      type: "werk_overseer",
+      act: "silent",
+      text: "no event for 60 s",
+    }),
+  ).toBe("overseer silent: no event for 60 s");
+  expect(summariseEvent({ type: "werk_overseer" })).toBe("overseer act");
+});
