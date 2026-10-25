@@ -39,3 +39,17 @@ test("without a root, the first card that refines no card opens, and its sub-car
   expect(open?.id).toBe("top");
   expect(open?.html).toContain('<li data-card-id="kid">Kid &#60;1&#62;</li>');
 });
+
+test("the why and body render Markdown, and a reference links only to a card in the map", () => {
+  const map = mapOf(
+    card("root", "Run `make`", "see #kid and #gone", { body: "- **a**" }),
+    accept("root"),
+    card("kid", "Kid", "", { parent: "root" }),
+  );
+  const html = renderOpenCard(map)?.html ?? "";
+  expect(html).toContain("<h1>Run <code>make</code></h1>");
+  expect(html).toContain(
+    '<a class="card-ref" href="/map/kid">#kid</a> and #gone',
+  );
+  expect(html).toContain("<ul><li><strong>a</strong></li></ul>");
+});
