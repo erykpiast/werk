@@ -1,0 +1,15 @@
+#!/usr/bin/env bun
+// The fake agent. A test puts this folder first in the program search list.
+import { run } from "../src/fake-agent/run.ts";
+
+const code = await run({
+  argv: process.argv.slice(2),
+  env: process.env,
+  cwd: process.cwd(),
+  input: Bun.stdin.stream(),
+  out: (line) => process.stdout.write(`${line}\n`),
+  err: (line) => process.stderr.write(`${line}\n`),
+});
+// Wait for the output to flush before the process ends.
+await new Promise((done) => process.stdout.write("", () => done(null)));
+process.exit(code);
