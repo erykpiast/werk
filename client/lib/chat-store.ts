@@ -72,7 +72,19 @@ export type ChatStore = {
   pick(id: string, question: number, selection: Selection): void;
 };
 
-export function createChatStore(deps: ChatDeps, project: string): ChatStore {
+/** The conversation that a page starts with. Its requests name no tab. */
+export const MAIN_TAB = "main";
+
+export function createChatStore(
+  deps: ChatDeps,
+  project: string,
+  tab: string = MAIN_TAB,
+): ChatStore {
+  /** The address of a route of this conversation. Another tab than the main one names itself. */
+  const urlOf = (path: string) =>
+    tab === MAIN_TAB
+      ? apiOf(project, path)
+      : `${apiOf(project, path)}?tab=${encodeURIComponent(tab)}`;
   let state: ChatState = emptyChat;
   const listeners = new Set<() => void>();
 
@@ -140,7 +152,7 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
   /** A post to the project that changes the conversation. The answer is null, or the refusal's reason. */
   const post = async (path: string, body: unknown): Promise<string | null> => {
     try {
-      const res = await deps.fetch(apiOf(project, path), {
+      const res = await deps.fetch(urlOf(path), {
         method: "POST",
         headers: {
           "x-werk-token": deps.token,
@@ -166,7 +178,7 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     },
     receive,
     async load() {
-      const res = await deps.fetch(apiOf(project, "/chat"));
+      const res = await deps.fetch(urlOf("/chat"));
       if (!res.ok) return;
       const { events, settings } = (await res.json()) as {
         events: { name: string; data: unknown }[];
@@ -180,7 +192,7 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     clearContext: () => post("/clear", {}),
     async commands() {
       try {
-        const res = await deps.fetch(apiOf(project, "/commands"));
+        const res = await deps.fetch(urlOf("/commands"));
         if (!res.ok) return [];
         const { commands } = (await res.json()) as { commands?: unknown };
         return Array.isArray(commands)
@@ -195,7 +207,7 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     async answer(id, answer) {
       apply({ type: "ask-sending", id, sending: true });
       try {
-        const res = await deps.fetch(apiOf(project, "/ask"), {
+        const res = await deps.fetch(urlOf("/ask"), {
           method: "POST",
           headers: {
             "x-werk-token": deps.token,
@@ -236,7 +248,7 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
       apply({ type: "sent", turn, text });
       let problem: string | null = null;
       try {
-        const res = await deps.fetch(apiOf(project, "/chat"), {
+        const res = await deps.fetch(urlOf("/chat"), {
           method: "POST",
           headers: {
             "x-werk-token": deps.token,

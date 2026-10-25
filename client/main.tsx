@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { Board } from "./app/board";
-import { ChatPane } from "./app/chat-pane";
 import { Composer } from "./app/composer";
 import { Counts, Crumbs, SearchBox, Tabs } from "./app/header";
 import { Switcher } from "./app/switcher";
+import { TabbedChat } from "./app/tabbed-chat";
 import { addProjectFromDialog } from "./lib/add-project";
 import { readPrefs, writePrefs } from "./lib/board-prefs";
 import { type BoardState, createBoardStore } from "./lib/board-store";
@@ -13,7 +13,6 @@ import {
   removeQuestion,
   sendCardAction,
 } from "./lib/card-actions";
-import { createChatStore } from "./lib/chat-store";
 import { countsOf } from "./lib/counts";
 import { pathTo } from "./lib/crumbs";
 import { stashDraft } from "./lib/draft";
@@ -31,6 +30,7 @@ import {
   viewPageOf,
 } from "./lib/project-route";
 import { rowsOf } from "./lib/switcher";
+import { createTabsStore } from "./lib/tabs-store";
 import { recall, remember } from "./lib/view-memory";
 import "./index.css";
 
@@ -288,7 +288,7 @@ async function start() {
   if (leftPane) {
     new ResizeObserver(() => renderHeader()).observe(leftPane);
   }
-  const chat = createChatStore(
+  const chat = createTabsStore(
     {
       fetch: (url, init) => fetch(url, init),
       token: token(),
@@ -301,7 +301,7 @@ async function start() {
   );
   chatReact?.render(
     <StrictMode>
-      <ChatPane store={chat} cards={() => index?.entries ?? []} />
+      <TabbedChat tabs={chat} cards={() => index?.entries ?? []} />
     </StrictMode>,
   );
   const store = createMapStore(

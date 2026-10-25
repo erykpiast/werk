@@ -79,6 +79,7 @@ export const PURE_FILES: readonly string[] = [
   "src/chat/reply-stream.ts",
   "src/chat/child-args.ts",
   "client/lib/chat-log.ts",
+  "client/lib/chat-tabs.ts",
   "client/lib/next-offer.ts",
   "src/chat/permission.ts",
   "client/lib/ask.ts",

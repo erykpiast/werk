@@ -83,6 +83,8 @@ export type AskData = {
 };
 
 export type SessionDeps = {
+  /** The name of a conversation other than the main one. Its saved state sits in files of its own. */
+  name?: string;
   folder: string;
   logPath: string;
   /** The environment of the server. The child gets a copy with the role and the map's log added. */
@@ -144,13 +146,13 @@ export function createSession(deps: SessionDeps): ChatSession {
   let stopped = false;
   /** The retries that the waiting message used. One is allowed (#werk-crashmsg). */
   let attempts = 0;
-  const saved = readSettings(deps.logPath);
+  const saved = readSettings(deps.logPath, deps.name);
   let pick: ModelPick = saved
     ? { model: saved.model, advisor: saved.advisor }
     : DEFAULT_PICK;
   let used = saved?.used ?? 0;
   let window = saved?.window ?? windowOf(choiceOf(pick).model);
-  let sessionId = readSessionId(deps.logPath);
+  let sessionId = readSessionId(deps.logPath, deps.name);
   let pumping: Promise<void> = Promise.resolve();
   const kept: ChatEvent[] = [];
   /** The asks that wait for the person, by the id of the control request. */
@@ -176,7 +178,7 @@ export function createSession(deps: SessionDeps): ChatSession {
 
   const settings = (): ChatSettings => ({ ...pick, used, window });
 
-  const persist = () => writeSettings(deps.logPath, settings());
+  const persist = () => writeSettings(deps.logPath, settings(), deps.name);
 
   const announceSettings = () => emit({ name: "model", data: settings() });
 
@@ -244,7 +246,7 @@ export function createSession(deps: SessionDeps): ChatSession {
     }
     if (action.kind === "replay") {
       sessionId = null;
-      clearSessionId(deps.logPath);
+      clearSessionId(deps.logPath, deps.name);
       attempts = 0;
     } else {
       attempts += 1;
@@ -295,7 +297,7 @@ export function createSession(deps: SessionDeps): ChatSession {
       initSeen = true;
       if (typeof e.session_id === "string" && e.session_id !== sessionId) {
         sessionId = e.session_id;
-        writeSessionId(deps.logPath, sessionId);
+        writeSessionId(deps.logPath, sessionId, deps.name);
       }
       return true;
     }
@@ -511,7 +513,7 @@ export function createSession(deps: SessionDeps): ChatSession {
     async clear() {
       if (!idle()) return { ok: false, reason: BUSY };
       sessionId = null;
-      clearSessionId(deps.logPath);
+      clearSessionId(deps.logPath, deps.name);
       used = 0;
       window = windowOf(choiceOf(pick).model);
       persist();

@@ -14,7 +14,14 @@ import {
 } from "../projects/projects.ts";
 import { readBoardView, readTicketLog } from "./board-read.ts";
 import { cardActionRoute } from "./card-action-route.ts";
-import { askRoute, chatRoute, clearRoute, modelRoute } from "./chat-route.ts";
+import {
+  askRoute,
+  chatRoute,
+  clearRoute,
+  commandsRoute,
+  modelRoute,
+  tabsRoute,
+} from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
 import { chooseFolder } from "./folder-dialog.ts";
 import type { Route } from "./handler.ts";
@@ -120,9 +127,8 @@ async function projectRoute(
   const url = new URL(req.url);
   if (rest === "/live") return live(context);
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
-  if (rest === "/commands") {
-    return json({ commands: context.chat?.commands() ?? [] });
-  }
+  if (rest === "/commands") return commandsRoute(context, req);
+  if (rest === "/tabs") return tabsRoute(context);
   if (rest === "/ask") return askRoute(context, req);
   if (rest === "/model") return modelRoute(context, ctx.env, req);
   if (rest === "/clear") return clearRoute(context, ctx.env, req);

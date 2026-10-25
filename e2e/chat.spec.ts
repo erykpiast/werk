@@ -602,3 +602,39 @@ test("a background task list shows a line under the log, and an empty list remov
     },
   );
 });
+
+test("a crashed agent marks its tab and tells the other tabs", async ({
+  page,
+}) => {
+  const crash = [{ stderr: "boom: agent failed" }, { crash: 1 }];
+  await withChat(
+    {
+      roles: {
+        chat: { replies: [crash, crash, [say("m1", "I am back")]] },
+      },
+    },
+    async (server) => {
+      await page.goto(server.url);
+      const chips = page.locator("[data-slot=tab-chip]");
+      await page.locator("[data-slot=tab-new]").click();
+      await expect(chips).toHaveCount(2);
+      const [a, b] = [chips.nth(1), chips.nth(0)];
+      // The new tab is shown. Its agent crashes while the person looks at the other tab.
+      await send(page, "hello");
+      await chips.nth(0).click();
+      await expect(a).toHaveAttribute("data-blink", "red");
+      await expect(page.locator("[data-slot=dead-line]")).toContainText(
+        "boom: agent failed",
+      );
+      await a.click();
+      await expect(page.locator("[data-slot=dead-error]")).toContainText(
+        "boom: agent failed",
+      );
+      await send(page, "try again");
+      await expect(chat(page).getByText("I am back")).toBeVisible();
+      await expect(a).not.toHaveAttribute("data-blink", "red");
+      await b.click();
+      await expect(page.locator("[data-slot=dead-line]")).toHaveCount(0);
+    },
+  );
+});

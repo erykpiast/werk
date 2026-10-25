@@ -139,7 +139,9 @@ test("the history read returns the saved settings next to the events", async () 
 
 function stubbed(done: { ok: true } | { ok: false; reason: string }): Context {
   const session = { setModel: async () => done, clear: async () => done };
-  return { chat: session as unknown as ChatSession } as unknown as Context;
+  return {
+    chats: new Map([["main", session as unknown as ChatSession]]),
+  } as unknown as Context;
 }
 
 const post = (body: unknown) =>
@@ -177,4 +179,73 @@ test("a GET to the clear route or the model route is refused with 405", async ()
   const get = new Request("http://x/");
   expect((await clearRoute(context, {}, get)).status).toBe(405);
   expect((await modelRoute(context, {}, get)).status).toBe(405);
+});
+
+test("a crashed agent of one tab marks only that tab, and its next message starts a new agent", async () => {
+  project.install({
+    roles: {
+      chat: {
+        replies: [
+          [{ stderr: "boom: agent failed" }, { crash: 1 }],
+          [{ stderr: "boom: agent failed" }, { crash: 1 }],
+          [
+            {
+              event: {
+                type: "assistant",
+                message: {
+                  id: "m1",
+                  content: [{ type: "text", text: "back" }],
+                },
+              },
+            },
+            { event: { type: "result", duration_ms: 5, total_cost_usd: 0.01 } },
+          ],
+        ],
+      },
+    },
+  });
+  project.start(["bun", CLI, "serve", "--port", "0"]);
+  const { port } = await until(() => {
+    const lock = JSON.parse(
+      readFileSync(join(project.dir, ".werk", "serve.lock"), "utf8"),
+    );
+    return lock.port > 0 ? (lock as { port: number }) : undefined;
+  });
+  const base = `http://127.0.0.1:${port}/api/projects/project`;
+  const html = await (await fetch(`http://127.0.0.1:${port}/`)).text();
+  const token = /name="werk-token" content="([^"]+)"/.exec(html)?.[1] ?? "";
+  const deadOf = async (tab: string) =>
+    (
+      (await (await fetch(`${base}/chat?tab=${tab}`)).json()) as {
+        events: { name: string; data: { error: string | null } }[];
+      }
+    ).events.find((e) => e.name === "dead")?.data.error;
+  await fetch(`${base}/chat`);
+  const send = (tab: string, turn: string) =>
+    fetch(`${base}/chat?tab=${tab}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-werk-token": token },
+      body: JSON.stringify({ text: "hi", card: null, turn }),
+    });
+  expect((await send("A", "t1")).status).toBe(202);
+  const error = await until(() => deadOf("A"));
+  expect(error).toContain("boom: agent failed");
+  expect(await deadOf("main")).toBeUndefined();
+  const tabs = (await (await fetch(`${base}/tabs`)).json()) as {
+    tabs: string[];
+  };
+  expect(tabs.tabs).toEqual(["main", "A"]);
+
+  expect((await send("A", "t2")).status).toBe(202);
+  await until(async () =>
+    (await deadOf("A")) === undefined ? true : undefined,
+  );
+  expect(
+    (
+      (await (await fetch(`${base}/chat?tab=A`)).json()) as {
+        events: { name: string }[];
+      }
+    ).events.some((e) => e.name === "turn-end"),
+  ).toBe(true);
+  expect((await fetch(`${base}/chat?tab=..%2Fx`)).status).toBe(400);
 });

@@ -1252,3 +1252,30 @@ button.tag {
 .home-col {
   min-width: 0;
 }
+
+[data-slot="dead-line"],
+[data-slot="dead-error"] {
+  font-size: 0.75rem;
+  color: #b91c1c;
+  white-space: pre-wrap;
+}
+
+[data-slot="tab-strip"] {
+  display: flex;
+  gap: 0.25rem;
+}
+
+[data-slot="tab-chip"][data-current] {
+  font-weight: 600;
+}
+
+[data-slot="tab-chip"][data-blink="red"] {
+  color: #b91c1c;
+  animation: tab-blink 1s steps(2, start) infinite;
+}
+
+@keyframes tab-blink {
+  50% {
+    opacity: 0.3;
+  }
+}

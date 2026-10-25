@@ -23,8 +23,8 @@ export type Context = {
   /** The board log. Its growth sends the board signal (#vi-board-redraw-signal). */
   boardWatch: LogWatch;
   lock: Lock;
-  /** The conversation of the project. It starts with the first message. */
-  chat?: ChatSession;
+  /** The conversations of the project by name, in the order they were opened. The main one is named "main". */
+  chats: Map<string, ChatSession>;
   /** The names of the agent turns that run now. */
   runningTurns: () => string[];
   /** The count of background tasks of the agent. */
@@ -113,10 +113,18 @@ export async function openContext(
       measureWatch,
       boardWatch,
       lock,
-      runningTurns: () => context.chat?.running() ?? [],
-      background: () => context.chat?.background() ?? 0,
-      dead: () => context.chat?.dead() ?? null,
-      stopTurns: async () => context.chat?.stop(),
+      chats: new Map(),
+      runningTurns: () =>
+        [...context.chats.values()].flatMap((c) => c.running()),
+      background: () =>
+        [...context.chats.values()].reduce((n, c) => n + c.background(), 0),
+      dead: () =>
+        [...context.chats.values()]
+          .map((c) => c.dead())
+          .find((e) => e !== null) ?? null,
+      stopTurns: async () => {
+        await Promise.all([...context.chats.values()].map((c) => c.stop()));
+      },
     };
     return { ok: true, context };
   } catch (error) {
@@ -127,7 +135,7 @@ export async function openContext(
 
 /** Ends the page connections of the project, stops its watch and lets go of its lock. */
 export function closeContext(context: Context): void {
-  void context.chat?.stop();
+  for (const chat of context.chats.values()) void chat.stop();
   context.watch.close();
   context.measureWatch.close();
   context.boardWatch.close();

@@ -8,33 +8,42 @@ import { type ModelPick, parsePick } from "./model-pick.ts";
 
 export type SavedSettings = ModelPick & { used: number; window: number };
 
-const sessionFile = (logPath: string) => join(dirname(logPath), "session");
-const settingsFile = (logPath: string) =>
-  join(dirname(logPath), "chat-model.json");
+/** The main conversation keeps the plain file names. Another conversation adds its name to them. */
+const sessionFile = (logPath: string, name?: string) =>
+  join(dirname(logPath), name ? `session-${name}` : "session");
+const settingsFile = (logPath: string, name?: string) =>
+  join(dirname(logPath), name ? `chat-model-${name}.json` : "chat-model.json");
 
 /** The stored session id, or null when none is stored. */
-export function readSessionId(logPath: string): string | null {
+export function readSessionId(logPath: string, name?: string): string | null {
   try {
-    const id = readFileSync(sessionFile(logPath), "utf8").trim();
+    const id = readFileSync(sessionFile(logPath, name), "utf8").trim();
     return id === "" ? null : id;
   } catch {
     return null;
   }
 }
 
-export function writeSessionId(logPath: string, id: string): void {
+export function writeSessionId(
+  logPath: string,
+  id: string,
+  name?: string,
+): void {
   mkdirSync(dirname(logPath), { recursive: true });
-  writeFileSync(sessionFile(logPath), `${id}\n`);
+  writeFileSync(sessionFile(logPath, name), `${id}\n`);
 }
 
-export function clearSessionId(logPath: string): void {
-  rmSync(sessionFile(logPath), { force: true });
+export function clearSessionId(logPath: string, name?: string): void {
+  rmSync(sessionFile(logPath, name), { force: true });
 }
 
 /** The saved settings. A missing or unreadable file, or one with a broken field, holds none. */
-export function readSettings(logPath: string): SavedSettings | null {
+export function readSettings(
+  logPath: string,
+  name?: string,
+): SavedSettings | null {
   try {
-    const data = JSON.parse(readFileSync(settingsFile(logPath), "utf8"));
+    const data = JSON.parse(readFileSync(settingsFile(logPath, name), "utf8"));
     const pick = parsePick(data);
     if (pick === null) return null;
     const { used, window } = data;
@@ -45,10 +54,14 @@ export function readSettings(logPath: string): SavedSettings | null {
   }
 }
 
-export function writeSettings(logPath: string, settings: SavedSettings): void {
+export function writeSettings(
+  logPath: string,
+  settings: SavedSettings,
+  name?: string,
+): void {
   mkdirSync(dirname(logPath), { recursive: true });
   writeFileSync(
-    settingsFile(logPath),
+    settingsFile(logPath, name),
     `${JSON.stringify(settings, null, 2)}\n`,
   );
 }

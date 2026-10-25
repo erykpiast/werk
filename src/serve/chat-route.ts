@@ -18,18 +18,56 @@ const TURN_NAME = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/;
 const MAX_TEXT = 200_000;
 const MAX_IMAGES = 50;
 
-/** The conversation of the project. It is made at the first use and kept on the context. */
-function sessionOf(context: Context, env: Record<string, string | undefined>) {
-  context.chat ??= createSession({
+const MAIN = "main";
+
+/**
+ * A conversation of the project by name. It is made at the first use and kept on the context. An
+ * event of a conversation other than the main one carries its name, so a page routes it to its tab.
+ */
+function sessionOf(
+  context: Context,
+  env: Record<string, string | undefined>,
+  tab: string,
+) {
+  const have = context.chats.get(tab);
+  if (have) return have;
+  const named = tab === MAIN ? {} : { name: tab };
+  const made = createSession({
+    ...named,
     folder: context.folder,
     logPath: context.logPath,
     env,
     werk: selfCommandLine(),
     projectIsWerk: resolve(context.folder) === REPO,
     readMap: () => readMap(context.logPath).map,
-    emit: (event) => broadcastData(context.clients, event.name, event.data),
+    emit: (event) =>
+      broadcastData(
+        context.clients,
+        event.name,
+        tab === MAIN ? event.data : { ...event.data, tab },
+      ),
   });
-  return context.chat;
+  context.chats.set(tab, made);
+  return made;
+}
+
+/** The conversation a request names with its tab parameter. A request that names none is the main one. */
+function tabOf(req: Request): string | Response {
+  const tab = new URL(req.url).searchParams.get("tab") ?? MAIN;
+  return TURN_NAME.test(tab) ? tab : refuse("the tab name is not valid");
+}
+
+/** The names of the conversations: the main one first, then the others in the order they opened. */
+export function tabsRoute(context: Context): Response {
+  const others = [...context.chats.keys()].filter((t) => t !== MAIN);
+  return Response.json({ tabs: [MAIN, ...others] });
+}
+
+/** The command names of one conversation's agent. */
+export function commandsRoute(context: Context, req: Request): Response {
+  const tab = tabOf(req);
+  if (typeof tab !== "string") return tab;
+  return Response.json({ commands: context.chats.get(tab)?.commands() ?? [] });
 }
 
 function refuse(message: string, status = 400): Response {
@@ -49,9 +87,11 @@ export async function chatRoute(
   env: Record<string, string | undefined>,
   req: Request,
 ): Promise<Response> {
+  const tab = tabOf(req);
+  if (typeof tab !== "string") return tab;
   if (req.method === "GET") {
     // The session is built here, so a page that joins after a restart reads the saved model and fill.
-    const session = sessionOf(context, env);
+    const session = sessionOf(context, env, tab);
     return Response.json({
       events: session.history(),
       settings: session.settings(),
@@ -89,7 +129,7 @@ export async function chatRoute(
       paths.push(path);
     }
   }
-  const result = sessionOf(context, env).send({
+  const result = sessionOf(context, env, tab).send({
     turn,
     text,
     card: typeof card === "string" ? card : null,
@@ -120,7 +160,9 @@ export async function askRoute(
   if (typeof id !== "string" || answer === null) {
     return refuse("send the id of the ask and a decision");
   }
-  const done = context.chat?.answer(id, answer) ?? {
+  const tab = tabOf(req);
+  if (typeof tab !== "string") return tab;
+  const done = context.chats.get(tab)?.answer(id, answer) ?? {
     ok: false as const,
     reason: "no such open ask",
   };
@@ -149,7 +191,9 @@ export async function modelRoute(
   if (pick === null) {
     return refuse("send a model and an advisor that the header offers");
   }
-  const done = await sessionOf(context, env).setModel(pick);
+  const tab = tabOf(req);
+  if (typeof tab !== "string") return tab;
+  const done = await sessionOf(context, env, tab).setModel(pick);
   if (done.ok) return Response.json(pick, { status: 200 });
   return Response.json(
     { error: "busy", message: done.reason },
@@ -164,7 +208,9 @@ export async function clearRoute(
   req: Request,
 ): Promise<Response> {
   if (req.method !== "POST") return notPost();
-  const done = await sessionOf(context, env).clear();
+  const tab = tabOf(req);
+  if (typeof tab !== "string") return tab;
+  const done = await sessionOf(context, env, tab).clear();
   if (done.ok) return Response.json({ cleared: true }, { status: 200 });
   return Response.json(
     { error: "busy", message: done.reason },
