@@ -51,6 +51,7 @@ export function ticketPrompt(
   root: string,
   scope: ScopeText,
   paths: PlanPaths,
+  firstNumber = 1,
 ): string {
   return `Split the spec of the card #${root} into tickets.
 
@@ -58,7 +59,7 @@ ${scopeSection(scope)}
 
 ## Your task
 
-Read the spec in ${paths.spec}. Write one file for each ticket in ${paths.ticketsDir}. A file name starts with the ticket number, from 1 to 99, for example 01-login.md. A ticket is a narrow, complete slice through every layer that the change touches. It can be shown working on its own and fits one fresh context.
+Read the spec in ${paths.spec}. Write one file for each ticket in ${paths.ticketsDir}. A file name starts with the ticket number, from ${firstNumber} to 99, for example ${String(firstNumber).padStart(2, "0")}-login.md. Number the first ticket ${firstNumber}. Leave every file that is already in the folder as it is. A ticket is a narrow, complete slice through every layer that the change touches. It can be shown working on its own and fits one fresh context.
 
 Every ticket has this format, in this order. The first five lines are header lines. Cites holds card ids. Blocked_by and stories hold ticket numbers and story numbers, separated by commas. Touches holds the names of the modules the ticket changes, as concept names. A ticket names no file path anywhere. A check line is "make <target>".
 

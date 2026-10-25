@@ -3,7 +3,13 @@
  * becomes a ghost card under the subtree root (#st-spec, #st-spec-linked, #st-spec-answers, #st-ticket-partial).
  * The files go to werk's store for the project, never to the target repository (#st-build-target).
  */
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
 import {
@@ -25,6 +31,7 @@ import { checkTickets, formatVerdict } from "../tickets/check-folder.ts";
 import { decidedUnder } from "../tickets/decided-cards.ts";
 import { readTicketFiles } from "../tickets/read-folder.ts";
 import { storiesOf } from "../tickets/spec-stories.ts";
+import { ticketNumber } from "../tickets/ticket-parse.ts";
 import { parseAnswers, proposalEvent } from "./answers.ts";
 import { type PlanPaths, specPrompt, ticketPrompt } from "./prompts.ts";
 import { lastChanges, planScope } from "./scope.ts";
@@ -75,7 +82,12 @@ export async function runPlan(input: PlanInput): Promise<number> {
     return 1;
   }
   const onBoard = readBoard(boardLog);
-  const held = (onBoard.plans.get(root)?.tickets ?? []).filter(
+  const boardIds = onBoard.plans.get(root)?.tickets ?? [];
+  const numbersOnBoard = new Set(
+    boardIds.map((id) => Number(id.split("/")[1])),
+  );
+  const offset = Math.max(0, ...numbersOnBoard);
+  const held = boardIds.filter(
     (id) => onBoard.tickets.get(id)?.archived === false,
   );
   if (held.length > 0) {
@@ -152,9 +164,14 @@ export async function runPlan(input: PlanInput): Promise<number> {
   const specDir = join(store, "specs", root);
   const ticketsDir = join(store, "tickets", root);
   rmSync(specDir, { recursive: true, force: true });
-  rmSync(ticketsDir, { recursive: true, force: true });
   mkdirSync(specDir, { recursive: true });
   mkdirSync(ticketsDir, { recursive: true });
+  // The text of a ticket the board still holds stays; every other file of an earlier run goes.
+  for (const name of readdirSync(ticketsDir)) {
+    const digits = ticketNumber(name);
+    if (digits === null || !numbersOnBoard.has(Number(digits)))
+      rmSync(join(ticketsDir, name), { recursive: true, force: true });
+  }
   const paths: PlanPaths = {
     spec: join(specDir, "spec.md"),
     specAnswers: join(specDir, "spec-answers.json"),
@@ -235,7 +252,7 @@ export async function runPlan(input: PlanInput): Promise<number> {
   failure = await writer(
     "ticket-writer",
     "tickets",
-    ticketPrompt(root, scopeText, paths),
+    ticketPrompt(root, scopeText, paths, offset + 1),
     [paths.ticketAnswers, join(ticketsDir, "*")],
   );
   if (failure !== null) return endPlan("failed", failure);
@@ -243,7 +260,10 @@ export async function runPlan(input: PlanInput): Promise<number> {
   if (failure !== null) return endPlan("failed", failure);
 
   // The checks read the map again: the answers are ghosts now, and a ghost counts as no decided card.
-  const files = readTicketFiles(ticketsDir);
+  // A file of a ticket the board holds is not this run's output.
+  const files = readTicketFiles(ticketsDir).filter(
+    (f) => Number(ticketNumber(f.name) ?? 0) > offset,
+  );
   const verdict = checkTickets(
     files,
     decidedUnder(readMap(logPath).map, root),

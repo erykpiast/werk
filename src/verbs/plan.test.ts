@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { readBoard } from "../board/log-store.ts";
 import type { Script, Step } from "../fake-agent/script.ts";
@@ -226,4 +231,36 @@ test("a plan with no card, or a bad flag, is refused", async () => {
   expect((await werk("plan", "nothing")).code).toBe(1);
   expect((await werk("plan")).code).toBe(2);
   expect((await werk("plan", "a", "--timeout", "0")).code).toBe(2);
+});
+
+test("a plan after the old tickets are archived keeps their files and continues after the highest number", async () => {
+  seed(decided("app"));
+  project.install({
+    roles: {
+      "spec-writer": {
+        replies: [
+          goodSpec(),
+          [
+            edit("specs/app/spec.md", SPEC),
+            edit("specs/app/spec-answers.json", "[]"),
+            RESULT,
+          ],
+        ],
+      },
+      "ticket-writer": {
+        replies: [tickets(["01-a.md", good]), tickets(["02-b.md", good])],
+      },
+    },
+  });
+  expect((await werk("plan", "app")).code).toBe(0);
+  appendFileSync(
+    join(project.dir, ".werk", "board.jsonl"),
+    `${JSON.stringify({ type: "ticket.archived", id: "app/01" })}\n`,
+  );
+  const again = await werk("plan", "app");
+  expect(again.stderr).toBe("");
+  expect(again.code).toBe(0);
+  expect(existsSync(join(project.dir, ".werk/tickets/app/01-a.md"))).toBe(true);
+  expect(board().tickets.get("app/01")?.archived).toBe(true);
+  expect(board().tickets.get("app/02")?.column).toBe("ready");
 });
