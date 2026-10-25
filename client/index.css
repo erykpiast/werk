@@ -191,7 +191,7 @@ code {
   border-color: var(--proposed);
   border-left-color: var(--edge);
 }
-.card-box.is-proposed:not(.hero) {
+.card-box.is-proposed {
   background-color: #eff6ff;
 }
 
