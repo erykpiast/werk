@@ -1,5 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import { applyEvent, emptyMap, fold, type LogEntry, parseLog } from "./fold.ts";
+import {
+  rules as bad,
+  build,
+  decided,
+  link as dep,
+  kinds,
+  reopen,
+  review,
+} from "./mark-fixtures.ts";
 
 const node = (id: string, extra: Record<string, unknown> = {}) => ({
   type: "node.proposed",
@@ -426,5 +435,23 @@ describe("removal events", () => {
     expect(
       rules(...base, { type: "node.removed", id: "c" }, node("c")),
     ).toEqual(["duplicate-id"]);
+  });
+});
+
+describe("marks", () => {
+  test("a reopen and a review fold in order, and a decide ends a postponement", () => {
+    const map = build(
+      decided("x"),
+      decided("y"),
+      dep("y", "x"),
+      reopen("x", { reason: "postponed" }),
+      { type: "node.decided", id: "x" },
+      reopen("x"),
+      { type: "node.decided", id: "x" },
+      review("y", { confirmed: ["x"] }),
+    );
+    expect(bad(map)).toEqual([]);
+    expect(kinds(map, "x")).toEqual([]);
+    expect(kinds(map, "y")).toEqual([]);
   });
 });

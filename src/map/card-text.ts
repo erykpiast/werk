@@ -41,6 +41,7 @@ export function renderCard(map: FoldedMap, id: string): string | null {
     ...node.kill.map((criterion) => `kill: ${killText(criterion)}`),
   ];
   if (facts.length > 0) lines.push("", ...facts);
+  for (const mark of node.marks) lines.push("", mark.trace);
   if (node.pending) lines.push("", ...renderPending(node, node.pending));
   const edges = [
     ...map.edges.map((edge) => ({ edge, held: false })),
