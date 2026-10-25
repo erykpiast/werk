@@ -68,7 +68,7 @@ registerVerb({
         command: "claude",
       });
       out(
-        `${result.outcome} after ${result.passes} pass${result.passes === 1 ? "" : "es"} on branch ${result.branch}${result.reason ? `: ${result.reason}` : ""}`,
+        `${result.outcome} after ${result.passes} pass${result.passes === 1 ? "" : "es"} on branch ${result.branch}${result.reason ? `: ${result.reason}` : ""}${result.followup ? `; follow-up ${result.followup} filed` : ""}`,
       );
       return result.outcome === "merging" ? 0 : 1;
     } catch (error) {

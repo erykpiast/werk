@@ -46,6 +46,8 @@ export type AgentRun = {
   fields?: Record<string, unknown>;
   /** Called with the session log name once the file exists, before the child starts. */
   onStarted?: (log: string) => void;
+  /** An abort stops the child and fails the run. */
+  signal?: AbortSignal;
 };
 
 export type AgentResult = {
@@ -56,6 +58,8 @@ export type AgentResult = {
   log: string;
   ms: number;
   cost: Cost;
+  /** The text of the agent's final answer. Empty when the run sent no result. */
+  text: string;
 };
 
 const num = (value: unknown): number =>
@@ -107,6 +111,7 @@ export async function runAgent(run: AgentRun): Promise<AgentResult> {
   let reason: string | undefined;
   let cost = NO_COST;
   let sawResult = false;
+  let text = "";
   let lastEvent = Date.now();
   try {
     const child = Bun.spawn(
@@ -133,6 +138,9 @@ export async function runAgent(run: AgentRun): Promise<AgentResult> {
       reason ??= why;
       child.kill();
     };
+    const onAbort = () => stop("the run was aborted");
+    if (run.signal?.aborted) onAbort();
+    else run.signal?.addEventListener("abort", onAbort, { once: true });
     const limit = setTimeout(
       () => stop(`the wall-clock limit of ${run.timeoutMs / 1000} s passed`),
       run.timeoutMs,
@@ -159,6 +167,7 @@ export async function runAgent(run: AgentRun): Promise<AgentResult> {
       if (parsed.type === "result") {
         sawResult = true;
         cost = costOf(parsed);
+        if (typeof parsed.result === "string") text = parsed.result;
         if (parsed.is_error === true) {
           reason ??= `the agent ended with an error result`;
         }
@@ -175,6 +184,7 @@ export async function runAgent(run: AgentRun): Promise<AgentResult> {
     const code = await child.exited;
     clearTimeout(limit);
     clearInterval(watch);
+    run.signal?.removeEventListener("abort", onAbort);
     if (reason === undefined && code !== 0) {
       const text = (await errors).trim();
       reason = `the agent exited with code ${code}${text === "" ? "" : `: ${text}`}`;
@@ -192,5 +202,5 @@ export async function runAgent(run: AgentRun): Promise<AgentResult> {
     file: log,
     ...(reason === undefined ? {} : { reason }),
   });
-  return { ok: reason === undefined, reason, log, ms, cost };
+  return { ok: reason === undefined, reason, log, ms, cost, text };
 }
