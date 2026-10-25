@@ -14,4 +14,10 @@ export const PURE_FILES: readonly string[] = [
   "src/agent/launch-options.ts",
   "src/board/fold.ts",
   "src/board/resolve.ts",
+  "src/tickets/ticket-parse.ts",
+  "src/tickets/own-checks.ts",
+  "src/tickets/set-checks.ts",
+  "src/tickets/decided-cards.ts",
+  "src/tickets/spec-stories.ts",
+  "src/tickets/check-folder.ts",
 ];
