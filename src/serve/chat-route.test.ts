@@ -250,14 +250,19 @@ test("a crashed agent of one tab marks only that tab, and its next message start
   expect((await fetch(`${base}/chat?tab=..%2Fx`)).status).toBe(400);
 });
 
-test("the commands read answers the names of the first chat that has any, and an empty list with no chat", async () => {
-  const chat = (names: string[]) => ({ commands: () => names });
+test("the commands read answers the names of the most recently started agent, and an empty list with no chat", async () => {
+  const chat = (names: string[], at: number) => ({
+    commands: () => names,
+    commandsAt: () => at,
+  });
   const none = { chats: new Map() } as unknown as Context;
   expect(await commandsRoute(none).json()).toEqual({ commands: [] });
   const some = {
     chats: new Map([
-      ["main", chat([])],
-      ["A", chat(["review", "recall"])],
+      ["main", chat(["old"], 1)],
+      ["A", chat(["review", "recall"], 3)],
+      ["B", chat(["mid"], 2)],
+      ["C", chat([], 0)],
     ]),
   } as unknown as Context;
   expect(await commandsRoute(some).json()).toEqual({

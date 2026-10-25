@@ -63,12 +63,18 @@ export function tabsRoute(context: Context): Response {
   return Response.json({ tabs: [MAIN, ...others] });
 }
 
-/** The command names that the project's chats keep: the first chat that has any wins. */
+/** The command names from the start line of the project's most recently started agent (#werk-chat-cmdmenu-source). */
 export function commandsRoute(context: Context): Response {
-  const named = [...context.chats.values()]
-    .map((chat) => chat.commands())
-    .find((names) => names.length > 0);
-  return Response.json({ commands: named ?? [] });
+  let latest = 0;
+  let names: string[] = [];
+  for (const chat of context.chats.values()) {
+    const at = chat.commandsAt();
+    if (at > latest) {
+      latest = at;
+      names = chat.commands();
+    }
+  }
+  return Response.json({ commands: names });
 }
 
 function refuse(message: string, status = 400): Response {
