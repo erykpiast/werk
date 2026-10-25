@@ -3,6 +3,7 @@
  * parts of each reply, sent on the live channel with the name of the turn they belong to
  * (#werk-onechat, #werk-chat-turn-id, #werk-progress).
  */
+import { basename } from "node:path";
 import { buildLaunchOptions } from "../agent/launch-options.ts";
 import type { FoldedMap } from "../map/fold.ts";
 import { buildRuleTitles } from "./build-rules.ts";
@@ -51,7 +52,7 @@ export type ChatEvent =
   | { name: "cleared"; data: Record<string, never> }
   | { name: "background"; data: { count: number } }
   | { name: "dead"; data: { error: string | null } }
-  | { name: "sent"; data: { turn: string; text: string } }
+  | { name: "sent"; data: { turn: string; text: string; images: string[] } }
   | { name: "turn-start"; data: { turn: string } }
   | { name: "delta"; data: Part & { type: "delta"; turn: string } }
   | { name: "chat"; data: Part & { type: "chat"; turn: string } }
@@ -454,7 +455,14 @@ export function createSession(deps: SessionDeps): ChatSession {
   return {
     send(sent) {
       if (holds(queue, sent.turn)) return "duplicate";
-      emit({ name: "sent", data: { turn: sent.turn, text: sent.text } });
+      emit({
+        name: "sent",
+        data: {
+          turn: sent.turn,
+          text: sent.text,
+          images: (sent.images ?? []).map((path) => basename(path)),
+        },
+      });
       const added = enqueue(queue, sent);
       queue = added.queue;
       if (added.start) dispatch(added.start);

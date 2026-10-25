@@ -112,7 +112,9 @@ test("a send streams its reply on the live channel, and a page that joins late r
     seen += decoder.decode(chunk.value);
   }
   await reader.cancel();
-  expect(seen).toContain('event: sent\ndata: {"turn":"t1","text":"hello"}');
+  expect(seen).toContain(
+    'event: sent\ndata: {"turn":"t1","text":"hello","images":[]}',
+  );
   expect(seen).toContain("event: chat\ndata:");
   expect(seen).toContain('"durationMs":5');
   const history = (await (

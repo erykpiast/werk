@@ -407,6 +407,9 @@ test("a pasted image shows a chip with a thumbnail, and the agent gets its path"
       await composer.pressSequentially(" why is it red?");
       await composer.press("Enter");
       await expect(chat(page).getByText("Seen")).toBeVisible();
+      await expect(
+        chat(page).locator('[data-role="user"] img[alt="[Image #1]"]'),
+      ).toBeVisible();
       const [text] = messages(server);
       expect(text).toMatch(/\[Image #1\] = .*\.werk\/attachments\/.+\.png/);
       expect(text).toContain("Open each image above with Read");

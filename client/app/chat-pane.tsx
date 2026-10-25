@@ -40,7 +40,7 @@ export function ChatPane({
   return (
     <div data-slot="chat-pane">
       <div ref={log} data-slot="chat-scroll">
-        <ChatLog state={state} />
+        <ChatLog state={state} imageUrl={store.imageUrl} />
         <NextOffer state={state} store={store} />
       </div>
       <StatusLines state={state} />

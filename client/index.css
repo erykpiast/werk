@@ -1279,3 +1279,11 @@ button.tag {
     opacity: 0.3;
   }
 }
+
+[data-slot="message-image"] {
+  display: block;
+  max-width: 16rem;
+  max-height: 12rem;
+  margin: 0.25rem 0;
+  border-radius: var(--radius);
+}

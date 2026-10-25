@@ -133,7 +133,14 @@ export function createChatStore(
     if (typeof body.turn !== "string") return;
     switch (type) {
       case "sent":
-        apply({ type: "sent", turn: body.turn, text: String(body.text ?? "") });
+        apply({
+          type: "sent",
+          turn: body.turn,
+          text: String(body.text ?? ""),
+          images: Array.isArray(body.images)
+            ? body.images.filter((n): n is string => typeof n === "string")
+            : [],
+        });
         break;
       case "turn-start":
         apply({ type: "turn-start", turn: body.turn, at: deps.now() });
@@ -245,7 +252,7 @@ export function createChatStore(
       `${apiOf(project, "/image")}?name=${encodeURIComponent(name)}`,
     async send(text, images = []) {
       const turn = deps.newTurn();
-      apply({ type: "sent", turn, text });
+      apply({ type: "sent", turn, text, images });
       let problem: string | null = null;
       try {
         const res = await deps.fetch(urlOf("/chat"), {

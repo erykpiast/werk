@@ -30,6 +30,8 @@ export type Turn = {
   name: string;
   /** The message of the person. Null for a turn that another page sent. */
   text: string | null;
+  /** The stored names of the images of the message, in the order of their tokens. */
+  images: string[];
   /** True from the send until the turn starts: "waits for the reply above". */
   waiting: boolean;
   items: Item[];
@@ -100,7 +102,7 @@ export type Action =
   | { type: "cleared" }
   | { type: "background"; count: number }
   | { type: "dead"; error: string | null }
-  | { type: "sent"; turn: string; text: string }
+  | { type: "sent"; turn: string; text: string; images?: string[] }
   | { type: "turn-start"; turn: string; at: number }
   | {
       type: "delta";
@@ -140,10 +142,16 @@ export type Action =
 
 const isOpen = (turn: Turn) => turn.end === null;
 
-function newTurn(name: string, text: string | null, waiting: boolean): Turn {
+function newTurn(
+  name: string,
+  text: string | null,
+  waiting: boolean,
+  images: string[] = [],
+): Turn {
   return {
     name,
     text,
+    images,
     waiting,
     items: [],
     status: null,
@@ -230,7 +238,10 @@ export function reduce(state: ChatState, action: Action): ChatState {
       const waiting = state.turns.some(isOpen);
       return {
         ...state,
-        turns: [...state.turns, newTurn(action.turn, action.text, waiting)],
+        turns: [
+          ...state.turns,
+          newTurn(action.turn, action.text, waiting, action.images),
+        ],
       };
     }
     case "turn-start":

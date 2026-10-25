@@ -62,10 +62,50 @@ function Block({ item }: { item: Item }) {
   );
 }
 
-function TurnView({ turn }: { turn: Turn }) {
+/** The message of the person, with each image shown under its own [Image #N] token (#werk-shot-chip). */
+function UserMessage({
+  turn,
+  imageUrl,
+}: {
+  turn: Turn;
+  imageUrl?: (name: string) => string;
+}) {
+  let offset = 0;
+  const parts = (turn.text ?? "").split(/(\[Image #\d+\])/).map((part) => {
+    const at = offset;
+    offset += part.length;
+    return { part, at };
+  });
+  return (
+    <div data-role="user">
+      {parts.map(({ part, at }) => {
+        const n = /^\[Image #(\d+)\]$/.exec(part)?.[1];
+        const name = n === undefined ? undefined : turn.images[Number(n) - 1];
+        return (
+          <span key={at}>
+            {part}
+            {name !== undefined && imageUrl ? (
+              <img data-slot="message-image" src={imageUrl(name)} alt={part} />
+            ) : null}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function TurnView({
+  turn,
+  imageUrl,
+}: {
+  turn: Turn;
+  imageUrl?: (name: string) => string;
+}) {
   return (
     <article data-turn={turn.name}>
-      {turn.text === null ? null : <div data-role="user">{turn.text}</div>}
+      {turn.text === null ? null : (
+        <UserMessage turn={turn} imageUrl={imageUrl} />
+      )}
       {turn.waiting ? (
         <div data-slot="waiting">○ waits for the reply above</div>
       ) : null}
@@ -86,11 +126,17 @@ function TurnView({ turn }: { turn: Turn }) {
 }
 
 /** The chat log: each turn with its message, then its reply parts in order. */
-export function ChatLog({ state }: { state: ChatState }) {
+export function ChatLog({
+  state,
+  imageUrl,
+}: {
+  state: ChatState;
+  imageUrl?: (name: string) => string;
+}) {
   return (
     <div data-slot="chat-log" role="log" aria-label="Conversation">
       {state.turns.map((turn) => (
-        <TurnView key={turn.name} turn={turn} />
+        <TurnView key={turn.name} turn={turn} imageUrl={imageUrl} />
       ))}
     </div>
   );
