@@ -41,7 +41,14 @@ function basisMissing(map: FoldedMap, card: MapNode): string | null {
     const names = waiting
       .map((target) => `${target.id} (${state(target)})`)
       .join(", ");
-    return `basis: the card waits on ${names}. Fix: decide the open basis again`;
+    const fixes = waiting
+      .map((target) =>
+        target.status === "decided"
+          ? `werk rederive ${target.id} --status decided`
+          : `werk status ${target.id} decided`,
+      )
+      .join(", ");
+    return `basis: the card waits on ${names}. Fix: ${fixes}`;
   }
   if (card.noBasis !== null || usable.length > 0) return null;
   return `basis: no decided depends_on target or parent. Fix: werk link ${card.id} <card> --type depends_on --why "<what it takes>", or waive it: werk edit ${card.id} --no-basis "<reason>"`;
@@ -60,7 +67,10 @@ function optionMissing(map: FoldedMap, card: MapNode): string | null {
     );
   });
   if (weighed) return null;
-  return `option: none weighed. Fix: werk add ${card.id}:opt0 --kind option --title "<the alternative>" --why "<why not>", then werk link ${card.id}:opt0 ${card.id} --type alternative_to, or state that none was weighed: werk edit ${card.id} --unchallenged "<reason>"`;
+  const ghostNote = card.proposed
+    ? ""
+    : ` (a real card counts only a real option, so accept ${card.id}:opt0 as well)`;
+  return `option: none weighed. Fix: werk add ${card.id}:opt0 --kind option --title "<the alternative>" --why "<why not>", then werk link ${card.id}:opt0 ${card.id} --type alternative_to${ghostNote}, or state that none was weighed: werk edit ${card.id} --unchallenged "<reason>"`;
 }
 
 function killMissing(card: MapNode): string | null {

@@ -8,7 +8,7 @@
 import { checkDecide } from "./contract.ts";
 import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
-import { isOut, removeCard, restoreCard } from "./removal-rules.ts";
+import { isOut, outRefusal, removeCard, restoreCard } from "./removal-rules.ts";
 
 export type Kind = "card" | "option" | "source" | "excerpt";
 export type Who = "you" | "me" | "prototype";
@@ -407,7 +407,11 @@ function applyCriterion(map: FoldedMap, fields: Fields): Violation | null {
     criterion[key] = value;
   }
   const node = map.nodes.get(id);
-  if (!node) return { rule: "unknown-card", detail: `no card "${id}"` };
+  if (!node) {
+    return (
+      outRefusal(map, id) ?? { rule: "unknown-card", detail: `no card "${id}"` }
+    );
+  }
   node.kill.push(criterion as Criterion);
   return null;
 }
@@ -416,7 +420,8 @@ function applyDecided(map: FoldedMap, fields: Fields): Violation | null {
   const { id } = fields;
   if (typeof id !== "string") return bad('"id" must be text');
   const node = map.nodes.get(id);
-  if (node?.status === "decided") {
+  if (!node) return outRefusal(map, id) ?? checkDecide(map, id);
+  if (node.status === "decided") {
     return { rule: "contract", detail: `"${id}" is already decided` };
   }
   const violation = checkDecide(map, id);

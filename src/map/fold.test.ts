@@ -394,6 +394,23 @@ describe("removal events", () => {
     expect(back.removals).toEqual([]);
   });
 
+  test("a kill criterion and a decide on a removed node name the restore", () => {
+    const removed = [...base, { type: "node.removed", id: "p" }];
+    const out = fold(
+      entries(
+        ...removed,
+        { type: "criterion.added", id: "c", form: "revisit" },
+        { type: "node.decided", id: "c" },
+      ),
+    );
+    expect(out.problems.map((p) => p.detail)).toEqual([
+      '"c" is removed with "p"; restore "p" first',
+      '"c" is removed with "p"; restore "p" first',
+    ]);
+    const own = fold(entries(...removed, { type: "node.decided", id: "p" }));
+    expect(own.problems[0]?.detail).toBe('"p" is removed; restore "p" first');
+  });
+
   test("a removal event that is not well formed is refused", () => {
     expect(
       rules(
