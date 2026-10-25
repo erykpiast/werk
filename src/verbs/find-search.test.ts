@@ -40,3 +40,9 @@ test("bad arguments exit 2 and an unknown card exits 1", async () => {
   expect((await werk("search", "--status", "red")).code).toBe(2);
   expect((await werk("search", "--under", "none")).code).toBe(1);
 });
+
+test("an empty term is no term and the search returns", async () => {
+  const empty = await werk("search", "");
+  expect(empty.code).toBe(0);
+  expect(empty.stdout.trim()).toBe("top  Seat price");
+});

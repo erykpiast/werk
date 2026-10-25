@@ -79,7 +79,10 @@ function countIn(text: string, term: string): number {
  * With no term, the cards of the status that the query names, or the decided cards.
  */
 export function searchCards(map: FoldedMap, query: SearchQuery): MapNode[] {
-  const terms = query.terms.map((term) => term.toLowerCase());
+  // An empty term occurs everywhere and would never end the occurrence count.
+  const terms = query.terms
+    .filter((term) => term !== "")
+    .map((term) => term.toLowerCase());
   const status = query.status ?? (terms.length === 0 ? "decided" : null);
   const scope =
     query.under === null ? null : new Set(subtreeOrder(map, query.under));

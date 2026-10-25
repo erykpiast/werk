@@ -76,6 +76,17 @@ describe("search", () => {
     expect(names(found)).toEqual(["a", "b", "d"]);
   });
 
+  test("an empty term is dropped, so it ends and acts as no term", () => {
+    const found = searchCards(map, { terms: [""], status: null, under: null });
+    expect(names(found)).toEqual(["a", "b", "c"]);
+    const mixed = searchCards(map, {
+      terms: ["", "lemon"],
+      status: null,
+      under: null,
+    });
+    expect(names(mixed)).toEqual(["c"]);
+  });
+
   test("a status filter narrows the result", () => {
     const found = searchCards(map, {
       terms: ["seat"],

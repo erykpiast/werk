@@ -34,12 +34,14 @@ registerVerb({
       err(`werk: unknown card "${under}"`);
       return 1;
     }
+    // An empty term is no term, so `search ""` prints the index.
+    const terms = parsed.positional.filter((term) => term !== "");
     const found = searchCards(map, {
-      terms: parsed.positional,
+      terms,
       status: (status as Status | undefined) ?? null,
       under,
     });
-    const index = parsed.positional.length === 0 && status === undefined;
+    const index = terms.length === 0 && status === undefined;
     if (found.length > 0)
       out(index ? renderIndex(found) : renderMatches(found));
     return 0;
