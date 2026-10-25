@@ -20,6 +20,19 @@ const accept = (id: string, ...actor: (string | null)[]) => ({
   id,
   ...(actor[0] === null ? {} : { actor: actor[0] ?? "you" }),
 });
+const quoted = (id: string, card: string) => ({
+  type: "excerpt.quoted",
+  id,
+  title: "words",
+  card,
+  conversation: "c",
+  session: "s",
+  message: 0,
+  start: 0,
+  end: 5,
+  speaker: "agent",
+  said_at: "t",
+});
 const discard = (id: string) => ({ type: "node.discarded", id });
 const entries = (...events: unknown[]): LogEntry[] =>
   events.map((event, i) => ({ line: i + 1, event }));
@@ -29,11 +42,10 @@ const ids = (map: ReturnType<typeof build>) => [...map.nodes.keys()].sort();
 // The example of #werk-propose-new-carry.
 const carry = [
   node("C"),
-  node("C:ex0", { kind: "excerpt" }),
   node("S", { kind: "source" }),
   node("D"),
   node("T", { kind: "source" }),
-  link("C", "C:ex0", "supported_by"),
+  quoted("C:ex0", "C"),
   link("C", "S", "supported_by"),
   link("C", "T", "supported_by"),
   link("D", "S", "supported_by"),
@@ -85,11 +97,10 @@ describe("accept", () => {
       node("p"),
       node("c", { parent: "p" }),
       node("s", { kind: "source" }),
-      node("x", { kind: "excerpt" }),
       node("o", { kind: "option" }),
       node("ps", { kind: "source" }),
       link("c", "s", "supported_by"),
-      link("c", "x", "supported_by"),
+      quoted("x", "c"),
       link("o", "c", "alternative_to"),
       link("p", "ps", "supported_by"),
       accept("c"),
