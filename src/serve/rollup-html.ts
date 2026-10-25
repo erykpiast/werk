@@ -58,7 +58,7 @@ export function rollupLine(rollup: Rollup): string {
   const rings: [string, number][] = [
     ["unchallenged", rollup.unchallenged],
     ["stale", rollup.stale],
-    ["paused", rollup.paused],
+    ["postponed", rollup.paused],
   ];
   for (const [name, count] of rings) {
     if (count > 0) {

@@ -36,6 +36,14 @@ test("a postponed or paused card is striped and keeps its status class", () => {
   }
 });
 
+test("a card that is both stale and postponed shows only as stale", () => {
+  expect(
+    cardClasses(
+      node({ status: "open", marks: [mark("stale"), mark("paused")] }),
+    ),
+  ).toBe("card-box status-open is-stale");
+});
+
 test("a proposed card is marked, and an option takes the option edge", () => {
   expect(cardClasses(node({ proposed: true, kind: "option" }))).toBe(
     "card-box status-option is-proposed",

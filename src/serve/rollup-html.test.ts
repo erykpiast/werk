@@ -53,7 +53,7 @@ test("the line names its scope and total, then the dots, then the rings, and lea
     "3 decided",
     "1 unchallenged",
     "1 stale",
-    "1 paused",
+    "1 postponed",
   ];
   const at = order.map((text) => line.indexOf(text));
   expect(at.every((n) => n > 0)).toBe(true);

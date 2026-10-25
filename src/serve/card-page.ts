@@ -4,7 +4,7 @@
  * #vi-onview-hero, #vi-onview-root, #vi-detail, #vi-onview-links, #vi-onview-stale).
  */
 import type { Edge, FoldedMap, LinkType, MapNode } from "../map/fold.ts";
-import { type Rollup, rollups } from "../map/rollup.ts";
+import { isPostponed, type Rollup, rollups } from "../map/rollup.ts";
 import { escapeHtml } from "../md/escape.ts";
 import {
   cardHref,
@@ -88,7 +88,7 @@ function tagRow(node: MapNode): string {
   if (node.marks.some((m) => m.kind === "stale")) {
     tags.push(tag("stale", "tag-stale"));
   }
-  if (node.marks.some((m) => m.kind !== "stale")) {
+  if (isPostponed(node)) {
     tags.push(tag("postponed", "tag-postponed", POSTPONED_HINT));
   }
   if (node.proposed) tags.push(tag("proposed", "tag-proposed"));

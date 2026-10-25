@@ -65,3 +65,17 @@ test("a stale mark counts as stale and not as paused", () => {
   );
   expect(rollups(map).a).toMatchObject({ stale: 1, paused: 0 });
 });
+
+test("a card that is both stale and postponed counts as stale only (#pr-wf-paused)", () => {
+  const map = build(
+    decided("b"),
+    decided("c"),
+    open("a"),
+    link("a", "b"),
+    link("a", "c"),
+    reopen("b", { reason: "postponed", why: "later" }),
+    reopen("c", { reason: "invalidated", why: "wrong" }),
+  );
+  expect(rollups(map).a).toMatchObject({ stale: 1, paused: 0 });
+  expect(isPostponed(map.nodes.get("a") as never)).toBe(false);
+});

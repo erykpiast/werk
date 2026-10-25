@@ -29,8 +29,9 @@ export function emptyRollup(): Rollup {
   };
 }
 
-/** Whether the card carries the postponed word, as its own mark or as a pause from upstream. */
+/** Whether the card shows the postponed word, as its own mark or as a pause from upstream. A stale mark wins (#pr-wf-paused). */
 export function isPostponed(node: MapNode): boolean {
+  if (node.marks.some((m) => m.kind === "stale")) return false;
   return node.marks.some((m) => m.kind === "paused" || m.kind === "postponed");
 }
 
