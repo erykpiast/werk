@@ -4,6 +4,7 @@ import type { ChatStore } from "../lib/chat-store";
 import { AskBar } from "./ask-bar";
 import { ChatHead } from "./chat-head";
 import { ChatLog } from "./chat-log";
+import { NextOffer, StatusLines } from "./chat-notes";
 import { Composer } from "./composer";
 
 /** The right pane: the log, the header row, then the composer (#werk-head-bottom). */
@@ -26,7 +27,9 @@ export function ChatPane({
     <div data-slot="chat-pane">
       <div ref={log} data-slot="chat-scroll">
         <ChatLog state={state} />
+        <NextOffer state={state} store={store} />
       </div>
+      <StatusLines state={state} />
       <AskBar state={state} store={store} />
       <ChatHead state={state} store={store} />
       <Composer

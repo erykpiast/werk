@@ -80,6 +80,10 @@ export type ChatState = {
   asks: PendingAsk[];
   /** The picks of each open question form, kept here so a redraw never clears them (#werk-mc-askqa). */
   selections: Record<string, Selection[]>;
+  /** The background tasks of the agent: the length of its last full list (#werk-mc-live-bgcount). */
+  background: number;
+  /** The error of an agent that exited without werk stopping it, or null (#werk-mc-live-dead). */
+  dead: string | null;
 };
 
 export const emptyChat: ChatState = {
@@ -87,11 +91,15 @@ export const emptyChat: ChatState = {
   settings: null,
   asks: [],
   selections: {},
+  background: 0,
+  dead: null,
 };
 
 export type Action =
   | { type: "model"; settings: ModelSettings }
   | { type: "cleared" }
+  | { type: "background"; count: number }
+  | { type: "dead"; error: string | null }
   | { type: "sent"; turn: string; text: string }
   | { type: "turn-start"; turn: string; at: number }
   | {
@@ -172,7 +180,16 @@ export function reduce(state: ChatState, action: Action): ChatState {
       return { ...state, settings: action.settings };
     case "cleared":
       // Only the chat forgets. The model and the map stay.
-      return { ...emptyChat, settings: state.settings };
+      return {
+        ...emptyChat,
+        settings: state.settings,
+        background: state.background,
+        dead: state.dead,
+      };
+    case "background":
+      return { ...state, background: action.count };
+    case "dead":
+      return { ...state, dead: action.error };
     case "ask": {
       // A replay of the history names an ask that is open already, and keeps its state.
       if (state.asks.some((a) => a.id === action.ask.id)) return state;

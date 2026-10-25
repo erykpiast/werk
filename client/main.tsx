@@ -60,6 +60,8 @@ type Listed = {
   missing: boolean;
   dev: boolean;
   running: string[];
+  background: number;
+  dead: string | null;
 };
 
 const readList = async (): Promise<Listed[]> =>

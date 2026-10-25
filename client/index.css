@@ -152,6 +152,20 @@ body,
   white-space: pre-wrap;
 }
 
+[data-slot="next-offer"] {
+  padding-bottom: 0.5rem;
+}
+
+[data-slot="background-line"],
+[data-slot="dead-bar"] {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}
+
+[data-slot="dead-bar"] {
+  color: #b91c1c;
+}
+
 [data-slot="ask-bar"] {
   display: flex;
   flex-direction: column;

@@ -543,3 +543,62 @@ test("a slash opens the commands the agent named, and a hash opens the card sear
     },
   );
 });
+
+test("a Next line becomes a button that sends its phrase, and the next message removes it", async ({
+  page,
+}) => {
+  await withChat(
+    {
+      roles: {
+        chat: {
+          replies: [
+            [say("m1", 'Done.\n\nNext: say "merge it"')],
+            [say("m2", "Merged")],
+          ],
+        },
+      },
+    },
+    async (server) => {
+      await page.goto(server.url);
+      await send(page, "Ready?");
+      const offer = chat(page).getByRole("button", { name: "merge it" });
+      const composer = page.getByRole("textbox", { name: "Message" });
+      await composer.fill("a draft");
+      await offer.click();
+      await expect(chat(page).getByText("Merged")).toBeVisible();
+      await expect(offer).toHaveCount(0);
+      await expect(composer).toHaveValue("a draft");
+      expect(messages(server)[1]).toMatch(/merge it$/);
+    },
+  );
+});
+
+test("a background task list shows a line under the log, and an empty list removes it", async ({
+  page,
+}) => {
+  const list = (ids: string[]) => ({
+    event: {
+      type: "system",
+      subtype: "background_tasks",
+      tasks: ids.map((id) => ({ id })),
+    },
+  });
+  await withChat(
+    {
+      roles: {
+        chat: {
+          replies: [
+            [list(["a", "b"]), say("m1", "Started"), { pause: 2500 }, list([])],
+          ],
+        },
+      },
+    },
+    async (server) => {
+      await page.goto(server.url);
+      await send(page, "Go");
+      const line = chat(page).getByText("A background agent runs");
+      await expect(line).toBeVisible();
+      await expect(line).toHaveCount(0, { timeout: 10000 });
+    },
+  );
+});

@@ -25,6 +25,8 @@ export const CHAT_EVENTS = [
   "ask-done",
   "model",
   "cleared",
+  "background",
+  "dead",
 ] as const;
 
 /** The answer of the person to an open ask. */
@@ -88,6 +90,17 @@ export function createChatStore(deps: ChatDeps, project: string): ChatStore {
     }
     if (type === "cleared") {
       apply({ type: "cleared" });
+      return;
+    }
+    if (type === "background" && typeof body.count === "number") {
+      apply({ type: "background", count: body.count });
+      return;
+    }
+    if (type === "dead") {
+      apply({
+        type: "dead",
+        error: typeof body.error === "string" ? body.error : null,
+      });
       return;
     }
     if (type === "model" && typeof body.window === "number") {

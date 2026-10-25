@@ -41,6 +41,7 @@ export function Switcher({
               data-slot="switcher-row"
               data-missing={row.missing || undefined}
               data-busy={row.busy || undefined}
+              data-dead={row.dead || undefined}
             >
               <button
                 type="button"
@@ -53,11 +54,12 @@ export function Switcher({
                 }}
               >
                 <span data-slot="busy-dot" aria-hidden="true">
-                  {row.busy ? "●" : ""}
+                  {row.dead || row.busy ? "●" : ""}
                 </span>
                 <span data-slot="switcher-name">{row.name}</span>
                 <span data-slot="switcher-folder">{row.folder}</span>
                 {row.missing ? <em>(missing)</em> : null}
+                {row.dead ? <em data-slot="dead-mark">(dead)</em> : null}
               </button>
               {row.removable ? (
                 <button

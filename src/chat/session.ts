@@ -49,6 +49,8 @@ export type ChatSettings = ModelPick & { used: number; window: number };
 export type ChatEvent =
   | { name: "model"; data: ChatSettings }
   | { name: "cleared"; data: Record<string, never> }
+  | { name: "background"; data: { count: number } }
+  | { name: "dead"; data: { error: string | null } }
   | { name: "sent"; data: { turn: string; text: string } }
   | { name: "turn-start"; data: { turn: string } }
   | { name: "delta"; data: Part & { type: "delta"; turn: string } }
@@ -110,6 +112,10 @@ export type ChatSession = {
   setModel(pick: ModelPick): Promise<Refusal>;
   /** Drops the session and the transcript and restarts the child. The map is untouched. */
   clear(): Promise<Refusal>;
+  /** The count of background tasks: the length of the last full list the agent sent (#werk-mc-live-bgcount). */
+  background(): number;
+  /** The error of a child that exited without werk stopping it, until the next child starts (#werk-mc-live-dead). */
+  dead(): string | null;
   /** The command names that the most recent agent named when it started, or none before a first start. */
   commands(): string[];
   /** Ends the child. Every open turn ends with the exit. */
@@ -150,12 +156,16 @@ export function createSession(deps: SessionDeps): ChatSession {
   /** The asks that wait for the person, by the id of the control request. */
   const asks = new Map<string, Ask>();
   let commandNames: string[] = [];
+  let tasks = 0;
+  let deadError: string | null = null;
 
   const emit = (event: ChatEvent) => {
     if (
       event.name !== "delta" &&
       event.name !== "status" &&
       event.name !== "model" &&
+      event.name !== "background" &&
+      event.name !== "dead" &&
       event.name !== "cleared"
     ) {
       kept.push(event);
@@ -169,6 +179,18 @@ export function createSession(deps: SessionDeps): ChatSession {
   const persist = () => writeSettings(deps.logPath, settings());
 
   const announceSettings = () => emit({ name: "model", data: settings() });
+
+  const setTasks = (count: number) => {
+    if (count === tasks) return;
+    tasks = count;
+    emit({ name: "background", data: { count } });
+  };
+
+  const setDead = (error: string | null) => {
+    if (error === deadError) return;
+    deadError = error;
+    emit({ name: "dead", data: { error } });
+  };
 
   /** Ends every open turn with the text of the failure. */
   const endAll = (message: string) => {
@@ -196,6 +218,7 @@ export function createSession(deps: SessionDeps): ChatSession {
     announced = null;
     for (const id of asks.keys()) emit({ name: "ask-done", data: { id } });
     asks.clear();
+    setTasks(0);
   };
 
   /**
@@ -206,12 +229,19 @@ export function createSession(deps: SessionDeps): ChatSession {
   const handleExit = (message: string) => {
     forgetChild();
     const active = queue.active;
-    if (active === null || stopped) return endAll(message);
+    if (stopped) return endAll(message);
+    if (active === null) {
+      endAll(message);
+      return setDead(message);
+    }
     const action = onCrash(message, {
       hasSession: sessionId !== null,
       retried: attempts > 0,
     });
-    if (action.kind === "report") return endAll(action.message);
+    if (action.kind === "report") {
+      endAll(action.message);
+      return setDead(action.message);
+    }
     if (action.kind === "replay") {
       sessionId = null;
       clearSessionId(deps.logPath);
@@ -248,6 +278,7 @@ export function createSession(deps: SessionDeps): ChatSession {
     initSeen = false;
     earlyError = "";
     stopped = false;
+    setDead(null);
     pumping = pump(spawned);
     return spawned;
   };
@@ -266,6 +297,10 @@ export function createSession(deps: SessionDeps): ChatSession {
         sessionId = e.session_id;
         writeSessionId(deps.logPath, sessionId);
       }
+      return true;
+    }
+    if (e.type === "system" && e.subtype === "background_tasks") {
+      if (Array.isArray(e.tasks)) setTasks(e.tasks.length);
       return true;
     }
     if (e.type === "result" && !initSeen) {
@@ -427,7 +462,17 @@ export function createSession(deps: SessionDeps): ChatSession {
       ...(queue.active ? [queue.active.turn] : []),
       ...queue.waiting.map((w) => w.turn),
     ],
-    history: () => [...kept],
+    history: () => [
+      ...kept,
+      ...(tasks > 0
+        ? [{ name: "background" as const, data: { count: tasks } }]
+        : []),
+      ...(deadError !== null
+        ? [{ name: "dead" as const, data: { error: deadError } }]
+        : []),
+    ],
+    background: () => tasks,
+    dead: () => deadError,
     commands: () => [...commandNames],
     answer(id, answer) {
       const ask = asks.get(id);

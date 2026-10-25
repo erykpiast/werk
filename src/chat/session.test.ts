@@ -523,3 +523,76 @@ test("the session keeps the command names that the agent's start line gave", asy
     expect(session.commands()).toEqual(["review", "recall"]);
   });
 });
+
+const taskList = (ids: string[]) => ({
+  event: {
+    type: "system",
+    subtype: "background_tasks",
+    tasks: ids.map((id) => ({ id })),
+  },
+});
+const counts = (events: ChatEvent[]) =>
+  events.flatMap((e) => (e.name === "background" ? [e.data.count] : []));
+
+test("the background count is the length of the last full task list, and zero when the child exits", async () => {
+  const { p, session, events } = open();
+  p.install({
+    roles: {
+      chat: {
+        replies: [
+          [taskList(["a"]), taskList(["a", "b"]), result, { pause: 400 }],
+        ],
+      },
+    },
+  });
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    expect(session.background()).toBe(2);
+    expect(session.history()).toContainEqual({
+      name: "background",
+      data: { count: 2 },
+    });
+  });
+  expect(counts(events)).toEqual([1, 2, 0]);
+  expect(session.background()).toBe(0);
+});
+
+test("a child that crashes for good marks the session dead, and the next start clears the mark", async () => {
+  const { p, session, events } = open();
+  const text =
+    "Invalid credential.\nRemove the credential and run: claude auth login";
+  p.install({
+    roles: {
+      chat: {
+        replies: [[taskList(["a"]), { stderr: text }, { crash: 1 }], [result]],
+      },
+    },
+  });
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    expect(session.dead()).toContain(text);
+    expect(session.background()).toBe(0);
+    expect(session.history()).toContainEqual({
+      name: "dead",
+      data: { error: session.dead() },
+    });
+    session.send({ turn: "b", text: "B", card: null });
+    await until(() => ended(events).length === 2);
+    expect(session.dead()).toBeNull();
+  });
+});
+
+test("a model switch and a stop never mark the session dead", async () => {
+  const { p, session, events } = open();
+  p.install({ roles: { chat: { replies: [[result]] } } });
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    await session.setModel({ model: "opus", advisor: null });
+    await until(() => launchesOf(p).length === 2);
+  });
+  expect(session.dead()).toBeNull();
+  expect(events.some((e) => e.name === "dead")).toBe(false);
+});

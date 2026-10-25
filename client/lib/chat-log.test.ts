@@ -347,3 +347,14 @@ test("a model event sets the header settings, and a clear forgets the turns but 
   expect(cleared.turns).toEqual([]);
   expect(cleared.settings).toEqual(settings);
 });
+
+test("the background count and the dead error are kept, and a cleared chat keeps them", () => {
+  let state = reduce(emptyChat, { type: "background", count: 2 });
+  state = reduce(state, { type: "dead", error: "boom" });
+  expect(state).toMatchObject({ background: 2, dead: "boom" });
+  expect(reduce(state, { type: "cleared" })).toMatchObject({
+    background: 2,
+    dead: "boom",
+  });
+  expect(reduce(state, { type: "dead", error: null }).dead).toBeNull();
+});

@@ -23,6 +23,10 @@ export type Context = {
   chat?: ChatSession;
   /** The names of the agent turns that run now. */
   runningTurns: () => string[];
+  /** The count of background tasks of the agent. */
+  background: () => number;
+  /** The error of a dead agent, or null. */
+  dead: () => string | null;
   /** Stops every running agent turn. */
   stopTurns: () => Promise<void>;
 };
@@ -83,6 +87,8 @@ export async function openContext(
       measureWatch,
       lock,
       runningTurns: () => context.chat?.running() ?? [],
+      background: () => context.chat?.background() ?? 0,
+      dead: () => context.chat?.dead() ?? null,
       stopTurns: async () => context.chat?.stop(),
     };
     return { ok: true, context };

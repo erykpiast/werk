@@ -40,6 +40,10 @@ export type Entry = Listed & {
   locked: boolean;
   /** The agent turns that run in this project. */
   running: string[];
+  /** The background tasks of the agent of this project. */
+  background: number;
+  /** The error of a dead agent, until the next one starts. */
+  dead: string | null;
 };
 
 export function createProjects(home: string, dev?: string): Projects {
@@ -66,6 +70,8 @@ export function entries(projects: Projects): Entry[] {
         context === undefined &&
         projects.refused.has(listed.folder),
       running: context?.runningTurns() ?? [],
+      background: context?.background() ?? 0,
+      dead: context?.dead() ?? null,
     };
   });
 }

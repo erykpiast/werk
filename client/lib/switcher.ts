@@ -8,6 +8,10 @@ export type SwitcherProject = ProjectInfo & {
   dev: boolean;
   /** The agent turns that run in the project now. */
   running: string[];
+  /** The background tasks of the project's agent. */
+  background: number;
+  /** The error of a dead agent, or null. */
+  dead: string | null;
 };
 
 export type SwitcherRow = {
@@ -15,6 +19,8 @@ export type SwitcherRow = {
   /** The folder with the home folder written as ~. */
   folder: string;
   busy: boolean;
+  /** The agent exited without werk stopping it (#werk-mc-live-dead). */
+  dead: boolean;
   missing: boolean;
   /** The row has a remove button on hover. The dev entry never has one. */
   removable: boolean;
@@ -32,7 +38,8 @@ export function rowsOf(
   return projects.map((p) => ({
     name: p.name,
     folder: tilde(p.folder, home),
-    busy: p.running.length > 0,
+    busy: p.running.length > 0 || p.background > 0,
+    dead: p.dead !== null,
     missing: p.missing,
     removable: !p.dev,
   }));

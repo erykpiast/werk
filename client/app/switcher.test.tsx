@@ -16,6 +16,7 @@ const rows: SwitcherRow[] = [
     name: "werk",
     folder: "~/werk",
     busy: true,
+    dead: false,
     missing: false,
     removable: false,
   },
@@ -23,10 +24,18 @@ const rows: SwitcherRow[] = [
     name: "checkout",
     folder: "~/checkout",
     busy: false,
+    dead: false,
     missing: false,
     removable: true,
   },
-  { name: "api", folder: "~/api", busy: false, missing: true, removable: true },
+  {
+    name: "api",
+    folder: "~/api",
+    busy: false,
+    dead: false,
+    missing: true,
+    removable: true,
+  },
 ];
 
 async function render() {

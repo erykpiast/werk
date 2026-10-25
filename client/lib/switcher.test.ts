@@ -7,6 +7,8 @@ const project = (extra: Partial<SwitcherProject>): SwitcherProject => ({
   missing: false,
   dev: false,
   running: [],
+  background: 0,
+  dead: null,
   ...extra,
 });
 
@@ -29,6 +31,7 @@ test("a row shows the folder with the home folder as ~, a busy dot for a running
       name: "werk",
       folder: "~/werk",
       busy: true,
+      dead: false,
       missing: false,
       removable: false,
     },
@@ -36,6 +39,7 @@ test("a row shows the folder with the home folder as ~, a busy dot for a running
       name: "checkout",
       folder: "~/Projects/checkout",
       busy: false,
+      dead: false,
       missing: false,
       removable: true,
     },
@@ -43,6 +47,7 @@ test("a row shows the folder with the home folder as ~, a busy dot for a running
       name: "api",
       folder: "/srv/api",
       busy: false,
+      dead: false,
       missing: true,
       removable: true,
     },
@@ -63,4 +68,13 @@ test("a click opens another project, keeps the open one, and refuses a missing f
 
 test("the stop question names the running turns", () => {
   expect(stopQuestion("werk", ["main", "t2"])).toContain("main, t2");
+});
+
+test("a background task keeps a project busy, and a dead agent marks its row", () => {
+  const [bg, dead] = rowsOf([
+    project({ background: 1 }),
+    project({ name: "api", dead: "the agent exited with code 1" }),
+  ]);
+  expect(bg).toMatchObject({ busy: true, dead: false });
+  expect(dead).toMatchObject({ busy: false, dead: true });
 });
