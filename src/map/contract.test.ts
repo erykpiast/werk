@@ -29,6 +29,17 @@ const build = (...events: unknown[]): FoldedMap =>
 const facts = (map: FoldedMap, id: string) =>
   missingFacts(map, map.nodes.get(id) as never).map((f) => f.split(":")[0]);
 
+const mark = (kind: "stale" | "paused") => ({
+  kind,
+  origin: "o",
+  reason: "invalidated" as const,
+  at: "",
+  text: "",
+  link: null,
+  via: [],
+  trace: "t",
+});
+
 /** A decided root that other cards can stand on. */
 const base = [
   card("root"),
@@ -100,13 +111,13 @@ describe("missing facts", () => {
 
   test("a decided basis with a stale mark does not hold", () => {
     const map = build(...base, card("c", { parent: "root" }));
-    map.nodes.get("root")?.marks.push({ kind: "stale", trace: "t" });
+    map.nodes.get("root")?.marks.push(mark("stale"));
     expect(checkDecide(map, "c")?.detail).toContain("root (stale)");
   });
 
   test("a paused basis still holds", () => {
     const map = build(...base, card("c", { parent: "root" }));
-    map.nodes.get("root")?.marks.push({ kind: "paused", trace: "t" });
+    map.nodes.get("root")?.marks.push(mark("paused"));
     expect(facts(map, "c")).not.toContain("basis");
   });
 
