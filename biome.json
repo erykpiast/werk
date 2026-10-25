@@ -14,7 +14,12 @@
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2 },
   "linter": {
     "enabled": true,
-    "rules": { "preset": "recommended" },
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "noUnusedImports": { "level": "warn", "fix": "safe" }
+      }
+    },
     "domains": { "react": "recommended" }
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } }

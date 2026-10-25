@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "WERK_DEV=1 bun src/cli.ts serve",
-    "lint": "biome check .",
+    "lint": "biome check . && bun src/claude/check-subagent-links.ts",
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "bun test --parallel=4 --timeout=15000",

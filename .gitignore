@@ -4,3 +4,4 @@ dist
 test-results
 playwright-report
 .make
+.claude/settings.local.json
