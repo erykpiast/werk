@@ -452,3 +452,37 @@ test("removing chip 1 of two renumbers the other to [Image #1]", async ({
     await expect(chips).not.toContainText("[Image #2]");
   });
 });
+
+test("a slash opens the commands the agent named, and a hash opens the card search", async ({
+  page,
+}) => {
+  const start = {
+    event: {
+      type: "system",
+      subtype: "init",
+      slash_commands: ["review", "recall"],
+    },
+  };
+  await withChat(
+    { roles: { chat: { replies: [[start, say("m1", "Hello")]] } } },
+    async (server) => {
+      await page.goto(server.url);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await send(page, "hi");
+      await expect(chat(page).getByText("Hello")).toBeVisible();
+
+      const composer = page.getByRole("textbox", { name: "Message" });
+      await composer.pressSequentially("run /re");
+      await expect(page.getByRole("option")).toHaveText(["/review", "/recall"]);
+      await composer.press("Enter");
+      await expect(composer).toHaveValue("run /review ");
+
+      await composer.fill("`#ro");
+      await expect(page.getByRole("listbox")).toHaveCount(0);
+      await composer.fill("see #ro");
+      await expect(page.getByRole("option").first()).toContainText("#root");
+      await composer.press("Enter");
+      await expect(composer).toHaveValue("see #root ");
+    },
+  );
+});

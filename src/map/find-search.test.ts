@@ -1,14 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { findOpen, renderIndex, searchCards } from "./find-search.ts";
-import {
-  build,
-  decide,
-  decided,
-  ghost,
-  link,
-  open,
-  reopen,
-} from "./mark-fixtures.ts";
+import { build, decided, ghost, link, open, reopen } from "./mark-fixtures.ts";
 
 const names = (nodes: { id: string }[]) => nodes.map((node) => node.id);
 

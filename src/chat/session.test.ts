@@ -260,3 +260,21 @@ test("an agent that cannot start ends the turn with the reason", async () => {
   expect(end?.data).toMatchObject({ turn: "a", error: true });
   expect(JSON.stringify(end?.data)).toContain("could not run");
 });
+
+test("the session keeps the command names that the agent's start line gave", async () => {
+  const { p, session, events } = open();
+  const start = {
+    event: {
+      type: "system",
+      subtype: "init",
+      slash_commands: ["review", "recall"],
+    },
+  };
+  p.install({ roles: { chat: { replies: [[start, result]] } } });
+  await withSession(session, async () => {
+    expect(session.commands()).toEqual([]);
+    session.send({ turn: "t1", text: "hi", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    expect(session.commands()).toEqual(["review", "recall"]);
+  });
+});

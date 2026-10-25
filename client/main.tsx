@@ -222,7 +222,7 @@ async function start() {
   );
   chatReact?.render(
     <StrictMode>
-      <ChatPane store={chat} />
+      <ChatPane store={chat} cards={() => index?.entries ?? []} />
     </StrictMode>,
   );
   const store = createMapStore(

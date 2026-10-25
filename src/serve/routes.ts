@@ -117,6 +117,9 @@ async function projectRoute(
   const url = new URL(req.url);
   if (rest === "/live") return live(context);
   if (rest === "/chat") return chatRoute(context, ctx.env, req);
+  if (rest === "/commands") {
+    return json({ commands: context.chat?.commands() ?? [] });
+  }
   if (rest === "/ask") return askRoute(context, req);
   if (rest === "/image") return imageRoute(context, req, url);
   if (rest === "/graph") {
