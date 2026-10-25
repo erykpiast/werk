@@ -261,3 +261,69 @@ test("say, inbox, accept, discard and add refuse bad input", async () => {
   expect((await werk("discard", "nope")).code).toBe(1);
   expect(current().events()).toHaveLength(0);
 });
+
+test("a bare card is refused once, with every missing fact and its fix", async () => {
+  await werk("add", "x", "--title", "X");
+  const refused = await werk("status", "x", "decided");
+  expect(refused.code).toBe(1);
+  for (const fact of ["who:", "basis:", "option:", "kill:"]) {
+    expect(refused.stderr).toContain(fact);
+  }
+  expect(refused.stderr).toContain("werk edit x --who");
+  expect(current().events()).toHaveLength(1);
+});
+
+test("a card is decided after its facts are recorded, and the waiver reasons print", async () => {
+  await werk("add", "t", "--title", "T");
+  expect((await werk("edit", "t", "--who", "me")).code).toBe(0);
+  expect((await werk("edit", "t", "--no-basis", "")).code).toBe(1);
+  expect((await werk("status", "t", "decided")).code).toBe(1);
+  expect((await werk("edit", "t", "--no-basis", "root of a tree")).code).toBe(
+    0,
+  );
+  expect((await werk("kill", "t", "--revisit")).code).toBe(0);
+  const decided = await werk("status", "t", "decided");
+  expect(decided.stdout.trim()).toBe("t: decided");
+  const shown = (await werk("show", "t")).stdout;
+  expect(shown).toContain("basis waived: root of a tree");
+  expect(shown).toContain("kill: revisit at any time");
+  expect(shown).toContain("proposed");
+});
+
+test("an open basis is named, and the unchallenged reason prints", async () => {
+  await werk("add", "p", "--title", "P");
+  await werk("add", "u", "--title", "U", "--parent", "p");
+  await werk("edit", "u", "--who", "you", "--unchallenged", "no real choice");
+  await werk("kill", "u", "--no-metric", "cheap to reverse");
+  const refused = await werk("status", "u", "decided");
+  expect(refused.stderr).toContain("p (open)");
+  expect(refused.stderr).not.toContain("option:");
+  expect((await werk("show", "u")).stdout).toContain(
+    "option waived: no real choice",
+  );
+});
+
+test("kill takes exactly one form, and a metric needs all five parts", async () => {
+  await werk("add", "k", "--title", "K");
+  expect((await werk("kill", "k")).code).toBe(2);
+  expect((await werk("kill", "k", "--revisit", "--manual", "x")).code).toBe(2);
+  expect((await werk("kill", "k", "--metric", "m")).code).toBe(2);
+  const metric = await werk(
+    "kill",
+    "k",
+    "--metric",
+    "install time",
+    "--source",
+    "posthog",
+    "--threshold",
+    "> 4 min",
+    "--window",
+    "7 days",
+    "--sample",
+    "100",
+  );
+  expect(metric.code).toBe(0);
+  expect((await werk("kill", "k", "--manual", "I use it")).code).toBe(0);
+  expect((await werk("kill", "zz", "--revisit")).code).toBe(1);
+  expect((await werk("status", "k", "open")).code).toBe(2);
+});

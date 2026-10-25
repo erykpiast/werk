@@ -5,6 +5,7 @@
  * with the same step function, so the fold and a write never disagree.
  */
 
+import { checkDecide } from "./contract.ts";
 import { acceptGhost, discardGhost } from "./ghost-rules.ts";
 import { checkLink } from "./link-rules.ts";
 
@@ -30,6 +31,28 @@ export const LINK_TYPES: readonly LinkType[] = [
 /** A stale, paused or postponed mark. Later tickets derive them (#pr-log-fold-marks). */
 export type Mark = { kind: "stale" | "paused" | "postponed"; trace: string };
 
+/** One kill criterion: what must become true to revisit a decision (#kill-shape). */
+export type Criterion =
+  | {
+      form: "metric";
+      source: string;
+      metric: string;
+      threshold: string;
+      window: string;
+      sample: string;
+    }
+  | { form: "manual"; test: string }
+  | { form: "no-metric"; reason: string }
+  | { form: "revisit" };
+
+/** The text fields each form of criterion needs, all non-empty. */
+export const CRITERION_FIELDS: Record<Criterion["form"], readonly string[]> = {
+  metric: ["source", "metric", "threshold", "window", "sample"],
+  manual: ["test"],
+  "no-metric": ["reason"],
+  revisit: [],
+};
+
 export type MapNode = {
   id: string;
   kind: Kind;
@@ -41,6 +64,11 @@ export type MapNode = {
   /** A ghost: proposed, in no rollup, with every edge of its own held. */
   proposed: boolean;
   marks: Mark[];
+  /** The reason no basis applies, or null when none was waived (#werk-contract-waiver-reason). */
+  noBasis: string | null;
+  /** The reason no option was weighed, or null when none was waived. */
+  unchallenged: string | null;
+  kill: Criterion[];
 };
 
 export type Edge = { from: string; to: string; type: LinkType; why: string };
@@ -58,7 +86,9 @@ export type RuleName =
   | "not-ghost"
   | "accept-actor"
   | "frozen"
-  | "ghost-parent";
+  | "ghost-parent"
+  | "waiver"
+  | "contract";
 
 export type Violation = { rule: RuleName; detail: string };
 export type Problem = Violation & { line: number };
@@ -206,6 +236,9 @@ function applyProposed(
     who,
     proposed: true,
     marks: [],
+    noBasis: null,
+    unchallenged: null,
+    kill: [],
   });
   const thread = map.threads.get(id);
   if (thread) thread.push({ line, kind: "proposed-again" });
@@ -266,15 +299,32 @@ function applyNote(
   return null;
 }
 
+/** A waiver reason from an edit: null when absent, a violation when empty. */
+function waiver(fields: Fields, key: string): string | null | Violation {
+  const reason = optional(fields, key);
+  if (reason === null || isViolation(reason)) return reason;
+  if (reason.trim() === "") {
+    return {
+      rule: "waiver",
+      detail: `a waiver needs a reason: say why in "${key}"`,
+    };
+  }
+  return reason;
+}
+
 function applyEdited(map: FoldedMap, fields: Fields): Violation | null {
   const { id } = fields;
   if (typeof id !== "string") return bad('"id" must be text');
   const why = optional(fields, "why");
   const body = optional(fields, "body");
   const who = optional(fields, "who");
+  const noBasis = waiver(fields, "noBasis");
+  const unchallenged = waiver(fields, "unchallenged");
   if (isViolation(why)) return why;
   if (isViolation(body)) return body;
   if (isViolation(who)) return who;
+  if (isViolation(noBasis)) return noBasis;
+  if (isViolation(unchallenged)) return unchallenged;
   if (who !== null && !oneOf(who, WHOS)) {
     return bad(`"who" must be one of ${WHOS.join(", ")}`);
   }
@@ -288,7 +338,50 @@ function applyEdited(map: FoldedMap, fields: Fields): Violation | null {
         : `"${id}" changes its words only through a proposal`,
     };
   }
+  if (node.status === "decided") {
+    return {
+      rule: "frozen",
+      detail: `"${id}" is decided; a change to it goes through a proposal`,
+    };
+  }
   if (who !== null) node.who = who;
+  if (noBasis !== null) node.noBasis = noBasis;
+  if (unchallenged !== null) node.unchallenged = unchallenged;
+  return null;
+}
+
+function applyCriterion(map: FoldedMap, fields: Fields): Violation | null {
+  const { id, form } = fields;
+  if (typeof id !== "string") return bad('"id" must be text');
+  if (!oneOf(form, Object.keys(CRITERION_FIELDS) as Criterion["form"][])) {
+    return bad(
+      `"form" must be one of ${Object.keys(CRITERION_FIELDS).join(", ")}`,
+    );
+  }
+  const criterion: Record<string, string> = { form };
+  for (const key of CRITERION_FIELDS[form]) {
+    const value = fields[key];
+    if (typeof value !== "string" || value.trim() === "") {
+      return bad(`a "${form}" criterion needs "${key}" as text`);
+    }
+    criterion[key] = value;
+  }
+  const node = map.nodes.get(id);
+  if (!node) return { rule: "unknown-card", detail: `no card "${id}"` };
+  node.kill.push(criterion as Criterion);
+  return null;
+}
+
+function applyDecided(map: FoldedMap, fields: Fields): Violation | null {
+  const { id } = fields;
+  if (typeof id !== "string") return bad('"id" must be text');
+  const node = map.nodes.get(id);
+  if (node?.status === "decided") {
+    return { rule: "contract", detail: `"${id}" is already decided` };
+  }
+  const violation = checkDecide(map, id);
+  if (violation) return violation;
+  (map.nodes.get(id) as MapNode).status = "decided";
   return null;
 }
 
@@ -307,6 +400,10 @@ export function applyEvent(
       return applyDiscarded(map, event);
     case "node.edited":
       return applyEdited(map, event);
+    case "criterion.added":
+      return applyCriterion(map, event);
+    case "node.decided":
+      return applyDecided(map, event);
     case "note.added":
       return applyNote(map, event, line);
     case "edge.added":

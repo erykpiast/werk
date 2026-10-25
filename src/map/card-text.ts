@@ -1,6 +1,19 @@
 /** The text that the show verb prints for one card. See #werk-cli-show. */
-import type { Edge, FoldedMap, MapNode } from "./fold.ts";
+import type { Criterion, Edge, FoldedMap, MapNode } from "./fold.ts";
 import { threadLines } from "./thread.ts";
+
+function killText(criterion: Criterion): string {
+  switch (criterion.form) {
+    case "metric":
+      return `${criterion.metric} ${criterion.threshold} over ${criterion.window}, sample ${criterion.sample}, from ${criterion.source}`;
+    case "manual":
+      return `manual test: ${criterion.test}`;
+    case "no-metric":
+      return `no metric: ${criterion.reason}`;
+    case "revisit":
+      return "revisit at any time";
+  }
+}
 
 function row(arrow: string, edge: Edge, other: MapNode, held: boolean): string {
   const proposed = other.proposed ? "  [proposed]" : "";
@@ -19,6 +32,14 @@ export function renderCard(map: FoldedMap, id: string): string | null {
   ];
   if (node.why !== "") lines.push(`why: ${node.why}`);
   if (node.body !== "") lines.push("", node.body);
+  const facts = [
+    ...(node.noBasis === null ? [] : [`basis waived: ${node.noBasis}`]),
+    ...(node.unchallenged === null
+      ? []
+      : [`option waived: ${node.unchallenged}`]),
+    ...node.kill.map((criterion) => `kill: ${killText(criterion)}`),
+  ];
+  if (facts.length > 0) lines.push("", ...facts);
   const edges = [
     ...map.edges.map((edge) => ({ edge, held: false })),
     ...map.ghostEdges.map((edge) => ({ edge, held: true })),
