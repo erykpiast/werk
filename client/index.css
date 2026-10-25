@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: #6b7280;
+  --color-border: #e5e7eb;
+  --color-primary: #111827;
+  --color-primary-foreground: #ffffff;
+  --radius: 0.5rem;
+}
+
+html,
+body,
+#screen {
+  height: 100%;
+  margin: 0;
+}
+
+#screen {
+  display: flex;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: system-ui, sans-serif;
+}
+
+#left-pane {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+#left-pane > header {
+  position: sticky;
+  top: 0;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-slot="header-row-1"] {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+[data-slot="header-row-2"] {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 1rem;
+}
+
+[data-slot="body"] article {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+[data-slot="body"] h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+[data-slot="body"] [data-part="body"] {
+  white-space: pre-wrap;
+}
+
+[data-slot="body"] ul {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+[data-slot="body"] li {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  font-weight: 500;
+}
+
+#right-pane {
+  flex: 0 0 24rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  border-left: 1px solid var(--color-border);
+}

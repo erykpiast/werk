@@ -42,6 +42,7 @@ registerVerb({
     return await serve({
       logPath: logPathFor(cwd, env),
       port,
+      dev: env.WERK_DEV === "1",
       out,
       err,
       parentPid: Number.isInteger(parent) && parent > 0 ? parent : undefined,

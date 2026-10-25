@@ -45,7 +45,8 @@ test: bun-version $(STAMP) ## Run the unit tests on four parallel workers
 test-coverage: bun-version $(STAMP) ## Run the unit tests with coverage, then the 90% gate on the pure files
 	bun run test:coverage
 
-e2e: bun-version $(STAMP) ## Run the Playwright tests (passes while no spec exists)
+e2e: bun-version $(STAMP) ## Run the Playwright tests in Chromium, and install the browser when it is missing
+	bunx playwright install chromium
 	bun run e2e
 
 check: bun-version $(STAMP) ## Run every check in the merge loop's order
@@ -55,5 +56,5 @@ check: bun-version $(STAMP) ## Run every check in the merge loop's order
 	$(MAKE) test-coverage
 	$(MAKE) e2e
 
-dev: bun-version $(STAMP) ## Start the dev server
+dev: bun-version $(STAMP) ## Start the dev server: Vite serves the client, and a client change reloads the page
 	bun run dev
