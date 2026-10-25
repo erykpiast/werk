@@ -21,6 +21,7 @@ export const PURE_FILES: readonly string[] = [
   "src/serve/read-api.ts",
   "src/agent/launch-options.ts",
   "src/board/fold.ts",
+  "src/pipeline/fold.ts",
   "src/board/resolve.ts",
   "src/board/followup-records.ts",
   "src/tickets/ticket-parse.ts",
