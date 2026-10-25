@@ -27,7 +27,7 @@ test("a login error or a bad flag is reported whole and never retried", () => {
   expect(isFatal(flag)).toBe(true);
   expect(onCrash(login, fresh)).toEqual({
     kind: "report",
-    message: `${login}\n\nFix the problem above, then send it again.`,
+    message: `${login}\n\nYour message was not delivered. Send it again.`,
   });
 });
 

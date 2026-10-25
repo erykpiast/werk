@@ -44,13 +44,7 @@ export function onCrash(
   state: { hasSession: boolean; retried: boolean },
 ): CrashAction {
   if (state.hasSession && isDeadSession(text)) return { kind: "replay" };
-  if (isFatal(text)) {
-    return {
-      kind: "report",
-      message: `${text}\n\nFix the problem above, then send it again.`,
-    };
-  }
-  if (!state.retried) return { kind: "retry" };
+  if (!isFatal(text) && !state.retried) return { kind: "retry" };
   return {
     kind: "report",
     message: `${text}\n\nYour message was not delivered. Send it again.`,

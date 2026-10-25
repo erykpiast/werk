@@ -462,7 +462,9 @@ test("a login error shows the whole error and is not retried", async () => {
   expect(launchesOf(p)).toHaveLength(1);
   const end = ended(events)[0] as { exited?: string };
   expect(end.exited).toContain(text);
-  expect(end.exited).toContain("Fix the problem above, then send it again.");
+  expect(end.exited).toContain(
+    "Your message was not delivered. Send it again.",
+  );
   expect(readFileSync(sessionFile(p), "utf8").trim()).toBe("keep-me");
 });
 
