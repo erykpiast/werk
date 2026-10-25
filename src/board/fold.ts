@@ -238,7 +238,7 @@ function reordered(board: Board, rec: Rec): BoardViolation | null {
   if (order === undefined) return bad("reordered needs an order list");
   for (const id of order) {
     const ticket = board.tickets.get(id);
-    if (!ticket || ticket.column !== "ready" || ticket.archived)
+    if (ticket?.column !== "ready" || ticket.archived)
       return {
         rule: "not-ready",
         detail: `ticket ${id} is not in ready`,
