@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { OPUS } from "../agent/launch-options.ts";
 import { readMap } from "../map/log-store.ts";
 import { cleanEnv } from "../test-env/env.ts";
 import { createProject, type Project } from "../test-env/project.ts";
@@ -96,7 +98,10 @@ async function until(check: () => boolean, ms = 10000) {
 }
 
 const names = (events: ChatEvent[]) =>
-  events.map((e) => `${e.name}:${"turn" in e.data ? e.data.turn : e.data.id}`);
+  events.map(
+    (e) =>
+      `${e.name}:${"turn" in e.data ? e.data.turn : "id" in e.data ? e.data.id : ""}`,
+  );
 
 async function withSession(
   session: ChatSession,
@@ -223,7 +228,19 @@ test("a scripted add shows in the map while the reply is still streaming", async
 
 test("an exit ends every open turn, and the next send starts a new agent with the full description", async () => {
   const { p, session, events } = open();
-  p.install({ roles: { chat: { replies: [[{ crash: 3 }], [result]] } } });
+  p.install({
+    roles: {
+      chat: {
+        replies: [
+          [
+            { stderr: "Remove the credential and run: claude auth login" },
+            { crash: 3 },
+          ],
+          [result],
+        ],
+      },
+    },
+  });
   await Bun.write(
     p.logPath,
     `${JSON.stringify(root)}\n${JSON.stringify(accepted)}\n`,
@@ -259,6 +276,234 @@ test("an agent that cannot start ends the turn with the reason", async () => {
   const end = events.find((e) => e.name === "turn-end");
   expect(end?.data).toMatchObject({ turn: "a", error: true });
   expect(JSON.stringify(end?.data)).toContain("could not run");
+});
+
+const launchesOf = (p: Project) =>
+  p.launches().flatMap((r) => (r.kind === "launch" ? [r.args] : []));
+const flagOf = (args: string[], flag: string) => args[args.indexOf(flag) + 1];
+const sessionFile = (p: Project) => join(dirname(p.logPath), "session");
+const ended = (events: ChatEvent[]) =>
+  events.flatMap((e) => (e.name === "turn-end" ? [e.data] : []));
+
+test("switching to Opus while idle restarts the agent on the same session with the Opus id", async () => {
+  const { p, session, events } = open();
+  p.install({ roles: { chat: { replies: [[result]] } } });
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    expect(await session.setModel({ model: "opus", advisor: null })).toEqual({
+      ok: true,
+    });
+    await until(() => launchesOf(p).length === 2);
+  });
+  const [first, second] = launchesOf(p) as [string[], string[]];
+  expect(flagOf(first, "--model")).not.toBe(OPUS);
+  expect(flagOf(second, "--model")).toBe(OPUS);
+  expect(second).not.toContain("--advisor");
+  expect(flagOf(second, "--resume")).toBe("fake-session-1");
+  expect(session.settings()).toMatchObject({ model: "opus", advisor: null });
+  expect(ended(events)).toHaveLength(1);
+});
+
+test("a switch and a clear are refused while a turn runs", async () => {
+  const { p, session } = open();
+  p.install({ roles: { chat: { replies: [[{ pause: 300 }, result]] } } });
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    const switched = await session.setModel({ model: "opus", advisor: null });
+    expect(switched.ok).toBe(false);
+    expect((await session.clear()).ok).toBe(false);
+    expect(session.settings().model).toBe("sonnet");
+  });
+});
+
+test("a rebuilt session reads the saved model and fill before any message", async () => {
+  const first = open();
+  first.p.install({
+    roles: {
+      chat: {
+        replies: [
+          [
+            {
+              event: {
+                type: "assistant",
+                message: {
+                  id: "m1",
+                  content: [{ type: "text", text: "hi" }],
+                  usage: {
+                    input_tokens: 10,
+                    output_tokens: 20,
+                    cache_read_input_tokens: 100_000,
+                    cache_creation_input_tokens: 49_970,
+                  },
+                },
+              },
+            },
+            {
+              event: {
+                type: "result",
+                is_error: false,
+                modelUsage: {
+                  "claude-opus-5-5": { contextWindow: 200_000 },
+                },
+              },
+            },
+          ],
+        ],
+      },
+    },
+  });
+  await withSession(first.session, async () => {
+    await first.session.setModel({ model: "opus", advisor: null });
+    first.session.send({ turn: "a", text: "A", card: null });
+    await until(() => first.events.some((e) => e.name === "turn-end"));
+  });
+  const second = createSession({
+    folder: first.p.dir,
+    logPath: first.p.logPath,
+    env: {},
+    werk: "werk",
+    projectIsWerk: false,
+    readMap: () => readMap(first.p.logPath).map,
+    emit: () => {},
+  });
+  expect(second.settings()).toEqual({
+    model: "opus",
+    advisor: null,
+    used: 150_000,
+    window: 200_000,
+  });
+  expect(first.session.settings().used).toBe(150_000);
+});
+
+test("a stored session that no longer resolves is cleared and the message reaches a new session", async () => {
+  const { p, events } = open();
+  await Bun.write(sessionFile(p), "dead-id\n");
+  p.install({
+    roles: {
+      chat: {
+        replies: [
+          [
+            {
+              event: {
+                type: "result",
+                is_error: true,
+                errors: ["No conversation found with session ID: dead-id"],
+              },
+            },
+            { crash: 1 },
+          ],
+          [...streamed("m1", "hello"), result],
+        ],
+      },
+    },
+  });
+  const reopened = createSession({
+    folder: p.dir,
+    logPath: p.logPath,
+    env: {
+      ...cleanEnv(process.env),
+      WERK_FAKE_SCRIPT: join(dirname(p.dir), "script.json"),
+    },
+    werk: "werk",
+    projectIsWerk: false,
+    readMap: () => readMap(p.logPath).map,
+    emit: (event) => events.push(event),
+  });
+  await withSession(reopened, async () => {
+    reopened.send({ turn: "a", text: "Where were we?", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+  });
+  expect(ended(events)).toMatchObject([{ turn: "a", error: false }]);
+  const [first, second] = launchesOf(p) as [string[], string[]];
+  expect(flagOf(first, "--resume")).toBe("dead-id");
+  expect(second).not.toContain("--resume");
+  const texts = p
+    .launches()
+    .flatMap((r) => (r.kind === "message" ? [r.text] : []));
+  expect(texts).toHaveLength(2);
+  expect(texts[1]).toEndWith("Where were we?");
+  expect(readFileSync(sessionFile(p), "utf8").trim()).toBe("fake-session-2");
+});
+
+test("a login error shows the whole error and is not retried", async () => {
+  const { p, session, events } = open();
+  const text =
+    "Invalid credential.\nRemove the credential and run: claude auth login";
+  p.install({
+    roles: { chat: { replies: [[{ stderr: text }, { crash: 1 }], [result]] } },
+  });
+  await Bun.write(sessionFile(p), "keep-me\n");
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+  });
+  expect(launchesOf(p)).toHaveLength(1);
+  const end = ended(events)[0] as { exited?: string };
+  expect(end.exited).toContain(text);
+  expect(end.exited).toContain("Fix the problem above, then send it again.");
+  expect(readFileSync(sessionFile(p), "utf8").trim()).toBe("keep-me");
+});
+
+test("another crash retries once, and a second crash says the message was not delivered", async () => {
+  const retried = open();
+  retried.p.install({
+    roles: {
+      chat: { replies: [[{ stderr: "boom" }, { crash: 1 }], [result]] },
+    },
+  });
+  await withSession(retried.session, async () => {
+    retried.session.send({ turn: "a", text: "A", card: null });
+    await until(() => retried.events.some((e) => e.name === "turn-end"));
+  });
+  expect(launchesOf(retried.p)).toHaveLength(2);
+  expect(ended(retried.events)).toMatchObject([{ error: false }]);
+});
+
+test("two crashes in a row end the turn with the full error and the delivery notice", async () => {
+  const { p, session, events } = open();
+  p.install({
+    roles: {
+      chat: {
+        replies: [
+          [{ stderr: "boom" }, { crash: 1 }],
+          [{ stderr: "boom again" }, { crash: 1 }],
+        ],
+      },
+    },
+  });
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+  });
+  expect(launchesOf(p)).toHaveLength(2);
+  const end = ended(events)[0] as { exited?: string };
+  expect(end.exited).toBe(
+    "boom again\n\nYour message was not delivered. Send it again.",
+  );
+});
+
+test("clear context drops the session and the transcript and leaves the map's log unchanged", async () => {
+  const { p, session, events } = open();
+  p.install({ roles: { chat: { replies: [[result]] } } });
+  await Bun.write(
+    p.logPath,
+    `${JSON.stringify(root)}\n${JSON.stringify(accepted)}\n`,
+  );
+  const before = readFileSync(p.logPath, "utf8");
+  await withSession(session, async () => {
+    session.send({ turn: "a", text: "A", card: null });
+    await until(() => events.some((e) => e.name === "turn-end"));
+    expect(existsSync(sessionFile(p))).toBe(true);
+    expect(await session.clear()).toEqual({ ok: true });
+    await until(() => launchesOf(p).length === 2);
+  });
+  expect(existsSync(sessionFile(p))).toBe(false);
+  expect(session.history()).toEqual([]);
+  expect(events.some((e) => e.name === "cleared")).toBe(true);
+  expect(session.settings().used).toBe(0);
+  expect(launchesOf(p)[1]).not.toContain("--resume");
+  expect(readFileSync(p.logPath, "utf8")).toBe(before);
 });
 
 test("the session keeps the command names that the agent's start line gave", async () => {

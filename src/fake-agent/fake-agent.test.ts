@@ -147,13 +147,14 @@ test("a chat role answers two messages with two replies and exits when its input
   });
   const chat = launch("chat");
   chat.say("M1");
-  await chat.waitFor(2);
+  await chat.waitFor(3);
   expect(chat.lines.map((l) => JSON.parse(l).type ?? JSON.parse(l).r)).toEqual([
+    "system",
     1,
     "result",
   ]);
   chat.say("M2");
-  await chat.waitFor(4);
+  await chat.waitFor(5);
   chat.close();
   const done = await chat.finish();
   expect(done.code).toBe(0);
@@ -338,10 +339,11 @@ test("a scripted result line is the end of the reply, and the fake prints no sec
   });
   const c = launch("chat");
   c.say("hello");
-  await c.waitFor(1);
+  await c.waitFor(2);
   c.close();
   const done = await c.finish();
   expect(done.stdout).toEqual([
+    { type: "system", subtype: "init", session_id: "fake-session-1" },
     { type: "result", duration_ms: 1200, total_cost_usd: 0.04 },
   ]);
 });

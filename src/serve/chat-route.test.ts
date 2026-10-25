@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { ChatSession } from "../chat/session.ts";
+import type { Context } from "../projects/context.ts";
 import { createProject, type Project } from "../test-env/project.ts";
+import { clearRoute, modelRoute } from "./chat-route.ts";
 
 const CLI = join(import.meta.dir, "..", "cli.ts");
 
@@ -123,4 +126,55 @@ test("a send streams its reply on the live channel, and a page that joins late r
     "chat",
     "turn-end",
   ]);
+});
+
+test("the history read returns the saved settings next to the events", async () => {
+  const { origin } = await serving();
+  const body = (await (
+    await fetch(`${origin}/api/projects/project/chat`)
+  ).json()) as { events: unknown[]; settings: Record<string, unknown> };
+  expect(body.events).toEqual([]);
+  expect(body.settings).toBeDefined();
+});
+
+function stubbed(done: { ok: true } | { ok: false; reason: string }): Context {
+  const session = { setModel: async () => done, clear: async () => done };
+  return { chat: session as unknown as ChatSession } as unknown as Context;
+}
+
+const post = (body: unknown) =>
+  new Request("http://x/", { method: "POST", body: JSON.stringify(body) });
+
+test("a model switch with a pick the header does not offer is refused with 400", async () => {
+  const context = stubbed({ ok: true });
+  for (const body of [{}, { model: "opus", advisor: "opus" }, "x"]) {
+    expect((await modelRoute(context, {}, post(body))).status).toBe(400);
+  }
+  const bad = new Request("http://x/", { method: "POST", body: "not json" });
+  expect((await modelRoute(context, {}, bad)).status).toBe(400);
+});
+
+test("a model switch or a clear while a turn runs answers 409 busy", async () => {
+  const context = stubbed({ ok: false, reason: "a turn is running" });
+  const pick = { model: "opus", advisor: null };
+  const model = await modelRoute(context, {}, post(pick));
+  expect(model.status).toBe(409);
+  expect(((await model.json()) as { error: string }).error).toBe("busy");
+  expect((await clearRoute(context, {}, post({}))).status).toBe(409);
+});
+
+test("a valid model switch and a clear answer 200", async () => {
+  const context = stubbed({ ok: true });
+  const pick = { model: "opus", advisor: null };
+  const model = await modelRoute(context, {}, post(pick));
+  expect(model.status).toBe(200);
+  expect(await model.json()).toEqual(pick);
+  expect((await clearRoute(context, {}, post({}))).status).toBe(200);
+});
+
+test("a GET to the clear route or the model route is refused with 405", async () => {
+  const context = {} as Context;
+  const get = new Request("http://x/");
+  expect((await clearRoute(context, {}, get)).status).toBe(405);
+  expect((await modelRoute(context, {}, get)).status).toBe(405);
 });

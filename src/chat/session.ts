@@ -3,12 +3,22 @@
  * parts of each reply, sent on the live channel with the name of the turn they belong to
  * (#werk-onechat, #werk-chat-turn-id, #werk-progress).
  */
-import { buildLaunchOptions, OPUS, SONNET } from "../agent/launch-options.ts";
+import { buildLaunchOptions } from "../agent/launch-options.ts";
 import type { FoldedMap } from "../map/fold.ts";
 import { buildRuleTitles } from "./build-rules.ts";
 import { cardLine } from "./card-line.ts";
+import {
+  clearSessionId,
+  readSessionId,
+  readSettings,
+  writeSessionId,
+  writeSettings,
+} from "./chat-state-store.ts";
 import { chatArgs } from "./child-args.ts";
+import { usageTokens, windowFromResult, windowOf } from "./context-fill.ts";
+import { onCrash } from "./crash-rules.ts";
 import { imageHeader } from "./image-rules.ts";
+import { choiceOf, DEFAULT_PICK, type ModelPick } from "./model-pick.ts";
 import {
   type Answer,
   type Ask,
@@ -32,8 +42,13 @@ import {
   type Sent,
 } from "./turn-queue.ts";
 
-/** What a page receives on the live channel. Every event names its turn. */
+/** The model, the advisor and the context fill that the header shows (#werk-model-persist). */
+export type ChatSettings = ModelPick & { used: number; window: number };
+
+/** What a page receives on the live channel. A turn event names its turn. */
 export type ChatEvent =
+  | { name: "model"; data: ChatSettings }
+  | { name: "cleared"; data: Record<string, never> }
   | { name: "sent"; data: { turn: string; text: string } }
   | { name: "turn-start"; data: { turn: string } }
   | { name: "delta"; data: Part & { type: "delta"; turn: string } }
@@ -89,14 +104,23 @@ export type ChatSession = {
     id: string,
     answer: Answer,
   ): { ok: true } | { ok: false; reason: string };
+  /** The model, advisor and context fill now. They are saved, so a rebuilt session reads them back. */
+  settings(): ChatSettings;
+  /** Switches the model. Refused while a turn is open: the model takes effect only at spawn. */
+  setModel(pick: ModelPick): Promise<Refusal>;
+  /** Drops the session and the transcript and restarts the child. The map is untouched. */
+  clear(): Promise<Refusal>;
   /** The command names that the most recent agent named when it started, or none before a first start. */
   commands(): string[];
   /** Ends the child. Every open turn ends with the exit. */
   stop(): Promise<void>;
 };
 
+type Refusal = { ok: true } | { ok: false; reason: string };
+
 const HISTORY_LIMIT = 5000;
-const STDERR_LIMIT = 4000;
+const STDERR_LIMIT = 50_000;
+const BUSY = "a turn is running, so the model and the context stay as they are";
 
 type Child = Bun.Subprocess<"pipe", "pipe", "pipe">;
 
@@ -107,6 +131,20 @@ export function createSession(deps: SessionDeps): ChatSession {
   let reply = initialReply;
   let startedAt = 0;
   let stderrText = "";
+  /** What the child of this launch reported before it reached its session, and whether it did. */
+  let initSeen = false;
+  let earlyError = "";
+  /** True from stop() until the next launch: an exit then is not a crash to retry. */
+  let stopped = false;
+  /** The retries that the waiting message used. One is allowed (#werk-crashmsg). */
+  let attempts = 0;
+  const saved = readSettings(deps.logPath);
+  let pick: ModelPick = saved
+    ? { model: saved.model, advisor: saved.advisor }
+    : DEFAULT_PICK;
+  let used = saved?.used ?? 0;
+  let window = saved?.window ?? windowOf(choiceOf(pick).model);
+  let sessionId = readSessionId(deps.logPath);
   let pumping: Promise<void> = Promise.resolve();
   const kept: ChatEvent[] = [];
   /** The asks that wait for the person, by the id of the control request. */
@@ -114,22 +152,29 @@ export function createSession(deps: SessionDeps): ChatSession {
   let commandNames: string[] = [];
 
   const emit = (event: ChatEvent) => {
-    if (event.name !== "delta" && event.name !== "status") {
+    if (
+      event.name !== "delta" &&
+      event.name !== "status" &&
+      event.name !== "model" &&
+      event.name !== "cleared"
+    ) {
       kept.push(event);
       if (kept.length > HISTORY_LIMIT) kept.shift();
     }
     deps.emit(event);
   };
 
-  /** The turns end with the exit, and the next send starts a new child. */
-  const handleExit = (message: string) => {
-    child = null;
-    reply = initialReply;
-    announced = null;
-    for (const id of asks.keys()) emit({ name: "ask-done", data: { id } });
-    asks.clear();
+  const settings = (): ChatSettings => ({ ...pick, used, window });
+
+  const persist = () => writeSettings(deps.logPath, settings());
+
+  const announceSettings = () => emit({ name: "model", data: settings() });
+
+  /** Ends every open turn with the text of the failure. */
+  const endAll = (message: string) => {
     const { queue: next, ended } = exitAll(queue);
     queue = next;
+    attempts = 0;
     for (const turn of ended) {
       emit({
         name: "turn-end",
@@ -144,17 +189,53 @@ export function createSession(deps: SessionDeps): ChatSession {
     }
   };
 
+  /** The agent is gone: forget what lived in it. */
+  const forgetChild = () => {
+    child = null;
+    reply = initialReply;
+    announced = null;
+    for (const id of asks.keys()) emit({ name: "ask-done", data: { id } });
+    asks.clear();
+  };
+
+  /**
+   * An exit of the agent. The waiting message replays into a new session when the stored one is
+   * dead, and retries once for any other failure a retry can fix. Otherwise the turns end with the
+   * whole error (#werk-resume, #werk-crashmsg, #werk-fullerr).
+   */
+  const handleExit = (message: string) => {
+    forgetChild();
+    const active = queue.active;
+    if (active === null || stopped) return endAll(message);
+    const action = onCrash(message, {
+      hasSession: sessionId !== null,
+      retried: attempts > 0,
+    });
+    if (action.kind === "report") return endAll(action.message);
+    if (action.kind === "replay") {
+      sessionId = null;
+      clearSessionId(deps.logPath);
+      attempts = 0;
+    } else {
+      attempts += 1;
+    }
+    dispatch(active, true);
+  };
+
   const launch = (): Child => {
     const map = deps.readMap();
     const options = buildLaunchOptions({
       role: "chat",
-      chatModel: { model: SONNET, advisor: OPUS },
+      chatModel: choiceOf(pick),
       werk: deps.werk,
       projectIsWerk: deps.projectIsWerk,
       buildRuleTitles: buildRuleTitles(map),
     });
     const spawned = Bun.spawn(
-      ["claude", ...chatArgs(options, allowFlags(readAllow(deps.logPath)))],
+      [
+        "claude",
+        ...chatArgs(options, allowFlags(readAllow(deps.logPath)), sessionId),
+      ],
       {
         cwd: deps.folder,
         env: { ...deps.env, WERK_LOG: deps.logPath, ...options.env },
@@ -164,8 +245,48 @@ export function createSession(deps: SessionDeps): ChatSession {
       },
     ) as Child;
     stderrText = "";
+    initSeen = false;
+    earlyError = "";
+    stopped = false;
     pumping = pump(spawned);
     return spawned;
+  };
+
+  /**
+   * Reads the lines that are about the session and not about the reply. Returns true for a line the
+   * reply stream must not see: a result before the session starts is the child's failure to start,
+   * not a finished turn (#werk-resume).
+   */
+  const noteSession = (event: unknown): boolean => {
+    if (typeof event !== "object" || event === null) return false;
+    const e = event as Record<string, unknown>;
+    if (e.type === "system" && e.subtype === "init") {
+      initSeen = true;
+      if (typeof e.session_id === "string" && e.session_id !== sessionId) {
+        sessionId = e.session_id;
+        writeSessionId(deps.logPath, sessionId);
+      }
+      return true;
+    }
+    if (e.type === "result" && !initSeen) {
+      earlyError = resultText(e);
+      return true;
+    }
+    if (e.type === "assistant" && e.parent_tool_use_id == null) {
+      const message = e.message as { usage?: unknown } | undefined;
+      const tokens = usageTokens(message?.usage);
+      if (tokens > 0 && tokens !== used) {
+        used = tokens;
+        announceSettings();
+      }
+    } else if (e.type === "result") {
+      const reported = windowFromResult(e.modelUsage, choiceOf(pick).model);
+      if (reported !== null && reported !== window) {
+        window = reported;
+        announceSettings();
+      }
+    }
+    return false;
   };
 
   const onLine = (line: string) => {
@@ -195,6 +316,7 @@ export function createSession(deps: SessionDeps): ChatSession {
       });
       return;
     }
+    if (noteSession(event)) return;
     let parts: Part[];
     [reply, parts] = feed(reply, event);
     for (const part of parts) {
@@ -210,6 +332,8 @@ export function createSession(deps: SessionDeps): ChatSession {
             error: part.error,
           },
         });
+        attempts = 0;
+        persist();
         const done = finish(queue);
         queue = done.queue;
         if (done.start) dispatch(done.start);
@@ -246,15 +370,29 @@ export function createSession(deps: SessionDeps): ChatSession {
     await errors.catch(() => {});
     const code = await spawned.exited;
     if (child !== spawned) return;
+    const written = [earlyError, stderrText.trim()].filter((t) => t !== "");
     handleExit(
-      stderrText.trim() !== ""
-        ? stderrText.trim()
+      written.length > 0
+        ? written.join("\n")
         : `the agent exited with code ${code}`,
     );
   };
 
+  /** Stops the child on purpose and starts it again with the current settings. */
+  const restart = async () => {
+    const old = child;
+    if (old === null) return;
+    forgetChild();
+    const done = pumping;
+    old.kill();
+    await done;
+    child = launch();
+  };
+
+  const idle = () => queue.active === null && queue.waiting.length === 0;
+
   /** Writes the turn to the agent, with the opening lines of the open card. */
-  const dispatch = (sent: Sent) => {
+  const dispatch = (sent: Sent, replay = false) => {
     try {
       child ??= launch();
       const opening = cardLine(deps.readMap(), sent.card, announced);
@@ -262,15 +400,16 @@ export function createSession(deps: SessionDeps): ChatSession {
       const content = [opening.text, imageHeader(sent.images ?? []), sent.text]
         .filter((part) => part !== "")
         .join("\n\n");
-      startedAt = Date.now();
+      if (!replay) startedAt = Date.now();
       child.stdin.write(
         `${JSON.stringify({ type: "user", message: { role: "user", content } })}\n`,
       );
       child.stdin.flush();
-      emit({ name: "turn-start", data: { turn: sent.turn } });
+      if (!replay) emit({ name: "turn-start", data: { turn: sent.turn } });
     } catch (error) {
       const failed = child;
-      handleExit(`werk: the agent could not run: ${String(error)}`);
+      forgetChild();
+      endAll(`werk: the agent could not run: ${String(error)}`);
       failed?.kill();
     }
   };
@@ -311,7 +450,34 @@ export function createSession(deps: SessionDeps): ChatSession {
       emit({ name: "ask-done", data: { id } });
       return { ok: true };
     },
+    settings,
+    async setModel(next) {
+      if (!idle()) return { ok: false, reason: BUSY };
+      if (next.model === pick.model && next.advisor === pick.advisor) {
+        return { ok: true };
+      }
+      pick = next;
+      window = windowOf(choiceOf(pick).model);
+      persist();
+      announceSettings();
+      await restart();
+      return { ok: true };
+    },
+    async clear() {
+      if (!idle()) return { ok: false, reason: BUSY };
+      sessionId = null;
+      clearSessionId(deps.logPath);
+      used = 0;
+      window = windowOf(choiceOf(pick).model);
+      persist();
+      kept.length = 0;
+      emit({ name: "cleared", data: {} });
+      announceSettings();
+      await restart();
+      return { ok: true };
+    },
     async stop() {
+      stopped = true;
       const running = child;
       if (!running) return;
       running.kill();
@@ -319,4 +485,12 @@ export function createSession(deps: SessionDeps): ChatSession {
       await pumping;
     },
   };
+}
+
+/** The words an error result carries: its list of errors, or its result text. */
+function resultText(result: Record<string, unknown>): string {
+  if (Array.isArray(result.errors) && result.errors.length > 0) {
+    return result.errors.map(String).join("\n");
+  }
+  return typeof result.result === "string" ? result.result : "";
 }

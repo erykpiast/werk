@@ -329,3 +329,21 @@ test("the picks of a form stay in the state across turns and go when the ask clo
   ).toBe(full);
   expect(picksToSend([])).toBeNull();
 });
+
+test("a model event sets the header settings, and a clear forgets the turns but not the model", () => {
+  const settings = {
+    model: "opus" as const,
+    advisor: null,
+    used: 150_000,
+    window: 200_000,
+  };
+  const state = run(
+    { type: "model", settings },
+    { type: "sent", turn: "a", text: "hello" },
+  );
+  expect(state.settings).toEqual(settings);
+  expect(state.turns).toHaveLength(1);
+  const cleared = reduce(state, { type: "cleared" });
+  expect(cleared.turns).toEqual([]);
+  expect(cleared.settings).toEqual(settings);
+});

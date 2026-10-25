@@ -28,7 +28,7 @@ export function ChatPane({
         <ChatLog state={state} />
       </div>
       <AskBar state={state} store={store} />
-      <ChatHead state={state} />
+      <ChatHead state={state} store={store} />
       <Composer
         images={store}
         menu={{ commands: store.commands, cards }}

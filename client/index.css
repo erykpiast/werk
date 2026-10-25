@@ -223,6 +223,34 @@ body,
   animation: pulse 1s ease-in-out infinite;
 }
 
+[data-slot="chat-model-controls"] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+[data-slot="model-select"] {
+  font-size: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-background);
+}
+
+[data-slot="context-pie-box"] {
+  position: relative;
+  display: inline-flex;
+}
+
+[data-slot="context-pie"] {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
 @keyframes pulse {
   50% {
     opacity: 0.3;
@@ -283,6 +311,7 @@ code,
 
 /* A card box: the left edge carries the status, a stale card tints red, a postponed card is striped. */
 :root {
+  --stale: #dc2626;
   --status-open: #d97706;
   --status-proto: #2563eb;
   --status-decided: #16a34a;

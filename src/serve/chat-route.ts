@@ -5,6 +5,7 @@
  */
 import { join, resolve } from "node:path";
 import { findImage } from "../chat/attachments.ts";
+import { parsePick } from "../chat/model-pick.ts";
 import { parseAnswer } from "../chat/permission.ts";
 import { createSession } from "../chat/session.ts";
 import { readMap } from "../map/log-store.ts";
@@ -35,13 +36,26 @@ function refuse(message: string, status = 400): Response {
   return Response.json({ error: "bad-request", message }, { status });
 }
 
+/** A route that changes state answers only a POST, so a GET never reaches it by link or prefetch. */
+function notPost(): Response {
+  return Response.json(
+    { error: "method", message: "use POST" },
+    { status: 405, headers: { Allow: "POST" } },
+  );
+}
+
 export async function chatRoute(
   context: Context,
   env: Record<string, string | undefined>,
   req: Request,
 ): Promise<Response> {
   if (req.method === "GET") {
-    return Response.json({ events: context.chat?.history() ?? [] });
+    // The session is built here, so a page that joins after a restart reads the saved model and fill.
+    const session = sessionOf(context, env);
+    return Response.json({
+      events: session.history(),
+      settings: session.settings(),
+    });
   }
   let body: unknown;
   try {
@@ -115,5 +129,45 @@ export async function askRoute(
   return Response.json(
     { error: status === 409 ? "closed" : "bad-request", message: done.reason },
     { status },
+  );
+}
+
+/** A switch of the model: {model, advisor}, one of the three choices of the header (#werk-model-select). */
+export async function modelRoute(
+  context: Context,
+  env: Record<string, string | undefined>,
+  req: Request,
+): Promise<Response> {
+  if (req.method !== "POST") return notPost();
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return refuse("send a JSON body");
+  }
+  const pick = parsePick(body);
+  if (pick === null) {
+    return refuse("send a model and an advisor that the header offers");
+  }
+  const done = await sessionOf(context, env).setModel(pick);
+  if (done.ok) return Response.json(pick, { status: 200 });
+  return Response.json(
+    { error: "busy", message: done.reason },
+    { status: 409 },
+  );
+}
+
+/** Clears the context: the session and the transcript go, the map stays (#werk-context-pie). */
+export async function clearRoute(
+  context: Context,
+  env: Record<string, string | undefined>,
+  req: Request,
+): Promise<Response> {
+  if (req.method !== "POST") return notPost();
+  const done = await sessionOf(context, env).clear();
+  if (done.ok) return Response.json({ cleared: true }, { status: 200 });
+  return Response.json(
+    { error: "busy", message: done.reason },
+    { status: 409 },
   );
 }
