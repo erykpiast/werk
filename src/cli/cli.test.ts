@@ -327,3 +327,20 @@ test("kill takes exactly one form, and a metric needs all five parts", async () 
   expect((await werk("kill", "zz", "--revisit")).code).toBe(1);
   expect((await werk("status", "k", "open")).code).toBe(2);
 });
+
+test("remove takes the subtree and restore undoes it", async () => {
+  await werk("add", "r", "--title", "R");
+  await werk("add", "c", "--title", "C", "--parent", "r");
+  await werk("accept", "c", "--actor", "you");
+  expect((await werk("remove", "r")).stdout.trim()).toBe("removed");
+  expect((await werk("show", "c")).code).toBe(1);
+  const again = await werk("add", "r", "--title", "New");
+  expect(again.code).toBe(1);
+  expect(again.stderr).toContain("restore");
+  expect((await werk("restore", "c")).code).toBe(1);
+  expect((await werk("restore", "r")).stdout.trim()).toBe("restored");
+  expect((await werk("show", "c")).code).toBe(0);
+  expect((await werk("remove", "r", "--reparent")).code).toBe(1);
+  expect((await werk("remove")).code).toBe(2);
+  expect((await werk("restore")).code).toBe(2);
+});
