@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": ["Bash(make:*)", "Bash(werk:*)", "Bash(bun src/cli.ts:*)"],
+    "ask": [
+      "Bash(werk accept:*)",
+      "Bash(werk remove:*)",
+      "Bash(werk restore:*)",
+      "Bash(bun src/cli.ts accept:*)",
+      "Bash(bun src/cli.ts remove:*)",
+      "Bash(bun src/cli.ts restore:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun \"$CLAUDE_PROJECT_DIR/src/claude/lint-hook.ts\""
+          }
+        ]
+      }
+    ]
+  }
+}
