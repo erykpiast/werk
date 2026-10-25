@@ -2,4 +2,8 @@
 export const PURE_FILES: readonly string[] = [
   "src/test/coverage-report.ts",
   "src/toolchain.ts",
+  "src/map/fold.ts",
+  "src/map/rollup.ts",
+  "src/map/card-text.ts",
+  "src/cli/args.ts",
 ];

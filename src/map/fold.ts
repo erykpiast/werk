@@ -1,0 +1,292 @@
+/**
+ * The fold: a pure function from the events of the log to the map. See #pr-log.
+ * An event that breaks a map rule is not applied. The fold lists it as a problem
+ * and the events after it still fold (#pr-log-refuse). A write checks its events
+ * with the same step function, so the fold and a write never disagree.
+ */
+
+export type Kind = "card" | "option" | "source";
+export type Status = "open" | "proto" | "decided";
+export type Who = "you" | "me" | "prototype";
+export type LinkType =
+  | "refines"
+  | "depends_on"
+  | "supported_by"
+  | "alternative_to";
+
+export const KINDS: readonly Kind[] = ["card", "option", "source"];
+export const STATUSES: readonly Status[] = ["open", "proto", "decided"];
+export const WHOS: readonly Who[] = ["you", "me", "prototype"];
+export const LINK_TYPES: readonly LinkType[] = [
+  "refines",
+  "depends_on",
+  "supported_by",
+  "alternative_to",
+];
+
+/** A stale, paused or postponed mark. Later tickets derive them (#pr-log-fold-marks). */
+export type Mark = { kind: "stale" | "paused" | "postponed"; trace: string };
+
+export type MapNode = {
+  id: string;
+  kind: Kind;
+  title: string;
+  why: string;
+  body: string;
+  status: Status;
+  who: Who | null;
+  /** A ghost: proposed, in no rollup, with every edge of its own held. */
+  proposed: boolean;
+  whyNot: string | null;
+  url: string | null;
+  finding: string | null;
+  marks: Mark[];
+};
+
+export type Edge = { from: string; to: string; type: LinkType; why: string };
+
+export type RuleName =
+  | "bad-json"
+  | "bad-event"
+  | "duplicate-id"
+  | "unknown-card"
+  | "second-parent"
+  | "cycle"
+  | "option-link";
+
+export type Violation = { rule: RuleName; detail: string };
+export type Problem = Violation & { line: number };
+
+export type FoldedMap = {
+  nodes: Map<string, MapNode>;
+  /** Edges between real cards. */
+  edges: Edge[];
+  /** Edges of a ghost, held and drawn until the ghost goes real. */
+  ghostEdges: Edge[];
+  /** The parent of each card that has one, held or live. */
+  parents: Map<string, string>;
+  problems: Problem[];
+};
+
+/** One non-blank line of the log, parsed. A line that is not JSON carries its error. */
+export type LogEntry = { line: number; event: unknown; error?: string };
+
+export function emptyMap(): FoldedMap {
+  return {
+    nodes: new Map(),
+    edges: [],
+    ghostEdges: [],
+    parents: new Map(),
+    problems: [],
+  };
+}
+
+/** Splits the text of a log into entries. Blank lines are skipped, and keep their line numbers. */
+export function parseLog(text: string): LogEntry[] {
+  const entries: LogEntry[] = [];
+  text.split("\n").forEach((raw, index) => {
+    if (raw.trim() === "") return;
+    try {
+      entries.push({ line: index + 1, event: JSON.parse(raw) });
+    } catch (error) {
+      entries.push({
+        line: index + 1,
+        event: null,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+  return entries;
+}
+
+type Fields = Record<string, unknown>;
+
+const bad = (detail: string): Violation => ({ rule: "bad-event", detail });
+
+function isRecord(value: unknown): value is Fields {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function oneOf<T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+): value is T {
+  return (
+    typeof value === "string" && (allowed as readonly string[]).includes(value)
+  );
+}
+
+/** A string field that may be missing. A present field of another type is a violation. */
+function optional(fields: Fields, key: string): string | null | Violation {
+  const value = fields[key];
+  if (value === undefined) return null;
+  if (typeof value !== "string") return bad(`"${key}" must be text`);
+  return value;
+}
+
+function isViolation(value: unknown): value is Violation {
+  return isRecord(value) && "rule" in value;
+}
+
+function parentOf(map: FoldedMap, id: string): string | undefined {
+  return map.parents.get(id);
+}
+
+/** Whether `ancestor` is `id` itself or sits above it in the refines tree. */
+function isAtOrAbove(map: FoldedMap, ancestor: string, id: string): boolean {
+  const seen = new Set<string>();
+  for (
+    let at: string | undefined = id;
+    at !== undefined;
+    at = parentOf(map, at)
+  ) {
+    if (at === ancestor) return true;
+    if (seen.has(at)) return false;
+    seen.add(at);
+  }
+  return false;
+}
+
+function addEdge(map: FoldedMap, edge: Edge): void {
+  const from = map.nodes.get(edge.from);
+  const to = map.nodes.get(edge.to);
+  if (edge.type === "refines") map.parents.set(edge.from, edge.to);
+  if (from?.proposed || to?.proposed) map.ghostEdges.push(edge);
+  else map.edges.push(edge);
+}
+
+/** Checks a link against the map. */
+function checkEdge(map: FoldedMap, edge: Edge): Violation | null {
+  const from = map.nodes.get(edge.from);
+  if (!from) {
+    return { rule: "unknown-card", detail: `no card "${edge.from}"` };
+  }
+  if (!map.nodes.has(edge.to)) {
+    return { rule: "unknown-card", detail: `no card "${edge.to}"` };
+  }
+  if (from.kind === "option" && edge.type !== "alternative_to") {
+    return {
+      rule: "option-link",
+      detail: `option "${edge.from}" links by alternative_to only, not ${edge.type}`,
+    };
+  }
+  if (edge.type === "refines") {
+    const parent = parentOf(map, edge.from);
+    if (parent !== undefined) {
+      return {
+        rule: "second-parent",
+        detail: `"${edge.from}" already has the parent "${parent}"`,
+      };
+    }
+    if (isAtOrAbove(map, edge.from, edge.to)) {
+      return {
+        rule: "cycle",
+        detail: `"${edge.from}" refines "${edge.to}", which sits at or below it`,
+      };
+    }
+  }
+  return null;
+}
+
+function applyProposed(map: FoldedMap, fields: Fields): Violation | null {
+  const { id, kind, title, status } = fields;
+  if (typeof id !== "string" || id === "") return bad('"id" must be text');
+  if (typeof title !== "string") return bad('"title" must be text');
+  if (!oneOf(kind, KINDS))
+    return bad(`"kind" must be one of ${KINDS.join(", ")}`);
+  if (!oneOf(status, STATUSES)) {
+    return bad(`"status" must be one of ${STATUSES.join(", ")}`);
+  }
+  const why = optional(fields, "why");
+  const body = optional(fields, "body");
+  const parent = optional(fields, "parent");
+  const whyNot = optional(fields, "why_not");
+  const url = optional(fields, "url");
+  const finding = optional(fields, "finding");
+  const who = fields.who;
+  for (const value of [why, body, parent, whyNot, url, finding]) {
+    if (isViolation(value)) return value;
+  }
+  if (who !== undefined && !oneOf(who, WHOS)) {
+    return bad(`"who" must be one of ${WHOS.join(", ")}`);
+  }
+  if (map.nodes.has(id)) {
+    return { rule: "duplicate-id", detail: `the id "${id}" is taken` };
+  }
+  if (typeof parent === "string") {
+    if (!map.nodes.has(parent)) {
+      return { rule: "unknown-card", detail: `no card "${parent}"` };
+    }
+    if (kind === "option") {
+      return {
+        rule: "option-link",
+        detail: `option "${id}" links by alternative_to only, not refines`,
+      };
+    }
+  }
+  map.nodes.set(id, {
+    id,
+    kind,
+    title,
+    why: typeof why === "string" ? why : "",
+    body: typeof body === "string" ? body : "",
+    status,
+    who: oneOf(who, WHOS) ? who : null,
+    proposed: true,
+    whyNot: typeof whyNot === "string" ? whyNot : null,
+    url: typeof url === "string" ? url : null,
+    finding: typeof finding === "string" ? finding : null,
+    marks: [],
+  });
+  // The parent is part of what was added: one event makes the card and its link (#pr-log-one-event).
+  if (typeof parent === "string") {
+    addEdge(map, { from: id, to: parent, type: "refines", why: "" });
+  }
+  return null;
+}
+
+function applyEdgeAdded(map: FoldedMap, fields: Fields): Violation | null {
+  const { from, to, link } = fields;
+  if (typeof from !== "string" || typeof to !== "string") {
+    return bad('"from" and "to" must be text');
+  }
+  if (!oneOf(link, LINK_TYPES)) {
+    return bad(`"link" must be one of ${LINK_TYPES.join(", ")}`);
+  }
+  const why = optional(fields, "why");
+  if (isViolation(why)) return why;
+  const edge: Edge = { from, to, type: link, why: why ?? "" };
+  const violation = checkEdge(map, edge);
+  if (violation) return violation;
+  addEdge(map, edge);
+  return null;
+}
+
+/**
+ * Checks one event against the map and applies it when it holds every rule.
+ * Returns the rule it breaks otherwise, and leaves the map as it was.
+ */
+export function applyEvent(map: FoldedMap, event: unknown): Violation | null {
+  if (!isRecord(event)) return bad("an event is a JSON object");
+  switch (event.type) {
+    case "node.proposed":
+      return applyProposed(map, event);
+    case "edge.added":
+      return applyEdgeAdded(map, event);
+    default:
+      return bad(`unknown event type ${JSON.stringify(event.type)}`);
+  }
+}
+
+/** Folds every entry of the log, from the first to the last. */
+export function fold(entries: readonly LogEntry[]): FoldedMap {
+  const map = emptyMap();
+  for (const entry of entries) {
+    const violation: Violation | null =
+      entry.error !== undefined
+        ? { rule: "bad-json", detail: entry.error }
+        : applyEvent(map, entry.event);
+    if (violation) map.problems.push({ line: entry.line, ...violation });
+  }
+  return map;
+}
