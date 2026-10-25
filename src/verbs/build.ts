@@ -1,12 +1,13 @@
 // `build` runs the builder loop on one ticket in its own worktree (#werk-cli-build, #st-build-ticket).
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { deathText, parseSession } from "../board/dead-builds.ts";
 import { BuildRefused, buildTicket } from "../build/loop.ts";
 import { parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
 
 const USAGE =
-  "usage: build <ticket> [--spec <file>] [--cap <n>] [--base <branch>] [--agent-ms <n>] [--check-ms <n>] [--poll-ms <n>]";
+  "usage: build <ticket> [--spec <file>] [--cap <n>] [--base <branch>] [--agent-ms <n>] [--check-ms <n>] [--poll-ms <n>] [--after-death <session>]";
 
 /** A flag that holds a whole number of at least one, or the default when it is absent. */
 function count(
@@ -22,7 +23,15 @@ registerVerb({
   summary: "Build one ticket in its own worktree with fresh passes",
   run: async ({ args, cwd, env, out, err }) => {
     const parsed = parseArgs(args, {
-      flags: ["spec", "cap", "base", "agent-ms", "check-ms", "poll-ms"],
+      flags: [
+        "spec",
+        "cap",
+        "base",
+        "agent-ms",
+        "check-ms",
+        "poll-ms",
+        "after-death",
+      ],
     });
     const [ticket, ...extra] = parsed.ok ? parsed.positional : [];
     if (!parsed.ok || ticket === undefined || extra.length > 0) {
@@ -43,6 +52,13 @@ registerVerb({
       pollMs === undefined
     ) {
       err(`werk: every number flag is a whole number of at least 1\n${USAGE}`);
+      return 2;
+    }
+    // A fresh pass after a death continues the build of the dead session (#st-build-died).
+    const died = flags["after-death"];
+    const dead = died === undefined ? undefined : parseSession(died);
+    if (died !== undefined && dead === null) {
+      err(`werk: "${died}" is not a build session\n${USAGE}`);
       return 2;
     }
     let spec: string | null = null;
@@ -66,6 +82,19 @@ registerVerb({
         pollMs,
         spec,
         command: "claude",
+        ...(dead
+          ? {
+              resume: {
+                buildId: dead.buildId,
+                afterPass: dead.pass,
+                failure: deathText({
+                  ticket,
+                  session: died as string,
+                  ...dead,
+                }),
+              },
+            }
+          : {}),
       });
       out(
         `${result.outcome} after ${result.passes} pass${result.passes === 1 ? "" : "es"} on branch ${result.branch}${result.reason ? `: ${result.reason}` : ""}`,

@@ -82,3 +82,20 @@ export function removeWorktree(repo: string, env: Env, tree: Worktree): void {
   rmSync(tree.dir, { recursive: true, force: true });
   git(repo, env, "worktree", "prune");
 }
+
+/**
+ * Removes the worktree that still holds a branch, so a fresh pass can use the branch. Only the commits
+ * of the branch stay: what the dead pass did not commit is lost (#st-build-died).
+ */
+export function releaseBranch(repo: string, env: Env, branch: string): void {
+  const listing = must(repo, env, "worktree", "list", "--porcelain");
+  let dir: string | null = null;
+  for (const line of listing.split("\n")) {
+    if (line.startsWith("worktree ")) dir = line.slice("worktree ".length);
+    else if (line === `branch refs/heads/${branch}` && dir !== null) {
+      git(repo, env, "worktree", "remove", "--force", dir);
+      rmSync(dir, { recursive: true, force: true });
+    }
+  }
+  git(repo, env, "worktree", "prune");
+}

@@ -8,6 +8,7 @@ import { runCiteWatch } from "../board/cite-watch.ts";
 import { boardLogBeside } from "../board/log-store.ts";
 import type { ChatSession } from "../chat/session.ts";
 import { pipelineLogBeside } from "../pipeline/log-store.ts";
+import { spawnFreshPass, sweepDeadBuilds } from "../serve/dead-builds-watch.ts";
 import { broadcast, type Clients } from "../serve/live-channel.ts";
 import { type Lock, takeLock } from "../serve/lock.ts";
 import { type LogWatch, watchLog } from "../serve/log-watch.ts";
@@ -65,6 +66,19 @@ function watchCitedCards(logPath: string): void {
   }
 }
 
+/** Restarts the builds whose process died while no server watched (#st-build-died). */
+function restartDeadBuilds(folder: string, logPath: string): void {
+  try {
+    sweepDeadBuilds({
+      folder,
+      logPath,
+      start: spawnFreshPass(folder, logPath),
+    });
+  } catch {
+    // The sweep runs again when a build process that this server started exits and at the next start.
+  }
+}
+
 /** Takes the project's lock and starts watching its log. A refused lock gives the refusal message. */
 export async function openContext(
   folder: string,
@@ -83,6 +97,7 @@ export async function openContext(
   const clients: Clients = new Set();
   try {
     watchCitedCards(logPath);
+    restartDeadBuilds(folder, logPath);
     const watch = watchLog(logPath, () => {
       watchCitedCards(logPath);
       broadcast(clients, "changed");

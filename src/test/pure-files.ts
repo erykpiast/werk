@@ -39,6 +39,7 @@ export const PURE_FILES: readonly string[] = [
   "src/plan/cited-changes.ts",
   "src/plan/drops.ts",
   "src/board/cite-marks.ts",
+  "src/board/dead-builds.ts",
   "src/tickets/ticket-parse.ts",
   "src/tickets/own-checks.ts",
   "src/tickets/set-checks.ts",
