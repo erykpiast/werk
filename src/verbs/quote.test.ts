@@ -56,7 +56,9 @@ test("a quote that occurs once writes one event, and show prints the words, spea
   expect(shown).toContain("seats are the unit we bill");
   expect(shown).toContain("said by person at 10:02");
   expect(shown).toContain("session 6ae61be7, message 2, span 5..31");
-  expect((await werk("show", "x")).stdout).toContain("supported_by");
+  expect((await werk("show", "x")).stdout).toContain(
+    "Say:\n  person: seats are the unit we bill",
+  );
 });
 
 test("the words may come with --text, and a second quote takes the next id", async () => {
