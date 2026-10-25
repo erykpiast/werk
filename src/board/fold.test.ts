@@ -296,13 +296,11 @@ describe("builds", () => {
 });
 
 describe("run events", () => {
-  test("tier, gates, run and plan events fold into the plan", () => {
+  test("tier, gate and run events fold into the plan", () => {
     const board = foldBoard(
       entries(
         { type: "run.tier", plan: "r", tier: "feature" },
         { type: "run.gate_waiting", plan: "r", gate: "G2" },
-        { type: "plan.started", plan: "r" },
-        { type: "plan.step", plan: "r", step: "spec" },
         { type: "run.started", plan: "r", pid: 7 },
       ),
     );
@@ -311,8 +309,6 @@ describe("run events", () => {
     expect(p).toMatchObject({
       tier: "feature",
       gates: { G2: "waiting" },
-      planning: true,
-      steps: ["spec"],
       runPid: 7,
     });
     expect(runActive(p, () => true)).toBe(true);
@@ -320,14 +316,11 @@ describe("run events", () => {
     const after = foldBoard(
       entries(
         { type: "run.gate_passed", plan: "r", gate: "G2" },
-        { type: "plan.started", plan: "r" },
-        { type: "plan.ended", plan: "r" },
         { type: "run.started", plan: "r", pid: 7 },
         { type: "run.ended", plan: "r" },
       ),
     ).plans.get("r")!;
     expect(after.gates.G2).toBe("passed");
-    expect(after.planning).toBe(false);
     expect(runActive(after, () => true)).toBe(false);
   });
 
@@ -337,16 +330,9 @@ describe("run events", () => {
         { type: "run.tier", plan: "r" },
         { type: "run.gate_waiting", plan: "r" },
         { type: "run.started", plan: "r" },
-        { type: "plan.step", plan: "r" },
         { type: "run.tier" },
       ),
-    ).toEqual([
-      "bad-event",
-      "bad-event",
-      "bad-event",
-      "bad-event",
-      "bad-event",
-    ]);
+    ).toEqual(["bad-event", "bad-event", "bad-event", "bad-event"]);
   });
 });
 

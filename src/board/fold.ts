@@ -76,8 +76,6 @@ export type Plan = {
   gates: Record<string, "waiting" | "passed">;
   /** The merge-loop process that holds the run, from "run started" to "run ended". */
   runPid?: number;
-  planning: boolean;
-  steps: string[];
   tickets: string[];
 };
 
@@ -130,7 +128,7 @@ const ARCHIVABLE: readonly Column[] = ["ready", "blocked", "building"];
 function ensurePlan(board: Board, id: string): Plan {
   let plan = board.plans.get(id);
   if (!plan) {
-    plan = { id, gates: {}, planning: false, steps: [], tickets: [] };
+    plan = { id, gates: {}, tickets: [] };
     board.plans.set(id, plan);
   }
   return plan;
@@ -388,18 +386,8 @@ function runEvent(board: Board, type: string, rec: Rec): BoardViolation | null {
     case "run.ended":
       delete plan.runPid;
       return null;
-    case "plan.started":
-      plan.planning = true;
-      return null;
-    case "plan.step": {
-      const step = str(rec, "step");
-      if (step === undefined) return bad("plan step needs step");
-      plan.steps.push(step);
-      return null;
-    }
     default:
-      plan.planning = false;
-      return null;
+      return bad(`unknown run event ${type}`);
   }
 }
 
@@ -427,9 +415,6 @@ const RUN_EVENTS = new Set([
   "run.gate_passed",
   "run.started",
   "run.ended",
-  "plan.started",
-  "plan.step",
-  "plan.ended",
 ]);
 
 /** Applies one event to the board. Returns the rule it breaks, and then changes nothing. */
