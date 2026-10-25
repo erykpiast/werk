@@ -30,6 +30,7 @@ import {
 import {
   addWorktree,
   commitPass,
+  releaseBranch,
   removeWorktree,
   type Worktree,
 } from "./git.ts";
@@ -72,6 +73,8 @@ export type BuildOptions = {
   spec: string | null;
   /** The agent program. */
   command: string;
+  /** A fresh pass after a build process died: the build it continues and the pass that died (#st-build-died). */
+  resume?: { buildId: string; afterPass: number; failure: string };
 };
 
 export type BuildResult = {
@@ -249,6 +252,7 @@ async function runPass(
     session,
     pid: process.pid,
     log: transcript,
+    cap: options.cap,
     branch: tree.branch,
   });
   const watch = watchAgent({
@@ -370,9 +374,14 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
   if (ticket === undefined) throw new BuildRefused(`no ticket ${found.id}`);
   if (ticket.archived)
     throw new BuildRefused(`ticket ${ticket.id} is archived`);
-  if (ticket.column !== "ready")
+  const { resume } = options;
+  if (
+    resume !== undefined
+      ? ticket.column !== "building"
+      : ticket.column !== "ready"
+  )
     throw new BuildRefused(
-      `ticket ${ticket.id} is in ${ticket.column}, not in ready`,
+      `ticket ${ticket.id} is in ${ticket.column}, not in ${resume !== undefined ? "building" : "ready"}`,
     );
   const { map } = readMap(mapLog);
   const input = gatherTicket(
@@ -385,33 +394,42 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
       `ticket ${ticket.id} has no readable ticket file under ${dirname(ticketPath(mapLog, ticket.plan, ticket.number))}`,
     );
 
+  // The dead pass's worktree still holds the branch: its uncommitted edits are lost.
+  if (resume !== undefined) releaseBranch(resolve(cwd), env, ticket.id);
   const file = ticketPath(mapLog, ticket.plan, ticket.number);
   const grading = gatherGrading(input, file, map);
   if (grading === null)
     throw new BuildRefused(`ticket ${ticket.id} has no readable ticket file`);
 
   const tree = addWorktree(resolve(cwd), env, ticket.id, options.mainLine);
-  const moved = appendBoardEvent(boardLog, {
-    type: "ticket.moved",
-    id: ticket.id,
-    to: "building",
-    actor: "loop",
-  });
+  const moved =
+    resume !== undefined
+      ? { ok: true as const }
+      : appendBoardEvent(boardLog, {
+          type: "ticket.moved",
+          id: ticket.id,
+          to: "building",
+          actor: "loop",
+        });
   if (!moved.ok) {
     removeWorktree(cwd, env, tree);
     throw new BuildRefused(
       `${moved.violation.rule}: ${moved.violation.detail}`,
     );
   }
-  const buildId = `build-${ticket.id.replace("/", "-")}-${Date.now()}`;
-  appendEvents(mapLog, [
-    {
-      type: "obligation.opened",
-      id: buildId,
-      ticket: ticket.id,
-      cites: input.cards.map((card) => card.id),
-    },
-  ]);
+  const buildId =
+    resume?.buildId ?? `build-${ticket.id.replace("/", "-")}-${Date.now()}`;
+  // A fresh pass after a death keeps the obligation that the dead pass opened.
+  if (resume === undefined) {
+    appendEvents(mapLog, [
+      {
+        type: "obligation.opened",
+        id: buildId,
+        ticket: ticket.id,
+        cites: input.cards.map((card) => card.id),
+      },
+    ]);
+  }
 
   const watch = watchArchive(boardLog, ticket.id, options.pollMs);
   const run: Run = {
@@ -469,9 +487,9 @@ export async function buildTicket(options: BuildOptions): Promise<BuildResult> {
     ...(followup === undefined ? {} : { followup }),
   });
   try {
-    let failure: string | null = null;
+    let failure: string | null = resume?.failure ?? null;
     let previous: Grade | null = null;
-    for (let n = 1; n <= options.cap; n++) {
+    for (let n = (resume?.afterPass ?? 0) + 1; n <= options.cap; n++) {
       const brief = buildBrief({
         ...input,
         obligation: buildId,

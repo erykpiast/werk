@@ -7,6 +7,16 @@ import type { Reply, Script } from "../fake-agent/script.ts";
 import { open } from "../map/mark-fixtures.ts";
 import { readPipeline } from "../pipeline/log-store.ts";
 import { createProject, type Project } from "../test-env/project.ts";
+import {
+  ALL_GOOD,
+  AREA_ROLES,
+  findingsOf,
+  gradeOf,
+  judgeRoles,
+  line,
+  result,
+  withJudges,
+} from "./judge-fixtures.ts";
 
 const CLI = join(import.meta.dir, "..", "cli.ts");
 const MAKEFILE = "check:\n\t@test -f ok.txt\n";
@@ -39,52 +49,6 @@ const writeLines = (path: string, events: unknown[]) => {
   writeFileSync(path, events.map((e) => `${JSON.stringify(e)}\n`).join(""));
 };
 const edit = (path: string, content: string) => ({ edit: path, content });
-const result = (text: string): Reply => [
-  {
-    event: {
-      type: "result",
-      subtype: "success",
-      is_error: false,
-      result: text,
-    },
-  },
-];
-const line = (id: string, score: number, gap = "", more = {}) => ({
-  line: id,
-  score,
-  gap,
-  ...more,
-});
-const gradeOf = (...lines: unknown[]): Reply =>
-  result(JSON.stringify({ lines }));
-const ALL_GOOD = gradeOf(
-  line("criterion-1", 4),
-  line("card-top", 4),
-  line("scope", 5),
-);
-const findingsOf = (...findings: unknown[]): Reply =>
-  result(JSON.stringify({ findings }));
-const AREA_ROLES = [
-  "reviewer-design",
-  "reviewer-maintainability",
-  "reviewer-tests",
-  "reviewer-security",
-  "reviewer-performance",
-];
-type Judging = { grades?: Reply[]; reviews?: Record<string, Reply[]> };
-/** A script with the builder replies, and a grader and five reviewers that find nothing unless the test says so. */
-const judgeRoles = (judging: Judging = {}) => ({
-  grader: { replies: judging.grades ?? Array(5).fill(ALL_GOOD) },
-  ...Object.fromEntries(
-    AREA_ROLES.map((role) => [
-      role,
-      { replies: judging.reviews?.[role] ?? Array(5).fill(findingsOf()) },
-    ]),
-  ),
-});
-const withJudges = (builds: Reply[], judging: Judging = {}): Script => ({
-  roles: { builder: { replies: builds }, ...judgeRoles(judging) },
-});
 const builder = (...replies: Reply[]): Script => withJudges(replies);
 /** The prompts that the builder sessions got. */
 const messages = () =>
