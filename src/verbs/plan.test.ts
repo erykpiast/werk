@@ -441,19 +441,22 @@ test("a rewrite that fails its own checks is undone, and the ticket keeps its ol
   ).toBe(first(2));
 });
 
-test("a drop of a ticket that is not open, or a bad drops file, is reported and archives nothing", async () => {
+test("a drop of a ticket that is not open is ignored and archives nothing", async () => {
   const notOpen = await plannedTwice({
     tickets: [
+      edit(
+        "tickets/app/04-d.md",
+        ticket({ title: "Ticket 4", cites: "app", stories: "2" }),
+      ),
       edit(
         "specs/app/ticket-drops.json",
         JSON.stringify([{ ticket: 1, why: "x" }]),
       ),
     ],
   });
-  expect(notOpen.code).toBe(1);
-  expect(notOpen.stderr).toContain(
-    "ticket 1 is not open, so a plan does not drop it",
-  );
+  expect(notOpen.stderr).toBe("");
+  expect(notOpen.code).toBe(0);
+  expect(notOpen.stderr).not.toContain("not open");
   expect(board().tickets.get("app/01")?.archived).toBe(false);
 });
 

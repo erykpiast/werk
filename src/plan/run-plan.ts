@@ -291,8 +291,8 @@ export async function runPlan(input: PlanInput): Promise<number> {
   if (drops?.ok === false)
     problem(`the ticket-writer's drops file is bad: ${drops.error}`);
   for (const { ticket: number, why } of drops?.ok ? drops.drops : []) {
+    // A listed ticket that is not open is ignored (#st-plan-extend-drops).
     if (openNumbers.has(number)) dropped.set(number, why);
-    else problem(`ticket ${number} is not open, so a plan does not drop it`);
   }
 
   // A file of a ticket that is not open stays as it was.
