@@ -171,6 +171,18 @@ export type Removal = {
   moved: { child: string; parent: string; why: string }[];
 };
 
+/** A build's card obligation: opened for a ticket, closed by the cards the pass followed (#vi-board-state-obligation-events). */
+export type Obligation = {
+  id: string;
+  /** The board ticket whose build opened it, as <plan run>/<NN>. */
+  ticket: string;
+  cites: string[];
+  /** The cards that proposals under this obligation made, in log order. */
+  proposed: string[];
+  /** The cards a pass recorded it followed, or null while no pass recorded any. */
+  followed: string[] | null;
+};
+
 export type FoldedMap = {
   nodes: Map<string, MapNode>;
   /** Edges between real cards. */
@@ -185,6 +197,8 @@ export type FoldedMap = {
   removals: Removal[];
   /** Edges with an end that is out. Each returns when both ends are in the map (#werk-write-remove-links). */
   waiting: Edge[];
+  /** The card obligations by id (#vi-board-state-obligation-events). */
+  obligations: Map<string, Obligation>;
   problems: Problem[];
 };
 
@@ -200,6 +214,7 @@ export function emptyMap(): FoldedMap {
     threads: new Map(),
     removals: [],
     waiting: [],
+    obligations: new Map(),
     problems: [],
   };
 }
@@ -334,6 +349,45 @@ function applyProposed(
   if (typeof parent === "string") {
     addEdge(map, { from: id, to: parent, type: "refines", why: "" });
   }
+  // A card that a build proposes carries the id of its obligation.
+  if (typeof fields.obligation === "string") {
+    map.obligations.get(fields.obligation)?.proposed.push(id);
+  }
+  return null;
+}
+
+function stringList(value: unknown): string[] | null {
+  return Array.isArray(value) && value.every((v) => typeof v === "string")
+    ? (value as string[])
+    : null;
+}
+
+function applyObligationOpened(
+  map: FoldedMap,
+  fields: Fields,
+): Violation | null {
+  const { id, ticket } = fields;
+  if (typeof id !== "string" || id === "") return bad('"id" must be text');
+  if (typeof ticket !== "string" || ticket === "")
+    return bad('"ticket" must be text');
+  const cites = fields.cites === undefined ? [] : stringList(fields.cites);
+  if (cites === null) return bad('"cites" must be a list of text');
+  if (map.obligations.has(id))
+    return { rule: "duplicate-id", detail: `the obligation "${id}" is open` };
+  map.obligations.set(id, { id, ticket, cites, proposed: [], followed: null });
+  return null;
+}
+
+function applyObligationClosed(
+  map: FoldedMap,
+  fields: Fields,
+): Violation | null {
+  const { id } = fields;
+  const obligation = typeof id === "string" ? map.obligations.get(id) : null;
+  if (!obligation) return bad(`no obligation ${JSON.stringify(id)}`);
+  const cards = stringList(fields.cards);
+  if (cards === null) return bad('"cards" must be a list of text');
+  obligation.followed = cards;
   return null;
 }
 
@@ -556,6 +610,10 @@ export function applyEvent(
       return applyNote(map, event, line);
     case "edge.added":
       return applyEdgeAdded(map, event);
+    case "obligation.opened":
+      return applyObligationOpened(map, event);
+    case "obligation.closed":
+      return applyObligationClosed(map, event);
     default:
       return bad(`unknown event type ${JSON.stringify(event.type)}`);
   }

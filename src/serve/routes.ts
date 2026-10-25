@@ -12,6 +12,7 @@ import {
   type Projects,
   removeProject,
 } from "../projects/projects.ts";
+import { readBoardView, readTicketLog } from "./board-read.ts";
 import { cardActionRoute } from "./card-action-route.ts";
 import { askRoute, chatRoute, clearRoute, modelRoute } from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
@@ -137,6 +138,13 @@ async function projectRoute(
       return json({ error: "the graph is read with shape=1" }, 400);
     }
     return json(shapeRead(readMap(context.logPath).map));
+  }
+  if (rest === "/board") return json(readBoardView(context.logPath));
+  if (rest === "/board/log") {
+    const read = readTicketLog(context.logPath, url.searchParams.get("ticket"));
+    return read.ok
+      ? json({ lines: read.lines })
+      : json({ error: read.message }, read.status);
   }
   if (rest === "/index") return json(headerRead(readMap(context.logPath).map));
   if (rest === "/open") {

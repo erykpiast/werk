@@ -455,3 +455,56 @@ describe("marks", () => {
     expect(kinds(map, "y")).toEqual([]);
   });
 });
+
+describe("card obligations", () => {
+  const opened = (extra: Record<string, unknown> = {}) => ({
+    type: "obligation.opened",
+    id: "o1",
+    ticket: "r/01",
+    cites: ["a"],
+    ...extra,
+  });
+
+  test("an opened obligation collects the cards proposed under it and the cards it followed", () => {
+    const map = fold(
+      entries(opened(), node("c", { obligation: "o1" }), node("d"), {
+        type: "obligation.closed",
+        id: "o1",
+        cards: ["a", "b"],
+      }),
+    );
+    expect(map.problems).toEqual([]);
+    expect(map.obligations.get("o1")).toEqual({
+      id: "o1",
+      ticket: "r/01",
+      cites: ["a"],
+      proposed: ["c"],
+      followed: ["a", "b"],
+    });
+  });
+
+  test("an obligation is open until a pass closes it", () => {
+    const map = fold(entries(opened({ cites: undefined })));
+    expect(map.obligations.get("o1")?.followed).toBeNull();
+    expect(map.obligations.get("o1")?.cites).toEqual([]);
+  });
+
+  test("a second obligation with the same id, a bad field, or a close of no obligation is set aside", () => {
+    expect(
+      rules(
+        opened(),
+        opened(),
+        opened({ id: "" }),
+        opened({ ticket: 4, id: "x" }),
+      ),
+    ).toEqual(["duplicate-id", "bad-event", "bad-event"]);
+    expect(
+      rules(
+        opened({ id: "x", cites: "a" }),
+        { type: "obligation.closed", id: "none", cards: [] },
+        opened(),
+        { type: "obligation.closed", id: "o1", cards: "a" },
+      ),
+    ).toEqual(["bad-event", "bad-event", "bad-event"]);
+  });
+});

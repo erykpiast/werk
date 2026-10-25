@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import {
+  appendFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -110,6 +111,42 @@ test("the read API answers one card and a shape with no body", async () => {
   expect(JSON.parse(shape).nodes[0].id).toBe("root");
   expect(shape).not.toContain("SECRET BODY");
   expect((await fetch(url(port, api("/graph")))).status).toBe(400);
+});
+
+test("the board is read from two addresses, and a growth of the board log sends a board signal", async () => {
+  mkdirSync(join(project.dir, ".werk"), { recursive: true });
+  const board = join(project.dir, ".werk", "board.jsonl");
+  writeFileSync(
+    board,
+    `${JSON.stringify({ type: "ticket.planned", id: "r/01", title: "One" })}\n`,
+  );
+  project.start(["bun", CLI, "serve", "--port", "0"]);
+  const { port } = await holder();
+
+  const read = await (await fetch(url(port, api("/board")))).json();
+  expect(read.columns.ready.map((t: { id: string }) => t.id)).toEqual(["r/01"]);
+  expect(
+    await (await fetch(url(port, api("/board/log?ticket=r%2F01")))).json(),
+  ).toEqual({ lines: [] });
+  expect((await fetch(url(port, api("/board/log")))).status).toBe(400);
+  expect((await fetch(url(port, api("/board/log?ticket=r%2F99")))).status).toBe(
+    404,
+  );
+
+  const live = await fetch(url(port, api("/live")));
+  const reader = (live.body as ReadableStream<Uint8Array>).getReader();
+  await reader.read();
+  appendFileSync(
+    board,
+    `${JSON.stringify({ type: "ticket.moved", id: "r/01", to: "building" })}\n`,
+  );
+  let seen = "";
+  const decoder = new TextDecoder();
+  for (let i = 0; i < 100 && !seen.includes("event: board"); i++) {
+    seen += decoder.decode((await reader.read()).value);
+  }
+  await reader.cancel();
+  expect(seen).toContain("event: board");
 });
 
 test("a server of another per-user folder waits for the project, then refuses with the first server's pid and port", async () => {

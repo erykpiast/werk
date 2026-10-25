@@ -1,10 +1,13 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, type Root } from "react-dom/client";
+import { Board } from "./app/board";
 import { ChatPane } from "./app/chat-pane";
 import { Composer } from "./app/composer";
 import { Counts, Crumbs, SearchBox, Tabs } from "./app/header";
 import { Switcher } from "./app/switcher";
 import { addProjectFromDialog } from "./lib/add-project";
+import { readPrefs, writePrefs } from "./lib/board-prefs";
+import { type BoardState, createBoardStore } from "./lib/board-store";
 import {
   removeFactsOf,
   removeQuestion,
@@ -169,6 +172,72 @@ async function start() {
   const leftRoot = headerLeft ? createRoot(headerLeft) : null;
   const rightRoot = headerRight ? createRoot(headerRight) : null;
 
+  // The board (#vi-board): a React root that lives only while the board is the view.
+  let boardRoot: Root | null = null;
+  let boardState: BoardState = { board: null, lines: null };
+  let selected: string | null = null;
+  let prefs = readPrefs(localStorage, project);
+  const drawBoard = () =>
+    boardRoot?.render(
+      <Board
+        board={boardState.board}
+        lines={boardState.lines}
+        selected={selected}
+        prefs={prefs}
+        onSelect={(id) => {
+          selected = id;
+          boardState = { ...boardState, lines: null };
+          drawBoard();
+          void boardStore.refresh();
+        }}
+        onPrefs={(next) => {
+          prefs = next;
+          writePrefs(localStorage, project, next);
+          drawBoard();
+        }}
+      />,
+    );
+  const boardStore = createBoardStore(
+    {
+      fetch: (url) => fetch(url),
+      logTicket: () => {
+        if (selected === null || boardState.board === null) return null;
+        const open = Object.values(boardState.board.columns)
+          .flat()
+          .find((t) => t.id === selected);
+        return open?.column === "building" ? selected : null;
+      },
+      show: (state) => {
+        boardState = state;
+        drawBoard();
+      },
+      every: (ms, run) => {
+        const timer = setInterval(run, ms);
+        return () => clearInterval(timer);
+      },
+    },
+    project,
+  );
+  const showBoard = () => {
+    if (boardRoot || !body) return;
+    lastHtml = null;
+    const host = document.createElement("div");
+    body.replaceChildren(host);
+    boardRoot = createRoot(host);
+    drawBoard();
+    boardStore.start();
+  };
+  const hideBoard = () => {
+    if (!boardRoot) return;
+    boardStore.stop();
+    boardRoot.unmount();
+    boardRoot = null;
+    boardState = { board: null, lines: null };
+    body?.replaceChildren();
+  };
+  /** The HTML last put on the page for the open card. An identical read changes nothing, so a card's open question stays. */
+  let lastHtml: string | null = null;
+
   /** Opens an address and adds one history entry (#vi-routes). */
   const go = (path: string) => {
     if (location.pathname === path) return;
@@ -253,9 +322,14 @@ async function start() {
         if (view !== "map") return;
         openId = shown.id;
         renderHeader();
-        if (body) {
-          body.innerHTML = shown.html ?? "<p>The map has no cards yet.</p>";
+        const html = shown.html ?? "<p>The map has no cards yet.</p>";
+        if (body && html !== lastHtml) {
+          body.innerHTML = html;
+          lastHtml = html;
         }
+      },
+      board: () => {
+        if (view === "board") void boardStore.refresh();
       },
       reload: () => location.reload(),
       stashDraft: () =>
@@ -271,15 +345,13 @@ async function start() {
   const route = () => {
     view = viewOf(location.pathname);
     if (view === "map") {
+      hideBoard();
       const card = cardOf(location.pathname);
       remember(localStorage, project, { view, card });
       store.open(card);
     } else {
       remember(localStorage, project, { view, card: null });
-      if (body) {
-        body.innerHTML =
-          '<article class="board-page"><h1>Board</h1><p>The ticket board.</p></article>';
-      }
+      showBoard();
     }
     renderHeader();
   };

@@ -14,7 +14,12 @@ type Env = Record<string, string | undefined>;
 
 /** The board log of the project, in the folder of its map log. */
 export function boardLogPathFor(cwd: string, env: Env): string {
-  return join(dirname(mapLogPath(cwd, env)), "board.jsonl");
+  return boardLogBeside(mapLogPath(cwd, env));
+}
+
+/** The board log that sits beside a map log. */
+export function boardLogBeside(mapLog: string): string {
+  return join(dirname(mapLog), "board.jsonl");
 }
 
 function readText(path: string): string {
