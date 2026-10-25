@@ -4,10 +4,12 @@
  * when it is not, so no spec reaches a real agent (#werk-test-env).
  */
 import { type ChildProcess, spawn, spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, rmSync } from "node:fs";
+import { cpSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
+import { logPathFor, readRecords } from "../../src/fake-agent/launch-log.ts";
+import type { Script } from "../../src/fake-agent/script.ts";
 import { copyApp } from "../../src/test-env/app-copy.ts";
 import { cleanEnv, fakeIsFirst } from "../../src/test-env/env.ts";
 
@@ -19,6 +21,8 @@ export type ServerOptions = {
   env?: Record<string, string>;
   /** Run the server from a copy of the app, so a spec can edit the client source. */
   appCopy?: boolean;
+  /** The script that the fake agent replays for this server. */
+  script?: Script;
 };
 
 export type BrowserServer = {
@@ -34,6 +38,8 @@ export type BrowserServer = {
   appDir: string;
   start(): Promise<void>;
   stop(): Promise<void>;
+  /** The launches and messages that the fake agent recorded. */
+  launches(): ReturnType<typeof readRecords>;
   /** Runs one werk command on the project and returns its output. */
   werk(...args: string[]): { code: number; stdout: string; stderr: string };
   dispose(): Promise<void>;
@@ -62,18 +68,21 @@ async function until(check: () => Promise<boolean>, what: string, ms = 30000) {
 export async function startBrowserServer(
   options: ServerOptions = {},
 ): Promise<BrowserServer> {
-  const env = {
+  const base = {
     ...cleanEnv(process.env),
     // WERK_OPEN names a program that opens no window, so no spec starts a real browser.
     WERK_OPEN: "true",
     ...options.env,
   };
-  if (!fakeIsFirst(env.PATH)) {
+  if (!fakeIsFirst(base.PATH)) {
     throw new Error(
       "werk: the fake agent is not first in the program search list; the browser server does not start",
     );
   }
   const root = mkdtempSync(join(tmpdir(), "werk-e2e-"));
+  const scriptPath = join(root, "script.json");
+  if (options.script) writeFileSync(scriptPath, JSON.stringify(options.script));
+  const env = options.script ? { ...base, WERK_FAKE_SCRIPT: scriptPath } : base;
   const dir = join(root, "project");
   cpSync(FIXTURE, dir, { recursive: true });
   // A project is a folder with a git repository (#werk-projects).
@@ -129,6 +138,7 @@ export async function startBrowserServer(
       }, "the server to answer");
     },
     stop,
+    launches: () => readRecords(logPathFor(scriptPath)),
     werk(...args) {
       const result = spawnSync("bun", [cli, ...args], {
         cwd: dir,

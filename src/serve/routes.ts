@@ -12,6 +12,7 @@ import {
   type Projects,
   removeProject,
 } from "../projects/projects.ts";
+import { chatRoute } from "./chat-route.ts";
 import type { ClientServer } from "./client-server.ts";
 import { chooseFolder } from "./folder-dialog.ts";
 import type { Route } from "./handler.ts";
@@ -114,6 +115,7 @@ async function projectRoute(
   const { context } = opened;
   const url = new URL(req.url);
   if (rest === "/live") return live(context);
+  if (rest === "/chat") return chatRoute(context, ctx.env, req);
   if (rest === "/graph") {
     if (url.searchParams.get("shape") !== "1") {
       return json({ error: "the graph is read with shape=1" }, 400);
@@ -157,7 +159,10 @@ export function createRoute(ctx: RouteContext): Route {
       if (rest === "" && req.method === "DELETE") {
         return removeFromRequest(ctx, url, name);
       }
-      if (rest !== "" && req.method === "GET") {
+      if (
+        rest !== "" &&
+        (req.method === "GET" || (req.method === "POST" && rest === "/chat"))
+      ) {
         return projectRoute(ctx, req, name, rest);
       }
     }

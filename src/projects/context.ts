@@ -4,6 +4,7 @@
  * page never touches it (#werk-projects, #werk-projects-background).
  */
 import { dirname, join } from "node:path";
+import type { ChatSession } from "../chat/session.ts";
 import { pipelineLogBeside } from "../pipeline/log-store.ts";
 import { broadcast, type Clients } from "../serve/live-channel.ts";
 import { type Lock, takeLock } from "../serve/lock.ts";
@@ -18,6 +19,8 @@ export type Context = {
   /** The pipeline log. Its growth sends the measure signal (#werk-write-measure-signal). */
   measureWatch: LogWatch;
   lock: Lock;
+  /** The conversation of the project. It starts with the first message. */
+  chat?: ChatSession;
   /** The names of the agent turns that run now. */
   runningTurns: () => string[];
   /** Stops every running agent turn. */
@@ -72,19 +75,17 @@ export async function openContext(
       watch.close();
       throw error;
     }
-    return {
-      ok: true,
-      context: {
-        folder,
-        logPath,
-        clients,
-        watch,
-        measureWatch,
-        lock,
-        runningTurns: () => [],
-        stopTurns: async () => {},
-      },
+    const context: Context = {
+      folder,
+      logPath,
+      clients,
+      watch,
+      measureWatch,
+      lock,
+      runningTurns: () => context.chat?.running() ?? [],
+      stopTurns: async () => context.chat?.stop(),
     };
+    return { ok: true, context };
   } catch (error) {
     lock.release();
     throw error;
@@ -93,6 +94,7 @@ export async function openContext(
 
 /** Ends the page connections of the project, stops its watch and lets go of its lock. */
 export function closeContext(context: Context): void {
+  void context.chat?.stop();
   context.watch.close();
   context.measureWatch.close();
   for (const client of context.clients) {
