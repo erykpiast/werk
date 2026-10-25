@@ -47,6 +47,7 @@ export const PURE_FILES: readonly string[] = [
   "client/lib/card-search.ts",
   "client/lib/counts.ts",
   "client/lib/view-memory.ts",
+  "client/lib/switcher.ts",
   "src/projects/names.ts",
   "src/projects/list.ts",
   "client/lib/project-route.ts",
