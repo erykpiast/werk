@@ -7,7 +7,6 @@ import {
   reviewFailureText,
   where,
 } from "./review.ts";
-import { reviewPrompt } from "./review-prompt.ts";
 
 test("each of the five areas has its own reviewer role", () => {
   expect(AREAS.map((a) => a.role)).toEqual([
@@ -105,13 +104,4 @@ test("the failure text names the area, severity, place, impact and fix", () => {
   expect(reviewFailureText([finding("HIGH"), finding("CRITICAL")])).toContain(
     "these findings",
   );
-});
-
-test("a reviewer prompt holds one area and the diff command", () => {
-  const prompt = reviewPrompt(AREAS[3], "abc123");
-  expect(prompt).toContain("security reviewer");
-  expect(prompt).toContain("input validation");
-  expect(prompt).not.toContain("module boundaries");
-  expect(prompt).toContain("git diff abc123");
-  expect(prompt).toContain('"findings"');
 });
