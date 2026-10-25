@@ -187,3 +187,23 @@ test("a checkout that is also stored stays one entry and cannot be removed", asy
   expect((await removeProject(dev, "werk")).ok).toBe(false);
   closeAll(dev);
 });
+
+test("a dev checkout that is added is opened and never written to the stored list", async () => {
+  const checkout = repo("werk");
+  const dev = createProjects(join(root, "dev-home"), checkout);
+  const added = await addProject(dev, checkout);
+  expect(added.ok).toBe(true);
+  expect(dev.contexts.size).toBe(1);
+  expect(readStored(dev.home)).toEqual([]);
+  closeAll(dev);
+});
+
+test("a project that opens with another log keeps its lock and its watch beside that log", async () => {
+  const folder = repo("api");
+  const logPath = join(root, "other", "log.jsonl");
+  const added = await addProject(projects, folder, { logPath });
+  expect(added.ok).toBe(true);
+  expect(projects.contexts.get(folder)?.logPath).toBe(logPath);
+  expect(existsSync(join(root, "other", "serve.lock"))).toBe(true);
+  expect(existsSync(join(folder, ".werk", "serve.lock"))).toBe(false);
+});

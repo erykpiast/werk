@@ -27,3 +27,8 @@ test("the per-user folder comes from WERK_HOME, then the config folder, then the
   expect(userHome({ XDG_CONFIG_HOME: "/c" })).toBe("/c/werk");
   expect(userHome({})).toMatch(/\.config\/werk$/);
 });
+
+test("WERK_LOG puts the per-user folder beside the log it names", () => {
+  expect(userHome({ WERK_LOG: "/x/log.jsonl" })).toBe("/x");
+  expect(userHome({ WERK_HOME: "/h", WERK_LOG: "/x/log.jsonl" })).toBe("/h");
+});

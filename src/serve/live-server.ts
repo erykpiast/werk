@@ -140,6 +140,7 @@ export async function serve(options: ServeOptions): Promise<number> {
     // The start's own folder goes on the list and opens first, before the server accepts a connection
     // (#werk-write-watch-start). A project that another server holds ends the start.
     const added = await addProject(live.projects, options.folder, {
+      logPath: options.env.WERK_LOG,
       waitMs: 5000,
       onWait: (pid) =>
         options.err(

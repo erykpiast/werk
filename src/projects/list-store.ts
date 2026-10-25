@@ -12,9 +12,11 @@ import { parseFolders, serializeFolders } from "./list.ts";
 
 type Env = Record<string, string | undefined>;
 
-/** The per-user folder. WERK_HOME names another one, to run a second server on purpose. Tests run that way. */
+/** The per-user folder. WERK_HOME or WERK_LOG names another one, to run a second server on purpose. Tests run that way. */
 export function userHome(env: Env): string {
   if (env.WERK_HOME) return env.WERK_HOME;
+  // A second instance on purpose: its list and its lock sit beside the log it names (#werk-onelock).
+  if (env.WERK_LOG) return dirname(env.WERK_LOG);
   return join(env.XDG_CONFIG_HOME || join(homedir(), ".config"), "werk");
 }
 

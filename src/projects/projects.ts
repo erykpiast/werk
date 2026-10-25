@@ -82,7 +82,7 @@ export type OpenResult =
 export async function ensureContext(
   projects: Projects,
   folder: string,
-  options: Pick<OpenOptions, "waitMs" | "onWait"> = {},
+  options: Pick<OpenOptions, "waitMs" | "onWait" | "logPath"> = {},
 ): Promise<OpenResult> {
   const have = projects.contexts.get(folder);
   if (!folderExists(folder)) {
@@ -139,7 +139,10 @@ const hasGit = (folder: string) => existsSync(join(folder, ".git"));
 export async function addProject(
   projects: Projects,
   folder: string,
-  options: { init?: boolean } & Pick<OpenOptions, "waitMs" | "onWait"> = {},
+  options: { init?: boolean } & Pick<
+    OpenOptions,
+    "waitMs" | "onWait" | "logPath"
+  > = {},
 ): Promise<Added> {
   if (!folderExists(folder)) {
     return {
@@ -169,7 +172,10 @@ export async function addProject(
       };
     }
   }
-  writeStored(projects.home, withFolder(readStored(projects.home), real));
+  // The dev checkout is listed by the mode, never by the stored list (#werk-projects-dev-self).
+  if (real !== projects.dev) {
+    writeStored(projects.home, withFolder(readStored(projects.home), real));
+  }
   const opened = await ensureContext(projects, real, options);
   const entry = entries(projects).find((e) => e.folder === real);
   return {

@@ -3,7 +3,7 @@
  * Work that belongs to the project, such as agent turns, hangs on the context, so a switch of the
  * page never touches it (#werk-projects, #werk-projects-background).
  */
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { broadcast, type Clients } from "../serve/live-channel.ts";
 import { type Lock, takeLock } from "../serve/lock.ts";
 import { type LogWatch, watchLog } from "../serve/log-watch.ts";
@@ -36,6 +36,8 @@ export type OpenOptions = {
   /** How long to wait for a live holder of the project lock. */
   waitMs?: number;
   onWait?: (pid: number | null) => void;
+  /** Another log than the folder's own, from WERK_LOG. The lock sits beside it (#werk-onelock). */
+  logPath?: string;
   /** The port of the server, recorded in the lock for a second server that is refused. */
   port?: number;
 };
@@ -45,13 +47,18 @@ export async function openContext(
   folder: string,
   options: OpenOptions = {},
 ): Promise<Opened> {
-  const taken = await takeLock(projectLockPath(folder), options);
+  const logPath = options.logPath ?? logPathOf(folder);
+  const taken = await takeLock(
+    options.logPath
+      ? join(dirname(options.logPath), "serve.lock")
+      : projectLockPath(folder),
+    options,
+  );
   if (!taken.ok) return { ok: false, message: taken.message };
   const { lock } = taken;
   if (options.port) lock.setPort(options.port);
   const clients: Clients = new Set();
   try {
-    const logPath = logPathOf(folder);
     const watch = watchLog(logPath, () => broadcast(clients, "changed"));
     return {
       ok: true,
