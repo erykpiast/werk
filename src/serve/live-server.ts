@@ -4,7 +4,15 @@
  * A new evaluation swaps in the new request handler and never listens twice (#werk-hmr, #werk-hmr-swap).
  */
 import { randomBytes } from "node:crypto";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
+import { serverLockPath } from "../projects/list-store.ts";
+import {
+  addProject,
+  closeAll,
+  createProjects,
+  type Projects,
+  setPort,
+} from "../projects/projects.ts";
 import { type DevClient, startDevClient } from "./client-dev.ts";
 import { type ClientServer, noClient } from "./client-server.ts";
 import { createHandler, type Handler } from "./handler.ts";
@@ -14,9 +22,8 @@ import {
   upgradeHmr,
   wantsHmr,
 } from "./hmr-relay.ts";
-import { broadcast, type Clients } from "./live-channel.ts";
+import { broadcast } from "./live-channel.ts";
 import { type Lock, takeLock } from "./lock.ts";
-import { type LogWatch, watchLog } from "./log-watch.ts";
 import { createRoute } from "./routes.ts";
 import { judgeRequest } from "./trust.ts";
 
@@ -27,11 +34,11 @@ type Live = {
   server: Bun.Server<RelayData>;
   token: string;
   handler: Handler;
-  clients: Clients;
+  /** The projects of the server, each with its own context. */
+  projects: Projects;
   client: ClientServer;
   /** Vite, in dev. */
   dev?: DevClient;
-  watch: LogWatch;
   /** Long-lived child processes. A hot reload never starts a second set. */
   children: Set<Bun.Subprocess>;
   lock: Lock;
@@ -46,7 +53,11 @@ const LISTEN_RETRIES = 20;
 const LISTEN_RETRY_MS = 250;
 
 export type ServeOptions = {
-  logPath: string;
+  /** The folder of the project this start was run in. It goes on the list. */
+  folder: string;
+  /** The per-user folder: the stored list and the lock of the one server. */
+  home: string;
+  env: Record<string, string | undefined>;
   port: number;
   out: (text: string) => void;
   err: (text: string) => void;
@@ -56,21 +67,17 @@ export type ServeOptions = {
   parentPid?: number;
 };
 
-export function lockPathFor(logPath: string): string {
-  return join(dirname(logPath), "serve.lock");
-}
-
 function handlerFor(
-  live: Pick<Live, "token" | "clients" | "client">,
-  logPath: string,
+  live: Pick<Live, "token" | "projects" | "client">,
+  env: ServeOptions["env"],
 ) {
   return createHandler(
     live.token,
     createRoute({
-      logPath,
       token: live.token,
-      clients: live.clients,
+      projects: live.projects,
       client: live.client,
+      env,
     }),
   );
 }
@@ -103,14 +110,14 @@ async function listen(
 export async function serve(options: ServeOptions): Promise<number> {
   const existing = globals[KEY];
   if (existing) {
-    existing.handler = handlerFor(existing, options.logPath);
+    existing.handler = handlerFor(existing, options.env);
     options.err(
       `werk: hot reload: reusing the live server on port ${existing.server.port}`,
     );
     return existing.done;
   }
 
-  const taken = await takeLock(lockPathFor(options.logPath), {
+  const taken = await takeLock(serverLockPath(options.home), {
     onWait: (pid) =>
       options.err(
         `werk: waiting for ${pid === null ? "a lock" : `pid ${pid}`}`,
@@ -124,23 +131,35 @@ export async function serve(options: ServeOptions): Promise<number> {
 
   const live = {
     token: randomBytes(32).toString("hex"),
-    clients: new Set(),
+    // In dev mode the entry of werk's own checkout is added at each start, and never stored.
+    projects: createProjects(options.home, options.dev ? REPO : undefined),
     children: new Set(),
     lock,
   } as unknown as Live;
   try {
-    // The watch starts before the server accepts a connection (#werk-write-watch-start).
-    live.watch = watchLog(options.logPath, () =>
-      broadcast(live.clients, "changed"),
-    );
+    // The start's own folder goes on the list and opens first, before the server accepts a connection
+    // (#werk-write-watch-start). A project that another server holds ends the start.
+    const added = await addProject(live.projects, options.folder, {
+      waitMs: 5000,
+      onWait: (pid) =>
+        options.err(
+          `werk: waiting for ${pid === null ? "a lock" : `pid ${pid}`}`,
+        ),
+    });
+    if (!added.ok || added.locked !== undefined) {
+      options.err(added.ok ? (added.locked as string) : added.message);
+      closeAll(live.projects);
+      lock.release();
+      return 1;
+    }
     if (options.dev) {
       live.dev = await startDevClient({
         configFile: VITE_CONFIG,
-        onReload: () => broadcast(live.clients, "reload"),
+        onReload: () => reloadAll(live.projects),
       });
     }
     live.client = live.dev ?? noClient;
-    live.handler = handlerFor(live, options.logPath);
+    live.handler = handlerFor(live, options.env);
     live.server = await listen(options.port, async (req, server) => {
       const { dev } = live;
       if (dev && wantsHmr(req)) {
@@ -156,12 +175,14 @@ export async function serve(options: ServeOptions): Promise<number> {
       return live.handler(req);
     });
   } catch (error) {
-    live.watch?.close();
+    closeAll(live.projects);
     await live.dev?.close();
     lock.release();
     throw error;
   }
-  lock.setPort(live.server.port ?? 0);
+  const port = live.server.port ?? 0;
+  lock.setPort(port);
+  setPort(live.projects, port);
 
   let stop!: (code: number) => void;
   live.done = new Promise<number>((resolve) => {
@@ -170,13 +191,18 @@ export async function serve(options: ServeOptions): Promise<number> {
   const shutdown = () => {
     for (const child of live.children) child.kill();
     live.server.stop(true);
-    live.watch.close();
+    closeAll(live.projects);
     void live.dev?.close();
     lock.release();
     delete globals[KEY];
     stop(0);
   };
-  process.on("exit", () => lock.release());
+  process.on("exit", () => {
+    for (const context of live.projects.contexts.values()) {
+      context.lock.release();
+    }
+    lock.release();
+  });
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
   if (options.parentPid !== undefined) {
@@ -195,4 +221,11 @@ export async function serve(options: ServeOptions): Promise<number> {
     `werk: serving on http://127.0.0.1:${live.server.port} (pid ${process.pid})`,
   );
   return live.done;
+}
+
+/** Tells every page of every project to reload. */
+function reloadAll(projects: Projects): void {
+  for (const context of projects.contexts.values()) {
+    broadcast(context.clients, "reload");
+  }
 }

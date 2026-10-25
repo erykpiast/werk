@@ -29,4 +29,7 @@ export const PURE_FILES: readonly string[] = [
   "src/md/highlight.ts",
   "src/md/markdown.ts",
   "client/lib/draft.ts",
+  "src/projects/names.ts",
+  "src/projects/list.ts",
+  "client/lib/project-route.ts",
 ];

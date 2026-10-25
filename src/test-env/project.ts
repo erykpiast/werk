@@ -25,12 +25,21 @@ export type Project = {
   dir: string;
   /** The map log of the project. It does not exist until the first event. */
   logPath: string;
-  /** Runs a program in the project and waits for it. */
-  run(argv: string[], env?: Record<string, string>): Promise<RunResult>;
+  /** The per-user folder of this test: the stored project list and the lock of the one server. */
+  home: string;
+  /** Makes another git repository with an empty map at a path below the test's folder, and returns it. */
+  folder(...path: string[]): string;
+  /** Runs a program in the project, or in the folder that the third argument names, and waits for it. */
+  run(
+    argv: string[],
+    env?: Record<string, string>,
+    cwd?: string,
+  ): Promise<RunResult>;
   /** Starts a program in the project. The harness stops it when the test ends. */
   start(
     argv: string[],
     env?: Record<string, string>,
+    cwd?: string,
   ): Bun.Subprocess<"ignore", "pipe", "pipe">;
   /** The events of the map log, one per line. */
   events(): unknown[];
@@ -77,6 +86,7 @@ export function createProject(options: ProjectOptions = {}): Project {
   const dir = join(root, "project");
   const scriptPath = join(root, "script.json");
   const logPath = join(dir, ".werk", "log.jsonl");
+  const home = join(root, "home");
   const children = new Set<Bun.Subprocess>();
 
   try {
@@ -91,15 +101,26 @@ export function createProject(options: ProjectOptions = {}): Project {
     writeFileSync(scriptPath, JSON.stringify(script));
   if (options.script) install(options.script);
 
+  // WERK_OPEN names a program that opens no window, so no test starts a real browser.
   const envFor = (extra?: Record<string, string>) => ({
     ...cleanEnv(process.env),
     WERK_FAKE_SCRIPT: scriptPath,
+    WERK_HOME: home,
+    WERK_OPEN: "true",
     ...extra,
   });
 
-  const start: Project["start"] = (argv, env) => {
+  const folder: Project["folder"] = (...path) => {
+    const made = join(root, "folders", ...path);
+    mkdirSync(made, { recursive: true });
+    git(made, "init", "-q", "-b", "main");
+    mkdirSync(join(made, ".werk"));
+    return made;
+  };
+
+  const start: Project["start"] = (argv, env, cwd) => {
     const child = Bun.spawn(argv, {
-      cwd: dir,
+      cwd: cwd ?? dir,
       env: envFor(env),
       stdin: "ignore",
       stdout: "pipe",
@@ -110,8 +131,8 @@ export function createProject(options: ProjectOptions = {}): Project {
     return child;
   };
 
-  const run: Project["run"] = async (argv, env) => {
-    const child = start(argv, env);
+  const run: Project["run"] = async (argv, env, cwd) => {
+    const child = start(argv, env, cwd);
     const [stdout, stderr, code] = await Promise.all([
       new Response(child.stdout).text(),
       new Response(child.stderr).text(),
@@ -123,6 +144,8 @@ export function createProject(options: ProjectOptions = {}): Project {
   return {
     dir,
     logPath,
+    home,
+    folder,
     run,
     start,
     events: () =>

@@ -1,8 +1,10 @@
-// `serve` starts the map server under Bun's hot reload (#werk-cli-serve, #werk-hmr).
+// `serve` starts the one map server under Bun's hot reload, or adds its folder to the server that runs
+// (#werk-cli-serve, #werk-hmr, #werk-projects-one-process).
 import { join } from "node:path";
 import { parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
-import { logPathFor } from "../map/log-store.ts";
+import { userHome } from "../projects/list-store.ts";
+import { attachToRunning } from "../serve/attach.ts";
 import { serve } from "../serve/live-server.ts";
 
 const CLI = join(import.meta.dir, "..", "cli.ts");
@@ -34,13 +36,27 @@ registerVerb({
       );
       return 2;
     }
+    const home = userHome(env);
+    // The child of runHot has no need to look: its parent looked first.
+    if (env[PARENT_ENV] === undefined) {
+      const attached = await attachToRunning({
+        home,
+        folder: cwd,
+        env,
+        out,
+        err,
+      });
+      if (attached !== null) return attached;
+    }
     const parent = Number(env[PARENT_ENV]);
     // The child of runHot carries the marker, so it never starts a child of its own.
     if (!process.execArgv.includes("--hot") && env[PARENT_ENV] === undefined) {
       return await runHot(args, env);
     }
     return await serve({
-      logPath: logPathFor(cwd, env),
+      folder: cwd,
+      home,
+      env,
       port,
       dev: env.WERK_DEV === "1",
       out,

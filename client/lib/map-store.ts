@@ -5,6 +5,8 @@
  * A reload signal stashes the composer draft and reloads the page (#werk-client-reload).
  */
 
+import { apiOf } from "./project-route";
+
 /** What the server renders for the open card. The id is null for an empty map. */
 export type OpenView = { id: string | null; html?: string };
 
@@ -27,7 +29,8 @@ export type MapStore = {
   stop(): void;
 };
 
-export function createMapStore(deps: MapStoreDeps): MapStore {
+/** The store of one project. Every route it reads names the project (#werk-projects). */
+export function createMapStore(deps: MapStoreDeps, project: string): MapStore {
   let source: Source | undefined;
   let latest = 0;
 
@@ -35,7 +38,7 @@ export function createMapStore(deps: MapStoreDeps): MapStore {
   const refresh = async () => {
     const mine = ++latest;
     try {
-      const res = await deps.fetch("/api/open");
+      const res = await deps.fetch(apiOf(project, "/open"));
       if (!res.ok) return;
       const view = (await res.json()) as OpenView;
       if (mine === latest) deps.show(view);
@@ -47,7 +50,7 @@ export function createMapStore(deps: MapStoreDeps): MapStore {
   return {
     start() {
       if (source) return;
-      source = deps.connect("/api/live");
+      source = deps.connect(apiOf(project, "/live"));
       source.addEventListener("open", () => void refresh());
       source.addEventListener("changed", () => void refresh());
       source.addEventListener("reload", () => {

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { injectToken } from "./page-html.ts";
+import { injectToken, tokenOf } from "./page-html.ts";
 
 const META = (token: string) => `<meta name="werk-token" content="${token}">`;
 
@@ -27,4 +27,10 @@ test("a token that holds a quote cannot end the attribute", () => {
   const html = injectToken("<head></head>", 'a"><script>');
   expect(html).not.toContain('"><script>');
   expect(html).toContain("&#34;&#62;&#60;script&#62;");
+});
+
+test("the token of a page is read back, also when it held a quote", () => {
+  expect(tokenOf(injectToken("<head></head>", "abc"))).toBe("abc");
+  expect(tokenOf(injectToken("<head></head>", 'a"><b'))).toBe('a"><b');
+  expect(tokenOf("<p>no head</p>")).toBeNull();
 });
