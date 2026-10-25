@@ -56,7 +56,6 @@ test("add refuses bad input before it writes", async () => {
     ["add"],
     ["add", "a"],
     ["add", "a", "--title", "A", "--nope", "x"],
-    ["add", "a", "--title", "A", "--kind", "x"],
     ["add", "a", "--title", "A", "--status", "x"],
   ]) {
     expect((await werk(...args)).code).toBe(2);

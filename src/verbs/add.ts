@@ -1,20 +1,20 @@
-// `add` proposes a card, an option or a source as a ghost (#werk-cli-add, #werk-propose-new).
+// `add` proposes a card as a ghost (#werk-cli-add, #werk-propose-new).
 import { cardId, parseArgs } from "../cli/args.ts";
 import { registerVerb } from "../cli/registry.ts";
-import { KINDS, STATUSES } from "../map/fold.ts";
+import { STATUSES } from "../map/fold.ts";
 import { appendEvents, logPathFor } from "../map/log-store.ts";
 
 const USAGE =
-  'usage: add <id> --title "..." [--why "..."] [--body "..."] [--parent <id>] [--kind card|option|source] [--status open|proto]';
+  'usage: add <id> --title "..." [--why "..."] [--body "..."] [--parent <id>] [--status open|proto]';
 
 const TEXT_FLAGS = ["why", "body"] as const;
 
 registerVerb({
   name: "add",
-  summary: "Propose a card, an option or a source as a ghost",
+  summary: "Propose a card as a ghost",
   run: ({ args, cwd, env, out, err }) => {
     const parsed = parseArgs(args, {
-      flags: ["title", "parent", "kind", "status", ...TEXT_FLAGS],
+      flags: ["title", "parent", "status", ...TEXT_FLAGS],
       idFlags: ["parent"],
     });
     if (!parsed.ok) {
@@ -35,11 +35,6 @@ registerVerb({
       );
       return 1;
     }
-    const kind = flags.kind ?? "card";
-    if (!(KINDS as readonly string[]).includes(kind)) {
-      err(`werk: --kind must be one of ${KINDS.join(", ")}`);
-      return 2;
-    }
     if (!(STATUSES as readonly string[]).includes(status)) {
       err(`werk: --status must be open or proto`);
       return 2;
@@ -47,7 +42,7 @@ registerVerb({
     const event: Record<string, unknown> = {
       type: "node.proposed",
       id,
-      kind,
+      kind: "card",
       title: flags.title,
       status,
     };
