@@ -112,7 +112,9 @@ function tagRow(node: MapNode): string {
 /** The cards of the refines subtree below a card, ghosts included, in the order that the tree holds them. */
 function descendants(map: FoldedMap, id: string): string[] {
   const found: string[] = [];
-  for (const card of [id, ...found]) {
+  // `found` grows while the loop walks it, so grandchildren are visited too.
+  for (let i = -1; i < found.length; i++) {
+    const card = i < 0 ? id : found[i];
     for (const [child, parent] of map.parents) {
       if (parent === card) found.push(child);
     }

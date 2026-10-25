@@ -198,3 +198,23 @@ test("a tile of a card with a proposal carries the badge", () => {
     '<span class="tag tag-proposed">proposed</span>',
   );
 });
+
+test("the ✕ counts grandchildren in the cards that go", () => {
+  const map = build(
+    open("root"),
+    open("p", { parent: "root" }),
+    open("a", { parent: "p" }),
+    open("g", { parent: "a" }),
+  );
+  expect(page(map, "p")).toContain('data-card="p" data-cards="3"');
+});
+
+test("a tile of a card with a pending removal has a red badge", () => {
+  const map = build(open("root"), open("c", { parent: "root" }), {
+    type: "removal.proposed",
+    id: "c",
+  });
+  expect(page(map, "root")).toContain(
+    '<span class="tag tag-proposed tag-removal">proposed</span>',
+  );
+});

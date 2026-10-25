@@ -30,7 +30,8 @@ export function renderCardTile(
   const known = (ref: string) => map.nodes.has(ref);
   const meta = [`<span class="card-id">#${escapeHtml(node.id)}</span>`];
   if (hasProposal(node)) {
-    meta.push(`<span class="tag tag-proposed">proposed</span>`);
+    const kind = node.removal ? " tag-removal" : "";
+    meta.push(`<span class="tag tag-proposed${kind}">proposed</span>`);
   }
   const below = rollup ? cardsBelow(rollup) : 0;
   if (below > 0) meta.push(`<span class="meta-below">${below} below</span>`);
