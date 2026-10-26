@@ -13,28 +13,45 @@ When a decision changes, every card that rested on it turns **stale**. Nothing i
 
 ```mermaid
 flowchart LR
-    P([Person]) <-- talks --> A[Claude Code agent]
-    A -- appends events --> L[(log.jsonl<br/>append-only truth)]
+    subgraph PLAN["Plan: alignment, with a person"]
+        direction LR
+        P([Person]) <-- talks --> A[Claude Code agent]
+        A -- builds --> PR[Prototypes]
+        PR -- shown to --> P
+    end
+    A -- proposes cards --> L[(log.jsonl<br/>append-only truth)]
+    P -- accepts, rejects, reopens --> L
     L -- fold --> G[graph: cards + typed links]
     G --> M[Map]
     G --> B[Board of tickets]
     G --> F[Flow and measures]
-    P -- accepts, rejects, reopens --> L
-    B -- plan, build, validate --> X[Autonomous pipeline]
-    X -- builds code, proposes cards --> L
+    subgraph BUILD["Build: autonomous, no human waiting"]
+        direction LR
+        X[Claude builds tickets] -- production code --> C[(v0 code)]
+        X -- checks --> V[Validate against cards]
+    end
+    G -- decided cards + tickets --> X
+    X -. proposes map changes .-> L
 ```
 
 1. **The log is the truth.** Every change is an event in an append-only file.
 2. **The graph is derived.** Fold the log and you get cards and links. Delete the graph and it rebuilds.
-3. **The agent proposes, the person accepts.** A new card is a ghost until the person accepts it.
+3. **The agent proposes, the person accepts.** A new card is a ghost until the person accepts it. In the build phase the agent keeps proposing, and the build does not wait.
 4. **Links carry meaning.** `refines` is where a card sits. `depends_on` is what it needs. When a target is reopened, its dependents go stale.
 5. **Rejected options stay.** An alternative that was weighed and dropped is kept, with the reason.
 
-## Three stages
+## Two phases
 
-The tool works in a loop of three stages: **plan** (decisions on the map), **build**
-(tickets built by agents, in isolated branches, behind checks) and **validate** (held-out
-checks that a build satisfies the cards it cites). The board shows tickets moving through it.
+**Plan** is about getting alignment. The person talks with Claude and the agent builds
+prototypes to answer questions that talk cannot settle. Decisions land on the map as cards,
+and the person accepts them.
+
+**Build** is about letting Claude work on its own. It takes the decided cards, turns them
+into tickets and writes production code, in isolated branches and behind checks. It does not
+wait for the human. When a build learns something the map does not say, Claude proposes
+changes to the map. The person reviews those proposals when ready: the build is never blocked on them.
+
+The board shows tickets moving through the build phase.
 
 ![The board: tickets blocked, ready, building, merging, done](docs/screenshots/board.png)
 
