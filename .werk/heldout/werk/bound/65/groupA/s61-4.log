@@ -1,0 +1,35 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/groupA/s61-4.test.ts:
+[baseline coverage] exit 0
+baseline line: ok    100.00%  src/cli/card-id.ts
+[make test after deletion] exit 2 l) a discard and a new proposal keep the earlier notes, with one marker between old and new [15012.92ms]
+  ^ this test timed out after 15000ms.
+
+ 618 pass
+ 3 fail
+ 3 errors
+ 2202 expect() calls
+Ran 621 tests across 82 files. [107.59s]
+error: script "test" exited with code 1
+make: *** [test] Error 1
+
+17 |     // Keep only the imports and one trivial test: the rest of the unit tests are deleted.
+18 |     const imports = original.split("\n").filter((l) => l.startsWith("import ")).join("\n");
+19 |     writeFileSync(testFile, `${imports}\n\ntest("kept", () => { expect(1).toBe(1); });\n`);
+20 |     const t = sh(dir, ["make", "test"]);
+21 |     console.log("[make test after deletion] exit", t.code, t.out.slice(-300));
+22 |     expect(t.code).toBe(0);
+                        ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 2
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-VqOAUf/.werk-heldout/groupA/s61-4.test.ts:22:20)
+(fail) 61.4 coverage gate fails below 90% on one pure file and passes again once restored [208839.99ms]
+
+ 0 pass
+ 1 fail
+ 2 expect() calls
+Ran 1 test across 1 file. [209.20s]

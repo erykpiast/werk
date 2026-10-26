@@ -1,0 +1,76 @@
+import { test, expect, afterEach } from 'bun:test'
+import { project, type P } from './helpers.ts'
+
+let p: P
+afterEach(() => p?.cleanup())
+const lines = (s: string) => s.split('\n').map((l) => l.trim())
+
+test('66.1 An agent removes a bad branch and the log keeps its history', () => {
+  p = project()
+  p.card('Storage'); p.card('Cache', { parent: 'Storage' }); p.card('Index', { parent: 'Storage' }); p.card('Eviction', { parent: 'Cache' })
+  const before = p.logLines()
+  p.ok(['remove', 'Cache', '--actor', 'you'])
+  expect(p.ok(['show', 'Cache'])).toMatch(/state: removed/)
+  expect(p.ok(['show', 'Eviction'])).toMatch(/state: removed/)
+  const kids = p.childrenOf('Storage')
+  expect(kids).not.toContain('Cache'); expect(kids).not.toContain('Eviction')
+  expect(kids).toContain('Index')
+  expect(p.ok(['removed'])).toMatch(/#Cache\b/)
+  const after = p.logLines()
+  expect(after.length).toBe(before.length + 1)
+  expect(after.slice(0, before.length)).toEqual(before)
+})
+
+test('66.2 A person restores a removed card and its subtree with their links', () => {
+  p = project()
+  p.card('Storage'); p.card('Memory budget'); p.card('Cache', { parent: 'Storage' }); p.card('Eviction', { parent: 'Cache' })
+  p.ok(['link', 'Cache', 'Memory budget', '--type', 'depends_on'])
+  p.ok(['remove', 'Cache', '--actor', 'you'])
+  p.ok(['restore', 'Cache'])
+  const show = p.ok(['show', 'Cache'])
+  expect(show).not.toMatch(/state: removed/)
+  expect(p.childrenOf('Storage')).toContain('Cache')
+  expect(p.childrenOf('Cache')).toContain('Eviction')
+  expect(show).toContain('link: depends_on -> #Memory budget')
+  expect(p.ok(['removed'])).not.toMatch(/#Cache\b/)
+})
+
+test('66.3 An agent removes a bad parent but keeps its good children', () => {
+  p = project()
+  p.card('Storage'); p.card('Bad layer', { parent: 'Storage' }); p.card('Write path', { parent: 'Bad layer' }); p.card('Read path', { parent: 'Bad layer' })
+  p.ok(['remove', 'Bad layer', '--actor', 'you', '--reparent'])
+  expect(p.ok(['show', 'Bad layer'])).toMatch(/state: removed/)
+  const kids = p.childrenOf('Storage')
+  expect(kids).toContain('Write path'); expect(kids).toContain('Read path')
+  expect(p.ok(['show', 'Write path'])).not.toMatch(/state: removed/)
+  expect(p.ok(['show', 'Read path'])).not.toMatch(/state: removed/)
+})
+
+test('66.4 An agent finds the open cards it can work on in a subtree', () => {
+  p = project()
+  p.decided('Engine'); p.decided('Vendor')
+  p.card('Storage', { status: 'open' })
+  for (const c of ['Cache', 'Index', 'Backup', 'Quota']) p.card(c, { parent: 'Storage', status: 'open' })
+  p.ok(['link', 'Backup', 'Engine', '--type', 'depends_on'])
+  p.ok(['link', 'Quota', 'Vendor', '--type', 'depends_on'])
+  p.ok(['reopen', 'Engine', '--reason', 'postponed', '--why', 'later'])
+  p.ok(['reopen', 'Vendor', '--reason', 'rejected', '--why', 'wrong'])
+  expect(p.graph().marks['Backup']?.mark).toBe('paused')
+  expect(p.graph().marks['Quota']?.mark).toBe('stale')
+  p.card('Outside', { status: 'open' })
+  const out = lines(p.ok(['find', 'Storage']))
+  const has = (id: string) => out.some((l) => l.includes(`#${id} `) || l.endsWith(`#${id}`))
+  expect(has('Cache')).toBe(true); expect(has('Index')).toBe(true)
+  expect(has('Backup')).toBe(false); expect(has('Quota')).toBe(false); expect(has('Outside')).toBe(false)
+})
+
+test('66.5 A removed branch drops out of the find result and comes back after a restore', () => {
+  p = project()
+  p.card('Storage'); p.card('Cache', { parent: 'Storage', status: 'open' }); p.card('Index', { parent: 'Storage', status: 'open' })
+  p.ok(['remove', 'Cache', '--actor', 'you'])
+  let out = p.ok(['find', 'Storage'])
+  expect(out).toMatch(/#Index\b/); expect(out).not.toMatch(/#Cache\b/)
+  p.ok(['restore', 'Cache'])
+  out = p.ok(['find', 'Storage'])
+  expect(out).toMatch(/#Index\b/); expect(out).toMatch(/#Cache\b/)
+})

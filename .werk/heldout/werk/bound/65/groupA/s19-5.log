@@ -1,0 +1,60 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/groupA/s19-5.test.ts:
+[checks #1] exit 0  restore names the removal: a card that went out with another, or that sits under one still out, is refused [7165.46ms]
+
+ 623 pass
+ 0 fail
+ 2210 expect() calls
+Ran 623 tests across 82 files. [79.82s]
+
+[checks #2] exit 2 (pass) a read does not fail when its fold time cannot be written [257.93ms]
+(pass) coverage gate > fails a listed file under 90% of lines [1574.98ms]
+(pass) coverage gate > fails a listed file with no own test file and names the missing test file [857.89ms]
+(pass) coverage gate > fails a listed file whose own tests fail [1880.29ms]
+(pass) coverage gate > fails a listed file that does not exist [318.52ms]
+(pass) coverage gate > fails when the project has no list of pure files [467.27ms]
+(pass) judge > fails a file below the threshold, on its own numbers [0.04ms]
+(pass) judge > fails a file with no own test file at 0% and names the missing test file [0.02ms]
+(pass) judge > fails a file that its own test run never loaded at 0% [0.06ms]
+(pass) judge > fails a file whose own tests fail, whatever its coverage [0.02ms]
+(pass) a step applies an event that passes and returns the rule of one that fails [0.08ms]
+(pass) a failure line names its ticket, check and field, and a set failure names the ticket set [0.07ms]
+(pass) the count line counts tickets, own-check failures, failures, decided cards and stories [0.05ms]
+(pass) the report is the failure lines, then the count line [0.03ms]
+(pass) cards-cited lists every card no ticket cites, in one failure of the set [0.04ms]
+(pass) stories lists the missing numbers and the unknown numbers as two failures of the set [0.02ms]
+(pass) a blocker cycle is one failure that names every ticket on it, and a ticket that blocks itself is a cycle [0.05ms]
+(pass) an edit that leads outside the project fails and writes nothing [607.03ms]
+(pass) an edit through a link that leads outside the project fails and writes nothing [287.46ms]
++   ".claude/agents/test-scope.md: a copy, not a link; replace it with a link to src/agent/subagents/test-scope.md",
+[checks #3] exit 2 .30ms]
+  ^ this test timed out after 15000ms.
+
+ 622 pass
+ 1 fail
+ 1 error
+ 2208 expect() calls
+Ran 623 tests across 82 files. [94.26s]
+error: script "test" exited with code 1
+make: *** [test] Error 1
+
+26 | 
+27 |     rmSync(link);
+28 |     symlinkSync(target, link);
+29 |     const r3 = sh(dir, ["make", "test"]);
+30 |     console.log("[checks #3] exit", r3.code, r3.out.slice(-200));
+31 |     expect(r3.code).toBe(0);
+                         ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 2
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-VqOAUf/.werk-heldout/groupA/s19-5.test.ts:31:21)
+(fail) 19.5 a copy that replaces a subagent link fails the checks [259034.83ms]
+
+ 0 pass
+ 1 fail
+ 6 expect() calls
+Ran 1 test across 1 file. [259.47s]

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline — decision map</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3240; --line2:#3a4557;
+    --ink:#e6edf3; --dim:#8b98a8; --faint:#5d6b7d;
+    --decided:#3fb950; --open:#d29922; --proto:#58a6ff; --finding:#8b949e; --stale:#f85149;
+    --src:#a371f7; --review:#d29922;
+    --qYou:#8a6d1f; --qMe:#2d4a5c;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);
+    font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;cursor:pointer}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;
+    background:#0b0f14;padding:1px 4px;border-radius:3px}
+
+  header{position:sticky;top:0;z-index:30;background:rgba(13,17,23,.95);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);padding:13px 30px 0}
+  .crumbs{display:flex;align-items:center;gap:6px;font-size:12.5px;flex-wrap:wrap;min-height:22px}
+  .crumb{background:none;border:0;padding:2px 0;color:var(--dim);border-bottom:1px solid transparent}
+  .crumb:hover{color:var(--ink);border-bottom-color:var(--line2)}
+  .crumb.now{color:var(--ink);font-weight:600;cursor:default}
+  .sep{color:var(--faint)}
+  .lvl{margin-left:auto;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .hbar{display:flex;align-items:center;gap:16px;padding:11px 0 13px;flex-wrap:wrap}
+  .counts{display:flex;gap:16px;font-size:12px;color:var(--dim)}
+  .counts span{display:flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .dot.decided{background:var(--decided)} .dot.open{background:var(--open)}
+  .dot.proto{background:var(--proto)} .dot.finding{background:var(--finding)}
+  .dot.stale{background:var(--stale)} .dot.src{background:var(--src)}
+  .btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 11px;
+    font-size:12px;color:var(--dim)}
+  .btn:hover{color:var(--ink);border-color:var(--line2)}
+  .btn.r{margin-left:auto}
+  .btn.srcbtn{color:#c9a6ff;border-color:#3b2a56}
+  .btn.srcbtn:hover{border-color:#5b3f85}
+
+  .alarm{border-radius:7px;padding:11px 14px;margin:0 0 18px;font-size:12.5px}
+  .alarm.red{background:#2a0f0e;border:1px solid #5d2320;border-left:3px solid var(--stale);color:#ffbdb6}
+  .alarm.amber{background:#241c08;border:1px solid #4a3a13;border-left:3px solid var(--review);color:#f0d59a}
+  .alarm b{color:#fff} .alarm .list{margin-top:6px;font-size:12px;opacity:.85}
+
+  main{padding:22px 30px 110px;max-width:1560px}
+
+  /* ---------- hero ---------- */
+  .hero{border:1px solid var(--line);border-left:3px solid var(--line2);border-radius:10px;
+    background:var(--panel);padding:22px 24px;margin-bottom:34px}
+  .hero.decided{border-left-color:var(--decided)} .hero.open{border-left-color:var(--open)}
+  .hero.proto{border-left-color:var(--proto)} .hero.finding{border-left-color:var(--finding)}
+  .hero.stale{border-left-color:var(--stale);background:#1c1114}
+  .hero.source{border-left-color:var(--src);background:#171425}
+  .hero h1{margin:0 0 10px;line-height:1.25;font-weight:620;letter-spacing:-.02em}
+  .hero.d0 h1{font-size:26px} .hero.d1 h1{font-size:21px}
+  .hero.d2 h1{font-size:18px} .hero.d3 h1{font-size:17px}
+  .hero .why{margin:0 0 15px;font-size:14px;color:var(--dim);line-height:1.5;max-width:78ch}
+  .hbadges{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+
+  .cols{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:26px;
+    border-top:1px solid var(--line);padding-top:19px}
+  @media (max-width:1000px){.cols{grid-template-columns:1fr;gap:0}}
+  .one{border-top:1px solid var(--line);padding-top:19px}
+
+  .row{margin-bottom:21px}
+  .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.085em;color:var(--faint);
+    margin-bottom:9px;font-weight:650;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .k em{font-style:normal;text-transform:none;letter-spacing:0;color:#3f4b5c;font-size:10.5px;font-weight:400}
+  .v{font-size:13.5px;white-space:pre-wrap;line-height:1.6;max-width:76ch}
+
+  .said{border-left:2px solid var(--qMe);padding:3px 0 3px 13px;margin-bottom:14px}
+  .said.you{border-left-color:var(--qYou)}
+  .said .q{font-size:13px;line-height:1.6;color:#dbe4ee}
+  .said .a{font-size:10.5px;color:var(--faint);margin-top:6px;letter-spacing:.02em}
+  .said.you .a{color:#9c8347}
+
+  /* evidence, now a link to a node */
+  .ev{background:#12101c;border:1px solid #2c2340;border-radius:7px;padding:11px 12px;margin-bottom:8px;
+    width:100%;text-align:left;display:block}
+  .ev:hover{border-color:#453466;background:#171426}
+  .ev.disputed{border-color:#4a3a13;background:#1f1a0d}
+  .ev .t{font-size:12.5px;color:#c9a6ff;font-weight:530;line-height:1.45}
+  .ev .f{font-size:12.5px;color:var(--dim);margin-top:7px;line-height:1.55}
+  .ev .f b{color:#a8c7fa;font-weight:650;font-variant-numeric:tabular-nums}
+  .ev .f i{color:#c3cedb;font-style:italic}
+  .ev .n{font-size:10.5px;color:#6b5b8a;margin-top:8px;display:flex;justify-content:space-between;gap:10px}
+
+  .dep{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;
+    background:#101720;border:1px solid var(--line);border-radius:6px;padding:8px 10px;
+    font-size:12.5px;color:var(--dim);margin-bottom:5px}
+  .dep:hover{color:var(--ink);border-color:var(--line2)}
+  .dep .g{color:var(--faint);font-size:10.5px;white-space:nowrap}
+  .dep.stale{border-color:#5d2320;background:#1d1113;color:#ffbdb6}
+  .dep.review{border-color:#4a3a13;background:#1f1a0d;color:#f0d59a}
+
+  .alt{background:#101720;border:1px solid var(--line);border-radius:7px;padding:10px 11px;margin-bottom:7px}
+  .alt .t{font-size:12.5px;margin-bottom:4px} .alt .w{font-size:11.5px;color:var(--faint);margin-bottom:8px}
+  .alt button{background:#16212f;border:1px solid #24405f;color:#79b8ff;border-radius:4px;padding:3px 9px;font-size:11px}
+  .alt button:hover{background:#1b2a3d}
+
+  .danger{background:#241110;border:1px solid #5d2320;color:#ff9d95;border-radius:7px;
+    padding:9px 13px;font-size:12.5px;width:100%}
+  .danger:hover{background:#2e1614}
+  .warn{background:#241c08;border:1px solid #4a3a13;color:#f0d59a;border-radius:7px;
+    padding:9px 13px;font-size:12.5px;width:100%}
+  .warn:hover{background:#2e2309}
+  .out{display:inline-block;background:#12101c;border:1px solid #2c2340;color:#c9a6ff;
+    border-radius:6px;padding:7px 12px;font-size:12.5px;text-decoration:none}
+  .out:hover{border-color:#5b3f85}
+
+  .composer{display:flex;gap:6px}
+  .composer input{flex:1;background:#0b0f14;border:1px solid var(--line);border-radius:6px;
+    padding:9px 11px;color:var(--dim);font:inherit;font-size:12.5px}
+  .composer button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:0 13px;color:var(--faint)}
+  .stub{font-size:11.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+
+  /* ---------- children ---------- */
+  .csec{border-top:1px solid var(--line);padding-top:20px}
+  .ctitle{font-size:10.5px;text-transform:uppercase;letter-spacing:.085em;color:var(--faint);
+    font-weight:650;margin-bottom:13px}
+  .grid{display:grid;gap:10px}
+  .grid.g1{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+  .grid.g2{grid-template-columns:repeat(auto-fill,minmax(370px,1fr))}
+  .grid.g3{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .grid.gs{grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-left-width:3px;border-radius:8px;
+    padding:14px 15px;text-align:left;width:100%;position:relative}
+  .card:hover{background:var(--panel2);border-color:var(--line2)}
+  .card.decided{border-left-color:var(--decided)} .card.open{border-left-color:var(--open)}
+  .card.proto{border-left-color:var(--proto)} .card.finding{border-left-color:var(--finding);opacity:.78}
+  .card.stale{border-left-color:var(--stale)!important;background:#1d1113}
+  .card.srccard{border-left-color:var(--src);background:#141221}
+  .card.srccard:hover{background:#191527}
+  .card h4{margin:0 30px 7px 0;font-size:14px;font-weight:570;line-height:1.38}
+  .card .why{margin:0 0 11px;font-size:12.5px;color:var(--dim);line-height:1.45}
+  .chev{position:absolute;top:13px;right:14px;color:#39445a;font-size:14px}
+  .card:hover .chev{color:var(--dim)}
+  .qmini{border-left:2px solid var(--qYou);padding:1px 0 1px 11px;margin:0 0 11px;
+    font-size:12px;color:#c4cfdb;line-height:1.5}
+  .qmini.me{border-left-color:var(--qMe)}
+  .qmini .who{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--faint);margin-top:5px}
+  .rollup{display:flex;height:5px;border-radius:3px;overflow:hidden;background:#0b0f14;margin:0 0 9px}
+  .rollup i{display:block;height:100%}
+  .cfoot{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--faint);flex-wrap:wrap}
+  .tag{font-size:10px;padding:1px 5px;border-radius:3px;border:1px solid var(--line);
+    color:var(--faint);white-space:nowrap}
+  .tag.you{color:#e3b341;border-color:#4a3a13;background:#241c08}
+  .tag.me{color:#7ee08a;border-color:#1c3d24;background:#0c1f12}
+  .tag.proto{color:#79b8ff;border-color:#1f3a5f;background:#0c1b2e}
+  .tag.nobasis{color:#ff8a80;border-color:#4d1f1c;background:#260f0e}
+  .tag.staleT{color:#ff8a80;border-color:#5d2320;background:#2a0f0e}
+  .tag.reviewT{color:#f0d59a;border-color:#4a3a13;background:#241c08}
+  .tag.srcT{color:#c9a6ff;border-color:#3b2a56;background:#18142a}
+  .tag.hot{color:#c9a6ff;border-color:#4b3a70;background:#1d1730}
+  .proof{margin-left:auto;color:#4c5a6e;white-space:nowrap}
+
+  .add{background:none;border:1px dashed var(--line2);border-radius:8px;color:var(--faint);
+    padding:15px;font-size:12.5px;width:100%;text-align:center}
+  .add:hover{color:var(--ink);border-color:#5b6a80;background:#12171f}
+  .leaf{font-size:12.5px;color:var(--faint);margin-bottom:11px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="crumbs" id="crumbs"></div>
+  <div class="hbar">
+    <div class="counts" id="counts"></div>
+    <button class="btn r srcbtn" id="srcs">Sources</button>
+    <button class="btn" id="up">&uarr; up</button>
+    <button class="btn" id="reset">Reset flags</button>
+  </div>
+</header>
+
+<main>
+  <div id="alarm"></div>
+  <div id="hero"></div>
+  <div id="kids"></div>
+</main>
+
+<script>
+/* =====================================================================
+   NODES        card | source
+   EDGES        refines (p)          the level tree
+                depends_on (dep)    propagates STALE, reverse closure
+                supported_by (ev)   points at a source node. Flags only.
+                alternative_to(alt) rejected options, kept forever
+   One view = one node. Its full detail on top, its children below.
+   ===================================================================== */
+
+/* ---------------- source nodes: cited by many cards ---------------- */
+const SRC = [
+{id:"specbench",t:"SpecBench: Measuring Reward Hacking in Long-Horizon Coding Agents",
+ u:"https://arxiv.org/abs/2605.21384",kind:"source",tier:"benchmark",
+ f:"<b>Every model saturates the visible test suite on every task.</b> The reward-hacking gap grows <b>28 percentage points per tenfold increase in code size</b>. Weaker models show larger gaps. The most common exploit is feature isolation: each feature works alone and they fail to share state. The search algorithm matters less than the other factors."},
+{id:"verifhorizon",t:"The Verification Horizon: No Silver Bullet for Coding Agent Rewards",
+ u:"https://arxiv.org/pdf/2606.26300",kind:"source",tier:"paper",
+ f:"Argues dynamic, co-evolving verification is essential. Shows <i>agentic quality judges plus behaviour monitoring</i> reduce reward hacking sharply."},
+{id:"cmu",t:"Carnegie Mellon study of 807 projects, via the agentic-SDLC guides",
+ u:"https://www.coderabbit.ai/guides/agentic-sdlc",kind:"source",tier:"study",
+ f:"<b>807 open-source projects</b> using SonarQube: a velocity increase that <b>disappeared by month three</b>, with code analysis warnings up <b>30%</b> and complexity up <b>41%</b>. DORA calls the same effect the verification tax: time saved writing code is re-spent auditing it."},
+{id:"sdd3",t:"Böckeler — Understanding Spec-Driven Development: Kiro, spec-kit, Tessl",
+ u:"https://www.martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html",kind:"source",tier:"practitioner",
+ f:"She ran Kiro on a small bug fix and received <b>4 user stories and 16 acceptance criteria</b>. On spec-kit for a mid-size feature: it generated so much repetitive Markdown that she <b>never finished the implementation</b>, and she would rather review code than review those files. Overhead scales poorly downward."},
+{id:"ralph",t:"Mastering Ralph loops — LinearB / Geoffrey Huntley",
+ u:"https://linearb.io/blog/ralph-loop-agentic-engineering-geoffrey-huntley",kind:"source",tier:"practitioner",
+ f:"A coding agent inside a plain <code>while</code> loop. Each pass starts a fresh agent with a clean context; progress accumulates in files and git. Huntley built a working language and compiler in one unattended run for about <b>$297</b>. At a Y Combinator hackathon a Ralph loop produced <b>1,100 commits across 6 repositories overnight</b>. The only truth is the exit code of an external command."},
+{id:"tdp",t:"Task-Decoupled Planning, via the workflow-optimisation survey",
+ u:"https://arxiv.org/html/2603.22386v1",kind:"source",tier:"survey",
+ f:"Decomposes a task into a DAG of sub-goals, each with a <b>scoped context</b> isolating its history from the global context. Reported token reductions up to <b>82%</b>. Forces one constraint: nodes must be idempotent so a retry cannot corrupt state."},
+{id:"langchain",t:"Introducing Rubrics for DeepAgents — LangChain",
+ u:"https://www.langchain.com/blog/introducing-rubrics-for-deepagents",kind:"source",tier:"implementation",
+ f:"A working reference for the loop exit gate: the agent self-evaluates and iterates until every criterion passes or hits a configured cap, and a <b>separate grader sub-agent</b> reasons over the full transcript and returns per-criterion feedback."},
+{id:"openaievals",t:"Testing Agent Skills Systematically with Evals — OpenAI",
+ u:"https://developers.openai.com/blog/eval-skills",kind:"source",tier:"guide",
+ f:"Start from a <b>checkable definition of done</b>. Write deterministic checks first; add a graded rubric pass only where deterministic rules cannot reach. Coverage grows from real incidents: <b>every manual fix is a signal to turn into a test</b>."},
+{id:"sica",t:"A Self-Improving Coding Agent — arXiv 2504.15228",
+ u:"https://arxiv.org/pdf/2504.15228",kind:"source",tier:"paper",
+ f:"Includes a <b>system overseer</b> that monitors execution traces in real time and has authority to <b>cancel agents that stop making progress or clearly deviate — after at least one warning attempt</b>."},
+{id:"dgm",t:"Darwin Gödel Machine — arXiv 2505.22954",
+ u:"https://arxiv.org/pdf/2505.22954",kind:"source",tier:"paper",
+ f:"A separate model diagnoses improvement opportunities from the chosen agent's evaluation logs and passes them to the coding agent. The extracted problem description and improvement suggestion <b>become the agent's self-modification task</b>."},
+{id:"clarifygpt",t:"ClarifyGPT — ACM Proceedings on Software Engineering",
+ u:"https://dl.acm.org/doi/10.1145/3660810",kind:"source",tier:"paper",
+ f:"Detects ambiguity by a <b>code consistency check</b>: sample several solutions, compare the implementations to locate the ambiguity, then generate questions targeted at the divergence points only. GPT-4 pass@1 on MBPP-sanitized rose from <b>70.96% to 80.80%</b>. Across five benchmarks: GPT-4 <b>62.43% → 69.60%</b>, ChatGPT <b>54.32% → 62.37%</b>."},
+{id:"clarifybench",t:"ClarifyCodeBench — arXiv 2607.00711",
+ u:"https://arxiv.org/pdf/2607.00711",kind:"source",tier:"benchmark",
+ f:"Evaluates clarification-question effectiveness across ambiguity types. Its protocol is a useful design constraint: the model must either output code <b>or ask exactly one clarification question</b>."},
+{id:"coshop",t:"Agents should help users construct preferences, not just elicit them — arXiv 2606.30863",
+ u:"https://arxiv.org/pdf/2606.30863",kind:"source",tier:"paper",
+ f:"Much agent research assumes the user already knows what they want. On their CoShop benchmark <b>no agent exceeded 56% accuracy after five turns of dialogue</b>. Their human study: showing items that vary along one feature built a preference more reliably than explaining the feature. Rules: variants diverse along the dimension in question, cap the set, short rationale each, explicit “I do not care”."},
+{id:"care",t:"CARE: Collaborative Agent Reasoning Engineering — arXiv 2604.28043",
+ u:"https://arxiv.org/pdf/2604.28043",kind:"source",tier:"paper",
+ f:"Required helper-agent capabilities: summarise intent accurately and <b>introduce no new requirements</b>; ask structured, phase-aligned questions when information is missing; propose <b>concrete revision diffs</b> the human can accept, modify, or reject; reuse earlier artifacts so a failed review gate does not re-run elicitation from scratch."},
+{id:"decisionmd",t:"decision — a portable DECISION.md from preference elicitation",
+ u:"https://github.com/selinayfilizp/decision",kind:"source",tier:"tool",
+ f:"Captures how you decide, not what to build. When the agent hits an uncovered trade-off it detects the gap, flags the specific trade-off with concrete options, captures the answer as a new rule, and updates the profile <b>so it never asks the same question type again</b>."},
+{id:"ibis",t:"Dialogue Mapping and IBIS — Kunz & Rittel, Conklin",
+ u:"https://www.argumentree.com/what-is/dialogue-mapping/",kind:"source",tier:"foundational",
+ f:"Introduced in <b>1970</b> to capture the reasoning behind decisions on hard planning problems. The notation is a grammar, not a set of node types: Questions respond to Ideas, Ideas respond to Questions, Arguments respond to Ideas. Two properties matter: the grammar is <b>deliberately tiny</b> so a facilitator can keep pace with live conversation, and <i>the map, not the transcript, is the record of what the conversation established</i>."},
+{id:"convtree",t:"Conversation Tree Architecture — arXiv 2603.21278",
+ u:"https://arxiv.org/abs/2603.21278",kind:"source",tier:"paper",
+ f:"Flat append-only chat accumulates all context in one unbounded window, so topically distinct threads bleed into each other and degrade response quality. They call it <b>logical context poisoning</b>. Their framework: a tree of <b>context-isolated nodes</b>, each with its own local window, with rules for how context flows downstream on branch creation and upstream on deletion. Their stated gap: <i>no mainstream LLM interface lets users manage context hierarchically.</i>"},
+{id:"grokers",t:"Grokers: write-time intelligence over typed knowledge graphs — arXiv 2606.00050",
+ u:"https://arxiv.org/pdf/2606.00050",kind:"source",tier:"paper",
+ f:"Let v be modified. S(v) = {u | there is a path u ⇝ v via <code>depends_on</code>}. Mark all of S(v) stale, reprocess in valid topological order, and no node is stale. Nodes outside S(v) are unaffected. Cost <b>O(|S(v)|)</b>. Framed explicitly as <i>the build-system model applied to semantic comprehension</i>."},
+{id:"temporal",t:"Temporal Validity in Retrieval Memory — arXiv 2606.26511",
+ u:"https://arxiv.org/pdf/2606.26511",kind:"source",tier:"paper",
+ f:"On an invalidated-only split, <b>single-hop scoring captures only 6–11% of the chain, regardless of chain length</b>, because a single-hop judgement cannot see that an upstream update invalidated a node two or three hops away. Also: keep the model off the read path — a deterministic superseded-row filter runs at about <b>2.1s</b> against <b>16–18s</b> for model reranking."},
+{id:"tms",t:"Problem Solving and Truth Maintenance Systems",
+ u:"https://cis.temple.edu/~ingargio/cis587/readings/tms.html",kind:"source",tier:"foundational",
+ f:"The classical ancestor, <b>1979</b>. A sentence's justification records which assumptions must change to invalidate it. In a JTMS, changing an assumption means relabelling nodes of a dependency network, and switching between alternative assumption sets <i>may lead to considerable work</i>."},
+{id:"sensemaking",t:"Guided Sensemaking: Agents in Collaborative Deliberation — arXiv 2606.02260",
+ u:"https://arxiv.org/pdf/2606.02260",kind:"source",tier:"paper",
+ f:"Ito et al. keep conversation state in an IBIS tree and inject facilitation messages: more comprehensive discussion, higher satisfaction. Nomura et al.: humans brainstorming with IBIS-based agents produced <b>more ideas per person</b> and reported <b>less hesitation to contribute</b>. Cites Krakauer's split: a <b>complementary</b> cognitive artifact coaches users toward internalising the mental model; a <b>competitive</b> one performs the task and transfers no skill."},
+{id:"copilotlinear",t:"Copilot cloud agent for Linear — generally available",
+ u:"https://github.blog/changelog/2026-07-23-copilot-cloud-agent-for-linear-is-now-generally-available/",kind:"source",tier:"product",
+ f:"GA on <b>23 July 2026</b>. Assign a Linear issue to the agent; it works in its own environment, opens a draft pull request, and streams progress into the Linear activity timeline. GA added model selection, branch control, and mid-task steering by mentioning the agent in a comment."},
+{id:"ghlinear",t:"Integrate coding agent with Linear — GitHub Docs",
+ u:"https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/integrate-coding-agent-with-linear",kind:"source",tier:"docs",
+ f:"Linear's agent platform lets you delegate an issue to Cursor, Codex, Copilot, or Devin by assignment or mention. Triage rules can delegate with <b>no human involved</b>. The agent captures the entire issue description and comments as context, and that context is stored in the pull request."},
+{id:"archify",t:"Archify — architecture diagrams as an agent skill",
+ u:"https://www.coddykit.com/pages/blog-detail?id=513039&slug=archify-the-open-source-ai-agent-skill-with-32-500-github-stars-that-turns-code-",kind:"source",tier:"tool",
+ f:"The agent emits a <b>typed JSON intermediate representation</b>; a deterministic compiler renders it to self-contained HTML and SVG with validation. <b>The agent never draws pixels.</b> Every node, edge, and label is explicitly defined."},
+{id:"gradualui",t:"Gradual Generation of User Interfaces — arXiv 2601.17975",
+ u:"https://arxiv.org/pdf/2601.17975",kind:"source",tier:"paper",
+ f:"Studies intermediate user interfaces as a way to organise sets of customisations, rather than generating a final interface in one step. Cites the Ink &amp; Switch malleable-software essay alongside Lovable and Claude Artifacts."},
+];
+
+/* ---------------- card nodes ---------------- */
+const CARDS = [
+{id:"root",p:null,t:"We build and fix software with agents in one repeating pipeline.",
+ s:"decided",who:"you",
+ why:"Six steps that feed back into each other. Eryk brings judgement and drive; Claude brings knowledge and speed.",
+ d:"Agreed 2026-09-01.\n\nSix steps: intent, options, build, validate, ship, measure. Step 6 opens the next step 1. Everything below refines this one statement.",
+ say:[{w:"you",q:"Let’s design my personal software development pipeline where me and you create features and fix bugs in different software projects in a way that uses best features of each of us. I’m good at judgement and I have drive and motivation. You have access to endless knowledge resources and can very quickly write code. I see the synergy here.",a:"Opening message"},
+  {w:"you",q:"That means these steps above are themselves a loop.",a:"Opening message, after listing the six values"},
+  {w:"you",q:"The foundations to build on top are there but we don’t need to be limited by what’s today in the skills directory or even what Claude Code is about (it’s your wrapper at most, you’re more). Open mind!",a:"Opening message"},
+  {w:"me",q:"Your six steps are right. The part that is missing is the thing that carries state between them. Skills today are stateless prompts. Each one starts from nothing. That is why you must repeat yourself.",a:"My first reply"}]},
+
+{id:"tracker",p:"root",t:"State lives in an external issue tracker",
+ why:"Linear for work, GitHub Issues for side projects. The record outlives the branch and you read it on a phone.",
+ s:"decided",who:"you",dep:["root"],ev:["copilotlinear"],
+ d:"Gives three things a local folder cannot: the record outlives the branch, you read it on a phone, and step 6 can query across every past work item to find patterns.",
+ say:[{w:"me",q:"Where should the work-item folder live?",a:"My question — you rejected it twice before answering"},
+  {w:"you",q:"The state should depend on the project. A good universal option is the issue tracker — Linear for work projects, GitHub issues for my personal side projects.",a:"Your answer, which reframed the question"},
+  {w:"me",q:"Tracker-first is better than my folder proposal. It gives you three things a folder cannot.",a:"My reply, adopting it"}],
+ alt:[{t:"A folder in the repo, gitignored",w:"Rejected: dies with the branch, no phone access, no cross-project query."},
+  {t:"A folder in the repo, committed",w:"Rejected: noise in every diff, prototypes bloat the repo."},
+  {t:"A central folder outside all repos",w:"Rejected: paths break, and the context sits far from the code."}]},
+
+{id:"stages",p:"root",t:"Six stages, three human gates",
+ why:"intent, options, build, validate, ship, measure. You approve at G1, G2, G3 — and nowhere else.",
+ s:"decided",who:"you",dep:["root"],
+ d:"The gates are tracker workflow-state transitions, so approving works from a phone and the pipeline has no hidden state.\n\nEverything between the gates is autonomous. Your values 1 to 3 need judgement; your value 4 needs none.",
+ say:[{w:"you",q:"Ship - help me create PRs with concious change descriptions, clear motivation explanation and actionable testing and deployment instructions",a:"Your value 5, verbatim"},
+  {w:"me",q:"Three gates. G1 and G2 are you. G3 is you, and then the merge runs by itself on green CI.",a:"My summary of the state machine"}]},
+
+{id:"product",p:"root",t:"The result must become a standalone product",
+ why:"The Claude Code terminal is a temporary harness. This constraint decided the whole architecture.",
+ s:"decided",who:"you",dep:["root"],
+ d:"It is why the logic cannot live in Markdown skill files. A skill is a prompt file and cannot become a product.",
+ say:[{w:"you",q:"The general-purpose Claude Code TUI is good but I want to try something more advanced long-term. I don’t mean to build a system that replaces it today but what we test in this new workflow must be possible to turn into a standalone product.",a:"Your constraint"},
+  {w:"me",q:"Your constraint changes the design more than the tracker answer did. If the pipeline logic lives in 15 skill files, extracting it later is a rewrite, not a move.",a:"My reply"}]},
+
+{id:"loop",p:"root",t:"The build-and-validate loop runs without me",
+ why:"Build, validate, fix, review, re-validate — exits on a rubric. The largest open risk in the design.",
+ s:"open",who:"me",dep:["root"],
+ d:"A loop needs a stop condition, and “until it is good” is not one. The rubric is that condition — which is also what makes it attackable.",
+ say:[{w:"you",q:"autonomous implementation loop … I don’t want to be bothered to run repeated code review loops or instructions for you about how to verify changes at different levels; the system must close the loop fully - you build, validate, identify issues, fix them, re-validate, review code, apply suggestions, re-validate wheter the system works - until it’s done and the code matches the standards for the stage (prototype, production, etc.)",a:"Your value 4, verbatim"},
+  {w:"me",q:"The rubric is what makes step 4 possible. You want me to loop without you. A loop needs a stop condition. “Until it is good” is not one.",a:"My first reply"}]},
+
+{id:"align",p:"root",t:"We align on intent before building",
+ why:"Talking, questions, and prototypes. The research says options beat descriptions — measurably.",
+ s:"open",who:"me",dep:["root"],ev:["coshop"],
+ d:"Your values 1 and 2. Asking questions turns out to be a weak instrument; showing variants is a strong one.",
+ say:[{w:"you",q:"alignment on the intent - you must know what I want to build and why; we build this alignment by talking, asking questions and reviewing prototypes together",a:"Your value 1, verbatim"},
+  {w:"you",q:"quick iteration … it’s often difficult to decide what to build without seeing different options; if we can discuss concretes like “it’s this or that” - may be easier to choose",a:"Your value 2, verbatim"},
+  {w:"you",q:"the agent asks me to decide on things I’m not sure about - that’s were prototypes would help",a:"Your complaint 1 about this very conversation"}]},
+
+{id:"visual",p:"root",t:"The visual artifact is the primary medium",
+ why:"A map that is overwritten each turn, not a transcript that is appended. This file is the prototype of it.",
+ s:"proto",who:"proto",dep:["root"],ev:["ibis","convtree","sensemaking"],
+ d:"Your value 3, and your complaint 2. A chat log is append-only; a picture must be replaced each turn.",
+ say:[{w:"you",q:"visual representation - I’m a visual thinker; instead of a wall of text I need diagrams, schemas, wireframes, etc. the UI must make visual content the first-class citizen on all stages",a:"Your value 3, verbatim"},
+  {w:"you",q:"the conversation becomes broad and wide but the full picture becomes invisible clearly and gets burried under derails - which are great that we went through them, but then reconciling the high-level picture from the conversation is difficult",a:"Your complaint 2"},
+  {w:"you",q:"how can we exploit people’s visual cortex to help with progress-making?",a:"Your research question, axis 3"}]},
+
+{id:"measure",p:"root",t:"Step 6 improves the pipeline, not only the product",
+ why:"Checks and live metrics feed back into step 1 and into the rubric itself.",
+ s:"open",who:"me",dep:["root"],
+ d:"Without this the pipeline repeats instead of improving.",
+ say:[{w:"you",q:"Measure and analyse - run checks that we aligned on or gather live metric data; find patterns, spot gaps, ideate about improvements - so we can go back to step 1.",a:"Your value 6, verbatim"}]},
+
+/* --- tracker --- */
+{id:"tk-config",p:"tracker",t:"The tracker is configurable per project",
+ why:"Linear for work, GitHub Issues for personal. One adapter hides the difference.",
+ s:"decided",who:"you",dep:["tracker"],
+ d:"Linear uses custom workflow states. GitHub Issues uses labels such as pipeline:options. The adapter hides which one you are on.",
+ say:[{w:"you",q:"Linear for work projects, GitHub issues for my personal side projects.",a:"Your answer on state"}]},
+{id:"tk-local",p:"tracker",t:"A local folder holds ephemeral state and the worklog",
+ why:"The seam: judgement and durability go to the tracker, execution stays local.",
+ s:"decided",who:"me",dep:["tracker"],
+ d:"If you must judge it, or it must outlive the branch, it goes to the tracker. If the loop must run it, it stays local.\n\nThe local folder is a cache. Delete it any time; the engine rebuilds it from the issue.\n\nThe loop posts only at milestones — entered the loop, rubric passed, blocked, done. A 200-cycle machine log would drown the issue.",
+ say:[{w:"me",q:"Prototypes stay local, because a prototype is code that runs. loop.jsonl stays local, because 200 machine cycles would drown the issue. Its verdict goes to the tracker.",a:"My seam rule"}]},
+{id:"tk-gates",p:"tracker",t:"The gates are tracker state transitions",
+ why:"You approve by moving the issue. Works from a phone. No hidden state anywhere.",
+ s:"decided",who:"me",dep:["tracker","stages"],
+ d:"The tracker already has workflow states, so the gates need no new interface and there is nothing to catch in a terminal.\n\nIt also means where a work item stands is a thing you can see.",
+ say:[{w:"me",q:"The best part: your gates are already built. You approve by moving the issue. You can approve G2 from your phone at a coffee shop.",a:"My proposal"}]},
+{id:"tk-verbs",p:"tracker",t:"Six verbs are the whole contact with the outside",
+ why:"getBrief, setBrief, addNote, setStage, listByStage, linkPR. A third tracker costs one file.",
+ s:"decided",who:"me",dep:["tracker"],
+ d:"Skills must not know which tracker they talk to. Every call goes through the adapter.",
+ say:[{w:"me",q:"Skills must not know which tracker they talk to. Adding a third tracker later costs one file.",a:"My design"}]},
+{id:"tk-api",p:"tracker",t:"Agent-session API, or plain comments?",
+ why:"Linear now has a real agent-session API with a streaming timeline. Using it couples us to Linear’s model.",
+ s:"open",who:"me",dep:["tracker"],ev:["ghlinear","copilotlinear"],
+ d:"Not discussed yet. It appeared in the research after the tracker decision was already made.",
+ say:[{w:"me",q:"Your tracker-as-state instinct is now a shipped product pattern. Two consequences: the design is validated, and the Tracker interface should use Linear’s agent session API, not only comments.",a:"My note after research"}]},
+
+/* --- stages --- */
+{id:"st-six",p:"stages",t:"The six stages",
+ why:"intent → options → build → validate → ship → measure → back to intent.",
+ s:"decided",who:"you",dep:["stages"],
+ d:"Plus one more state: blocked. The loop enters it after three failures on the same check, and posts the check, the error, and the three attempts to the issue.",
+ say:[{w:"you",q:"That means these steps above are themselves a loop.",a:"Your opening message"}]},
+{id:"st-gates",p:"stages",t:"Three gates: brief, option, pull request",
+ why:"G1 the brief is right. G2 which option to build. G3 the pull request is correct.",
+ s:"decided",who:"me",dep:["stages"],
+ d:"G3 approval also permits the merge.",
+ say:[{w:"me",q:"Three gates. G1 and G2 are you. G3 is you, and then the merge runs by itself on green CI.",a:"My design"}]},
+{id:"st-tier",p:"stages",t:"A risk tier decides how many stages run",
+ why:"Kiro turned one small bug fix into 4 user stories and 16 acceptance criteria. Overhead scales badly downward.",
+ s:"proto",who:"proto",dep:["stages","st-six"],ev:["sdd3"],
+ d:"fix → the loop only, no gates. change → brief, loop, ship. feature → all six stages.\n\nWhere the boundaries sit is not knowable by talking. It needs real work items.\n\nThis also matches the tiered merge pattern reported across 2026: auto-merge for low risk, human-only for critical paths.",
+ say:[{w:"me",q:"My design puts every work item through a brief, two prototypes, three gates, and a full rubric. For a one-line null check that is waste.",a:"My largest self-correction"}]},
+{id:"st-merge",p:"stages",t:"Merge on green CI, after G3",
+ why:"You picked the most aggressive of three abstract options, with no run data to judge against.",
+ s:"decided",who:"you",nobasis:true,dep:["stages","st-gates"],ev:["specbench","cmu"],
+ d:"You approve at G3, then the merge runs by itself when CI passes.\n\nThis is the clearest example of failure 1 in this conversation. Three descriptions, no evidence, and the pipeline is supposed to make this call on data.\n\nBoth sources attached here argue for care, not against the choice: the rubric can go green while the code drifts.",
+ say:[{w:"me",q:"How far does the autonomous loop go before it stops and waits for you?",a:"My question"},
+  {w:"you",q:"Through merge on green CI",a:"Your selection — the third option, which I had not recommended"}],
+ alt:[{t:"Local commits only, never push",w:"Rejected. You review locally, then tell me to push."},
+  {t:"Up to a pushed draft pull request",w:"Rejected. This was my recommendation: nothing reaches main without you."}]},
+{id:"st-safe",p:"stages",t:"pipeline pause, and a posted revert command",
+ why:"Two safeguards that auto-merge requires to stay recoverable.",
+ s:"open",who:"me",dep:["st-merge"],
+ d:"One command stops all merging across every project. Every automatic merge posts its own revert command to the issue as the last note.",
+ say:[{w:"me",q:"You chose auto-merge on green CI. That is safe because G3 is still yours. Two additions make it recoverable.",a:"My reply"}]},
+
+/* --- product --- */
+{id:"pr-logic",p:"product",t:"Logic in a program. Markdown holds prompts only.",
+ why:"A skill is a prompt file. It cannot become a product.",
+ s:"decided",who:"me",dep:["product"],
+ d:"The state machine, the tracker adapter, the rubric runner, and the loop controller go into a small TypeScript CLI. Skills become three-line wrappers that call it.",
+ say:[{w:"me",q:"If the pipeline logic lives in 15 skill files, extracting it later is a rewrite, not a move. So one rule from day one: logic goes in a program, Markdown holds prompt text only.",a:"My rule"}]},
+{id:"pr-log",p:"product",t:"An append-only event log is the spine",
+ why:"One object, three uses: it renders any UI, it feeds step 6, and it lets a killed loop resume.",
+ s:"decided",who:"me",dep:["product"],
+ d:"The engine must never assume a human watches a terminal. Every state change is an event. Today the terminal reads it; later your product UI reads the same log and nothing in the engine changes.\n\nThe decision map is a projection of the same kind of log.",
+ say:[{w:"me",q:"That log is not extra work. It is the same object three times.",a:"My argument"}]},
+{id:"pr-iface",p:"product",t:"Four interfaces, and nothing else touches outside",
+ why:"Tracker, AgentRuntime, Renderer, Bus. Everything swappable sits behind one of them.",
+ s:"decided",who:"me",dep:["product","pr-logic"],
+ d:"AgentRuntime is Claude Code headless today, and the Claude Agent SDK later. Bus is a JSONL file today, a real event store later.",
+ say:[{w:"me",q:"Four interfaces, and nothing else in the engine touches the outside world.",a:"My design"}]},
+{id:"pr-now",p:"product",t:"Build the engine now, thin",
+ why:"Day one is four pieces and about one day. Later commands get built when a real feature needs them.",
+ s:"decided",who:"you",dep:["product"],
+ d:"Tracker adapter, state machine, event log, pipeline init. Then every work item we run adds the piece it needed. Nothing is thrown away later.",
+ say:[{w:"me",q:"When do we start building the extractable engine?",a:"My question"},
+  {w:"you",q:"Now, thin. Grow it per work item",a:"Your selection — the option that had a concrete CLI preview attached"}],
+ alt:[{t:"Skills first, extract after 3-5 real features",w:"Rejected: the extraction would be a rewrite."},
+  {t:"Design the full CLI before any real feature",w:"Rejected: about a week spent guessing requirements we have not met."}]},
+{id:"pr-first",p:"product",t:"Which project and which feature go first",
+ why:"This blocks the build. You have the basis to answer it and I do not.",
+ s:"open",who:"you",dep:["product","pr-now"],
+ d:"A small feature or bug, in a repo whose tests already pass.\n\nOpen since four messages ago.",
+ say:[{w:"me",q:"Name the first project and the first real feature or bug. A small one, in a repo with tests that already pass.",a:"Asked, not yet answered"}]},
+
+/* --- loop --- */
+{id:"lp-stateless",p:"loop",t:"The loop is stateless per pass",
+ why:"My first design used one long context. Contexts degrade; the file system and git do not.",
+ s:"proto",who:"proto",dep:["loop"],ev:["ralph","tdp"],
+ d:"One fresh agent per pass. Give it the brief, the decision, the rubric, and the last failure. It does one unit of work and exits. The repository is the memory.\n\nThis is a correction to my own design, not an addition. It changes the engine’s shape.",
+ say:[{w:"me",q:"I designed one long agent context that builds, validates, and fixes. That context degrades.",a:"My self-correction after research"},
+  {w:"you",q:"I’ve heard about Ralph loops a year ago already",a:"Your prompt — you already knew this one"}]},
+{id:"lp-rubric",p:"loop",t:"Rubrics are per-project files, written once",
+ why:"You answered this one instantly. It was the question with a concrete preview attached.",
+ s:"decided",who:"you",dep:["loop"],ev:["langchain"],
+ d:"Each project gets prototype.md and production.md. I draft them from the repo, the CI workflow, and package.json. You correct them one time. Then the loop runs without further input.\n\nThe rubric is the only recurring input the loop needs from you.",
+ say:[{w:"me",q:"Who writes the rubric that tells the loop when to stop?",a:"My question, with a rubric preview attached"},
+  {w:"you",q:"Per-project files, written once",a:"Your selection, made without hesitation"},
+  {w:"me",q:"The two questions I attached a concrete preview to, you answered without hesitation. The abstract ones you refused. A preview is a small prototype. That is your point, measured.",a:"My later observation"}],
+ alt:[{t:"Derived per work item, approved at G1",w:"Rejected: more precise per task, more to read at every gate."},
+  {t:"Project baseline plus per-item additions",w:"Rejected for now: most accurate, one extra thing to review at G1."}]},
+{id:"lp-split",p:"loop",t:"Split the rubric: visible and held-out checks",
+ why:"Our rubric is the reward. A long loop learns to satisfy the rubric instead of the brief.",
+ s:"proto",who:"proto",dep:["lp-rubric"],ev:["specbench","verifhorizon"],
+ d:"The loop sees only the visible checks. A held-out set runs once, at the end, before the merge. The agent that writes the tests must not be the agent that writes the code. Watch composition, not isolated features.\n\nThis is the most serious problem found in the whole research pass.",
+ say:[{w:"me",q:"Our loop runs against a fixed rubric until it passes. That rubric is the reward. The longer the loop runs, the more it optimises for the rubric instead of the brief.",a:"My warning"}]},
+{id:"lp-two",p:"loop",t:"Two layers: deterministic checks and graded judgements",
+ why:"Exit codes answer “did it work”. A grader agent answers “is it good”. My first version mixed them.",
+ s:"open",who:"me",dep:["lp-split"],ev:["langchain","openaievals"],
+ d:"checks:\n  CI=true pnpm test\n  pnpm typecheck\n  pnpm lint\n\njudgements:\n  every brief item has a test\n  no new public function without a doc comment\n  the screenshot matches the chosen option",
+ say:[{w:"me",q:"Current practice splits acceptance into two layers. Deterministic checks answer “did it work”. A graded rubric answers “is it good”. Our single list mixed them.",a:"My correction"}]},
+{id:"lp-overseer",p:"loop",t:"An overseer cancels a stalled agent",
+ why:"Stronger than my “three failures on the same check” rule, and cheap because the event log exists.",
+ s:"open",who:"me",dep:["lp-split","pr-log"],ev:["sica","verifhorizon"],
+ d:"A second process reads the event log in real time. It is the real safety control for auto-merge.",
+ say:[{w:"me",q:"My stop rule was “3 identical failures”. The paper uses something stronger.",a:"My correction"}]},
+{id:"lp-trend",p:"loop",t:"Trend checks, not only pass or fail",
+ why:"Pass-or-fail gates stay green while complexity climbs. Measured over 807 projects.",
+ s:"open",who:"me",dep:["st-merge","lp-rubric"],ev:["cmu"],
+ d:"The rubric needs limits on the change against the merge base, not only exit codes. Step 6 reports the trend across work items.\n\nThis matters most because you chose auto-merge.",
+ say:[{w:"me",q:"Pass-or-fail gates do not catch slow drift. Every check stays green while complexity climbs.",a:"My warning"}]},
+
+/* --- align --- */
+{id:"al-sample",p:"align",t:"Find ambiguity by sampling, not by asking",
+ why:"Sample N implementations. Where they diverge, the requirement is ambiguous. Ask only about the fork.",
+ s:"proto",who:"proto",dep:["align"],ev:["clarifygpt","clarifybench","care"],
+ d:"This is the fix for your complaint 1. Neither of us has to guess what is unclear — the machine finds the fork, then asks about the fork.\n\nIt also merges your two problems: the divergent implementations ARE the options. “A or B?” arrives with two running prototypes attached, and they exist because of real ambiguity, not invented contrast.\n\nRules: constrain questions to the divergence points, because broad questions produce off-topic answers and make results worse. Never ask you to restate the whole requirement.",
+ say:[{w:"you",q:"What’s completely not answered is how to align with agent on what to build.",a:"Your research question, axis 2"},
+  {w:"me",q:"It turns alignment from an interview into a measurement.",a:"My reply"}]},
+{id:"al-two",p:"align",t:"Never show one option",
+ why:"One option turns a decision into a rubber stamp. Judgement needs contrast.",
+ s:"decided",who:"me",dep:["align"],ev:["coshop"],
+ d:"Design rules from the research: variants must be diverse along the dimension in question, cap the set, attach a short rationale to each, and always offer an explicit “I do not care” so indifference is not read as a choice.",
+ say:[{w:"you",q:"if we can discuss concretes like “it’s this or that” - may be easier to choose",a:"Your value 2"},
+  {w:"me",q:"Never show one option. Step 2 always produces at least two.",a:"My rule"}]},
+{id:"al-ephem",p:"align",t:"Prototypes are ephemeral",
+ why:"Screenshots and a trade-off note survive. The code does not.",
+ s:"decided",who:"you",dep:["align","al-two"],
+ d:"A throwaway worktree per option. Playwright screenshots. Images and a note go to the issue. Worktrees deleted.\n\nThe production implementation starts from the brief and the decision, not from prototype code — prototype code carries prototype quality into production, and the rubric would have to fight it.\n\nSafeguard: the chosen option’s diff is attached as a .patch file. A record, not living code.",
+ say:[{w:"you",q:"images or screenshots attached to the issue as a decision record are fine. Prototypes themselves should be ephemeral.",a:"Your decision"}]},
+{id:"al-diff",p:"align",t:"Propose diffs to the brief, not rewrites",
+ why:"Reviewing a change to a brief is much faster than reviewing a rewritten brief.",
+ s:"open",who:"me",dep:["align"],ev:["care"],
+ d:"Also: reuse earlier artifacts so a failed gate does not restart elicitation from the beginning.",
+ say:[{w:"me",q:"The diff detail matters. Reviewing a proposed change to a brief is much faster than reviewing a rewritten brief.",a:"My note"}]},
+{id:"al-profile",p:"align",t:"A growing decision profile",
+ why:"Capture how you decide, not what to build. Our design resets alignment every work item.",
+ s:"open",who:"me",dep:["align"],ev:["decisionmd"],
+ d:"When the agent hits a trade-off the profile does not cover, it stops, names the trade-off with concrete options, records your answer as a rule, and never asks that class of question again.",
+ say:[{w:"me",q:"Our alignment is per work item and resets each time. A decision profile makes alignment cheaper on every following work item.",a:"My note"}]},
+
+/* --- visual --- */
+{id:"vi-images",p:"visual",t:"Images on the issue are the decision record",
+ why:"Rendered to images, not Mermaid source. One code path, both trackers, works on a phone.",
+ s:"decided",who:"you",dep:["visual","tracker"],ev:["archify"],
+ d:"GitHub renders Mermaid in issue text. Linear may not. Rendering to an image is one code path everywhere.\n\nThe Mermaid source stays in the local folder so the engine can redraw it.",
+ say:[{w:"you",q:"images or screenshots attached to the issue as a decision record are fine",a:"Your decision"}]},
+{id:"vi-overwrite",p:"visual",t:"The map is overwritten, not appended",
+ why:"That is the whole difference between a picture and a chat log.",
+ s:"decided",who:"me",dep:["visual"],ev:["ibis","convtree"],
+ d:"A conversation is append-only. The shape has to be replaced each turn, or the derails bury it.",
+ say:[{w:"you",q:"reconciling the high-level picture from the conversation is difficult",a:"Your complaint 2"},
+  {w:"me",q:"A chat log is append-only. A picture has to be overwritten every turn. That is the actual difference, and it is why text cannot do this job.",a:"My reply"}]},
+{id:"vi-edges",p:"visual",t:"Four edge types. No “relates to”.",
+ why:"“Relates to” cannot be acted on. IBIS survived 50 years on three edge types.",
+ s:"proto",who:"proto",dep:["visual","vi-overwrite"],ev:["ibis"],
+ d:"refines — the level edge. Children get reviewed.\ndepends_on — propagates staleness through the reverse closure.\nsupported_by — evidence. Flags for review, never auto-invalidates.\nalternative_to — a rejected option, kept, restored when the decision reopens.\n\nThe grammar must be small enough to maintain during live conversation. That is the constraint, not expressiveness.",
+ say:[{w:"you",q:"certain decisions on different levels influence, inform or at least relate to others",a:"Your description of the graph"},
+  {w:"me",q:"“Relates to” cannot be acted on. IBIS survived 50 years because its grammar has three edge types and a facilitator can keep pace with live speech.",a:"My objection, and the four-edge proposal"}]},
+{id:"vi-srcnode",p:"visual",t:"Evidence is a node, not inline text",
+ why:"Many decisions link to the same evidence. 13 of the 25 sources here are cited more than once.",
+ s:"decided",who:"you",dep:["visual","vi-edges"],ev:["grokers"],
+ d:"Before this change, every source was a string copied inside one card. IBIS-style, a source is its own node and cards point at it with supported_by.\n\nThree things become possible:\n\n1. “What else rests on this paper?” is a query, not a search.\n2. Disputing a source flags every card that cites it, in one action.\n3. The finding text exists once, so it cannot drift between cards.\n\nNote the edge semantics: supported_by flags for review. It does NOT propagate staleness. Only depends_on does that. Try the button on any source page.",
+ say:[{w:"me",q:"Evidence is inline, not a node. SpecBench is a string inside one card. It should be its own node that many cards point at.",a:"My list of four structural problems"},
+  {w:"you",q:"Evidence is inline, not a node - yes, should be node indeed. Many decisions can link to the same evidence",a:"Your decision"}]},
+{id:"vi-prop",p:"visual",t:"Propagation cannot be done by asking a model",
+ why:"Single-hop validity checks recover only 6% to 11% of the invalidation chain.",
+ s:"proto",who:"proto",dep:["vi-edges"],ev:["grokers","temporal","tms"],
+ d:"So every card records depends_on at the moment it is created. There is no recovering the edges later.\n\nFormally: reverse dependency closure, mark stale, re-derive in topological order, cost O(|S(v)|). This is the build-system model applied to meaning. Mark stale, never delete — deleting destroys the evidence chain.\n\nThis is a discipline cost on me, every turn, forever. If I skip it the map rots into a pretty outline.",
+ say:[{w:"you",q:"the decision update must be propagated and change the full picture, too",a:"Your requirement"},
+  {w:"me",q:"If the edges are missing, propagation is impossible and the map rots into a pretty outline.",a:"My reply"}]},
+{id:"vi-levels",p:"visual",t:"Who creates the levels",
+ why:"Cheap correction beats correct generation. I propose the split live; you promote or demote.",
+ s:"proto",who:"proto",dep:["visual"],ev:["gradualui"],
+ d:"If I generate the split, it drifts from how you think. If you make it, it is work you did not ask for.\n\nOpen: the level split in this file is mine. You said it is not wrong, but it is untested.",
+ say:[{w:"you",q:"what would be helpful is if we have this UI somehow repeated like a fractal for deeper and deeper layers. I feel what we got here is really cluterred and some cards are about nitty-grity decisions, some about the fundamental high-level ones.",a:"Your request"},
+  {w:"you",q:"I wouldn’t say it’s wrong, we’re prototyping here.",a:"Your reply to my level split"}]},
+{id:"vi-detail",p:"visual",t:"Every card carries its own proof",
+ why:"Verbatim quotes, the finding with its numbers, the deps, and the rejected options — all on the card’s own page.",
+ s:"decided",who:"you",dep:["visual","vi-edges"],
+ d:"say — verbatim excerpts from this conversation, attributed, so “how did we arrive here” is answerable without re-reading anything.\nev — a pointer to a source node, whose finding carries the numbers.\nalt — the options that were rejected, kept, never deleted.\n\nThree versions failed before this one. V1 had titles only. V2 hid the proof in a side panel that leaf cards never opened. V3 copied source text into every card.",
+ say:[{w:"you",q:"What I’m missing now is a detail. The cards became merely titles with no proof or links to the supporting evidence.",a:"Your critique of version 1"},
+  {w:"you",q:"Deps and sources are still not visible. Also, only the top quote is displayed.",a:"Your critique of version 2"}]},
+{id:"vi-onview",p:"visual",t:"One view = one card, detail on top, sub-cards below",
+ why:"No side panel. Every node has a page. The shape is identical at every depth.",
+ s:"decided",who:"you",dep:["visual","vi-detail"],ev:["convtree","tdp"],
+ d:"This is what makes it genuinely fractal. The same layout renders the root statement, the deepest leaf, and now a source node.\n\nA leaf shows its full detail and an empty sub-card area, instead of an empty page — which is what version 2 did wrong.\n\nThe address bar carries the current node, so a view is shareable and survives a reload.",
+ say:[{w:"you",q:"Maybe after clicking on each card the top part should be about this particular card and the sub-cards as displayed today appear below that?",a:"Your proposal"},
+  {w:"me",q:"Your proposal is better than my panel. Adopting it.",a:"My reply"}]},
+{id:"vi-extract",p:"visual",t:"The quotes should be extracted, not written by me",
+ why:"Sessions are on disk. Provenance should be verifiable, not my paraphrase.",
+ s:"open",who:"me",dep:["vi-detail"],
+ d:"Every session is at ~/.claude/projects/<encoded-cwd>/<session-id>.jsonl.\n\nThe engine should pull the excerpts with a pointer back to the exact message, so “how did we arrive here” is answerable without trusting my memory.\n\nToday I hand-write every quote in this file. That is the weakest part of it — and the same argument that made evidence a node applies here: an excerpt should be a node too.",
+ say:[{w:"me",q:"I hand-wrote every quote from memory of this conversation. That is wrong.",a:"My admission"}]},
+{id:"vi-compl",p:"visual",t:"The tool must be complementary, not competitive",
+ why:"Your contribution is judgement. If the tool decides, it removes the thing you bring.",
+ s:"open",who:"me",dep:["visual"],ev:["sensemaking"],
+ d:"A design principle, not a feature. It is the test to apply to every future addition.",
+ say:[{w:"you",q:"I’m good at judgement and I have drive and motivation.",a:"Your opening message"}]},
+
+/* --- measure --- */
+{id:"ms-rubric",p:"measure",t:"Step 6 writes new rubric lines",
+ why:"The rubric grows from real failures. Without this the pipeline repeats instead of improving.",
+ s:"open",who:"me",dep:["measure","lp-rubric"],ev:["openaievals","dgm"],
+ d:"When a bug reaches production, or when you reject at a gate, step 6 appends a line to the project rubric.",
+ say:[{w:"me",q:"The rubric grows from real failures. That is what makes the pipeline improve instead of only repeat.",a:"My proposal"}]},
+{id:"ms-metrics",p:"measure",t:"Which live metrics feed step 6",
+ why:"Candidates: PostHog, Sentry, CI timings, and the event log. You know which you trust.",
+ s:"open",who:"you",dep:["measure"],
+ d:"Open question from the design document. Nobody has answered it yet.",
+ say:[{w:"you",q:"run checks that we aligned on or gather live metric data",a:"Your value 6"}]},
+{id:"ms-self",p:"measure",t:"Measure the pipeline, not only the product",
+ why:"Where the loop stalled, how many fix cycles ran, which gate you rejected at.",
+ s:"open",who:"me",dep:["measure","pr-log"],ev:["dgm"],
+ d:"That is the data that improves the pipeline design, rather than one feature.",
+ say:[{w:"me",q:"loop.jsonl measures the pipeline, not only the product.",a:"My proposal"}]},
+];
+
+/* ============================ graph ============================ */
+const N = CARDS.concat(SRC);
+const byId = Object.fromEntries(N.map(n=>[n.id,n]));
+const isSrc = n => n && n.kind==="source";
+const kids  = id => CARDS.filter(n=>n.p===id);
+const depth = n => { let d=0,c=n; while(c&&c.p){c=byId[c.p];d++} return d; };
+const trail = n => { const a=[]; let c=n; while(c){a.unshift(c);c=c.p?byId[c.p]:null} return a; };
+const sub   = id => { const o=[]; (function w(i){kids(i).forEach(k=>{o.push(k);w(k.id)})})(id); return o; };
+/* supported_by, reverse */
+const citers = sid => CARDS.filter(c=>(c.ev||[]).includes(sid));
+
+let stale=new Set(), disputed=new Set(), here="root";
+
+/* depends_on reverse closure */
+function closure(id){
+  const out=new Set(), q=[id];
+  while(q.length){ const cur=q.pop();
+    CARDS.forEach(n=>{ if((n.dep||[]).includes(cur)&&!out.has(n.id)){ out.add(n.id); q.push(n.id); } }); }
+  return out;
+}
+/* supported_by does NOT propagate. It flags one hop. */
+const needsReview = id => (byId[id]?.ev||[]).some(e=>disputed.has(e));
+
+/* ============================ helpers ============================ */
+const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const LBL = {decided:"Decided",open:"Open",proto:"Prototype first",finding:"Research"};
+const WHO = {you:["you","you decide"],me:["me","I decide"],proto:["proto","build it first"]};
+const statusOf = n => isSrc(n) ? "source" : (stale.has(n.id) ? "stale" : n.s);
+
+function rollup(id){ const all=sub(id), c={decided:0,open:0,proto:0,finding:0,stale:0};
+  all.forEach(n=>c[statusOf(n)]++); return {c,total:all.length}; }
+function rollupBar(id){
+  const {c,total}=rollup(id); if(!total) return "";
+  const seg=(k,col)=> c[k] ? '<i style="width:'+(c[k]/total*100)+'%;background:'+col+'"></i>' : "";
+  return '<div class="rollup">'+seg("stale","var(--stale)")+seg("decided","var(--decided)")+
+    seg("proto","var(--proto)")+seg("open","var(--open)")+seg("finding","var(--finding)")+'</div>';
+}
+function miniQuote(n){
+  const q=(n.say||[]).find(x=>x.w==="you")||(n.say||[])[0]; if(!q) return "";
+  const txt=q.q.length>190?q.q.slice(0,187)+"…":q.q;
+  return '<div class="qmini'+(q.w==="me"?" me":"")+'">“'+esc(txt)+'”'+
+    '<span class="who">'+(q.w==="you"?"Eryk":"Claude")+' — '+esc(q.a)+'</span></div>';
+}
+function proofStr(n){
+  const e=[], deps=(n.dep||[]).filter(x=>x!==n.p);
+  if((n.say||[]).length) e.push(n.say.length+" quoted");
+  if((n.ev||[]).length)  e.push(n.ev.length+" source"+(n.ev.length>1?"s":""));
+  if(deps.length)        e.push(deps.length+" dep");
+  if((n.alt||[]).length) e.push(n.alt.length+" alt");
+  return e.join(" · ");
+}
+function statusTags(n){
+  if(isSrc(n)) return '<span class="tag srcT">source · '+esc(n.tier)+'</span>'+
+    (disputed.has(n.id)?'<span class="tag reviewT">disputed</span>':'');
+  const st=statusOf(n), w=WHO[n.who]||WHO.me;
+  return '<span class="tag">'+(st==="stale"?"Stale":LBL[n.s])+'</span>'+
+    '<span class="tag '+w[0]+'">'+w[1]+'</span>'+
+    (n.nobasis?'<span class="tag nobasis">no basis</span>':'')+
+    (needsReview(n.id)?'<span class="tag reviewT">review evidence</span>':'');
+}
+
+/* ============================ evidence block ============================ */
+function evBlock(ids){
+  return ids.map(sid=>{ const s=byId[sid]; if(!s) return "";
+    const n=citers(sid).length;
+    return '<button class="ev'+(disputed.has(sid)?' disputed':'')+'" data-go="'+sid+'">'+
+      '<div class="t">'+esc(s.t)+'</div>'+
+      '<div class="f">'+s.f+'</div>'+
+      '<div class="n"><span>'+esc(s.tier)+(disputed.has(sid)?' · disputed':'')+'</span>'+
+      '<span>'+n+' card'+(n>1?"s":"")+' rest on this &rarr;</span></div></button>'; }).join("");
+}
+
+/* ============================ hero ============================ */
+function heroHTML(n){
+  if(isSrc(n)) return srcHero(n);
+  const d=depth(n), st=statusOf(n);
+  const deps=(n.dep||[]).filter(x=>x!==n.p);
+  const dependents=CARDS.filter(x=>(x.dep||[]).includes(n.id));
+  const cnt=closure(n.id).size;
+
+  let L="", R="";
+  if(st==="stale") L+='<div class="row"><span class="tag staleT">Stale — an upstream decision changed. '+
+    'This needs re-deriving.</span></div>';
+  if(needsReview(n.id)) L+='<div class="row"><span class="tag reviewT">A source this card cites is disputed. '+
+    'Review the evidence — this card is NOT automatically invalid.</span></div>';
+
+  if(n.d) L+='<div class="row"><div class="k">What it means</div><div class="v">'+esc(n.d)+'</div></div>';
+  if((n.say||[]).length) L+='<div class="row"><div class="k">How we arrived here '+
+    '<em>'+n.say.length+' verbatim excerpts from this conversation</em></div>'+
+    n.say.map(q=>'<div class="said '+(q.w==="you"?"you":"")+'"><div class="q">“'+esc(q.q)+'”</div>'+
+      '<div class="a">'+(q.w==="you"?"Eryk":"Claude")+' — '+esc(q.a)+'</div></div>').join("")+'</div>';
+
+  if((n.ev||[]).length) R+='<div class="row"><div class="k">Supported by '+
+    '<em>'+n.ev.length+' source node'+(n.ev.length>1?"s":"")+' — click to see what else rests on them</em></div>'+
+    evBlock(n.ev)+'</div>';
+
+  if(deps.length) R+='<div class="row"><div class="k">Depends on '+
+    '<em>if one of these changes, this card goes stale</em></div>'+
+    deps.map(x=>'<button class="dep'+(stale.has(x)?' stale':'')+'" data-go="'+x+'">'+
+      '<span>'+esc(byId[x].t)+'</span><span class="g">level '+depth(byId[x])+' &rarr;</span></button>').join("")+'</div>';
+
+  if(dependents.length) R+='<div class="row"><div class="k">'+dependents.length+
+    ' card'+(dependents.length>1?"s":"")+' depend on this <em>reverse closure, all hops</em></div>'+
+    dependents.map(x=>'<button class="dep'+(stale.has(x.id)?' stale':'')+'" data-go="'+x.id+'">'+
+      '<span>'+esc(x.t)+'</span><span class="g">level '+depth(x)+' &rarr;</span></button>').join("")+'</div>';
+
+  if((n.alt||[]).length) R+='<div class="row"><div class="k">Alternatives, kept '+
+    '<em>rejected, never deleted</em></div>'+
+    n.alt.map((a,i)=>'<div class="alt"><div class="t">'+esc(a.t)+'</div><div class="w">'+esc(a.w)+'</div>'+
+      '<button data-swap="'+n.id+'|'+i+'">Choose this instead</button></div>').join("")+'</div>';
+
+  if(cnt) R+='<div class="row"><button class="danger" data-reopen="'+n.id+'">'+
+    'I changed my mind — reopen this &nbsp;('+cnt+' card'+(cnt>1?"s":"")+' go stale)</button></div>';
+
+  R+='<div class="row"><div class="k">Ask about this card only</div>'+
+    '<div class="composer"><input placeholder="Why did we decide this? / Show me alternatives…" disabled>'+
+    '<button disabled>Send</button></div>'+
+    '<div class="stub">Stub. A live thread needs the engine. It would scope context to this card, its ancestors, '+
+    'and the excerpts on the left — so other branches cannot bleed in.</div></div>';
+
+  const r=rollup(n.id);
+  return '<section class="hero d'+Math.min(d,3)+' '+st+'">'+
+    '<h1>'+esc(n.t)+'</h1>'+
+    '<div class="hbadges">'+statusTags(n)+'<span class="tag">level '+d+'</span>'+
+      (proofStr(n)?'<span class="tag">'+proofStr(n)+'</span>':'')+'</div>'+
+    (n.why?'<p class="why">'+esc(n.why)+'</p>':'')+
+    (r.total?rollupBar(n.id):'')+
+    '<div class="cols"><div>'+L+'</div><div>'+R+'</div></div></section>';
+}
+
+function srcHero(s){
+  const cs=citers(s.id);
+  let h='<section class="hero d2 source"><h1>'+esc(s.t)+'</h1>'+
+    '<div class="hbadges">'+statusTags(s)+
+    '<span class="tag hot">'+cs.length+' card'+(cs.length>1?"s":"")+' rest on this</span></div>'+
+    '<div class="one">'+
+    '<div class="row"><div class="k">The finding</div><div class="v">'+s.f+'</div></div>'+
+    '<div class="row"><a class="out" href="'+s.u+'" target="_blank" rel="noreferrer">Open the source &#8599;</a></div>'+
+    '<div class="row"><div class="k">Cards that cite it '+
+      '<em>supported_by, reversed — this is the query that inline text could not answer</em></div>'+
+      cs.map(c=>'<button class="dep'+(stale.has(c.id)?' stale':'')+(needsReview(c.id)?' review':'')+
+        '" data-go="'+c.id+'"><span>'+esc(c.t)+'</span>'+
+        '<span class="g">level '+depth(c)+' · '+esc(trail(c)[1]?trail(c)[1].t.slice(0,26):"—")+' &rarr;</span></button>').join("")+
+      '</div>'+
+    '<div class="row"><button class="warn" data-dispute="'+s.id+'">'+
+      (disputed.has(s.id)?'Clear the dispute on this source':
+      'Dispute this source &nbsp;(flags '+cs.length+' card'+(cs.length>1?"s":"")+' for review — does NOT make them stale)')+
+      '</button>'+
+      '<div class="stub">This is the difference between the two edge types. <code>supported_by</code> flags one hop '+
+      'and asks a human to look. <code>depends_on</code> propagates staleness through the whole reverse closure.</div>'+
+    '</div></div></section>';
+  return h;
+}
+
+/* ============================ children ============================ */
+function kidsHTML(n){
+  if(isSrc(n)) return "";
+  const ch=kids(n.id), d=depth(n)+1;
+  const g = d===1 ? "g1" : d===2 ? "g2" : "g3";
+  let h='<section class="csec"><div class="ctitle">'+
+    (ch.length? ch.length+' card'+(ch.length>1?"s":"")+' inside — level '+d : 'Nothing inside this card yet')+'</div>';
+  if(!ch.length) h+='<div class="leaf">This is a leaf. Its whole content is above.</div>';
+  h+='<div class="grid '+g+'">'+ch.map(k=>{
+    const st=statusOf(k), r=rollup(k.id);
+    return '<button class="card '+st+'" data-go="'+k.id+'"><span class="chev">&rarr;</span>'+
+      '<h4>'+esc(k.t)+'</h4>'+(k.why?'<div class="why">'+esc(k.why)+'</div>':'')+
+      miniQuote(k)+(r.total?rollupBar(k.id):'')+
+      '<div class="cfoot">'+statusTags(k)+(r.total?'<span>'+r.total+' inside</span>':'')+
+      '<span class="proof">'+proofStr(k)+'</span></div></button>';
+  }).join("")+'</div>';
+  h+='<div style="margin-top:10px"><button class="add" id="add">+ &nbsp;add a tangent here</button></div>';
+  return h+'</section>';
+}
+
+/* ============================ sources index ============================ */
+function sourcesPage(){
+  const ranked=SRC.map(s=>({s,n:citers(s.id).length})).sort((a,b)=>b.n-a.n||a.s.t.localeCompare(b.s.t));
+  const multi=ranked.filter(x=>x.n>1).length;
+  document.getElementById("hero").innerHTML =
+    '<section class="hero d1 source"><h1>Sources</h1>'+
+    '<div class="hbadges"><span class="tag srcT">'+SRC.length+' source nodes</span>'+
+    '<span class="tag hot">'+multi+' cited by more than one card</span>'+
+    (disputed.size?'<span class="tag reviewT">'+disputed.size+' disputed</span>':'')+'</div>'+
+    '<p class="why">Evidence is a node, not text copied into a card. That is why this page can exist: '+
+    'the same source is reachable from every decision that rests on it, and its finding is written once.</p></section>';
+  document.getElementById("kids").innerHTML =
+    '<section class="csec"><div class="ctitle">Ranked by how many cards rest on them</div>'+
+    '<div class="grid gs">'+ranked.map(({s,n})=>
+      '<button class="card srccard" data-go="'+s.id+'"><span class="chev">&rarr;</span>'+
+      '<h4>'+esc(s.t)+'</h4>'+
+      '<div class="why">'+s.f.replace(/<[^>]+>/g,"").slice(0,150)+'…</div>'+
+      '<div class="cfoot"><span class="tag srcT">'+esc(s.tier)+'</span>'+
+      (disputed.has(s.id)?'<span class="tag reviewT">disputed</span>':'')+
+      '<span class="proof">'+n+' card'+(n>1?"s":"")+'</span></div></button>').join("")+
+    '</div></section>';
+}
+
+/* ============================ render ============================ */
+function render(){
+  if(here==="__sources"){
+    document.getElementById("crumbs").innerHTML='<button class="crumb" data-go="root">All</button>'+
+      '<span class="sep">/</span><button class="crumb now">Sources</button>';
+    counts(); alarms(); sourcesPage();
+    document.getElementById("up").style.visibility="visible";
+    return;
+  }
+  const node=byId[here]||byId.root; here=node.id;
+
+  document.getElementById("crumbs").innerHTML = isSrc(node)
+    ? '<button class="crumb" data-go="root">All</button><span class="sep">/</span>'+
+      '<button class="crumb" data-go="__sources">Sources</button><span class="sep">/</span>'+
+      '<button class="crumb now">'+esc(node.t)+'</button>'
+    : trail(node).map((n,i,a)=>{ const last=i===a.length-1, label=n.id==="root"?"All":n.t;
+        return (i?'<span class="sep">/</span>':'')+
+          '<button class="crumb'+(last?' now':'')+'" data-go="'+n.id+'">'+esc(label)+'</button>'; }).join("");
+
+  counts(); alarms();
+  document.getElementById("hero").innerHTML = heroHTML(node);
+  document.getElementById("kids").innerHTML = kidsHTML(node);
+  document.getElementById("up").style.visibility = (node.p||isSrc(node)) ? "visible" : "hidden";
+}
+
+function counts(){
+  const {c,total}=rollup("root");
+  const quotes=CARDS.reduce((a,n)=>a+(n.say||[]).length,0);
+  const links =CARDS.reduce((a,n)=>a+(n.ev||[]).length,0);
+  const rev=CARDS.filter(n=>needsReview(n.id)).length;
+  document.getElementById("counts").innerHTML =
+    (stale.size?'<span><i class="dot stale"></i>'+c.stale+' stale</span>':'')+
+    (rev?'<span><i class="dot" style="background:var(--review)"></i>'+rev+' to review</span>':'')+
+    '<span><i class="dot decided"></i>'+c.decided+' decided</span>'+
+    '<span><i class="dot open"></i>'+c.open+' open</span>'+
+    '<span><i class="dot proto"></i>'+c.proto+' need a prototype</span>'+
+    '<span><i class="dot src"></i>'+SRC.length+' sources</span>'+
+    '<span class="lvl" style="margin:0">'+(total+1)+' cards · '+quotes+' quotes · '+links+' citations</span>';
+}
+function alarms(){
+  let h="";
+  if(stale.size) h+='<div class="alarm red"><b>'+stale.size+' cards went stale.</b> A decision changed, and every '+
+    'card reachable through <code>depends_on</code> needs re-deriving — including other branches and cards two hops '+
+    'away.<div class="list">'+[...stale].map(i=>esc(byId[i].t)).join(" &nbsp;·&nbsp; ")+'</div></div>';
+  const rev=CARDS.filter(n=>needsReview(n.id));
+  if(rev.length) h+='<div class="alarm amber"><b>'+rev.length+' cards cite a disputed source.</b> '+
+    '<code>supported_by</code> flags for review; it does not invalidate. A human decides whether the card still '+
+    'holds.<div class="list">'+rev.map(n=>esc(n.t)).join(" &nbsp;·&nbsp; ")+'</div></div>';
+  document.getElementById("alarm").innerHTML=h;
+}
+
+function goto(id,push){
+  if(id!=="__sources" && !byId[id]) return;
+  here=id;
+  if(push!==false) location.hash = id==="root" ? "" : id;
+  render(); window.scrollTo({top:0,behavior:"instant"});
+}
+
+/* ============================ events ============================ */
+document.addEventListener("click", e=>{
+  const dp=e.target.closest("[data-dispute]");
+  if(dp){ const id=dp.dataset.dispute;
+    disputed.has(id) ? disputed.delete(id) : disputed.add(id);
+    render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+
+  const sw=e.target.closest("[data-swap]");
+  if(sw){ const [id,i]=sw.dataset.swap.split("|"); const n=byId[id], ch=n.alt[+i];
+    n.alt[+i]={t:n.t,w:"Previously the decision. Replaced by: "+ch.t};
+    n.t=ch.t; n.why="Chosen from the kept alternatives."; n.d=ch.w;
+    stale=closure(id); render(); return; }
+
+  const ro=e.target.closest("[data-reopen]");
+  if(ro){ stale=closure(ro.dataset.reopen); render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+
+  const ad=e.target.closest("#add");
+  if(ad){ const t=prompt("Add a card at this level:");
+    if(t&&t.trim()){ const id="u"+Date.now();
+      const card={id,p:here,t:t.trim(),s:"open",who:"you",dep:[here],
+        why:"Added by you during the conversation.",
+        d:"Added by you. It depends on its parent, so reopening the parent marks it stale.",
+        say:[{w:"you",q:t.trim(),a:"Added directly in the map"}]};
+      CARDS.push(card); N.push(card); byId[id]=card; render(); }
+    return; }
+
+  const go=e.target.closest("[data-go]");
+  if(go && !go.classList.contains("now")) goto(go.dataset.go);
+});
+
+document.getElementById("srcs").onclick = ()=> goto("__sources");
+document.getElementById("up").onclick = ()=>{
+  if(here==="__sources") return goto("root");
+  const n=byId[here]; if(isSrc(n)) return goto("__sources");
+  if(n.p) goto(n.p);
+};
+document.getElementById("reset").onclick = ()=>{ stale=new Set(); disputed=new Set(); render(); };
+window.addEventListener("hashchange", ()=>{ const id=location.hash.slice(1)||"root"; if(id!==here) goto(id,false); });
+document.addEventListener("keydown", e=>{
+  if(e.key==="Escape"||e.key==="Backspace"){ document.getElementById("up").click(); e.preventDefault(); }
+});
+
+goto(location.hash.slice(1)||"root", false);
+</script>
+</body>
+</html>

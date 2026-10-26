@@ -1,0 +1,5 @@
+#!/bin/sh
+# The `werk` command every agent calls, in any project (#werk-cli-name). werk puts this folder
+# first on each agent's PATH. It runs the CLI of the checkout it sits in, so a call always runs
+# the current code.
+exec bun "$(dirname "$0")/../src/cli.ts" "$@"

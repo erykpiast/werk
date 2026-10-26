@@ -1,0 +1,1 @@
+{"type":"assistant","message":{"content":[{"type":"text","text":"Reading the ticket."},{"type":"tool_use","name":"Bash","input":{"command":"make test"}}]}}

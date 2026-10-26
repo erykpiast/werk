@@ -1,0 +1,993 @@
+exit 0
+bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
++ @biomejs/biome@2.6.3
++ @happy-dom/global-registrator@21.0.4
++ @playwright/test@1.64.1
++ @tailwindcss/vite@4.3.3
++ @testing-library/dom@10.4.2
++ @testing-library/react@16.3.3
++ @types/bun@1.4.4
++ @types/react@19.3.0
++ @types/react-dom@19.3.0
++ @vitejs/plugin-react@6.1.2
++ tailwindcss@4.3.3
++ typescript@7.0.2
++ vite@8.3.5
++ @radix-ui/react-slot@1.5.0
++ class-variance-authority@0.7.1
++ clsx@2.1.1
++ react@19.3.1
++ react-dom@19.3.1
++ tailwind-merge@3.7.0
+
+80 packages installed [145.00ms]
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+src/map/ops.test.ts:
+(pass) the blocks of a body > cut at each run of blank lines outside a fence, trimmed at both ends [0.18ms]
+(pass) the blocks of a body > an empty or missing body has no blocks, and lines of spaces count as blank [0.02ms]
+(pass) the blocks of a body > a tilde fence closes only on a tilde fence, and an unclosed fence runs to the end [0.02ms]
+(pass) the cover rule > lists each block that no elaborated or removed op names [0.16ms]
+(pass) the cover rule > two equal blocks need two ops [0.06ms]
+(pass) the diff > marks kept, elaborated, new and removed blocks in the order of the ops [0.26ms]
+(pass) the diff > an old that quotes no real block shows as removed plus new, and is never trusted [0.04ms]
+(pass) the diff > an old quotes one block once, so a second quote of the same single block is not trusted [0.02ms]
+(pass) applying the ops > rebuilds the body from the new text of each op, in order, one blank line apart [0.07ms]
+(pass) applying the ops > an unquoted elaborated op still adds its new text, and an unquoted removal changes nothing [0.03ms]
+(pass) applying the ops > removing every block leaves an empty body [0.02ms]
+(pass) the shape of an op list > is a list of ops, each with its tag and its texts [0.14ms]
+
+src/map/removal.test.ts:
+(pass) a removal takes the card, its subtree, its options and excerpts, and the sources only they cite [1.52ms]
+(pass) a reparent takes only the card and its own evidence, and moves the children to its parent [0.09ms]
+(pass) a reparent of a card with no children moves nothing [0.07ms]
+(pass) a branch removed earlier is out already, so a removal above it does not take it [0.08ms]
+(pass) each node out names the removal that took it [0.04ms]
+
+src/map/review.test.ts:
+(pass) a confirm > is refused while a link reason is unconfirmed, and the refusal gives the command [0.48ms]
+(pass) a confirm > is refused while the basis is open or stale, with the command that settles each [0.14ms]
+(pass) a confirm > passes when the basis holds and every reason is confirmed [0.04ms]
+(pass) a confirm > does not ask for a link made after the change [0.03ms]
+(pass) a confirm > cannot name a target the card has no depends_on link to [0.03ms]
+
+src/map/rollup.test.ts:
+(pass) the rollup counts the card and its subtree, and open, proto and decided add up to the cards [0.23ms]
+(pass) a ghost, an option and an unknown id have no rollup [0.03ms]
+(pass) unchallenged counts only a decided who:you card with a recorded statement [0.09ms]
+(pass) the rollup reads as one line with the card count and every count that is not zero [0.03ms]
+(pass) the postponed cards of a rollup count by their status, and a ghost or a non-card has none [0.12ms]
+
+src/map/rules.test.ts:
+(pass) a new node > may sit under a real or a ghost card [0.32ms]
+(pass) a new node > needs an id, a known kind and a title, and valid fields [0.08ms]
+(pass) a new node > cannot take an id that a node holds; a ghost's words are frozen [2.16ms]
+(pass) a new node > needs a parent that exists and is a card [0.10ms]
+(pass) a new node > a real card cannot sit under a ghost [0.03ms]
+(pass) a refines link > gives a card one parent [0.07ms]
+(pass) a refines link > never closes a loop [0.04ms]
+(pass) a refines link > never puts a real card under a ghost, but a ghost may move under a ghost [0.02ms]
+(pass) a depends_on link > needs a reason [0.12ms]
+(pass) a depends_on link > never points to an ancestor or a descendant [0.04ms]
+(pass) a depends_on link > links a card to a card [0.02ms]
+(pass) an option > has only alternative_to links, to one card [0.09ms]
+(pass) an option > alternative_to links an option to a card [0.02ms]
+(pass) a link > names a known type and two known nodes [0.04ms]
+(pass) a link > supported_by links a card to a source or an excerpt [0.03ms]
+(pass) a link > a removal needs the link to exist [0.04ms]
+(pass) an accept and a discard > apply only to a ghost [0.12ms]
+(pass) an accept and a discard > an accept under a ghost parent is refused until the parent is real [0.02ms]
+(pass) a proposal > names a real node and changes its title, its why or its body [0.10ms]
+(pass) a proposal > needs ops of a known shape, and refuses an op list that leaves a block unnamed [0.15ms]
+(pass) a proposal > an accept checks the cover rule again, so a block written after the proposal is never lost [0.05ms]
+(pass) a proposal > an accept or a discard takes the pending change of a real card, open or decided [0.05ms]
+(pass) a change of words > refuses on a ghost, and works on a real node [0.08ms]
+(pass) a removal > names a card in the map, ghost or real [0.20ms]
+(pass) a removal > with a reparent, moves children only to a parent the card has [0.05ms]
+(pass) a removal > keeps the id taken, and a node out of the map takes no link or change [0.06ms]
+(pass) a restore > names the card that its removal named [0.06ms]
+(pass) a restore > refuses while the card's parent is out of the map [0.04ms]
+(pass) a record on a card > applies to a card only, real or ghost [0.12ms]
+(pass) a record on a card > an edit sets who or a waiver with a written reason, and nothing else [0.09ms]
+(pass) a record on a card > a kill criterion has a known form and every word that form needs [0.11ms]
+(pass) a record on a card > a decide applies to a card that is not decided yet [0.02ms]
+(pass) an event needs a payload and a known type [0.03ms]
+(pass) a note needs a node and text, and any node kind takes one [0.03ms]
+(pass) an excerpt > comes only from a quote, never from a plain add [0.03ms]
+(pass) an excerpt > comes from a quote with a new id, a citing card, and a span as long as its words [0.06ms]
+(pass) an excerpt > never changes its words, before or after the accept, and still takes a note [0.07ms]
+
+src/map/search.test.ts:
+(pass) the index lists every decided card with its id and title, and no ghost, open or removed card [0.31ms]
+(pass) the index keeps another status, and one refines subtree [0.14ms]
+(pass) a card matches only when it holds every term, case-insensitive, and the most hits come first [0.11ms]
+(pass) a search reads every status, and never a ghost or a removed card [0.04ms]
+(pass) a term found only in an option's why-not matches the option's card [0.03ms]
+(pass) a search keeps one status and one refines subtree [0.06ms]
+(pass) a search with no match says so [0.04ms]
+
+src/serve/map-api.test.ts:
+(pass) the card read gives one card in full, with its marks and rollup [0.20ms]
+(pass) the card read lists every neighbour by id and title, with the link and its direction [0.05ms]
+(pass) the card read of an option or a ghost has no rollup and no mark, and an unknown id has no read [0.05ms]
+(pass) the card read of a decided card carries who decides it [0.02ms]
+(pass) the shape read holds every node and link, with rollups, and no words beyond the ids [0.07ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > passes a listed file that its own test covers, and prints one line with its percentage [344.31ms]
+
+src/map/show.test.ts:
+(pass) a ghost prints its status, who, parent, words and held links [0.31ms]
+(pass) a parent lists its ghost child as a ghost [0.05ms]
+(pass) an option and a source print their own fields [0.03ms]
+(pass) each set-aside line prints with its line number and rule [0.02ms]
+(pass) an accept or a discard names the node, then each node that went with it [0.02ms]
+(pass) a node out of the map keeps its title for the lines that name it [0.06ms]
+(pass) a card prints its waivers with their reasons and every kill criterion in order [0.08ms]
+(pass) each form of a kill criterion reads in plain words [0.02ms]
+(pass) a pending change prints as one diff of the title, the why and the body, after the current words [0.17ms]
+(pass) a node with notes prints its thread after its links [0.05ms]
+(pass) a card ends with the excerpts that support it, and a ghost excerpt says proposed [0.16ms]
+(pass) an excerpt prints its pointer under its words, before and after the accept [0.05ms]
+(pass) a card prints its options, excerpts and sources with their words, and a ghost item says proposed [0.08ms]
+(pass) a card with no options, excerpts or sources prints none of the three sections [0.04ms]
+(pass) each incoming refines row prints the child's rollup, and a card prints its own [0.07ms]
+
+src/serve/page.test.ts:
+(pass) a map address names a card id, URL-decoded, and the home addresses name the home card [0.11ms]
+(pass) a card page holds the token, the title and the card in the view [0.72ms]
+(pass) a page for an id that is not in the map says so [0.02ms]
+(pass) a title with a replacement pattern goes in as it is [0.08ms]
+(pass) the app's page has both slots that the server fills, and the chat pane beside the view [0.08ms]
+
+src/map/stage.test.ts:
+(pass) an accept takes the ghost parents up to the first real one, then the ghost options and evidence [0.34ms]
+(pass) an accept of a card under a real parent takes only itself and its own ghosts [0.08ms]
+(pass) one accept of a ghost takes its set, and one accept of a real node takes only that node [0.06ms]
+(pass) a source shared by two cards in the accepted chain is listed once [0.03ms]
+(pass) a discard takes the ghost descendants, deepest first, with their options and excerpts [0.08ms]
+(pass) a discard keeps a ghost source another card cites, and drops one only it cited [0.06ms]
+(pass) a discard of a parent drops a source that only the parent and its child cite [0.04ms]
+
+src/map/stale.test.ts:
+(pass) the kind a card lists under > is stale, paused or waiting, and none for an unmarked card [0.42ms]
+(pass) fix order > puts each card after every card it stands on [0.12ms]
+(pass) the listing > prints a basis before the card on it, each with its origin, reason and date [0.21ms]
+(pass) the listing > covers one card and its subtree, and one kind [0.15ms]
+(pass) the listing > says that nothing is marked [0.05ms]
+
+src/map/store.test.ts:
+(pass) the log is WERK_LOG when set, else .werk/log.jsonl in the nearest folder that has one [134.26ms]
+
+src/verbs/notes-verbs.test.ts:
+(pass) say adds a note that the thread of the card shows [567.12ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > fails a listed file under 90% of lines [348.22ms]
+
+src/map/store.test.ts:
+(pass) every read records its fold time beside the log [146.99ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > fails a listed file with no own test file and names the missing test file [112.39ms]
+
+src/map/store.test.ts:
+(pass) a read does not fail when its fold time cannot be written [154.26ms]
+(pass) a write appends all of its events, after a last line with no line end [125.39ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > does not count lines that another file's test runs [269.71ms]
+
+src/map/store.test.ts:
+(pass) a refused write appends nothing and names the rule [119.10ms]
+
+src/map/trace.test.ts:
+(pass) a stale trace > names the origin, the reason, the day, the reopen text and the link with its reason [0.38ms]
+(pass) a paused trace > names every card on its path, nearest to the origin first, and the last link type [2.77ms]
+(pass) a paused trace > one hop from its origin names no cards between [0.08ms]
+(pass) a paused trace > starts with the kind, the origin, the change and the day [0.05ms]
+(pass) the sections of a card page > say why a card is stale, and why a card is paused [0.08ms]
+(pass) the sections of a card page > say why a card is postponed, with the reopen text [0.09ms]
+(pass) the sections of a card page > say what a waiting card waits on, and nothing for an unmarked card [0.05ms]
+(pass) the note under a flagged depends_on row > gives the reopen reason, day and text of the change that marked the card along the row [0.06ms]
+(pass) the note under a flagged depends_on row > gives the target's own reopen when the card has no mark from it [0.06ms]
+(pass) the note under a flagged depends_on row > points further upstream when the mark came from a card behind the target [0.03ms]
+(pass) the note under a flagged depends_on row > is absent for a row whose target is not flagged [0.03ms]
+
+src/map/tree.test.ts:
+(pass) a card's parent, children, ancestors and descendants [0.30ms]
+(pass) a loop in a hand-written map still ends each walk [0.15ms]
+(pass) links by end and type [0.06ms]
+(pass) a link is live when both ends are real, and held while one is a ghost [0.03ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > passes a listed file with no executable lines [159.06ms]
+
+src/map/types.test.ts:
+(pass) the map has four node kinds and four link types (#map-card, #vi-edges) [0.04ms]
+(pass) a card's status and who take the values a card can hold [0.01ms]
+(pass) the root card has the id root (#vi-onview-root)
+
+src/serve/card-html.test.ts:
+(pass) a card shows its tag row, its title, its why with live links, and its sub-cards [4.82ms]
+(pass) the title shrinks with the depth of the card, down to the third level [2.99ms]
+(pass) real sub-cards come in log order and the ghosts after them, each a tile with one link [5.52ms]
+(pass) a card escapes its words, renders a code span in its title, and has no sub-cards with no children [0.78ms]
+(pass) a ghost has the blue look and the proposed tag, and its thread keeps the notes across a new proposal [0.49ms]
+(pass) an empty thread says so, an unknown id has no card, and a missing page names the id [0.02ms]
+(pass) a ghost excerpt shows under Say with its speaker and words on a pending link, and only the ghost has the ✓ [0.75ms]
+(pass) an accepted excerpt is on a live link, with no ✓ and no pending mark left [0.33ms]
+(pass) a card with an option, a source and an excerpt shows the words of all three [1.11ms]
+(pass) a card lists its neighbours with lighter ids and titles, and each depends_on row carries its reason [2.38ms]
+(pass) an excerpt lists the card that cites it [0.26ms]
+(pass) a stale card keeps its status edge, tints red, and lists its trace and its flagged dependency [3.78ms]
+(pass) a postponed card shows stripes and a grey postponed tag on its page and on its tile [2.05ms]
+(pass) an open card on an open basis shows no waiting tag or section [0.64ms]
+(pass) the hero's rollup has a bar and a line with its scope, its total and a count per status [0.68ms]
+(pass) a card whose author waived the option shows the words and the ring [0.62ms]
+(pass) a pending edit draws as a diff in the hero, with a blue border only and a ✓ [2.13ms]
+(pass) the ✕ of a card carries the counts of its removal, and of its reparent when it has children and a parent [1.35ms]
+
+src/verbs/notes-verbs.test.ts:
+(pass) say takes a note on an excerpt, and refuses an unknown id or empty text [660.29ms]
+
+src/serve/card-look.test.ts:
+(pass) the box carries the status colour on its edge for a card, an option and a source [0.24ms]
+(pass) the who label reads in words, with the ring before it when no option was weighed [0.69ms]
+(pass) the bar gives each status its width, hatches the postponed share, and a leaf has none [0.69ms]
+(pass) the rollup line names its scope and total, then the counts that are not zero, the rings last [0.34ms]
+(pass) a tile is one link with the title, the why line, a meta row and the bar of a card with cards below [1.18ms]
+(pass) the sub-cards split into real ones and ghosts [0.02ms]
+(pass) a node link shows a lighter id and the title, and marks a ghost [0.03ms]
+
+src/serve/card-marks.test.ts:
+(pass) a paused card's trace names the path from the origin, nearest first, and the last link [2.81ms]
+(pass) a stale trace names the change kind, and an amend reads amended [0.39ms]
+(pass) a flagged dependency shows its target's reopen, or points upstream, and an unflagged one is left out [0.43ms]
+(pass) a card that is only postponed or only waits has no mark section [0.04ms]
+
+src/serve/server.test.ts:
+(pass) a request that names no loopback host is refused, and every loopback name passes [1044.18ms]
+
+src/serve/chat-stream.test.ts:
+(pass) a text block streams its text so far, and its finished form keeps the same id [0.33ms]
+(pass) a finished block claims the first open block of its kind, not the one at its array index [0.18ms]
+(pass) a delta for a block that never opened, a message with no id, and lines of no interest give nothing or a fallback [0.06ms]
+(pass) a message from the person is one stream-json user line [0.02ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > fails a listed file whose own tests fail [291.11ms]
+
+src/serve/server.test.ts:
+(pass) a note without the token of this start is refused, and the log stays as it was [174.92ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > fails a listed file that does not exist [123.01ms]
+
+src/serve/server.test.ts:
+(pass) a note is sent with POST, as JSON with an id and a text [171.62ms]
+
+scripts/coverage-gate.test.ts:
+(pass) coverage gate > fails when the project has no list of pure files [193.22ms]
+
+src/serve/chat.test.ts:
+(pass) one child serves every message, and each part of its reply arrives [365.57ms]
+
+scripts/coverage.test.ts:
+(pass) parsePureList > keeps one path per line and skips blank lines and comments [0.08ms]
+(pass) parsePureList > lists a file once when the list repeats it [0.01ms]
+(pass) ownTestFile > puts .test before the extension, in the same folder [0.04ms]
+(pass) parseLcov > reads the lines found and hit of each source file [0.05ms]
+(pass) parseLcov > returns no records for an empty report
+(pass) lineCoverage > is the share of executable lines that ran, in percent
+(pass) lineCoverage > is 100 for a file with no executable lines
+(pass) judge > passes a file at or above the threshold [0.03ms]
+(pass) judge > fails a file below the threshold, on its own numbers [0.01ms]
+(pass) judge > fails a file with no own test file at 0% and names the missing test file
+(pass) judge > fails a file that its own test run never loaded at 0%
+(pass) judge > fails a file whose own tests fail, whatever its coverage [0.01ms]
+(pass) judge > passes a file with no executable lines, also with no own test file [0.01ms]
+(pass) formatResult > prints the verdict, the percentage and the file on one line [0.03ms]
+(pass) formatResult > adds the reason after the file
+
+src/serve/server.test.ts:
+(pass) a note that the map refuses answers with the broken rule [173.23ms]
+
+src/verbs/notes-verbs.test.ts:
+(pass) inbox prints the person's notes after --since, at most -n of them [747.31ms]
+
+src/serve/server.test.ts:
+(pass) a note with the served page's token is appended once, in the person's name [166.52ms]
+
+src/serve/chat.test.ts:
+(pass) the chat agent starts with the werk text and the titles of the project's build rules [309.15ms]
+
+src/serve/server.test.ts:
+(pass) the card API refuses a bad id and says found false for an unknown one [177.08ms]
+(pass) a chat message needs the token, POST, and a text [234.63ms]
+
+src/serve/chat.test.ts:
+(pass) after the child exits, the next message starts a fresh child [568.02ms]
+
+src/verbs/notes-verbs.test.ts:
+(pass) a discard and a new proposal keep the earlier notes, with one marker between old and new [830.86ms]
+
+src/serve/server.test.ts:
+(pass) a chat message comes back rendered, and the reply streams on the live channel as HTML [372.42ms]
+
+scripts/format-hook.test.ts:
+(pass) format-and-lint hook > formats the edited file and returns nothing when no error remains [1029.37ms]
+
+src/serve/chat.test.ts:
+(pass) a close stops the child [312.77ms]
+
+src/serve/server.test.ts:
+(pass) the ✓ without the token of this start is refused, and the ghost stays a ghost [148.78ms]
+
+src/serve/chat.test.ts:
+(pass) the child runs Sonnet with Opus as its advisor, both by their pinned ids [130.64ms]
+
+src/serve/lock.test.ts:
+(pass) the lock sits beside the log [0.04ms]
+
+src/serve/server.test.ts:
+(pass) the ✓ on a ghost excerpt makes it real in the person's name, and its link from the card goes live [164.87ms]
+
+scripts/format-hook.test.ts:
+(pass) format-and-lint hook > returns the errors that remain to the agent [347.69ms]
+
+src/serve/lock.test.ts:
+(pass) a free lock is taken in the name of this process, then names its port, and a release removes it [122.45ms]
+
+src/serve/server.test.ts:
+(pass) the ✓ on a node with nothing pending answers with the broken rule, and a bad body is refused [147.00ms]
+
+src/verbs/propose-verbs.test.ts:
+(pass) a proposal that leaves a body block unnamed is refused and lists that block [456.23ms]
+
+src/serve/lock.test.ts:
+(pass) a release leaves a lock that names another process [128.22ms]
+
+src/serve/server.test.ts:
+(pass) a write without the token is refused whatever its address, and a write with a non-loopback Host too [178.73ms]
+
+src/serve/lock.test.ts:
+(pass) the lock of a dead holder is stale and is replaced at once [128.96ms]
+
+src/verbs/propose-verbs.test.ts:
+(pass) a quoted old that is not a real block shows as removed plus new [221.19ms]
+
+scripts/format-hook.test.ts:
+(pass) format-and-lint hook > touches only the edited file [338.48ms]
+
+src/serve/server.test.ts:
+(pass) a read needs no token [142.46ms]
+
+scripts/format-hook.test.ts:
+(pass) format-and-lint hook > ignores a file outside the project [151.08ms]
+
+src/serve/server.test.ts:
+(pass) the card read returns one card with its body and why, and only the ids and titles of its neighbours [145.34ms]
+(pass) the shape read holds every id, kind, status, link and rollup, and no body text [119.75ms]
+
+scripts/format-hook.test.ts:
+(pass) format-and-lint hook > ignores a file the linter does not handle [332.18ms]
+
+scripts/subagent-links.test.ts:
+(pass) this repository links every shipped subagent [0.45ms]
+(pass) a repository that links every shipped subagent passes, beside a plain file of its own [1.77ms]
+(pass) the check fails when a shipped subagent's link is replaced by a copy [1.10ms]
+(pass) the check fails when a shipped subagent has no link [1.17ms]
+(pass) the check fails when the link points at another file or at nothing [1.69ms]
+(pass) only definition files in the shipped folder count [1.17ms]
+
+src/verbs/propose-verbs.test.ts:
+(pass) a proposal is staged: the card shows the pending change and keeps its words until the accept [568.17ms]
+
+src/serve/lock.test.ts:
+(pass) a live holder makes the start wait, then refuse with the holder's pid and port [657.69ms]
+
+src/agent/launch.test.ts:
+(pass) a build pass in another project starts with its own prompt, the werk text, the three rule titles and both subagents [104.62ms]
+(pass) a chat agent gets the werk text and the rule titles, and a sample agent gets neither [103.81ms]
+(pass) a project whose build-rules card has no children gets the werk text and no title list [105.23ms]
+
+src/serve/server.test.ts:
+(pass) a command-line add while the server runs sends one changed signal with no data to each live channel [595.52ms]
+
+src/verbs/propose-verbs.test.ts:
+(pass) accepting a proposal on a decided card leaves it decided with the new words, and records one amend [395.34ms]
+
+src/agent/launch.test.ts:
+(pass) in werk's own checkout the werk text appears one time, with the rule titles after it [101.30ms]
+(pass) the map is read from the log the launcher names, when the agent runs outside the project [106.63ms]
+(pass) by default werk names itself by the runtime and the entry script it runs from [0.13ms]
+
+src/agent/prompt.test.ts:
+(pass) a build pass's prompt is its own prompt, then the werk text, then the build-rule titles [0.11ms]
+(pass) the chat agent and the plan writers get the werk text too [0.09ms]
+(pass) a sample agent, a diagram agent and a model call with no tools get only their own prompt [0.03ms]
+(pass) in werk's own checkout the text and the subagents are not added a second time [0.03ms]
+(pass) a project's instruction file that only mentions the include path still gets the text [0.01ms]
+(pass) with no cards under the build-rules card, the prompt holds no title list [0.04ms]
+(pass) the title list skips ghosts, open cards and options, and keeps a decided card below an open one [0.06ms]
+(pass) each agent that gets the text gets the shipped subagents, with the werk command line filled in [0.10ms]
+(pass) the instruction text names every subagent that werk ships [0.03ms]
+(pass) the instruction text and the subagents name no card id but the made-up examples [0.11ms]
+(pass) werk runs from source as the runtime and the entry script, and from a built file as that file [0.02ms]
+(pass) a subagent definition needs its front matter, a name and a description [0.04ms]
+
+src/serve/lock.test.ts:
+(pass) a holder that exits during the wait lets the start in [514.86ms]
+
+src/cli.test.ts:
+(pass) werk help lists every registered verb [138.46ms]
+
+src/verbs/propose-verbs.test.ts:
+(pass) an amend that misses a required fact is refused, and the card keeps its words and its pending change [395.84ms]
+
+src/serve/server.test.ts:
+(pass) a read without a log change sends no signal [419.50ms]
+
+src/cli.test.ts:
+(pass) an unknown verb prints the help and exits 2 [109.19ms]
+
+src/serve/server.test.ts:
+(pass) a write made before the server started shows in the first read after connect [119.59ms]
+
+src/cli.test.ts:
+(pass) the start-up ends before its verb, and the process exits with the verb's code [105.52ms]
+
+src/cli/args.test.ts:
+(pass) positional card ids lose one leading hash [0.14ms]
+(pass) a flag whose value is a card id loses one leading hash, in both forms [0.04ms]
+(pass) a text flag that starts with a hash passes through unchanged [0.01ms]
+(pass) a text positional keeps its hash [0.01ms]
+(pass) a switch is true when present
+(pass) a flag value may start with dashes
+(pass) wrong arguments are refused with the reason [0.03ms]
+(pass) a verb with no positionals or flags takes none [0.01ms]
+(pass) a one-letter flag is written with one dash [0.05ms]
+(pass) a repeating last positional takes every argument left [0.02ms]
+
+src/serve/lock.test.ts:
+(pass) a lock that does not parse is held during the wait and stale after it [414.55ms]
+
+src/cli/card-id.test.ts:
+(pass) an id with one leading hash and an id without one name the same card [0.03ms]
+(pass) only one leading hash goes
+(pass) a hash inside the id stays
+
+src/cli/help.test.ts:
+(pass) a verb prints its arguments, its help and each flag with its value kind [0.10ms]
+(pass) a verb with no flags prints its name and its help
+(pass) the help lists every verb it is given [0.03ms]
+(pass) a one-letter flag prints with one dash [0.01ms]
+(pass) a repeating positional prints with an ellipsis [0.01ms]
+
+src/cli/registry.test.ts:
+(pass) a registered verb is found by its name [2.97ms]
+(pass) the list holds every registered verb, ordered by name [0.34ms]
+(pass) a second verb with the same name is refused [0.03ms]
+(pass) registerVerb adds to the registry of the command line [0.01ms]
+
+src/cli/start.test.ts:
+(pass) the chosen verb gets its parsed arguments and its exit code is returned [0.15ms]
+(pass) an unknown verb prints the help and exits 2 [0.06ms]
+(pass) no verb prints the help and exits 2 [0.03ms]
+(pass) a wrong argument names the verb and exits 2 [0.02ms]
+(pass) a verb that throws exits 1 with its message [0.07ms]
+(pass) the start-up returns before the verb ends, then exits with the verb's code [6.31ms]
+(pass) a second verb module joins the help without a change to any other verb [6.00ms]
+
+src/map/chat.test.ts:
+(pass) a conversation's chat log sits in the chats folder beside the decision log [0.07ms]
+(pass) a name that could leave the chats folder has no chat log [0.02ms]
+(pass) every line counts for the message position, a bad or unknown line too [0.12ms]
+(pass) a quote that occurs once points at its message and its span [0.10ms]
+(pass) a quote in two messages names the messages [0.02ms]
+(pass) a quote twice in one message names the number of matches [0.02ms]
+(pass) text only in a tool call, a tool result or tooling text is no match [0.03ms]
+(pass) a refusal says which case it found [0.02ms]
+
+src/serve/server.test.ts:
+(pass) a swapped request handler answers the next request, and the open live channel stays [272.47ms]
+
+src/map/commit.test.ts:
+(pass) each event gets the next seq and the time, in the order of the log line [0.58ms]
+(pass) a later event that breaks a rule refuses the whole write, and the map is unchanged [0.11ms]
+(pass) the log lines are one JSON event per line [0.13ms]
+(pass) a write that a contract check refuses appends nothing and names every missing fact [0.36ms]
+
+src/map/contract.test.ts:
+(pass) the four facts > a bare card misses who, basis, option and kill criterion, in that order [0.23ms]
+(pass) the four facts > a card with who me or prototype needs no option; who you needs one [0.19ms]
+(pass) the four facts > an option, or an option waiver, holds the option fact [0.25ms]
+(pass) the four facts > the option fix names the first free option id [0.11ms]
+(pass) the four facts > a decided parent, a decided depends_on target or a basis waiver holds the basis [0.18ms]
+(pass) the four facts > a card on an open basis waits, and the gap names each open basis [0.07ms]
+(pass) the four facts > a kill criterion holds the last fact, and a card with all four has no gap [0.03ms]
+(pass) a decide > is refused with every missing fact in one message [0.09ms]
+(pass) a decide > names one missing fact in the singular [0.04ms]
+(pass) a decide > passes when every fact holds [0.03ms]
+(pass) a decide > on a ghost reads its held links and options [0.06ms]
+(pass) a change to a decided card > removing the last option is refused; removing one of two is allowed [0.11ms]
+(pass) a change to a decided card > discarding its only ghost option is refused [0.05ms]
+(pass) a change to a decided card > changing who to you on a card with no option removes the option fact [0.03ms]
+(pass) a change to a decided card > a missing fact can always be added to an old decided card [0.07ms]
+(pass) a change to a decided card > a change to its words or its depends_on links needs every fact after the change [0.11ms]
+(pass) a change to a decided card > a link to a source, or the removal of a card it stands on, is not refused [0.06ms]
+(pass) a change to a decided card > an amend runs the facts on the new version, so it waits on a missing fact and refuses to lose one [0.21ms]
+(pass) a change to a decided card > a change to an open card is never refused [0.03ms]
+
+src/map/find.test.ts:
+(pass) find lists open and proto cards breadth first, the card itself first, and leaves out waiting ones [0.55ms]
+(pass) a card reopened as rejected is listed, and a postponed one is not [0.11ms]
+(pass) find with no card reads every tree of the map [0.10ms]
+(pass) find prints one line per card with its id, status and title, or says there is none [0.15ms]
+
+src/map/fold.test.ts:
+(pass) an empty log folds to an empty map [0.21ms]
+(pass) a card added under a parent sits under it, from the same event [0.31ms]
+(pass) a proposed node is a ghost until it is accepted [0.12ms]
+(pass) the map holds only the latest words and links [0.18ms]
+(pass) a discarded ghost leaves with its links, and its id is free again [0.07ms]
+(pass) a ghost's links are held outside the live links, and go live once both ends are real [0.10ms]
+(pass) a bad line is set aside with its line number, and the lines after it still fold [0.06ms]
+(pass) a step applies an event that passes and returns the rule of one that fails [0.02ms]
+(pass) a copy changes apart from the original [0.07ms]
+(pass) a removal moves its nodes out of the map, their links wait, and a restore brings them back [0.23ms]
+(pass) a reparent moves the children up, and its restore puts them back under the card [0.10ms]
+(pass) a moved child removed on its own goes back under the card while it stays out [0.05ms]
+(pass) a link waits while either end is out, whatever the order of the removals and restores [0.09ms]
+(pass) a branch removed earlier stays out when a card above it is removed and restored [0.02ms]
+(pass) a ghost link to a removed card waits after the accept, and a discard drops a waiting link [0.05ms]
+(pass) a copy keeps its removals apart from the original [0.10ms]
+(pass) a decide, an edit and each kill criterion change the card they name [0.08ms]
+(pass) a kill criterion added to a copy leaves the original's criteria alone [0.02ms]
+(pass) a proposal waits on a real node until an accept or an amend takes it, or a discard drops it [0.39ms]
+(pass) a thread belongs to the id: a discard keeps it, and a new proposal adds one marker [0.04ms]
+(pass) a first proposal adds no marker, and a copy of the map has its own threads [0.03ms]
+(pass) a quote folds into a ghost excerpt with its pointer and a held link from the citing card [0.10ms]
+
+src/map/marks.test.ts:
+(pass) a reopen with the reason invalidated or rejected > marks the direct dependents and the direct children stale, and nothing two hops away [0.38ms]
+(pass) a reopen with the reason invalidated or rejected > names the reason rejected in the mark [0.07ms]
+(pass) a reopen with the reason invalidated or rejected > leaves the reopened card open, with no mark of its own [0.08ms]
+(pass) a reopen with the reason postponed > pauses every card downstream at any distance, by the shortest path [0.10ms]
+(pass) a reopen with the reason postponed > puts one mark on a card that two paths reach [0.06ms]
+(pass) a reopen with the reason postponed > leaves the postponed card open, and it carries the postponed mark itself [0.04ms]
+(pass) a reopen with the reason postponed > does not reach a card linked after it [0.04ms]
+(pass) deciding a postponed card again > clears the paused marks it caused, and leaves a pause from another card [0.07ms]
+(pass) deciding a postponed card again > of a card reopened as invalidated leaves the stale marks [0.03ms]
+(pass) stale and paused on one card > read as stale, so an invalidation never looks calm [0.05ms]
+(pass) stale and paused on one card > a confirm clears the stale mark and keeps the pause [0.15ms]
+(pass) a mark holds over the link it passed > and drops when the link is removed [0.06ms]
+(pass) a mark holds over the link it passed > and does not come back when the link is made again later [0.04ms]
+(pass) a mark holds over the link it passed > and a restore brings back the link and its mark, as the map was (#werk-remove-restore-undo) [0.09ms]
+(pass) a mark holds over the link it passed > and a child moved up by a removal sits on a new link with no mark [0.04ms]
+(pass) a mark holds over the link it passed > and a ghost or a missing card carries none [0.05ms]
+(pass) a card on its basis > waits on an open basis, and a card linked after the reopen carries no mark [0.04ms]
+(pass) a card on its basis > waits on a stale basis, and is not stale [0.04ms]
+(pass) a card on its basis > holds on a paused basis [0.04ms]
+(pass) a card on its basis > names a missing basis, and only an open card that has no mark waits [0.03ms]
+(pass) the links a confirm must name > are the depends_on links made before the newest stale mark [0.04ms]
+(pass) an amend > clears the reviewed card and marks its next hop stale with the review sentence [0.05ms]
+
+src/serve/server.test.ts:
+(pass) every view address is answered with the app, and another address is not [172.72ms]
+
+src/map/notes.test.ts:
+(pass) an empty thread prints nothing [0.05ms]
+(pass) a thread prints each note with its position and writer, and each marker [0.19ms]
+(pass) the inbox prints only the person's notes, in log order, under the title the id has now [0.13ms]
+(pass) the inbox starts after the given position and stops at the count [0.03ms]
+(pass) a note on an id that is discarded and not proposed again prints with no title [0.02ms]
+
+web/diff.test.ts:
+(pass) a reworded sentence marks only the words that changed, removed before added [2.48ms]
+(pass) a reworded phrase is one change, not one mark per word [0.29ms]
+(pass) a title with nothing changed has no mark, and an added word keeps the code span around it [0.34ms]
+(pass) one added item in a long list marks only that item [0.84ms]
+(pass) a reworded item and a removed item in a numbered list are each marked alone [0.60ms]
+(pass) a heading is marked line by line and keeps its level [0.19ms]
+(pass) a block that changes kind shows the old block removed and the new block added [0.44ms]
+(pass) kept, new and removed blocks of a body render in op order, and an unquoted removal says so [0.32ms]
+(pass) a why replaced whole pairs its blocks: kept ones plain, a new one added, a dropped one removed [0.32ms]
+(pass) references and links keep working inside the diff, and a mark never lands inside a tag [0.61ms]
+(pass) removed syntax is dropped and added syntax renders, so the new structure shows [0.27ms]
+(pass) a quote and a table are marked line by line [0.28ms]
+(pass) a rule replaced by a paragraph is a change of kind [0.09ms]
+
+src/verbs/propose-verbs.test.ts:
+(pass) discard drops the pending change and leaves the card as it was [618.07ms]
+
+web/escape.test.ts:
+(pass) escapeHtml > escapes every character that can open markup or an attribute [0.05ms]
+(pass) entityCharAtEnd > names the character an entity at the end stands for [0.02ms]
+(pass) entityCharAtEnd > names nothing when no entity ends the text [0.01ms]
+
+web/highlight.test.ts:
+(pass) grammarFor > answers to the common names of each language, in any letter case [0.07ms]
+(pass) grammarFor > knows no grammar for an unknown or empty tag
+(pass) highlight > colours shell keywords, strings, variables, flags and comments [0.14ms]
+(pass) highlight > does not read a # inside a shell word as a comment [0.02ms]
+(pass) highlight > colours script keywords, literals, numbers, strings and comments [0.24ms]
+(pass) highlight > leaves a keyword or a number inside a longer name uncoloured [0.04ms]
+(pass) highlight > tells a JSON key from a string value [0.04ms]
+(pass) highlight > renders an unknown tag as plain escaped text
+(pass) codeBlock > boxes the code with the tag as a corner label and the grammar it picked
+(pass) codeBlock > labels an unknown tag and renders its code plain
+(pass) codeBlock > shows no label for a fence with no tag
+
+web/live.test.ts:
+(pass) the page reads again on every connect of its live channel and on every changed signal [0.30ms]
+
+src/serve/server.test.ts:
+(pass) the card API gives a page that says so for an id that is not in the map [135.75ms]
+
+web/md.test.ts:
+(pass) card references > renders #al-diff, bare al-diff and a code span holding al-diff as the same link [0.25ms]
+(pass) card references > leaves a joined id and a command in a code span as text [0.04ms]
+(pass) card references > leaves an id the map does not know as plain text [0.04ms]
+(pass) card references > links no reference inside a fenced block, a heading or a link's own label [0.03ms]
+(pass) card references > renders a card id in a code span inside a link label as code, not as a second link [0.04ms]
+(pass) card references > links every form of a reference in one body the same way, and leaves the prose between as text [0.02ms]
+(pass) card references > links a reference on its own in a body full of look-alikes, and none of the look-alikes [0.04ms]
+(pass) card references > links a reference inside bold text [0.01ms]
+(pass) escaping > escapes script tags in card text [0.02ms]
+(pass) escaping > shows a script tag as text beside bold and struck-through words [0.02ms]
+(pass) escaping > renders a link with an unsafe scheme as text [0.03ms]
+(pass) escaping > never expands a placeholder that the text itself holds [0.06ms]
+(pass) blocks > renders headings, rules, lists and quotes [0.04ms]
+(pass) blocks > renders empty text as nothing
+(pass) a chat message > links a known card and leaves a removed card, which the known set leaves out, as written [0.01ms]
+(pass) renderTileInline > shows a summary's reference as #id with no link inside the tile [0.01ms]
+(pass) renderTileInline > shows links and images as their text, and a reference as #id with no link [0.01ms]
+(pass) fenced blocks > highlights by the tag and labels the box [0.02ms]
+(pass) fenced blocks > leaves a reference inside a fence of any tag as plain code [0.04ms]
+(pass) fenced blocks > renders an unknown tag plain, with its label
+(pass) fenced blocks > renders a fence with no closing line while text streams [0.01ms]
+(pass) fenced blocks > boxes each fence of one body by its own tag: shell, script, an unknown tag and none [0.04ms]
+(pass) fenced blocks > keeps the box and its label while a json fence streams, and colours the whole code once it closes [0.02ms]
+(pass) fenced blocks > keeps the prose on both sides of a fence [0.01ms]
+(pass) inline rules > renders code, bold, italic and strikethrough [0.01ms]
+(pass) inline rules > leaves an underscore inside a word alone
+(pass) inline rules > renders links and images [0.02ms]
+(pass) inline rules > gives an image a plain-text alt, even when it holds code or a reference [0.02ms]
+(pass) inline rules > leaves a link or image as text when its address holds code [0.01ms]
+
+web/page-store.test.ts:
+(pass) a refresh reads the open card and tells every listener [0.18ms]
+(pass) going to another card drops the old read and reads the new card [0.07ms]
+(pass) a slow read of an earlier card never covers the card opened after it [0.05ms]
+(pass) a read that lands after the page opened the same card again is dropped [0.04ms]
+(pass) a listener that unsubscribes hears nothing more [0.03ms]
+
+web/reflink.test.ts:
+(pass) linkRefs > links a #id for any known id, a single word included [0.05ms]
+(pass) linkRefs > links a bare id only when it holds a hyphen or a colon [0.01ms]
+(pass) linkRefs > leaves an unknown id as written [0.03ms]
+(pass) linkRefs > links the whole token or none of it
+(pass) linkRefs > starts no reference after a hyphen, a #, a colon, a word character or a slash [0.03ms]
+(pass) linkRefs > reads an escaped character as the character it stands for [0.01ms]
+(pass) linkRefs > leaves a URL fragment alone
+(pass) codeSpanRef > names the card when the span holds nothing but a known id
+(pass) codeSpanRef > names no card for a command or an unknown id
+(pass) the rendered reference > shows #id in a monospace face and points at the card's page
+(pass) the rendered reference > encodes the id in the address
+
+src/serve/server.test.ts:
+(pass) outside dev the server reads the built client folder, and no file outside it [112.91ms]
+
+web/remove.test.tsx:
+(pass) a ✕ reads its choice from its data, and offers a reparent only with children and a parent [0.90ms]
+(pass) a card with no children gets one plain question that names the count [10.61ms]
+(pass) a card with two children offers the subtree, the reparent with its counts and parent, and cancel [9.26ms]
+(pass) a click on a ✕ opens the dialog, and an answer sends the removal with the token, then closes [6.86ms]
+(pass) a refused removal keeps the dialog open with the server's words, and a click elsewhere opens nothing [4.61ms]
+
+web/routes.test.ts:
+(pass) the home addresses open the home card [0.08ms]
+(pass) a map address names its card id, URL-decoded [0.03ms]
+(pass) an address that is not a view address names no view [0.03ms]
+(pass) the address of a view reads back as the same view [0.02ms]
+
+src/serve/lock.test.ts:
+(pass) a lock that parses during the wait and names a live holder refuses [679.90ms]
+(pass) the wait comes from WERK_LOCK_WAIT_MS when it is a whole number [0.13ms]
+
+src/tickets/own-checks.test.ts:
+(pass) a valid ticket passes all eight checks and gives its fields to the set checks, without the hash sign [0.48ms]
+(pass) empty cites, blocked_by, stories and an empty Checks section pass [0.04ms]
+(pass) a file with no title fails title alone, and no other check runs on it [0.06ms]
+(pass) shape names each missing header line and each missing heading [0.04ms]
+(pass) shape fails header lines or sections out of order, and a list entry that is not a number [0.05ms]
+(pass) a file over the size limit fails size, and a file at the limit passes [0.09ms]
+(pass) what-to-build fails an empty section and a missing heading [0.06ms]
+(pass) acceptance needs a plain bullet or a checkbox [0.07ms]
+(pass) no-file-paths lists each path with its line and its field; a bare file name, a URL and a slash command pass [0.07ms]
+(pass) no-file-paths finds a path in Markdown emphasis, and a path from the root or the home folder [0.04ms]
+(pass) an underscore that begins a path stays part of it when no underscore closes it [0.02ms]
+(pass) a path in a header line or between the header lines names its place [0.03ms]
+(pass) make-targets fails each Checks bullet that is not make <target> [0.07ms]
+(pass) touches needs a module name, and fails a name with a slash, a backslash or an extension [0.06ms]
+
+src/tickets/parse.test.ts:
+(pass) the header lines are read with their line numbers, and each section with the lines below its heading [0.11ms]
+(pass) a header-like line below the first heading is section text, and only the first header line of a name counts [0.03ms]
+(pass) a deeper heading stays inside its section, and Windows line ends read the same [0.02ms]
+(pass) a list value splits on commas and drops the empty entries [0.02ms]
+
+src/serve/server.test.ts:
+(pass) the ✕ removes a card in the person's name, with its subtree or with its children moved up [155.60ms]
+
+src/tickets/report.test.ts:
+(pass) a failure line names its ticket, check and field, and a set failure names the ticket set [0.05ms]
+(pass) the count line counts tickets, own-check failures, failures, decided cards and stories [0.11ms]
+(pass) the report is the failure lines, then the count line [0.03ms]
+
+src/test/clean-env.test.ts:
+(pass) every WERK_ variable and every variable that names a real repository points at a real project [0.05ms]
+(pass) the clean environment drops the real project and keeps the rest [0.03ms]
+(pass) the fake agent's directory comes first on PATH, once [0.01ms]
+(pass) git reads no configuration of the person who runs the tests
+(pass) the fake is first only when its directory is the first entry on PATH [0.01ms]
+
+src/tickets/set-checks.test.ts:
+(pass) a ticket's number is the number its file name starts with [0.20ms]
+(pass) a set that cites every card, delivers every story and blocks in order passes [0.43ms]
+(pass) cards-cited lists every card no ticket cites, in one failure of the set [0.05ms]
+(pass) stories lists the missing numbers and the unknown numbers as two failures of the set [0.05ms]
+(pass) a blocker not in the set names the ticket that names it [0.04ms]
+(pass) a blocker cycle is one failure that names every ticket on it, and a ticket that blocks itself is a cycle [0.10ms]
+
+src/test/dom.test.tsx:
+(pass) a component renders into the one DOM of the process [10.13ms]
+(pass) a server test in the same process calls the runtime's network function, not the DOM's [6.58ms]
+
+src/tickets/spec.test.ts:
+(pass) the stories are the numbered lines under User stories, up to the next heading of the same level or higher [0.12ms]
+(pass) a spec with no User stories heading has no stories list, and an empty section has an empty one [0.01ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) a unique quote writes one excerpt ghost with its pointer, linked from the card, in one event [415.76ms]
+
+src/test/project.test.ts:
+(pass) a fresh project is a git repository with an empty map, beside a target git repository [182.80ms]
+
+src/test/fake-agent.test.ts:
+(pass) with no script the fake exits with an error [274.44ms]
+
+src/test/project.test.ts:
+(pass) each test gets its own project [270.68ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) a quote in two messages, or twice in one message, refuses, says which, and writes nothing [373.26ms]
+
+src/verbs/contract-verbs.test.ts:
+(pass) deciding a bare card is refused once, naming who, basis, option and kill criterion with their fixes [530.83ms]
+
+src/test/fake-agent.test.ts:
+(pass) a build pass plays its events and edits in order, then exits with the script's code [311.01ms]
+
+src/test/project.test.ts:
+(pass) a werk command runs in the project and gives its exit code and output [446.29ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) text only in a tool call or a tool result gives no match [441.41ms]
+
+src/test/project.test.ts:
+(pass) a test that fails leaves its project and its processes behind [148.83ms]
+(pass) the harness removed the failed test's project and stopped its process [0.11ms]
+
+src/test/setup.test.ts:
+(pass) no variable that points at a real project is left in the test process [0.05ms]
+(pass) Bun's program lookup finds the fake agent [0.04ms]
+(pass) a child started with no explicit environment finds the fake agent, by every way Bun starts one [75.79ms]
+
+src/test/fake-agent.test.ts:
+(pass) an edit that leads outside the project fails and writes nothing [408.05ms]
+
+src/test/setup.test.ts:
+(pass) the fake agent started with no script exits with an error [132.02ms]
+
+src/test/fake-agent.test.ts:
+(pass) an edit through a link that leads outside the project fails and writes nothing [274.24ms]
+
+src/test/setup.test.ts:
+(pass) a variable of the shell that starts the run does not reach a test's children [248.30ms]
+
+src/tickets/cards.test.ts:
+(pass) the root and its decided real descendants at any depth count; open cards, ghosts and other subtrees do not [0.63ms]
+
+src/tickets/check.test.ts:
+(pass) valid tickets pass, and the counts name the tickets, cards and stories [0.62ms]
+(pass) a ticket that fails its own checks is left out of the set checks, so its cites and stories do not count [0.12ms]
+
+src/test/fake-agent.test.ts:
+(pass) an ask does not block the steps after it, and the result waits for its answer [316.46ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) a quote refuses an unknown card, a missing chat log, a bad name and empty text [809.09ms]
+
+src/verbs/ticket-check.test.ts:
+(pass) a folder of valid hand-written tickets exits 0 and prints only the count line [362.89ms]
+
+src/test/fake-agent.test.ts:
+(pass) a crash with an ask open exits with no final result [327.57ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) an excerpt cannot be added by hand [330.91ms]
+
+src/verbs/ticket-check.test.ts:
+(pass) a ticket naming a source file path fails no-file-paths with the line number; a bare file name passes [332.95ms]
+
+src/test/fake-agent.test.ts:
+(pass) with no input channel an open ask is denied at the end of the turn [279.95ms]
+
+src/verbs/contract-verbs.test.ts:
+(pass) a card with who me needs no option; a card with who you does [1767.51ms]
+
+src/test/fake-agent.test.ts:
+(pass) a pause lasts at least the scripted time plus a 20 ms margin [354.47ms]
+
+src/verbs/ticket-check.test.ts:
+(pass) a path in emphasis and an oversized ticket each fail on a line that starts with their file name [564.16ms]
+(pass) a ticket over 4000 characters fails size [338.46ms]
+
+src/test/fake-agent.test.ts:
+(pass) each launch is recorded with its arguments, its role and the messages it read [641.30ms]
+
+src/verbs/ticket-check.test.ts:
+(pass) an uncited decided card, a missing story and a blocker cycle each print one set failure [397.89ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) an excerpt takes a note, and goes with its citing ghost on a discard and on an accept [1629.83ms]
+
+src/test/fake-agent.test.ts:
+(pass) the next launch of a role plays the role's next reply, and a launch past the last reply fails [648.69ms]
+
+src/verbs/ticket-check.test.ts:
+(pass) a ghost under the root does not need to be cited, also when it is decided [414.50ms]
+
+src/verbs/contract-verbs.test.ts:
+(pass) a waiver with an empty reason is refused; a waiver with a reason prints on the card [1724.82ms]
+
+src/test/fake-agent.test.ts:
+(pass) a launch whose role the script does not name fails [414.57ms]
+(pass) a chat agent answers each message in turn and exits when its input closes [375.04ms]
+(pass) a chat agent with no input stream fails [317.49ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) a quote for a decided card waits as a ghost, and one accept makes it live evidence under the card [1415.32ms]
+
+src/verbs/contract-verbs.test.ts:
+(pass) a card on an open basis is refused, and the message names the basis [1101.06ms]
+
+src/verbs/ticket-check.test.ts:
+(pass) a malformed call exits 2 and prints nothing to standard output [1489.92ms]
+
+src/test/fake-agent.test.ts:
+(pass) a script that cannot be read fails the launch [444.35ms]
+
+web/chat-thread.test.ts:
+(pass) a sent message and the parts of its reply follow one another in the thread [4.62ms]
+(pass) a finished block replaces the streamed block with the same id, in its place [0.07ms]
+
+src/test/fake-script.test.ts:
+(pass) a script holds the replies and the exit code of each role [0.22ms]
+(pass) a script with a wrong shape throws and names the place [0.14ms]
+(pass) a reply is picked by role and index, and a missing one is an error, never an invented reply [0.04ms]
+(pass) a path is inside the project only when it names something below the project folder [0.04ms]
+(pass) a launch has an input channel only with the stream-json input format [0.02ms]
+(pass) an input line is a message, an answer to an ask, or nothing the fake reads [0.04ms]
+(pass) an ask prints a permission request, and a result names the asks that were denied [0.02ms]
+
+web/composer.test.tsx:
+(pass) the composer stashes its draft in the tab's session storage just before the page goes away [27.83ms]
+(pass) a composer that mounts after a reload shows the kept draft [1.08ms]
+
+web/copy-id.test.ts:
+(pass) a click on the id copies it as a reference and marks the button copied [3.78ms]
+(pass) a click elsewhere copies nothing, and a refused copy leaves the button as it was [0.36ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) a quote past a hidden tool result shows its pointer, and counts the hidden line for the position [932.04ms]
+
+src/verbs/search-verbs.test.ts:
+(pass) search with no term prints the index of decided cards, and no ghost [430.31ms]
+
+src/verbs/marks-verbs.test.ts:
+(pass) a reopen marks the next hop stale, and stale lists a basis before the card on it [1167.05ms]
+
+src/verbs/search-verbs.test.ts:
+(pass) search with terms keeps the cards that hold all of them, the most hits first [998.00ms]
+
+src/verbs/contract-verbs.test.ts:
+(pass) removing the last option of a decided card is refused; a kill criterion on an old decided card is allowed [2091.74ms]
+
+src/verbs/search-verbs.test.ts:
+(pass) search refuses an unknown status or subtree [655.28ms]
+
+src/verbs/marks-verbs.test.ts:
+(pass) a confirm is refused while a link reason is unconfirmed, and the refusal gives the command [1275.43ms]
+
+src/verbs/search-verbs.test.ts:
+(pass) find lists the open work, with a rejected card and without a postponed one [805.28ms]
+
+src/verbs/quote-verbs.test.ts:
+(pass) a discard drops an excerpt with its card, and an accept keeps the other excerpt's pointer [2715.83ms]
+
+src/verbs/marks-verbs.test.ts:
+(pass) a postponement pauses the cards downstream, and deciding the card again clears the pause [1413.21ms]
+
+src/verbs/serve.test.ts:
+(pass) of two starts on one store at the same moment, exactly one runs and the other refuses after the wait [1134.66ms]
+
+src/verbs/contract-verbs.test.ts:
+(pass) a ghost with held edges, options and a kill criterion is set decided and commits decided on accept [2875.39ms]
+
+src/verbs/marks-verbs.test.ts:
+(pass) a reopen and a stale listing refuse a value they do not know [620.01ms]
+
+src/verbs/serve.test.ts:
+(pass) a stale lock from a killed server is replaced, and the new server starts [881.12ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) adding a card under a parent appends one event, and the card shows under its parent as a ghost [593.37ms]
+
+src/verbs/serve.test.ts:
+(pass) an interrupt stops the server and releases the lock [488.20ms]
+
+src/verbs/remove.test.ts:
+(pass) removing a card with two children removes three cards in one event, and a restore brings all three back with their links [2475.61ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) a card added with no parent sits under the root, so the root's page lists it [764.95ms]
+
+src/verbs/serve.test.ts:
+(pass) WERK_LOG sets the store, so its lock sits beside that log [527.12ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) the first card of an empty map has no parent to take [264.38ms]
+
+src/verbs/remove.test.ts:
+(pass) remove with reparent moves the children to the grandparent, and a restore puts them back under the card [1160.37ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) a refused write appends nothing and prints the rule it breaks [825.00ms]
+(pass) a hand-inserted bad line is listed as a problem with its position, and later events still fold [358.75ms]
+
+src/verbs/remove.test.ts:
+(pass) removing login, then session, then restoring login keeps the link between them out until session is restored [946.66ms]
+(pass) adding a card with a removed card's id is refused and names the restore [373.74ms]
+(pass) a source cited by a remaining card stays after the removal, and one only the branch cites goes [885.63ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) a depends_on link needs a reason, and never points to an ancestor or a descendant [1668.90ms]
+
+src/verbs/remove.test.ts:
+(pass) remove and restore without --actor you refuse and append nothing [656.22ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) accepting a ghost child also accepts its ghost parents, sources and options, and its held links go live [1515.62ms]
+
+src/verbs/remove.test.ts:
+(pass) a restore names the removal: a card that went out with another, or that sits under one still out, is refused [1160.01ms]
+
+src/verbs/map-verbs.test.ts:
+(pass) accept without --actor you exits non-zero and appends nothing [544.50ms]
+(pass) discarding a ghost keeps a ghost source another card cites, and drops one that only it cited [1824.05ms]
+(pass) show refuses a node the map does not hold [191.78ms]
+(pass) show with no id prints the root card, with the rollup of each card that refines it [470.70ms]
+(pass) show prints the root card with its rollup and the proof sections [573.15ms]
+
+ 590 pass
+ 0 fail
+ 2034 expect() calls
+Ran 590 tests across 76 files. [26.03s]

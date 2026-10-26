@@ -1,0 +1,4 @@
+exit 0
+bun run lint
+$ biome check --error-on-warnings .
+Checked 208 files in 96ms. No fixes applied.

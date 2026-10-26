@@ -1,0 +1,165 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Flow and Measure — mockup</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--panel2:#1c2230;--line:#2a3240;--line2:#3a4557;--ink:#e6edf3;--dim:#8b98a8;--faint:#5d6b7d;
+--decided:#3fb950;--open:#d29922;--proto:#58a6ff;--stale:#f85149;--postponed:#8b98a8;--pending:#a371f7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.view{width:980px;padding:0 0 28px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:2px;padding:10px 20px 0;border-bottom:1px solid var(--line);background:var(--panel)}
+.tabs span{padding:7px 14px;color:var(--dim);border-radius:6px 6px 0 0}
+.tabs span.on{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-bottom-color:var(--bg);margin-bottom:-1px}
+.tabs span.new{position:relative}
+.tabs span.new::after{content:"new";font-size:9px;color:var(--pending);margin-left:5px;vertical-align:top}
+.body{padding:16px 20px}
+.scope{color:var(--dim);margin-bottom:14px}.scope b{color:var(--ink)}
+.scope .btn{border:1px solid var(--line2);border-radius:4px;padding:1px 7px;margin-left:6px;font-size:11px}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;min-width:84px}
+.tile .v{display:block;font-size:20px;font-weight:600}.tile .l{font-size:11px;color:var(--dim)}
+.tile.c{border-left:3px solid var(--c)}.tile.c .v{color:var(--c)}
+h3{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 10px}
+h3 .q{text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);font-size:13px}
+h3 .card{text-transform:none;letter-spacing:0;font-weight:400;color:var(--proto);margin-left:8px}
+section{margin-bottom:26px}
+.loop{display:flex;align-items:center;gap:0;margin:6px 0}
+.box{border:1.5px solid var(--c);border-radius:6px;padding:8px 14px;min-width:110px;text-align:center}
+.box b{display:block;font-size:18px;color:var(--c)}.box small{color:var(--dim)}
+.arr{flex:0 0 90px;text-align:center;color:var(--dim);font-size:11px;position:relative}
+.arr::after{content:"";display:block;height:1.5px;background:var(--line2);margin:3px 6px}
+.back{color:var(--stale);font-size:11px;margin-left:120px}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;font-weight:500;color:var(--faint);font-size:11px;padding:4px 8px;border-bottom:1px solid var(--line)}
+td{padding:5px 8px;border-bottom:1px solid var(--panel2)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.id{color:var(--proto)}.t{color:var(--dim);margin-left:8px}
+.pills{display:flex;gap:6px;margin-bottom:8px;align-items:center}
+.pills span{border:1px solid var(--line2);border-radius:12px;padding:2px 10px;font-size:12px;color:var(--dim)}
+.pills span.on{background:var(--panel2);color:var(--ink)}
+.pills input{margin-left:auto;background:var(--panel);border:1px solid var(--line);color:var(--dim);padding:4px 8px;border-radius:4px;width:200px}
+.mk{font-size:11px;padding:1px 6px;border-radius:3px;border:1px solid var(--c);color:var(--c);margin-right:4px}
+.st{color:var(--c)}
+/* Measure */
+.mhead{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:4px;overflow:hidden}
+.seg span{padding:2px 10px;color:var(--dim);font-size:12px}.seg span.on{background:var(--panel2);color:var(--ink)}
+.mgrid{display:grid;grid-template-columns:180px 1fr;gap:20px}
+.rail a{display:block;color:var(--dim);text-decoration:none;padding:3px 0;font-size:12px}
+.rail .g{color:var(--faint);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 4px}
+.rail .g:first-child{margin-top:0}
+.rail a.out::before{content:"● ";color:var(--stale)}
+.gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.gauge{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:6px;padding:8px 10px}
+.gauge .v{font-size:20px;font-weight:600;color:var(--c)}.gauge .q{font-size:12px;margin:2px 0 4px}
+.gauge .crit{font-size:11px;color:var(--faint)}.gauge .crit i{color:var(--proto);font-style:normal}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:10px}
+.bars{display:flex;align-items:flex-end;gap:6px;height:90px;padding:0 4px;border-bottom:1px solid var(--line2);position:relative}
+.bars .band{position:absolute;left:0;right:0;bottom:22px;height:30px;background:rgba(88,166,255,.08);border-top:1px dashed rgba(88,166,255,.35);border-bottom:1px dashed rgba(88,166,255,.35)}
+.bars i{flex:1;background:var(--line2);border-radius:2px 2px 0 0;position:relative}
+.bars i.o{background:var(--stale)}
+.legend{font-size:11px;color:var(--faint);margin-top:6px}
+.legend b{color:var(--stale);font-weight:500}
+.hb{display:grid;grid-template-columns:110px 1fr 40px;gap:8px;align-items:center;font-size:12px;margin:4px 0}
+.hb .tr{height:10px;background:var(--panel2);border-radius:2px;display:flex;overflow:hidden}
+.hb .tr i{display:block;height:100%}
+.note{font-size:11px;color:var(--faint);margin:4px 0 0}
+.cap{font-size:12px;color:var(--pending);margin:0 0 10px}
+</style></head><body>
+
+<!-- ================= FLOW (refined) ================= -->
+<div class="view" id="flow">
+  <div class="tabs"><span>Map</span><span>Graph</span><span>Diagram</span><span>Board</span><span class="on">Flow</span><span class="new">Measure</span></div>
+  <div class="body">
+    <p class="cap">Flow — only the map's own cards: counts, the loop, subtrees, the list.</p>
+    <div class="scope"><b>Whole map</b></div>
+    <div class="tiles">
+      <div class="tile"><span class="v">642</span><span class="l">cards</span></div>
+      <div class="tile c" style="--c:var(--open)"><span class="v">71</span><span class="l">open</span></div>
+      <div class="tile c" style="--c:var(--proto)"><span class="v">9</span><span class="l">proto</span></div>
+      <div class="tile c" style="--c:var(--decided)"><span class="v">562</span><span class="l">decided</span></div>
+      <div class="tile c" style="--c:var(--stale)"><span class="v">4</span><span class="l">stale</span></div>
+      <div class="tile c" style="--c:var(--postponed)"><span class="v">38</span><span class="l">postponed</span></div>
+      <div class="tile c" style="--c:var(--pending)"><span class="v">3</span><span class="l">proposed</span></div>
+      <div class="tile"><span class="v">2d</span><span class="l">median to decide</span></div>
+      <div class="tile"><span class="v">117</span><span class="l">cross-tree deps</span></div>
+    </div>
+
+    <section><h3>The loop</h3>
+      <div class="loop">
+        <div class="box" style="--c:var(--open)"><b>71</b><small>open · median 1d</small></div>
+        <div class="arr">412 →</div>
+        <div class="box" style="--c:var(--proto)"><b>9</b><small>proto · median 4h</small></div>
+        <div class="arr">58 →</div>
+        <div class="box" style="--c:var(--decided)"><b>562</b><small>decided</small></div>
+      </div>
+      <div class="back">← reopen 46 (decided → open)</div>
+    </section>
+
+    <section><h3>Subtrees <span class="seg" style="margin-left:8px"><span class="on">direct children</span><span>every parent</span></span></h3>
+      <table><tr><th>card</th><th class="n">open</th><th class="n">proto</th><th class="n">decided</th><th class="n">stale</th><th class="n">to decide</th><th class="n">in / out</th></tr>
+        <tr><td><span class="id">#visual</span><span class="t">The visual artifact is the primary medium</span></td><td class="n">22</td><td class="n">3</td><td class="n">188</td><td class="n">2</td><td class="n">2d</td><td class="n">31 / 40</td></tr>
+        <tr><td><span class="id">#pipeline</span><span class="t">The build pipeline</span></td><td class="n">30</td><td class="n">4</td><td class="n">201</td><td class="n">1</td><td class="n">3d</td><td class="n">44 / 27</td></tr>
+        <tr><td><span class="id">#werk</span><span class="t">werk v0</span></td><td class="n">19</td><td class="n">2</td><td class="n">173</td><td class="n">1</td><td class="n">1d</td><td class="n">18 / 26</td></tr>
+      </table>
+    </section>
+
+    <section><h3>Cards</h3>
+      <div class="pills"><span class="on">all 642</span><span>open 71</span><span>proto 9</span><span>decided 562</span><span>stale 4</span><span>paused 38</span><span>proposed 3</span><input placeholder="filter by id or title…"></div>
+      <table><tr><th>card</th><th>status</th><th>marks</th><th class="n">last move ↓</th></tr>
+        <tr><td><span class="id">#vi-flowtab</span><span class="t">Flow is a fourth tab beside the graph, the diagram, and the board</span></td><td class="st" style="--c:var(--decided)">decided</td><td></td><td class="n">2h</td></tr>
+        <tr><td><span class="id">#vi-flow-ms</span><span class="t">Flow shows the pipeline measures as panels</span></td><td class="st" style="--c:var(--proto)">proto</td><td><span class="mk" style="--c:var(--postponed)">paused</span></td><td class="n">3d</td></tr>
+        <tr><td><span class="id">#vi-flowtab-subtrees</span><span class="t">Flow breaks the stats down by subtree</span></td><td class="st" style="--c:var(--decided)">decided</td><td><span class="mk" style="--c:var(--stale)">stale</span></td><td class="n">12d</td></tr>
+      </table>
+    </section>
+  </div>
+</div>
+
+<!-- ================= MEASURE (new) ================= -->
+<div class="view" id="measure">
+  <div class="tabs"><span>Map</span><span>Graph</span><span>Diagram</span><span>Board</span><span>Flow</span><span class="on">Measure</span></div>
+  <div class="body">
+    <p class="cap">Measure — how the pipeline and the tool perform. No card scope: these numbers belong to passes and runs, not to cards.</p>
+    <div class="mhead"><span class="seg"><span>7 days</span><span class="on">30 days</span><span>all</span></span><span class="note">Every panel uses this window. A red dot marks a panel with a mark outside its band.</span></div>
+    <div class="mgrid">
+      <nav class="rail">
+        <div class="g">Kill criteria</div><a href="#">4 gauges</a>
+        <div class="g">Cost</div><a class="out" href="#">Which stage costs the most?</a><a href="#">Is effort per ticket going up?</a>
+        <div class="g">Failures</div><a class="out" href="#">Why do checks fail?</a><a href="#">Why do the grader and reviews fail?</a>
+        <div class="g">Waits</div><a href="#">Where does the pipeline wait?</a><a href="#">Chat-pane waits</a>
+      </nav>
+      <main>
+        <section><h3>Kill criteria — revisit a decision when a gauge turns red</h3>
+          <div class="gauges">
+            <div class="gauge" style="--c:var(--decided)"><div class="v">18%</div><div class="q">Stale reviews that changed nothing</div><div class="crit">revisit <i>#vi-prop</i> above 60%</div></div>
+            <div class="gauge" style="--c:var(--stale)"><div class="v">14%</div><div class="q">Process probe samples failed</div><div class="crit">revisit <i>#lp-overseer-psfail</i> above 10%</div></div>
+            <div class="gauge" style="--c:var(--decided)"><div class="v">91%</div><div class="q">One-card redraws that stayed local</div><div class="crit">revisit <i>#vi-sysdiag-localrate</i> below 80%</div></div>
+            <div class="gauge" style="--c:var(--faint)"><div class="v">—</div><div class="q">Fold time on every read</div><div class="crit">revisit <i>#pr-log-snapshot</i> above 200 ms · 3 of 20 samples</div></div>
+          </div>
+        </section>
+
+        <section><h3>Cost</h3>
+          <div class="panel"><h3><span class="q">Which stage costs the most, and is it growing?</span><span class="card">#vi-flow-ms-stage</span></h3>
+            <div class="hb"><span>build</span><span class="tr"><i style="width:62%;background:var(--proto)"></i></span><span>$41</span></div>
+            <div class="hb"><span>review</span><span class="tr"><i style="width:24%;background:var(--proto)"></i></span><span>$16</span></div>
+            <div class="hb"><span>plan</span><span class="tr"><i style="width:31%;background:var(--stale)"></i></span><span>$20</span></div>
+            <p class="legend">Bar: cost in the window. <b>Red</b>: above the stage's own band.</p>
+          </div>
+          <div class="panel"><h3><span class="q">Is effort per ticket going up?</span><span class="card">#vi-flow-ms-effort</span></h3>
+            <div class="bars"><div class="band"></div><i style="height:40%"></i><i style="height:48%"></i><i style="height:38%"></i><i style="height:52%"></i><i style="height:45%"></i><i class="o" style="height:86%"></i><i style="height:50%"></i><i style="height:44%"></i></div>
+            <p class="legend">Bar: tokens per changed line, one per ticket. Band: 90% of past tickets. <b>Red</b>: outside the band.</p>
+          </div>
+        </section>
+
+        <section><h3>Failures</h3>
+          <div class="panel"><h3><span class="q">Why do checks fail?</span><span class="card">#vi-flow-ms-checks</span></h3>
+            <div class="hb"><span>typecheck</span><span class="tr"><i style="width:40%;background:var(--open)"></i><i style="width:6%;background:var(--stale)"></i></span><span>23</span></div>
+            <div class="hb"><span>e2e</span><span class="tr"><i style="width:14%;background:var(--open)"></i><i style="width:22%;background:var(--stale)"></i></span><span>18</span></div>
+            <p class="legend">Amber: the code's fault. <b>Red</b>: the check's own fault — fix the check.</p>
+          </div>
+        </section>
+        <p class="note">Waits and the grader panel follow the same frame.</p>
+      </main>
+    </div>
+  </div>
+</div>
+</body></html>

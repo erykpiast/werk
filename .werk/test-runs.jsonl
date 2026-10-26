@@ -1,0 +1,18 @@
+{"at":"2026-10-24T18:36:28.916Z","tests":997,"failed":[]}
+{"at":"2026-10-24T18:39:11.196Z","tests":997,"failed":[{"name":"a classifier that times out counts as not looping","file":"src/overseer.test.ts","ms":308,"timeout":false,"message":"undefined is not an object (evaluating 'fake.calls()[0].argv')"}]}
+{"at":"2026-10-24T19:17:27.076Z","tests":998,"failed":[]}
+{"at":"2026-10-24T19:18:55.239Z","tests":998,"failed":[{"name":"a reworded sentence highlights only the changed words","file":"src/diff.test.ts","ms":0,"timeout":false,"message":"isList is not defined"},{"name":"a whole rewrite is one highlight, not word salad","file":"src/diff.test.ts","ms":0,"timeout":false,"message":"isList is not defined"},{"name":"a pure deletion or a pure addition at the end","file":"src/diff.test.ts","ms":0,"timeout":false,"message":"isList is not defined"},{"name":"a structural block that changes shape renders the old block removed and the new one added","file":"src/diff.test.ts","ms":0,"timeout":false,"message":"isList is not defined"}]}
+{"at":"2026-10-24T19:19:30.288Z","tests":1001,"failed":[{"name":"the options build at the same time, not one after another","file":"src/prototype.test.ts","ms":3866,"timeout":false,"message":"expect(received).toBeLessThan(expected)"}]}
+{"at":"2026-10-24T19:20:25.656Z","tests":1001,"failed":[]}
+{"at":"2026-10-24T19:23:54.351Z","tests":1002,"failed":[]}
+{"at":"2026-10-24T19:25:01.504Z","tests":1002,"failed":[]}
+{"at":"2026-10-24T20:46:44.560Z","tests":1031,"failed":[]}
+{"at":"2026-10-24T21:24:18.027Z","tests":1042,"failed":[]}
+{"at":"2026-10-24T21:52:11.545Z","tests":1056,"failed":[]}
+{"at":"2026-10-25T15:47:59.638Z","tests":1085,"failed":[]}
+{"at":"2026-10-25T15:57:45.053Z","tests":1096,"failed":[]}
+{"at":"2026-10-25T15:59:26.615Z","tests":1096,"failed":[]}
+{"at":"2026-10-25T16:00:58.715Z","tests":1096,"failed":[]}
+{"at":"2026-10-25T17:55:39.304Z","tests":1097,"failed":[{"name":"the step author runs beside the builder, with no tools and outside the worktree","file":"src/run.test.ts","ms":1814,"timeout":false,"message":"expect(received).toBeLessThan(expected)"}]}
+{"at":"2026-10-25T20:55:33.650Z","tests":1107,"failed":[]}
+{"at":"2026-10-25T22:18:13.266Z","tests":1114,"failed":[{"name":"a silent builder is cancelled, and a fresh pass starts with the reason in its brief","file":"src/build.test.ts","ms":5642,"timeout":false,"message":"expect(received).toBeLessThan(expected)"},{"name":"G2 opens again for a new tip after a later merge","file":"src/run.test.ts","ms":3611,"timeout":false,"message":"expect(received).toBe(expected)"}]}

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 606 402" width="606" height="402" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif">
+<rect x="0" y="0" width="606" height="402" fill="#0a0d12"/>
+<g id="debug-columns" style="display:none">
+<rect x="48" y="0" width="19.86" height="402" fill="#ff5ca8" opacity="0.08"/>
+<rect x="231" y="0" width="19.86" height="402" fill="#ff5ca8" opacity="0.08"/>
+<rect x="278.86" y="0" width="0" height="402" fill="#ff5ca8" opacity="0.08"/>
+<rect x="420.15" y="0" width="0" height="402" fill="#ff5ca8" opacity="0.08"/>
+<rect x="571.7" y="0" width="0" height="402" fill="#ff5ca8" opacity="0.08"/>
+</g>
+<defs>
+<marker id="arrow-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5fb0c9"/></marker>
+<marker id="arrow-state" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5c8fd6"/></marker>
+<marker id="arrow-agent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d7bd8"/></marker>
+<marker id="arrow-perm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d99a4e"/></marker>
+<marker id="arrow-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5fbf8f"/></marker>
+<marker id="arrow-ext" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a93a6"/></marker>
+<marker id="arrow-dev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9718a"/></marker>
+</defs>
+<rect x="30" y="30" width="545.7" height="132" rx="12" fill="none" stroke="#2a3a4d" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="46" font-size="11" letter-spacing="0.06em" fill="#5c7086">BROWSER</text>
+<rect x="30" y="240" width="545.7" height="132" rx="12" fill="none" stroke="#2a3a4d" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="256" font-size="11" letter-spacing="0.06em" fill="#5c7086">SERVER PROCESS</text>
+<g class="wd-node" data-node="mv" data-cards=""><rect x="48" y="64" width="202.86" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="149.43" y="84" font-weight="700" font-size="12.5">map view</tspan><tspan x="149.43" y="106" font-size="10" fill="#9fb0c4">the decision tree, the 3D graph, and</tspan><tspan x="149.43" y="119" font-size="10" fill="#9fb0c4">one card's full text</tspan></text></g>
+<g class="wd-node" data-node="cp" data-cards=""><rect x="292.86" y="64" width="264.84" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="425.28" y="84" font-weight="700" font-size="12.5">chat pane</tspan><tspan x="425.28" y="106" font-size="10" fill="#9fb0c4">where you type, and where the reply</tspan><tspan x="425.28" y="119" font-size="10" fill="#9fb0c4">streams back</tspan></text></g>
+<g class="wd-node" data-node="st" data-cards=""><rect x="48" y="274" width="202.86" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="149.43" y="294" font-weight="700" font-size="12.5">state</tspan><tspan x="149.43" y="316" font-size="10" fill="#9fb0c4">GET /api/graph, one fetch of today's</tspan><tspan x="149.43" y="329" font-size="10" fill="#9fb0c4">folded map</tspan></text></g>
+<g class="wd-node" data-node="lv" data-cards=""><rect x="292.86" y="274" width="264.84" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="425.28" y="294" font-weight="700" font-size="12.5">live + sse</tspan><tspan x="425.28" y="316" font-size="10" fill="#9fb0c4">POST /api/chat and /api/ask, and the</tspan><tspan x="425.28" y="329" font-size="10" fill="#9fb0c4">SSE stream back</tspan></text></g>
+<g class="wd-edge" data-edge="mv-&gt;st" data-cards="">
+<path class="wd-hitarea" d="M149.43,144 L149.43,171 L149.43,209 L149.43,247 L149.43,274" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M149.43,144 L149.43,171 L149.43,209 L149.43,247 L149.43,274" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="81.86" y="198" width="135.14" height="22" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="149.43" y="212">loads the folded map</tspan></text>
+</g>
+<g class="wd-edge" data-edge="cp-&gt;lv" data-cards="">
+<path class="wd-hitarea" d="M349.51,144 L349.51,171 L349.51,209 L349.51,247 L349.51,274" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M349.51,144 L349.51,171 L349.51,209 L349.51,247 L349.51,274" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="292.86" y="198" width="113.29" height="22" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="349.51" y="212">sends what you type</tspan></text>
+</g>
+<g class="wd-edge" data-edge="lv-&gt;cp" data-cards="">
+<path class="wd-hitarea" d="M495.93,274 L495.93,247 L495.93,209 L495.93,171 L495.93,144" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M495.93,274 L495.93,247 L495.93,209 L495.93,171 L495.93,144" fill="none" stroke="#9d7bd8" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-agent)"/>
+<rect x="434.15" y="198" width="123.55" height="22" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#9d7bd8"><tspan x="495.93" y="212">streams the reply back</tspan></text>
+</g>
+</svg>

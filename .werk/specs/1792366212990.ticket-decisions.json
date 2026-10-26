@@ -1,0 +1,14 @@
+[
+  {
+    "id": "werk-align-v0",
+    "title": "In v0, alignment before building is the accept gate and the plan's proposed decisions",
+    "why": "No card names what v0 builds for alignment, and both mechanisms already put every agent answer in front of the person before code.",
+    "body": "v0 builds no separate alignment feature. Alignment before building is delivered by two mechanisms that are already in v0: every card, option, source and excerpt an agent adds waits for the person's accept (see #werk-propose-new), and every answer that the spec or ticket writer gives and no card gives comes back as a proposed card before the build (see #st-spec). Every build gate also waits for the person (see #werk-loop-tier)."
+  },
+  {
+    "id": "werk-heldout-before-merge",
+    "title": "The held-out set is built and gated on the run's tree before the merge loop runs it at each merge",
+    "why": "The merge loop depends on the held-out set, so the held-out set has to work on its own first.",
+    "body": "The held-out set is built as its own slice before the merge loop: the step author, the binder, the run on the run's tree, the feedback to the builder, and the G2 refusal while a step is red (see #lp-prod-heldout, #st-g2-heldout). The merge loop then adds the run after each merge and the follow-up ticket on a red step (see #st-build-run)."
+  }
+]

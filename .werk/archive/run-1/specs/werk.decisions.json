@@ -1,0 +1,8 @@
+[
+  {
+    "id": "werk-base-dir-root",
+    "title": "v0's packages and checks sit at the root of v0's own repository, not in a directory inside the prototype's repository",
+    "why": "One card puts v0 in a directory of the prototype's repository and another puts it in a new repository, and only one location can hold.",
+    "body": "v0 has its own package list, lockfile, compiler configuration and test configuration, and nothing in it imports from the prototype, as #werk-base-dir requires. These files sit at the root of the new repository that #werk-base-repo names, because a separate repository is the only layout in which no build can start from or merge into the prototype's tree, and every project builds in a repository of its own (#st-build-target). Every check runs inside that repository and installs the locked packages first when they are missing. The part of #werk-base-dir that places v0 in a directory of the prototype's repository does not hold."
+  }
+]

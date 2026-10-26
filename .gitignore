@@ -1,0 +1,11 @@
+node_modules/
+.claude/settings.local.json
+.DS_Store
+coverage/
+test-results/
+playwright-report/
+e2e/evidence/
+.werk/runs/
+.werk/session
+.werk/serve.lock
+**/node_modules/

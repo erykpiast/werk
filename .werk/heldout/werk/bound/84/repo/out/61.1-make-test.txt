@@ -1,0 +1,25 @@
+exit 0
+bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
++ @playwright/test@1.64.1
++ @types/bun@1.4.3
++ @types/react@19.3.0
++ @types/react-dom@19.3.0
++ @vitejs/plugin-react@6.1.2
++ oxlint@1.89.0
++ typescript@7.0.2
++ vite@8.3.4
++ react@19.3.1
++ react-dom@19.3.1
+
+35 packages installed [20.00ms]
+touch node_modules/.installed
+CI=true bun run test
+$ bun test
+bun test v1.4.1 (4661e494f)
+
+ 417 pass
+ 0 fail
+ 1739 expect() calls
+Ran 417 tests across 46 files. [130.88s]

@@ -1,0 +1,8 @@
+{"seq":1,"at":"t","actor":"you","type":"node.added","payload":{"id":"root","kind":"card","title":"Root"}}
+{"seq":2,"at":"t","actor":"you","type":"node.added","payload":{"id":"storage","kind":"card","title":"Storage","parent":"root"}}
+{"seq":3,"at":"2026-10-25T04:28:48.328Z","actor":"agent","type":"node.proposed","payload":{"id":"sqlite","kind":"card","title":"Use SQLite","parent":"storage"}}
+{"seq":4,"at":"2026-10-25T04:28:48.662Z","actor":"agent","type":"node.proposed","payload":{"id":"sqlite:opt0","kind":"option","title":"P","why_not":"n"}}
+{"seq":5,"at":"2026-10-25T04:28:48.832Z","actor":"agent","type":"edge.added","payload":{"from":"sqlite:opt0","to":"sqlite","type":"alternative_to"}}
+{"seq":6,"at":"2026-10-25T04:28:49.001Z","actor":"agent","type":"node.edited","payload":{"id":"sqlite","no_basis":"none"}}
+{"seq":7,"at":"2026-10-25T04:28:49.155Z","actor":"agent","type":"kill.added","payload":{"id":"sqlite","criterion":{"form":"revisit"}}}
+{"seq":8,"at":"2026-10-25T04:28:49.322Z","actor":"agent","type":"node.edited","payload":{"id":"sqlite","who":"you"}}

@@ -1,0 +1,3 @@
+# The repo-level tests run with the real environment, with no unit test preload.
+[test]
+root = "."

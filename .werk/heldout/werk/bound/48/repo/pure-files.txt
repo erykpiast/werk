@@ -1,0 +1,34 @@
+# The pure files that the coverage check judges, one path per line (#werk-test-pure-list).
+# A merge keeps every entry from both sides (#werk-test-pure-list-union).
+scripts/coverage.ts
+web/highlight.ts
+web/md.ts
+web/reflink.ts
+web/escape.ts
+src/cli/args.ts
+src/cli/card-id.ts
+src/cli/help.ts
+src/cli/registry.ts
+src/cli/start.ts
+src/test/clean-env.ts
+src/test/fake-script.ts
+src/map/commit.ts
+src/map/fold.ts
+src/map/rules.ts
+src/map/show.ts
+src/map/stage.ts
+src/map/tree.ts
+src/map/types.ts
+src/map/removal.ts
+src/map/contract.ts
+src/map/ops.ts
+src/map/notes.ts
+src/map/chat.ts
+src/agent/prompt.ts
+src/tickets/parse.ts
+src/tickets/own-checks.ts
+src/tickets/set-checks.ts
+src/tickets/spec.ts
+src/tickets/cards.ts
+src/tickets/check.ts
+src/tickets/report.ts

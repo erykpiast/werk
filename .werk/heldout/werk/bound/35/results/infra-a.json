@@ -1,0 +1,12 @@
+[
+{"id":"02.1","result":"pass","detail":"Reduced copy of werk (Makefile, gate, test config) with one listed pure file and its own test at 100%; `make test-coverage` printed one 'ok 100.0% <file>' line and exited 0.","owner":""},
+{"id":"02.2","result":"pass","detail":"Same setup plus a second test that runs every line; passed first, then deleted own test: output 'FAIL 0.0% file (missing test file src/pure/full.test.ts)', exit non-zero.","owner":""},
+{"id":"02.3","result":"pass","detail":"Own test ran 1 of 4 functions; output showed the file with a sub-100 percentage, exit non-zero.","owner":""},
+{"id":"02.4","result":"pass","detail":"Listed types-only file with no own test printed an 'ok' line (no executable lines); exit 0.","owner":""},
+{"id":"02.5","result":"pass","detail":"Listed pure file with no own test; `make test` ran the unit tests (1 pass), exit 0, no pure-file line and no missing-test report.","owner":""},
+{"id":"03.1","result":"pass","detail":"Ran fake/claude as builder (prompt 'Build the ticket') and grader; builder wrote note.md and played its reply, grader played its own; launch log had one builder and one grader launch with role and args.","owner":""},
+{"id":"03.2","result":"pass","detail":"Chat role with two replies: first message gave first reply and process stayed alive, second gave second reply, closing stdin exited 0.","owner":""},
+{"id":"03.3","result":"pass","detail":"Builder scripted ask, pause, text, crash 7 with no answer: control_request printed, later text played, no tool_result and no result event, exit 7.","owner":""},
+{"id":"03.4","result":"fail","detail":"Script with ask, edit to ../outside.txt, exit 5. The fake rejects the whole reply before any step plays: no permission request is printed, exit code is 1 not 5, error goes to stderr. Outside file kept its content. Step expects the ask to appear, the reply to end with the script exit code and the edit reported as failed.","owner":""},
+{"id":"03.5","result":"pass","detail":"With no WERK_FAKE_SCRIPT the fake exited non-zero with 'no script installed', printed nothing on stdout and wrote no launch record.","owner":""}
+]

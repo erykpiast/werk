@@ -1,0 +1,56 @@
+clone /tmp/g1-19.5.QKPn/werk
+total 0
+lrwxr-xr-x@ 1 eryk.napierala  wheel  39 Oct 25 11:03 prototyper.md -> ../../src/agent/subagents/prototyper.md
+lrwxr-xr-x@ 1 eryk.napierala  wheel  39 Oct 25 11:03 test-scope.md -> ../../src/agent/subagents/test-scope.md
+ok   Given: every shipped subagent is linked
+--- make test exit=0 (tail):
+bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
+Checked 80 installs across 160 packages (no changes) [13.00ms]
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 747 pass
+ 0 fail
+ 2689 expect() calls
+Ran 747 tests across 97 files. [50.66s]
+ok   Given: the repository checks pass (make test)
+replaced .claude/agents/test-scope.md link with a plain copy
+total 8
+lrwxr-xr-x@ 1 eryk.napierala  wheel    39 Oct 25 11:03 prototyper.md -> ../../src/agent/subagents/prototyper.md
+-rw-r--r--@ 1 eryk.napierala  wheel  3820 Oct 25 11:04 test-scope.md
+--- make test exit=2 (tail):
+25 |   return root;
+26 | }
+27 | 
+28 | test("this repository links every shipped subagent", () => {
+29 |   expect(checkSubagentLinks(join(import.meta.dir, ".."))).toEqual([]);
+                                                               ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   ".claude/agents/test-scope.md: a copy, not a link; replace it with a link to src/agent/subagents/test-scope.md",
++ ]
+
+- Expected  - 1
++ Received  + 3
+
+      at <anonymous> (/private/tmp/g1-19.5.QKPn/werk/scripts/subagent-links.test.ts:29:59)
+(fail) this repository links every shipped subagent [0.90ms]
+
+ 746 pass
+ 1 fail
+ 2689 expect() calls
+Ran 747 tests across 97 files. [89.09s]
+error: script "test" exited with code 1
+make: *** [test] Error 1
+ok   the checks fail
+17:+   ".claude/agents/test-scope.md: a copy, not a link; replace it with a link to src/agent/subagents/test-scope.md",
+ok   the failure names the test-scope subagent
+put the link back
+total 0
+lrwxr-xr-x@ 1 eryk.napierala  wheel  39 Oct 25 11:03 prototyper.md -> ../../src/agent/subagents/prototyper.md
+lrwxr-xr-x@ 1 eryk.napierala  wheel  39 Oct 25 11:05 test-scope.md -> ../../src/agent/subagents/test-scope.md

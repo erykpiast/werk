@@ -1,0 +1,91 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/cli/61-project.test.ts:
+make test-coverage failed:
+              ^
+error: expect(received).toContain(expected)
+
+Expected to contain: "pass 1: red at make test"
+Received: "building 3 The thing is done on werk-build/werk-03-1792584363087, from main at 4cd0216f7ea8\n"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/heldout-61-UgThsn/werk/src/cli/build.test.ts:200:20)
+(fail) the checks stop at the first red one, and a ticket with no checks uses the rubric defaults [5048.71ms]
+  ^ this test timed out after 5000ms.
+----------------------------|---------|---------|-------------------
+File                        | % Funcs | % Lines | Uncovered Line #s
+----------------------------|---------|---------|-------------------
+All files                   |   98.29 |   98.55 |
+ src/board/events.ts        |  100.00 |  100.00 | 
+ src/board/fold.ts          |  100.00 |  100.00 | 
+ src/build/brief.ts         |  100.00 |  100.00 | 
+ src/build/usage.ts         |  100.00 |  100.00 | 
+ src/cli/args.ts            |  100.00 |  100.00 | 
+ src/cli/dispatch.ts        |  100.00 |  100.00 | 
+ src/cli/help-text.ts       |  100.00 |  100.00 | 
+ src/cli/registry.ts        |  100.00 |  100.00 | 
+ src/coverage/gate.ts       |  100.00 |  100.00 | 
+ src/coverage/lcov.ts       |  100.00 |  100.00 | 
+ src/coverage/pure-files.ts |  100.00 |  100.00 | 
+ src/map/contract.ts        |  100.00 |  100.00 | 
+ src/map/derive.ts          |  100.00 |  100.00 | 
+ src/map/events.ts          |  100.00 |  100.00 | 
+ src/map/find.ts            |  100.00 |  100.00 | 
+ src/map/fold.ts            |  100.00 |  100.00 | 
+ src/map/graph.ts           |  100.00 |  100.00 | 
+ src/map/log.ts             |   33.33 |   44.44 | 13,18,31-32,41-45,55-65
+ src/map/rules.ts           |  100.00 |  100.00 | 
+ src/map/show-text.ts       |  100.00 |  100.00 | 
+ src/map/stale-text.ts      |  100.00 |  100.00 | 
+ src/map/staleness.ts       |  100.00 |  100.00 | 
+ src/map/subtree.ts         |  100.00 |  100.00 | 
+ src/map/thread-text.ts     |  100.00 |  100.00 | 
+ src/map/transcript.ts      |  100.00 |  100.00 | 
+ src/markdown/escape.ts     |  100.00 |  100.00 | 
+ src/markdown/highlight.ts  |  100.00 |  100.00 | 
+ src/markdown/reflink.ts    |  100.00 |  100.00 | 
+ src/markdown/render.ts     |  100.00 |  100.00 | 
+ src/plan/answers.ts        |  100.00 |  100.00 | 
+ src/plan/board-plan.ts     |  100.00 |  100.00 | 
+ src/test/harness.ts        |  100.00 |  100.00 | 
+ src/test/map-events.ts     |  100.00 |  100.00 | 
+ src/ticket/check.ts        |  100.00 |  100.00 | 
+ src/ticket/failure.ts      |  100.00 |  100.00 | 
+ src/ticket/own-checks.ts   |  100.00 |   98.92 | 105
+ src/ticket/parse.ts        |  100.00 |  100.00 | 
+ src/ticket/set-checks.ts   |  100.00 |  100.00 | 
+ src/ticket/spec.ts         |  100.00 |  100.00 | 
+----------------------------|---------|---------|-------------------
+
+ 376 pass
+ 1 fail
+ 1461 expect() calls
+Ran 377 tests across 45 files. [145.59s]
+error: script "test:coverage" exited with code 1
+make: *** [test-coverage] Error 1
+
+35 |     expect(sh(['git', 'merge-base', '--is-ancestor', first, c], dir).code).toBe(0)
+36 |   }
+37 |   for (const target of ['test', 'test-coverage', 'typecheck', 'lint', 'e2e']) {
+38 |     const r = sh(['make', target], dir)
+39 |     if (r.code !== 0) console.log(`make ${target} failed:\n${r.out.slice(-3000)}`)
+40 |     expect({ target, code: r.code }).toEqual({ target, code: 0 })
+                                          ^
+error: expect(received).toEqual(expected)
+
+@@ -1,3 +1,3 @@
+  {
+-   "code": 0,
++   "code": 2,
+    "target": "test-coverage",
+
+- Expected  - 1
++ Received  + 1
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-0rSxKZ/.werk-heldout/cli/61-project.test.ts:40:38)
+(fail) 61.1 a fresh clone builds on an empty first commit and passes every check [282071.04ms]
+61.4 gate line:   FAIL    0.0%  src/cli/help-text.ts  (no test loads this file)
+
+ 3 pass
+ 1 fail
+ 111 expect() calls
+Ran 4 tests across 1 file. [765.21s]

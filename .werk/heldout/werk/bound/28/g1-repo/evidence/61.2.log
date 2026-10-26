@@ -1,0 +1,13 @@
+clone /tmp/g1-61.2.9w5m/werk
+help exit=0
+registered: accept add discard edit find help inbox kill link plan propose quote rederive remove removed reopen restore retitle say search serve show stale status target ticket ticket-check unlink 
+ok   registry is not empty and holds help
+ok   help names every registered verb
+added src/verbs/ping.ts
+help exit=0
+ok   help names ping
+ok   help names every verb it named before
+?? src/verbs/ping.ts
+?? src/verbs/ping.ts
+ok   git status shows only the new module
+PASS

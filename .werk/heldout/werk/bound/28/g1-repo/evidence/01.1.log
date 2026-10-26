@@ -1,0 +1,89 @@
+clone /tmp/g1-01.1.nCZu/werk
+scripts/coverage.ts
+ok   Given: pure list has a first helper with its own test file
+--- make test exit=0 (tail):
+bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
+Checked 80 installs across 160 packages (no changes) [20.00ms]
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 747 pass
+ 0 fail
+ 2689 expect() calls
+Ran 747 tests across 97 files. [36.82s]
+ok   make test: unit tests pass
+ok   make test: no coverage check in the report
+--- make test-coverage exit=0 (tail):
+ok    100.00%  src/serve/card-html.ts
+ok    100.00%  src/serve/page.ts
+ok    100.00%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok     96.20%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/turns.ts
+ok    100.00%  src/serve/open-card.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  src/serve/header.ts
+ok    100.00%  src/serve/jump.ts
+ok    100.00%  src/serve/home-html.ts
+ok    100.00%  web/crumbs.ts
+ok    100.00%  web/counts.ts
+ok    100.00%  web/diff.ts
+ok    100.00%  src/plan/scope.ts
+ok    100.00%  src/plan/answers.ts
+ok    100.00%  src/plan/board-plan.ts
+ok    100.00%  src/plan/prompts.ts
+ok    100.00%  src/agent/limits.ts
+64 pure files, 0 under 90% of lines or without an own test file.
+ok   make test-coverage: passes
+64 files each on one line
+ok   make test-coverage: one line per pure-list file with its line %
+deleted src/cli/card-id.test.ts
+--- make test-coverage exit=2 (tail):
+ok    100.00%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok     96.20%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/turns.ts
+ok    100.00%  src/serve/open-card.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  src/serve/header.ts
+ok    100.00%  src/serve/jump.ts
+ok    100.00%  src/serve/home-html.ts
+ok    100.00%  web/crumbs.ts
+ok    100.00%  web/counts.ts
+ok    100.00%  web/diff.ts
+ok    100.00%  src/plan/scope.ts
+ok    100.00%  src/plan/answers.ts
+ok    100.00%  src/plan/board-plan.ts
+ok    100.00%  src/plan/prompts.ts
+ok    100.00%  src/agent/limits.ts
+64 pure files, 1 under 90% of lines or without an own test file.
+error: script "test:coverage" exited with code 1
+make: *** [test-coverage] Error 1
+ok   make test-coverage again: fails
+FAIL    0.00%  src/cli/card-id.ts  (missing own test file src/cli/card-id.test.ts)
+ok   output shows 0% for src/cli/card-id.ts and names the missing test file
+--- make test exit=0 (tail):
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 744 pass
+ 0 fail
+ 2684 expect() calls
+Ran 744 tests across 96 files. [63.11s]
+ok   make test still passes
+ok   make test has no coverage failure
+PASS

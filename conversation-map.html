@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline design — current state</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --panel-2: #1c2230;
+    --line: #2a3240;
+    --ink: #e6edf3;
+    --ink-dim: #8b98a8;
+    --ink-faint: #5d6b7d;
+    --decided: #3fb950;
+    --open: #d29922;
+    --proto: #58a6ff;
+    --finding: #8b949e;
+    --risk: #f85149;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.5 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 22px 26px 18px;
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; background: var(--bg); z-index: 10;
+  }
+  h1 { margin: 0 0 4px; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-dim); font-size: 12.5px; margin-bottom: 16px; }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  .controls { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+  .filters { display: flex; gap: 6px; }
+  button.f {
+    background: var(--panel); color: var(--ink-dim); border: 1px solid var(--line);
+    padding: 5px 11px; border-radius: 6px; cursor: pointer; font: inherit; font-size: 12.5px;
+  }
+  button.f:hover { color: var(--ink); border-color: #3d4858; }
+  button.f[aria-pressed="true"] { background: var(--panel-2); color: var(--ink); border-color: #4a5769; }
+  .counts { display: flex; gap: 18px; font-size: 12.5px; color: var(--ink-dim); }
+  .counts span { display: flex; align-items: center; gap: 7px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .dot.decided { background: var(--decided); }
+  .dot.open { background: var(--open); }
+  .dot.proto { background: var(--proto); }
+  .dot.finding { background: var(--finding); }
+
+  main { padding: 24px 26px 80px; }
+
+  .band { margin-bottom: 30px; }
+  .band-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--ink-faint); margin-bottom: 10px; font-weight: 600;
+  }
+  .band-arch { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 9px; }
+
+  .loop { position: relative; }
+  .stages { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; }
+  @media (max-width: 1180px) { .stages { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+  @media (max-width: 700px)  { .stages { grid-template-columns: 1fr; } }
+
+  .stage { min-width: 0; }
+  .stage-head {
+    display: flex; align-items: baseline; gap: 7px; padding: 0 2px 9px;
+    border-bottom: 1px solid var(--line); margin-bottom: 10px;
+  }
+  .stage-num {
+    font-size: 11px; font-weight: 700; color: var(--bg);
+    background: var(--ink-faint); border-radius: 4px;
+    width: 17px; height: 17px; display: grid; place-items: center; flex: none;
+  }
+  .stage-name { font-size: 12.5px; font-weight: 600; }
+  .gate {
+    margin-left: auto; font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    color: var(--proto); border: 1px solid #23406b; background: #10203a;
+    padding: 1px 5px; border-radius: 3px;
+  }
+  .cards { display: flex; flex-direction: column; gap: 7px; }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-left-width: 3px;
+    border-radius: 6px; padding: 9px 10px; cursor: pointer; text-align: left;
+    color: inherit; font: inherit; width: 100%; display: block;
+    transition: background .1s, border-color .1s;
+  }
+  .card:hover { background: var(--panel-2); }
+  .card.sel { background: var(--panel-2); border-color: #55627a; }
+  .card.decided { border-left-color: var(--decided); }
+  .card.open    { border-left-color: var(--open); }
+  .card.proto   { border-left-color: var(--proto); }
+  .card.finding { border-left-color: var(--finding); opacity: .72; }
+  .card-title { font-size: 12.5px; line-height: 1.35; margin-bottom: 5px; }
+  .card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px; letter-spacing: 0.03em; padding: 1px 5px; border-radius: 3px;
+    border: 1px solid var(--line); color: var(--ink-faint); white-space: nowrap;
+  }
+  .tag.you   { color: #d29922; border-color: #4a3a13; background: #241c08; }
+  .tag.me    { color: #7ee08a; border-color: #1c3d24; background: #0c1f12; }
+  .tag.proto { color: #79b8ff; border-color: #1f3a5f; background: #0c1b2e; }
+  .tag.nobasis { color: var(--risk); border-color: #4d1f1c; background: #260f0e; }
+
+  .loopback {
+    margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 9px;
+    font-size: 11.5px; color: var(--ink-faint); text-align: center;
+  }
+
+  /* detail panel */
+  aside {
+    position: fixed; right: 0; top: 0; bottom: 0; width: 400px; max-width: 92vw;
+    background: var(--panel); border-left: 1px solid var(--line);
+    padding: 24px 24px 40px; overflow-y: auto; z-index: 20;
+    transform: translateX(100%); transition: transform .16s ease-out;
+  }
+  aside.show { transform: none; }
+  aside h2 { font-size: 15px; margin: 0 0 12px; line-height: 1.35; font-weight: 620; }
+  aside .close {
+    position: absolute; top: 14px; right: 16px; background: none; border: 0;
+    color: var(--ink-faint); font-size: 20px; cursor: pointer; line-height: 1;
+  }
+  aside .close:hover { color: var(--ink); }
+  aside .row { margin-bottom: 15px; }
+  aside .k {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-faint); margin-bottom: 4px; font-weight: 600;
+  }
+  aside .v { font-size: 13px; color: var(--ink); }
+  aside .v.dim { color: var(--ink-dim); }
+  .empty { color: var(--ink-faint); font-size: 13px; padding: 40px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Personal development pipeline — where the design actually stands</h1>
+  <div class="sub">
+    Generated from the design conversation of <b>2026-09-01</b>.
+    This file is <b>overwritten</b> each turn, not appended. Click any card for the detail.
+  </div>
+  <div class="controls">
+    <div class="filters" id="filters">
+      <button class="f" data-f="all" aria-pressed="true">All</button>
+      <button class="f" data-f="decided" aria-pressed="false">Decided</button>
+      <button class="f" data-f="open" aria-pressed="false">Open</button>
+      <button class="f" data-f="proto" aria-pressed="false">Needs a prototype</button>
+      <button class="f" data-f="finding" aria-pressed="false">Research only</button>
+    </div>
+    <div class="counts" id="counts"></div>
+  </div>
+</header>
+
+<main>
+  <section class="band">
+    <div class="band-title">Cross-cutting — applies to every stage</div>
+    <div class="band-arch" id="arch"></div>
+  </section>
+
+  <section class="loop">
+    <div class="band-title">The loop</div>
+    <div class="stages" id="stages"></div>
+    <div class="loopback">&#8629; step 6 opens the next step 1 &nbsp;·&nbsp; the loop closes here</div>
+  </section>
+</main>
+
+<aside id="panel" aria-live="polite">
+  <button class="close" id="close" aria-label="Close">&times;</button>
+  <div id="panel-body"></div>
+</aside>
+
+<script>
+const STAGES = [
+  { n: 1, name: "Intent",   gate: "G1" },
+  { n: 2, name: "Options",  gate: "G2" },
+  { n: 3, name: "Build",    gate: null },
+  { n: 4, name: "Validate", gate: null },
+  { n: 5, name: "Ship",     gate: "G3" },
+  { n: 6, name: "Measure",  gate: null },
+];
+
+// who: "you" = Eryk decides, and has a basis to decide
+//      "me"  = Claude decides, reversible, no need to ask
+//      "proto" = neither of us can decide by talking. Build something first.
+const ITEMS = [
+  // ---------- cross-cutting ----------
+  { s:"arch", st:"decided", who:"you", t:"State lives in the issue tracker",
+    d:"Linear for work projects. GitHub Issues for personal side projects. The record outlives the branch, you read it on a phone, and step 6 can query across every past work item.",
+    src:"You proposed this. It replaced my local-folder design." },
+  { s:"arch", st:"decided", who:"you", t:"The result must become a standalone product",
+    d:"The Claude Code terminal is a temporary harness. Everything we build must be extractable. This is the constraint that shaped the whole architecture.",
+    src:"Your constraint." },
+  { s:"arch", st:"decided", who:"me", t:"Logic in a program, Markdown holds prompts only",
+    d:"A skill is a prompt file and cannot become a product. If the logic lives in 15 skill files, extracting it later is a rewrite. So the state machine, rubric runner, and loop controller go into a TypeScript CLI.",
+    src:"My proposal. Follows directly from your constraint." },
+  { s:"arch", st:"decided", who:"me", t:"An append-only event log is the spine",
+    d:"One object, three uses: it renders progress in any UI, it is the data step 6 analyses, and it lets a killed loop resume. The engine never assumes a human watches a terminal.",
+    src:"My proposal." },
+  { s:"arch", st:"decided", who:"you", t:"Build the engine now, thin",
+    d:"Day one is four pieces: the Tracker adapter, the state machine, the event log, and `pipeline init`. About one day. Each later command gets built when a real feature needs it.",
+    src:"You chose this over 'skills first, extract later'." },
+  { s:"arch", st:"open", who:"me", t:"Tracker adapter: comments or Linear agent sessions?",
+    d:"Copilot's cloud agent for Linear went generally available on 2026-07-23. Linear now has a real agent-session API with a streaming activity timeline. Using it beats posting comments, but it couples us to Linear's model.",
+    src:"Found in research. Not discussed yet." },
+  { s:"arch", st:"open", who:"you", t:"Which project and which feature go first",
+    d:"This blocks everything. A small feature or bug, in a repo whose tests already pass. You have the basis to answer this and I do not.",
+    src:"Still open from three messages ago." },
+  { s:"arch", st:"proto", who:"proto", t:"A risk tier router: fix / change / feature",
+    d:"Böckeler ran Kiro on a small bug fix and got 4 user stories and 16 acceptance criteria. Spec-driven overhead scales poorly downward. A tier chosen at intake would decide how many stages and gates run. Neither of us knows where the tier boundaries sit until we run real work items.",
+    src:"My correction after research. Not accepted yet." },
+
+  // ---------- 1 Intent ----------
+  { s:1, st:"proto", who:"proto", t:"ClarifyGPT: find ambiguity by sampling",
+    d:"Sample N implementations of the same request. Where they diverge, the requirement is ambiguous. Ask questions only about the divergence points. Measured: GPT-4 pass@1 70.96% to 80.80%.\n\nThis is the fix for the failure you just named. It replaces 'the agent asks me to decide things I am unsure about' with 'the agent shows me where it genuinely forked'.",
+    src:"Research. I recommended folding this in first." },
+  { s:1, st:"open", who:"me", t:"The brief states the success signal up front",
+    d:"At G1 you answer one question: how will we know this worked? That answer becomes what step 6 measures. Without it step 6 has nothing to check.",
+    src:"My proposal. Uncontested but not confirmed." },
+  { s:1, st:"open", who:"me", t:"CARE: propose diffs to the brief, not rewrites",
+    d:"Reviewing a proposed change to a brief is much faster than reviewing a rewritten brief. Also: reuse earlier artifacts so a failed gate does not restart elicitation.",
+    src:"arXiv 2604.28043." },
+  { s:1, st:"open", who:"me", t:"DECISION.md — a growing decision profile",
+    d:"Capture how you decide, not what to build. When the agent hits an uncovered trade-off it names it with concrete options, records your answer as a rule, and never asks that class of question again.\n\nOur current design resets alignment on every work item. This is the missing piece.",
+    src:"Research. Directly answers your complaint 1." },
+  { s:1, st:"finding", who:"me", t:"Asking questions is a weak instrument",
+    d:"On the CoShop benchmark no agent exceeded 56% accuracy after five turns of dialogue. Users often have no formed preference to elicit. Showing items that vary along one feature built preferences better than explaining the feature.",
+    src:"arXiv 2606.30863. Evidence for your value 2." },
+
+  // ---------- 2 Options ----------
+  { s:2, st:"decided", who:"you", t:"Prototypes are ephemeral",
+    d:"A throwaway worktree per option. Playwright screenshots. Screenshots and a trade-off note go to the issue. Worktrees deleted. The chosen option's diff is attached as a .patch file — a record, not living code.",
+    src:"Your decision." },
+  { s:2, st:"decided", who:"you", t:"Images on the issue are the decision record",
+    d:"Diagrams and screenshots rendered to images and attached. Works in both trackers and on a phone. Permanent.",
+    src:"Your decision." },
+  { s:2, st:"decided", who:"me", t:"Never show one option",
+    d:"Step 2 always produces at least two. One option turns a decision into a rubber stamp. Judgement needs contrast.",
+    src:"My proposal, matching your value 2." },
+  { s:2, st:"proto", who:"proto", t:"Does side-by-side at G2 actually work for you?",
+    d:"Design rules from the research: variants must be diverse along the dimension in question, cap the set, attach a short rationale to each, and always offer an explicit 'I do not care'. Whether this lets you decide fast is a thing we find out by doing it, not by discussing it.",
+    src:"Untested." },
+  { s:2, st:"finding", who:"me", t:"Tree search keeps several codebases alive",
+    d:"AIDE treats each whole generated codebase as a node in a search tree and expands the best-scoring branch. This would make 'two options' the execution model rather than a special stage.",
+    src:"Via SpecBench." },
+
+  // ---------- 3 Build ----------
+  { s:3, st:"proto", who:"proto", t:"Make the loop stateless per pass",
+    d:"My original design used one long agent context that builds, validates, and fixes. That context degrades. The Ralph loop starts a fresh agent every pass and keeps state in files and git.\n\nThis is a correction to my own design, not an addition. It changes the engine's shape.",
+    src:"Huntley's Ralph loop. Not accepted yet." },
+  { s:3, st:"open", who:"me", t:"Scoped context per unit of work",
+    d:"Task-Decoupled Planning gives each sub-goal a context isolated from the global history. Reported token reduction up to 82%. Forces one constraint: every unit must be idempotent so a retry cannot corrupt state.",
+    src:"Research." },
+  { s:3, st:"finding", who:"me", t:"Graph planning is harder than sequence planning",
+    d:"WorFBench shows a real gap. The published warning is that graph generation is being sold ahead of graph validation. Recommended middle: safety paths stay code-defined, the agent proposes routes only inside bounded regions.",
+    src:"Research. An argument against over-designing the topology." },
+
+  // ---------- 4 Validate ----------
+  { s:4, st:"decided", who:"you", t:"Rubrics are per-project files, written once",
+    d:"Each project gets prototype.md and production.md. I draft them from the repo, the CI config, and package.json. You correct them one time. Then the loop runs without further input.\n\nYou answered this one without hesitation. It had a concrete preview attached.",
+    src:"Your decision." },
+  { s:4, st:"proto", who:"proto", t:"Split the rubric: visible vs held-out checks",
+    d:"SpecBench: every model saturates the visible test suite on every task, and the reward-hacking gap grows 28 percentage points per tenfold increase in code size. Our rubric IS the reward. A long loop learns to satisfy it instead of the brief.\n\nFix: the loop sees only the visible checks. A held-out set runs once, before the merge. The agent writing tests must not be the agent writing code.",
+    src:"arXiv 2605.21384. The most serious problem found." },
+  { s:4, st:"open", who:"me", t:"Two-layer rubric: checks and judgements",
+    d:"Deterministic checks (exit code) answer 'did it work'. A graded rubric scored by a separate agent answers 'is it good'. My first version mixed them into one list.",
+    src:"LangChain RubricMiddleware, OpenAI eval guidance." },
+  { s:4, st:"open", who:"me", t:"An overseer process",
+    d:"My stop rule was '3 failures on the same check'. Stronger version: a separate process reads the event log in real time and cancels an agent that stops making progress, after one warning. We already have the log, so this is cheap.",
+    src:"arXiv 2504.15228." },
+  { s:4, st:"open", who:"me", t:"Trend checks, not only pass or fail",
+    d:"A Carnegie Mellon study of 807 projects found the velocity gain gone by month three, with analysis warnings up 30% and complexity up 41%. Pass-or-fail gates stay green while quality drifts. The rubric needs limits on the change against the merge base.",
+    src:"Research. Matters most because you chose auto-merge." },
+
+  // ---------- 5 Ship ----------
+  { s:5, st:"decided", who:"you", t:"Merge on green CI, after G3",
+    d:"You approve the pull request at G3, then the merge runs by itself when CI passes.\n\nHonest note: you picked the most aggressive option from three abstract descriptions. You had no run data to judge it against. This is exactly the kind of decision the pipeline is supposed to make on evidence.",
+    src:"Your decision. Flagged as made without a basis.", nobasis:true },
+  { s:5, st:"open", who:"me", t:"pipeline pause and a posted revert command",
+    d:"Two safeguards for auto-merge: one command stops all merging across every project, and every automatic merge posts its own revert command to the issue as the last note.",
+    src:"My proposal. Required by the choice above." },
+  { s:5, st:"decided", who:"me", t:"The gates are tracker state transitions",
+    d:"You approve by moving the issue. No new approval UI, nothing to catch in a terminal, and it works from a phone. The pipeline then has no hidden state.",
+    src:"My proposal." },
+
+  // ---------- 6 Measure ----------
+  { s:6, st:"open", who:"me", t:"Step 6 writes new rubric lines",
+    d:"When a bug reaches production, or when you reject at a gate, step 6 appends a line to the project rubric. The rubric grows from real failures. Without this the pipeline repeats instead of improving.",
+    src:"OpenAI eval guidance, Darwin Gödel Machine." },
+  { s:6, st:"open", who:"you", t:"Which live metrics feed step 6",
+    d:"Candidates: PostHog, Sentry, CI timings, and the event log itself. You know which of these you actually trust.",
+    src:"Listed as an open question in the design doc." },
+  { s:6, st:"open", who:"me", t:"Measure the pipeline, not only the product",
+    d:"The event log records where the loop stalled, how many fix cycles ran, and which gate you rejected at. That is the data that improves the pipeline design.",
+    src:"My proposal." },
+
+  // ---------- visual layer, spread across stages ----------
+  { s:"arch", st:"proto", who:"proto", t:"What the visual layer actually is",
+    d:"This file is the first attempt. Three references worth copying:\n\n• Antigravity: select-and-comment on a screenshot region, and the feedback is non-blocking — the agent takes it without stopping.\n• tldraw: the same editor API a person drives with a mouse, an agent drives in code. Agent modes map onto pipeline stages.\n• Archify: the agent emits a typed JSON intermediate representation and a deterministic compiler renders it. The agent never draws pixels.\n\nNo paper was found linking diagrams of agent progress to measured developer cognition. There is no state of the art here to catch up with.",
+    src:"Your complaint 2, and the axis-3 research." },
+  { s:"arch", st:"finding", who:"me", t:"The academic name for your complaint 2",
+    d:"CHI 2026's Deep Cognition paper calls it the 'input-wait-output' paradigm: the user submits a query and gets a result after a process that cannot be interrupted and shows little of its intermediate decisions. In multi-agent systems delayed feedback amplifies early errors.",
+    src:"CHI EA 2026." },
+];
+
+const LABEL = { decided:"Decided", open:"Open", proto:"Prototype first", finding:"Research only" };
+const WHO = {
+  you:   { cls:"you",   txt:"you decide" },
+  me:    { cls:"me",    txt:"I decide" },
+  proto: { cls:"proto", txt:"build it first" },
+};
+
+let filter = "all";
+let selected = null;
+
+function cardEl(item, idx) {
+  const b = document.createElement("button");
+  b.className = "card " + item.st;
+  b.dataset.idx = idx;
+  if (selected === idx) b.classList.add("sel");
+  const w = WHO[item.who];
+  b.innerHTML =
+    '<div class="card-title">' + esc(item.t) + '</div>' +
+    '<div class="card-meta">' +
+      '<span class="tag">' + LABEL[item.st] + '</span>' +
+      (item.st !== "finding" ? '<span class="tag ' + w.cls + '">' + w.txt + '</span>' : '') +
+      (item.nobasis ? '<span class="tag nobasis">no basis</span>' : '') +
+    '</div>';
+  b.addEventListener("click", () => select(idx));
+  return b;
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+}
+
+function visible(item) { return filter === "all" || item.st === filter; }
+
+function render() {
+  const arch = document.getElementById("arch");
+  const stages = document.getElementById("stages");
+  arch.innerHTML = ""; stages.innerHTML = "";
+
+  ITEMS.forEach((it, i) => {
+    if (it.s === "arch" && visible(it)) arch.appendChild(cardEl(it, i));
+  });
+  if (!arch.children.length) arch.innerHTML = '<div class="empty">Nothing here under this filter.</div>';
+
+  STAGES.forEach(st => {
+    const col = document.createElement("div");
+    col.className = "stage";
+    col.innerHTML =
+      '<div class="stage-head">' +
+        '<span class="stage-num">' + st.n + '</span>' +
+        '<span class="stage-name">' + st.name + '</span>' +
+        (st.gate ? '<span class="gate">' + st.gate + '</span>' : '') +
+      '</div>';
+    const cards = document.createElement("div");
+    cards.className = "cards";
+    let n = 0;
+    ITEMS.forEach((it, i) => {
+      if (it.s === st.n && visible(it)) { cards.appendChild(cardEl(it, i)); n++; }
+    });
+    if (!n) cards.innerHTML = '<div style="color:var(--ink-faint);font-size:11.5px;padding:4px 2px">&mdash;</div>';
+    col.appendChild(cards);
+    stages.appendChild(col);
+  });
+
+  const c = { decided:0, open:0, proto:0, finding:0 };
+  ITEMS.forEach(i => c[i.st]++);
+  document.getElementById("counts").innerHTML =
+    '<span><i class="dot decided"></i>' + c.decided + ' decided</span>' +
+    '<span><i class="dot open"></i>' + c.open + ' open</span>' +
+    '<span><i class="dot proto"></i>' + c.proto + ' need a prototype</span>' +
+    '<span><i class="dot finding"></i>' + c.finding + ' research only</span>';
+}
+
+function select(idx) {
+  selected = idx;
+  const it = ITEMS[idx];
+  const stage = it.s === "arch" ? "Cross-cutting" :
+    ("Step " + it.s + " — " + STAGES.find(s => s.n === it.s).name);
+  const w = WHO[it.who];
+  document.getElementById("panel-body").innerHTML =
+    '<h2>' + esc(it.t) + '</h2>' +
+    '<div class="row"><div class="k">Status</div><div class="v">' + LABEL[it.st] +
+      (it.st !== "finding" ? ' &nbsp;·&nbsp; ' + w.txt : '') + '</div></div>' +
+    '<div class="row"><div class="k">Where it belongs</div><div class="v dim">' + esc(stage) + '</div></div>' +
+    '<div class="row"><div class="k">Detail</div><div class="v" style="white-space:pre-wrap">' + esc(it.d) + '</div></div>' +
+    '<div class="row"><div class="k">Where it came from</div><div class="v dim">' + esc(it.src) + '</div></div>';
+  document.getElementById("panel").classList.add("show");
+  render();
+}
+
+document.getElementById("close").addEventListener("click", () => {
+  document.getElementById("panel").classList.remove("show");
+  selected = null; render();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") document.getElementById("close").click();
+});
+document.getElementById("filters").addEventListener("click", e => {
+  const b = e.target.closest("button.f");
+  if (!b) return;
+  filter = b.dataset.f;
+  [...document.querySelectorAll("button.f")].forEach(x =>
+    x.setAttribute("aria-pressed", String(x === b)));
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

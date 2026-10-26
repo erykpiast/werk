@@ -1,0 +1,13 @@
+{"seq":1,"at":"t","actor":"you","type":"node.added","payload":{"id":"checkout","kind":"card","title":"Checkout flow"}}
+{"seq":2,"at":"2026-10-25T09:39:36.209Z","actor":"agent","type":"node.proposed","payload":{"id":"retry","kind":"card","title":"Retry payment","why":"w","body":"b","parent":"checkout"}}
+{"seq":3,"at":"2026-10-25T09:39:36.527Z","actor":"you","type":"change.accepted","payload":{"id":"retry"}}
+{"seq":4,"at":"2026-10-25T09:39:36.820Z","actor":"agent","type":"node.retitled","payload":{"id":"retry","title":"New"}}
+{"seq":5,"at":"2026-10-25T09:39:37.021Z","actor":"agent","type":"node.bodyEdited","payload":{"id":"retry","body":"nb"}}
+{"seq":6,"at":"2026-10-25T09:39:43.306Z","actor":"agent","type":"node.proposed","payload":{"id":"idx","kind":"card","title":"Search index","why":"first why","parent":"checkout"}}
+{"seq":7,"at":"2026-10-25T09:39:43.894Z","actor":"agent","type":"node.proposed","payload":{"id":"src1","kind":"source","title":"Bench","url":"http://x","finding":"fast"}}
+{"seq":8,"at":"2026-10-25T09:39:43.992Z","actor":"agent","type":"edge.added","payload":{"from":"idx","to":"src1","type":"supported_by"}}
+{"seq":9,"at":"2026-10-25T09:39:53.152Z","actor":"agent","type":"node.proposed","payload":{"id":"opt1","kind":"option","title":"Opt","why_not":"slow"}}
+{"seq":10,"at":"2026-10-25T09:39:53.257Z","actor":"agent","type":"edge.added","payload":{"from":"opt1","to":"idx","type":"alternative_to"}}
+{"seq":11,"at":"2026-10-25T09:39:53.523Z","actor":"agent","type":"change.discarded","payload":{"id":"opt1"}}
+{"seq":12,"at":"2026-10-25T09:39:53.523Z","actor":"agent","type":"change.discarded","payload":{"id":"idx"}}
+{"seq":13,"at":"2026-10-25T09:39:53.523Z","actor":"agent","type":"change.discarded","payload":{"id":"src1"}}

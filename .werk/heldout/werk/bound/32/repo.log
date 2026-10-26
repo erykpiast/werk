@@ -1,0 +1,50 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/repo.test.ts:
+73 | test('01.3 the unit tests, then the coverage gate', () => {
+74 |   const dir = clone()
+75 |   install(dir)
+76 |   const plain = sh(['bun', 'test'], dir)
+77 |   expect(plain.code).toBe(0)
+78 |   expect(plain.out).toMatch(/src\/server\/\S+\.test\.ts/)
+                         ^
+error: expect(received).toMatch(expected)
+
+Expected substring or pattern: /src\/server\/\S+\.test\.ts/
+Received: "bun test v1.4.1 (4661e494f)\n\n 149 pass\n 0 fail\n 276 expect() calls\nRan 149 tests across 19 files. [15.76s]\n"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-6AQKKc/.werk-heldout/repo.test.ts:78:21)
+(fail) 01.3 the unit tests, then the coverage gate [16340.15ms]
+113 |       if (statSync(p).isDirectory()) walk(p)
+114 |       else if (n.endsWith('.png')) shots.push(p)
+115 |     }
+116 |   }
+117 |   walk(join(dir, 'test-results'))
+118 |   expect(shots.length).toBe(passed)
+                             ^
+error: expect(received).toBe(expected)
+
+Expected: 11
+Received: 22
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-6AQKKc/.werk-heldout/repo.test.ts:118:24)
+(fail) 01.4 the browser tests give screenshot evidence without a real agent [9574.59ms]
+144 |   const headBefore = sh(['git', 'rev-parse', 'HEAD'], dir).out
+145 |   const statusBefore = sh(['git', 'status', '--porcelain'], dir).out
+146 |   const treeBefore = sh(['git', 'ls-files', '-s'], dir).out
+147 |   const r = sh(['make', 'test'], dir)
+148 |   expect({ code: r.code, tail: r.out.slice(-2000) }).toMatchObject({ code: 0 })
+149 |   expect(r.out).toContain('werk hello')
+                      ^
+error: expect(received).toContain(expected)
+
+Expected to contain: "werk hello"
+Received: "bun install --frozen-lockfile\nbun install v1.4.1 (4661e494f)\n\nChecked 34 installs across 96 packages (no changes) [6.00ms]\nbun run test\nbun test v1.4.1 (4661e494f)\n$ PATH=\"$PWD/src/test/fake-claude/bin:$PATH\" bun test\n\n 150 pass\n 0 fail\n 279 expect() calls\nRan 150 tests across 20 files. [14.62s]\n"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-6AQKKc/.werk-heldout/repo.test.ts:149:17)
+(fail) 31.3 a new verb in its own module shows in the list and runs through the harness [16016.23ms]
+
+ 2 pass
+ 3 fail
+ 52 expect() calls
+Ran 5 tests across 1 file. [140.90s]

@@ -1,0 +1,8 @@
+[
+  {
+    "id": "werk-ticket-cite-extends",
+    "title": "A ticket that extends a card another ticket built also cites it, and is blocked by that earlier ticket",
+    "why": "depends_on edges alone leave a ticket with no blocker when it builds on a card with no outgoing edge, so the ticket could start before the code it extends exists.",
+    "body": "A ticket cites every card it builds, including a card that an earlier ticket first built and this ticket extends. The first ticket that cites a card introduces it. blocked_by then follows two rules: a ticket is blocked by the ticket that introduces each card its own cited cards depend_on, and a ticket is blocked by the ticket that introduces a card it cites and extends. No other order is added."
+  }
+]

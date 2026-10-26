@@ -1,0 +1,30 @@
+import { expect, test } from "bun:test";
+import { card, lines, ok, withMap } from "./h62util.ts";
+
+test("04.1 an agent's new card waits as a ghost until the person accepts it", async () => {
+  const p = withMap([card("root", "Root"), card("checkout", "Checkout flow", "root")]);
+  await ok(p, ["add", "other", "--title", "Other ghost", "--parent", "root"]);
+  const before = lines(p);
+  const add = await ok(p, ["add", "retry", "--title", "Retry payment", "--parent", "checkout"]);
+  expect(add.out).toContain("proposed");
+  expect(add.out).not.toContain("added");
+  const after = lines(p);
+  expect(after).toHaveLength(before.length + 1);
+  expect(after.slice(0, before.length)).toEqual(before);
+  const ev = JSON.parse(after.at(-1) as string);
+  expect(ev.type).toBe("node.proposed");
+  expect(ev.payload.parent).toBe("checkout");
+  const show = (await ok(p, ["show", "retry"])).out;
+  expect(show).toContain("proposed");
+  expect(show).toContain("parent: checkout  Checkout flow");
+  const acc = await ok(p, ["accept", "retry", "--actor", "you"]);
+  expect(acc.code).toBe(0);
+  const after2 = lines(p);
+  expect(after2).toHaveLength(after.length + 1);
+  expect(JSON.parse(after2.at(-1) as string).type).toBe("change.accepted");
+  const real = (await ok(p, ["show", "retry"])).out;
+  expect(real).not.toContain("proposed");
+  expect(real).not.toContain("ghost");
+  expect(real).toContain("parent: checkout  Checkout flow");
+  expect((await ok(p, ["show", "other"])).out).toContain("proposed");
+}, 30_000);

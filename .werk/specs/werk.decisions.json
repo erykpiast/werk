@@ -1,0 +1,20 @@
+[
+  {
+    "id": "werk-v0-onechat",
+    "title": "In v0, each project has one conversation, and the rules written for a tab apply to it",
+    "why": "Several conversations in tabs are postponed, but some decided chat rules are written for tabs. Reading each tab rule as a rule for the one conversation keeps those rules in v0 without the tab strip.",
+    "body": "v0 builds one continuous conversation per project in the chat pane (see #werk-onechat), with no tab strip, no fork and no park (see #werk-multichat, which is postponed).\n\nA rule that names a tab applies to that one conversation. The background line shows in its pane (see #werk-mc-bgagents). The dead mark stays until the next child starts (see #werk-mc-live-dead). A dead child has no other pane in the same project to show a line in, so its error shows in its own pane, and the project switcher marks the project as dead beside the busy mark (see #werk-projects-switcher).\n\nExample:\n\n- Project P \"checkout\" has its one conversation C.\n- The person looks at project Q.\n\n1. The child of C exits with an error that a retry cannot fix.\n2. The switcher row of P shows the dead mark.\n3. The person opens P. The pane of C shows the error at the end of the turn.\n4. The person sends a message in C. A new child starts, and the dead mark goes."
+  },
+  {
+    "id": "werk-projects-add-nodialog",
+    "title": "Where the server cannot open a folder dialog, a project is added by starting werk in its folder",
+    "why": "werk ships for macOS and Linux, and the folder dialog is decided for macOS only. Starting werk in a folder already adds that folder to the running server, so it is a path that works on every platform with no new interface.",
+    "body": "Adding a project opens the operating system's folder dialog (see #werk-projects-add). On a platform where the server cannot open one, for example a Linux machine with no dialog program, the \"Add project…\" row says so and names the other way in: start werk in the folder. A start in a folder while a server runs adds the folder to the list and opens it (see #werk-projects-one-process). The git check and the empty map work the same on both paths."
+  },
+  {
+    "id": "werk-test-own-file-name",
+    "title": "A pure file's own test file has the same name with a test suffix, in the same folder",
+    "why": "The coverage check finds each pure file's own test file by one fixed convention, and no card names it. The name beside the file is the one the runner already finds and a person already expects.",
+    "body": "The coverage check counts only the lines that a pure file's own test file runs (see #werk-reflink-own-test-coverage). The own test file of a pure file is the file in the same folder with the same base name and the test suffix that the unit test runner picks up. A pure file with no such file counts as 0%, and the check names the expected test file."
+  }
+]

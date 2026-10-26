@@ -1,0 +1,19 @@
+[
+{"id":"29.1","result":"pass","detail":"Planned app twice with fake spec/ticket writers; tickets 1 building and 2 done (board events as the merge loop would write them), added decided card under app, re-planned. One plan, spec text covers new card, ticket 3 rewritten in place, ticket 4 added, 1 and 2 unchanged."},
+{"id":"29.2","result":"pass","detail":"Removed card 'kid' with werk remove --actor you, re-planned with a drop of ticket 2; ticket archived with reason 'the current spec no longer needs it'; werk ticket restore 02 --actor you brought it back as app/02."},
+{"id":"29.3","result":"pass","detail":"With werk serve running, propose+accept of a new title on cited card 'app' moved ready ticket to blocked with reason naming #app and 'title changed'; re-plan returned it to ready with no marks."},
+{"id":"29.4","result":"pass","detail":"With werk serve running, a note changed nothing; a body change (propose --ops, accept) blocked the ready ticket with 'body changed' and left the building ticket in building without reason. The no-change check waits 1.5s for the watcher."},
+{"id":"29.5","result":"pass","detail":"With server running, a new card under the planned subtree made decided through the verbs; board plan.uncited names it; tickets stay ready. Reading: a card must be decided to count for the cards-cited check."},
+{"id":"30.1","result":"pass","detail":"ticket-check on two correct tickets: one output line '2 tickets, 0 own-check failures, 0 failures, 3 decided cards, 2 stories', exit 0 (root counts as a decided card)."},
+{"id":"30.2","result":"pass","detail":"Path on line 12 of ticket 2 gives no-file-paths line with 'src/loop.ts (line 12)'; ticket 3 gives shape: touches line; ticket 1 has none; last line counts 3 tickets, 2 own-check failures; exit 1."},
+{"id":"30.3","result":"pass","detail":"One 'ticket set' line names the uncited real card; ghost (proposed, decided) is never named; 3 decided cards counted; exit 1."},
+{"id":"30.4","result":"pass","detail":"blocked_by failure lines for tickets 2 and 3 only; none for 1 or 4; exit 1."},
+{"id":"30.5","result":"pass","detail":"Spec without User stories heading: message on stderr naming the heading, empty stdout, exit 2."},
+{"id":"35.1","result":"pass","detail":"werk build with grader scoring criterion-2 at 2 with gap: pass 1 red at gate grader, ticket stays building while pass 2 runs, pass 2 brief contains the gap."},
+{"id":"35.2","result":"pass","detail":"Grade 1 fails card line, grade 2 names a new small gap on the card that passed before: pass 2 green, reviewers ran, merging after 2 passes."},
+{"id":"35.3","result":"pass","detail":"Only reviewer-security reports HIGH: five reviewers launched, pass 1 red at reviewer gate with 'security HIGH at ok.txt:3', pass 2 brief holds impact and fix."},
+{"id":"35.4","result":"pass","detail":"MEDIUM and unknown severity findings: build merges after 1 pass; both findings are in the pass findings detail file of the pipeline log (the only place the product records them; the ticket on the board does not list them)."},
+{"id":"35.5","result":"pass","detail":"Grader launch record --allowedTools is Read, Grep, Glob, git diff/log/show; no Edit/Write; reviewers ran after its scores, ticket merged."},
+{"id":"35.6","result":"unbuilt","owner":"werk/38","detail":"With cap 5 and passes 1-4 failing the card line, pass 5 small gap: ticket moves to merging, follow-up r/02 filed citing the card, quoting the gap, blocked_by r/01 (all verified, pass). The ticket never moves to done: nothing moves merging to done, which is the merge loop's job."},
+{"id":"35.7","result":"fail","detail":"Pass 5 with a missed criterion and a small gap: no follow-up filed (correct), but the ticket goes to the ready column with reason 'red at the retry cap of 5', not blocked; the dependent ticket r/02 is then in blocked only by its blocked_by. The board code deliberately returns a capped build to ready."}
+]

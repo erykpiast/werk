@@ -1,0 +1,105 @@
+exit 0
+bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
++ @playwright/test@1.64.1
++ @types/bun@1.4.3
++ @types/react@19.3.0
++ @types/react-dom@19.3.0
++ @vitejs/plugin-react@6.1.2
++ oxlint@1.89.0
++ typescript@7.0.2
++ vite@8.3.4
++ react@19.3.1
++ react-dom@19.3.1
+
+35 packages installed [36.00ms]
+touch node_modules/.installed
+CI=true bun run test:coverage
+$ bun test --coverage --coverage-reporter=text --coverage-reporter=lcov && bun src/coverage/gate-cli.ts coverage/lcov.info
+bun test v1.4.1 (4661e494f)
+----------------------------|---------|---------|-------------------
+File                        | % Funcs | % Lines | Uncovered Line #s
+----------------------------|---------|---------|-------------------
+All files                   |   98.07 |   98.40 |
+ src/board/events.ts        |  100.00 |  100.00 | 
+ src/board/fold.ts          |  100.00 |  100.00 | 
+ src/build/brief.ts         |  100.00 |  100.00 | 
+ src/build/judge.ts         |   94.12 |  100.00 | 
+ src/build/usage.ts         |  100.00 |  100.00 | 
+ src/cli/args.ts            |  100.00 |  100.00 | 
+ src/cli/dispatch.ts        |  100.00 |  100.00 | 
+ src/cli/help-text.ts       |  100.00 |  100.00 | 
+ src/cli/registry.ts        |  100.00 |  100.00 | 
+ src/coverage/gate.ts       |  100.00 |  100.00 | 
+ src/coverage/lcov.ts       |  100.00 |  100.00 | 
+ src/coverage/pure-files.ts |  100.00 |  100.00 | 
+ src/map/contract.ts        |  100.00 |  100.00 | 
+ src/map/derive.ts          |  100.00 |  100.00 | 
+ src/map/events.ts          |  100.00 |  100.00 | 
+ src/map/find.ts            |  100.00 |  100.00 | 
+ src/map/fold.ts            |  100.00 |  100.00 | 
+ src/map/graph.ts           |  100.00 |  100.00 | 
+ src/map/log.ts             |   28.57 |   37.21 | 13,18,31-32,41,46-52,63-77
+ src/map/rules.ts           |  100.00 |  100.00 | 
+ src/map/show-text.ts       |  100.00 |  100.00 | 
+ src/map/stale-text.ts      |  100.00 |  100.00 | 
+ src/map/staleness.ts       |  100.00 |  100.00 | 
+ src/map/subtree.ts         |  100.00 |  100.00 | 
+ src/map/thread-text.ts     |  100.00 |  100.00 | 
+ src/map/transcript.ts      |  100.00 |  100.00 | 
+ src/markdown/escape.ts     |  100.00 |  100.00 | 
+ src/markdown/highlight.ts  |  100.00 |  100.00 | 
+ src/markdown/reflink.ts    |  100.00 |  100.00 | 
+ src/markdown/render.ts     |  100.00 |  100.00 | 
+ src/plan/answers.ts        |  100.00 |  100.00 | 
+ src/plan/board-plan.ts     |  100.00 |  100.00 | 
+ src/test/harness.ts        |  100.00 |  100.00 | 
+ src/test/map-events.ts     |  100.00 |  100.00 | 
+ src/ticket/check.ts        |  100.00 |  100.00 | 
+ src/ticket/failure.ts      |  100.00 |  100.00 | 
+ src/ticket/own-checks.ts   |  100.00 |   98.92 | 105
+ src/ticket/parse.ts        |  100.00 |  100.00 | 
+ src/ticket/set-checks.ts   |  100.00 |  100.00 | 
+ src/ticket/spec.ts         |  100.00 |  100.00 | 
+----------------------------|---------|---------|-------------------
+
+ 421 pass
+ 0 fail
+ 1767 expect() calls
+Ran 421 tests across 46 files. [128.23s]
+pure-file line gate, 90% per file
+  ok    100.0%  src/cli/registry.ts  (14/14 lines)
+  ok    100.0%  src/cli/help-text.ts  (3/3 lines)
+  ok    100.0%  src/cli/dispatch.ts  (9/9 lines)
+  ok    100.0%  src/cli/args.ts  (22/22 lines)
+  ok    100.0%  src/map/fold.ts  (167/167 lines)
+  ok    100.0%  src/map/rules.ts  (228/228 lines)
+  ok    100.0%  src/map/show-text.ts  (63/63 lines)
+  ok    100.0%  src/map/thread-text.ts  (14/14 lines)
+  ok    100.0%  src/map/transcript.ts  (54/54 lines)
+  ok    100.0%  src/map/derive.ts  (28/28 lines)
+  ok    100.0%  src/map/contract.ts  (97/97 lines)
+  ok    100.0%  src/map/graph.ts  (33/33 lines)
+  ok    100.0%  src/map/subtree.ts  (22/22 lines)
+  ok    100.0%  src/map/find.ts  (24/24 lines)
+  ok    100.0%  src/map/staleness.ts  (85/85 lines)
+  ok    100.0%  src/map/stale-text.ts  (12/12 lines)
+  ok    100.0%  src/board/fold.ts  (45/45 lines)
+  ok    100.0%  src/markdown/reflink.ts  (23/23 lines)
+  ok    100.0%  src/markdown/escape.ts  (2/2 lines)
+  ok    100.0%  src/markdown/highlight.ts  (55/55 lines)
+  ok    100.0%  src/markdown/render.ts  (123/123 lines)
+  ok    100.0%  src/ticket/parse.ts  (61/61 lines)
+  ok    100.0%  src/ticket/failure.ts  (12/12 lines)
+  ok     98.9%  src/ticket/own-checks.ts  (92/93 lines)
+  ok    100.0%  src/ticket/set-checks.ts  (63/63 lines)
+  ok    100.0%  src/ticket/spec.ts  (23/23 lines)
+  ok    100.0%  src/ticket/check.ts  (12/12 lines)
+  ok    100.0%  src/plan/answers.ts  (25/25 lines)
+  ok    100.0%  src/plan/board-plan.ts  (82/82 lines)
+  ok    100.0%  src/build/brief.ts  (44/44 lines)
+  ok    100.0%  src/build/usage.ts  (18/18 lines)
+  ok    100.0%  src/coverage/lcov.ts  (17/17 lines)
+  ok    100.0%  src/coverage/gate.ts  (20/20 lines)
+coverage gate: all 33 pure files at 90% or more

@@ -1,0 +1,63 @@
+[
+ {
+  "id": "35.1",
+  "result": "pass",
+  "detail": "Ticket with 2 criteria, checks green; grader scored criterion-1 = 2 with the gap. Pass 1 was red at gate grader, no move to merging, pass 2 builder prompt held the gap, board column was building."
+ },
+ {
+  "id": "35.2",
+  "result": "pass",
+  "detail": "Grade 1 failed card 'images' only; grade 2 gave the 'menu' card a new gap with no regression flag and passed 'images'. Build merged after 2 passes, reviewers ran in pass 2."
+ },
+ {
+  "id": "35.3",
+  "result": "pass",
+  "detail": "Only reviewer-security reported HIGH (file, line, impact, fix). All five reviewers launched; pass 1 red at gate reviewer with 'security HIGH at ok.txt:3'; pass 2 prompt held impact and fix."
+ },
+ {
+  "id": "35.4",
+  "result": "pass",
+  "detail": "MEDIUM and unknown-severity findings: review passed, both findings recorded in the pipeline findings file, ticket moved to merging."
+ },
+ {
+  "id": "35.5",
+  "result": "pass",
+  "detail": "Grader launch args: --tools Read,Grep,Glob,Bash; allowedTools Read,Grep,Glob,git diff/log/show; no Edit/Write; scores reached the loop (ticket merged)."
+ },
+ {
+  "id": "35.6",
+  "result": "unbuilt",
+  "detail": "Cap 5, passes 1-4 failed at grade, pass 5 small gap, review pass: ticket moved to merging and follow-up r/02 filed (cites card, quotes gap, blocked_by r/01, ready). The move to done never happens: no code merges the branch and writes the done move; that is the merge loop. (I made passes 1-4 fail on the same card line, since a line that passed earlier is forgiven.)",
+  "owner": "werk/38"
+ },
+ {
+  "id": "35.7",
+  "result": "fail",
+  "detail": "Cap 5, pass 5 small gap plus a missed criterion: no follow-up filed (ok), but the ticket goes to column 'ready' with reason 'red at the retry cap of 5', not 'blocked'."
+ },
+ {
+  "id": "37.1",
+  "result": "pass",
+  "detail": "Silence limit 150 ms, builder wrote init then paused: pass 1 cancelled, session log has overseer 'silent' act, builder pass 2 brief says silent, 2 builder launches, retries=1."
+ },
+ {
+  "id": "37.2",
+  "result": "pass",
+  "detail": "Silence limit 150 ms, builder wrote nothing for 900 ms: no cancel, no silent line, one builder launch, merged after 1 pass."
+ },
+ {
+  "id": "37.3",
+  "result": "pass",
+  "detail": "Classifier allow: log shows 'allowed Bash make check: ...' and tool_result allowed. Classifier with no verdict: log shows 'denied ...: the classifier gave no verdict', builder continued and merged."
+ },
+ {
+  "id": "37.4",
+  "result": "pass",
+  "detail": "Looping verdict: pass cancelled, log has looping act and reason, pass 2 brief contains reason. With a 'not looping' verdict and no new tool call, classifier launched once despite repeated progress ticks."
+ },
+ {
+  "id": "37.5",
+  "result": "pass",
+  "detail": "A fake ps that exits 1 first in PATH, long tool call: log has probe-failed line, no frozen/silent cancel; pass ended only at --agent-ms time limit."
+ }
+]

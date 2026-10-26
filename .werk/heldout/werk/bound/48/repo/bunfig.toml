@@ -1,0 +1,4 @@
+[test]
+# Cleans the environment and puts the fake agent first on PATH before any test file loads,
+# and removes each test's temporary project when the test ends (#werk-test-env).
+preload = ["./src/test/setup.ts"]

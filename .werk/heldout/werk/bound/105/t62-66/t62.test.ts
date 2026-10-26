@@ -1,0 +1,91 @@
+/** Held-out steps of ticket 62: an agent proposes and the person accepts. */
+import { expect, test } from 'bun:test'
+import { appendsOne, project, refuses } from './helpers.ts'
+
+test('62.1 An agent proposes a card and a person accepts it into the map', () => {
+  const p = project()
+  // Given a map whose log already holds some events
+  p.real('storage', 'Storage')
+  p.ok('add', 'cache', '--title', 'Cache', '--parent', 'storage')
+  expect(p.logLines().length).toBeGreaterThan(0)
+  // When the agent adds a new card with an id, a title, a body and a why
+  const add = appendsOne(p, 'add', 'use-log', '--title', 'Use a log', '--body', 'Every change is a line.', '--why', 'History must stay.')
+  expect(add.stdout).toContain('proposed')
+  // When the person shows that card
+  const ghost = p.show('use-log')
+  expect(ghost).toContain('Use a log')
+  expect(ghost).toContain('Every change is a line.')
+  expect(ghost).toContain('History must stay.')
+  expect(ghost).toContain('state: ghost')
+  // When the agent accepts the card and states that the person asked for it
+  appendsOne(p, 'accept', 'use-log', '--actor', 'you')
+  const real = p.show('use-log')
+  expect(real).toContain('Use a log')
+  expect(real).toContain('Every change is a line.')
+  expect(real).toContain('History must stay.')
+  expect(real).toContain('state: real')
+  expect(real).not.toContain('ghost')
+})
+
+test('62.2 An accept without the person\'s claim refuses and leaves the ghost waiting', () => {
+  const p = project()
+  p.ok('add', 'use-log', '--title', 'Use a log')
+  refuses(p, 'accept', 'use-log')
+  expect(p.show('use-log')).toContain('state: ghost')
+  p.ok('accept', 'use-log', '--actor', 'you')
+  expect(p.show('use-log')).toContain('state: real')
+})
+
+test('62.3 The words of a ghost are frozen', () => {
+  const p = project()
+  p.ok('add', 'use-log', '--title', 'Use a log')
+  refuses(p, 'edit', 'use-log', '--body', 'A new body')
+  refuses(p, 'retitle', 'use-log', '--title', 'Use an append-only log')
+  refuses(p, 'add', 'use-log', '--title', 'Another title')
+  const shown = p.show('use-log')
+  expect(shown).toContain('Use a log')
+  expect(shown).toContain('state: ghost')
+})
+
+test('62.4 A retitle on a real card shows only the new title and keeps the old one in the log', () => {
+  const p = project()
+  p.ok('add', 'use-log', '--title', 'Use a log')
+  p.ok('accept', 'use-log', '--actor', 'you')
+  appendsOne(p, 'retitle', 'use-log', '--title', 'Use an append-only log')
+  const shown = p.show('use-log')
+  expect(shown).toContain('Use an append-only log')
+  expect(shown).not.toContain('Use a log')
+  const lines = p.logLines()
+  expect(lines.slice(0, -1).some((l) => l.includes('"Use a log"'))).toBe(true)
+  p.ok('edit', 'use-log', '--body', 'The new body text')
+  const after = p.show('use-log')
+  expect(after).toContain('The new body text')
+  expect(after).toContain('Use an append-only log')
+})
+
+test('62.5 An option, a source and an excerpt also enter as ghosts', () => {
+  const p = project()
+  p.real('storage', 'Storage')
+  const opt = appendsOne(p, 'add', 'use-files', '--kind', 'option', '--title', 'Use flat files', '--why-not', 'No history', '--parent', 'storage')
+  const src = appendsOne(p, 'add', 'bench', '--kind', 'source', '--title', 'Benchmark notes', '--body', 'Numbers')
+  const exc = appendsOne(p, 'add', 'quote1', '--kind', 'excerpt', '--title', 'A quoted line', '--body', 'said once')
+  for (const r of [opt, src, exc]) expect(r.stdout).toContain('proposed')
+  const o = p.show('use-files')
+  expect(o).toContain('Use flat files')
+  expect(o).toContain('why-not: No history')
+  expect(o).toContain('state: ghost')
+  const s = p.show('bench')
+  expect(s).toContain('Benchmark notes')
+  expect(s).toContain('Numbers')
+  expect(s).toContain('state: ghost')
+  const e = p.show('quote1')
+  expect(e).toContain('A quoted line')
+  expect(e).toContain('said once')
+  expect(e).toContain('state: ghost')
+  p.ok('accept', 'use-files', '--actor', 'you')
+  const o2 = p.show('use-files')
+  expect(o2).toContain('state: real')
+  expect(o2).toContain('why-not: No history')
+  expect(p.show('bench')).toContain('state: ghost')
+  expect(p.show('quote1')).toContain('state: ghost')
+})

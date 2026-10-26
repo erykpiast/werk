@@ -1,0 +1,134 @@
+flowchart TD
+
+  subgraph browser["browser"]
+    subgraph mapview["map view"]
+      tree["`**refines tree**
+the decision tree, as a list you open and close`"]
+      graph3d["`**3d graph**
+the same cards, drawn as a 3D web of links`"]
+      detail["`**card detail**
+the full text of one card`"]
+      rollup["`**rollup bar**
+counts of decided, open, and stale cards`"]
+    end
+    subgraph pane["chat pane"]
+      composer["`**composer**
+the box where you type`"]
+      transcript["`**transcript**
+the chat history`"]
+      approvebar["`**approval bar**
+asks you to allow or deny a risky action`"]
+      tabs["`**tab strip**
+one tab per chat`"]
+      header["`**model + context header**
+which model runs, and how much context is left`"]
+    end
+  end
+
+  subgraph proc["server process"]
+    state["`**state**
+GET /api/graph — one fetch of today's folded map`"]
+    live["`**live + sse**
+POST /api/chat, /api/ask, and the SSE stream back`"]
+    foldfn["`**fold**
+turns the log of past decisions into today's state`"]
+    runner["`**agent runner**
+runs the agent that answers you`"]
+    gate["`**permission gate**
+decides if a tool call may run`"]
+    lock["`**one-server lock**
+stops two servers running at once`"]
+    dev["`**dev reload**
+reloads code changes without losing a live chat`"]
+  end
+
+  subgraph store["store"]
+    log[("`**log.jsonl**
+every decision, ever made, in order`")]
+    chatlog[("`**chat.jsonl**
+the saved chat messages`")]
+    allow[("`**allow.json**
+tool calls you already said yes to`")]
+  end
+
+  cli["`**cli**
+the commands that read and write the map`"]
+  child["`**claude code child**
+the Claude Code process doing the work`"]
+  tracker["`**issue tracker**
+an outside tool, like Linear or GitHub`"]
+
+  tree -->|loads the card tree| state
+  graph3d -->|loads nodes and edges| state
+  detail -->|loads one card's full text| state
+  rollup -->|loads decided, open, and stale counts| state
+  composer -->|sends what you type| live
+  transcript -->|streams the reply as it is written| live
+  approvebar -->|asks before a risky action runs| live
+  tabs -->|switches which chat is live| live
+  header -->|shows the model and context left| live
+
+  state -->|asks for today's state| foldfn
+  foldfn -->|reads every past decision| log
+  live -->|starts the agent for a message| runner
+  runner -->|runs the agent| child
+  runner -->|saves the conversation| chatlog
+  runner -->|checks no other server is running| lock
+  child -. checks before a tool runs .-> gate
+  gate -->|checks the saved yes/no list| allow
+  gate -. asks you when unsure .-> approvebar
+  child -->|changes the map| cli
+  cli -->|appends the change| log
+  log -. copies a decision out .-> tracker
+  dev -->|reloads the server on a code change| proc
+
+%% cards
+%% tree:        vi-overwrite, vi-onview, vi-levels, werk-reflink
+%% graph3d:     vi-graph3d, vi-graph3d-locate, vi-graph3d-highlight, vi-graph3d-paused
+%% detail:      vi-detail, vi-srcnode, werk-codeblock, werk-depwhy
+%% rollup:      rollup, ro-axes, ro-corner, ro-inline, ro-unchal, werk-alarm-collapse
+%% composer:    werk-chat, werk-chat-cmdmenu, werk-shots, werk-shot-chip, werk-cmdenter
+%% transcript:  werk-progress, werk-tool-collapse, werk-blockid
+%% approvebar:  werk-approve, werk-approve-clicks, werk-mc-askqa
+%% tabs:        werk-multichat, werk-mc-tabs, werk-mc-keys, werk-mc-park, werk-mc-desc,
+%%              werk-mc-live, werk-mc-follow, werk-mc-open, werk-mc-asks
+%% header:      werk-model-select, werk-context-pie, werk-advisor
+%% state:       werk
+%% live:        werk-pane, werk-crash
+%% foldfn:      werk, vi-edges, vi-prop, reopen-reason-gap
+%% runner:      werk-invoke, werk-onechat, werk-chat-stdin, werk-resume, werk-mc-fork,
+%%              werk-crashmsg, werk-fullerr, werk-authenv, werk-edits
+%% gate:        werk-perm-native, werk-perm-mode, werk-prefix, werk-readonly, werk-loopbody,
+%%              werk-hookschema, werk-approve-log
+%% lock:        werk-onelock
+%% dev:         werk-dev, werk-hmr
+%% log:         werk, werk-two-files, werk-write
+%% chatlog:     werk-two-files
+%% allow:       werk-perm-native
+%% cli:         werk-write, werk-contract, werk-mc-recall
+%% child:       werk-invoke, werk-compl
+%% tracker:     tracker, vi-backend, vi-images
+
+%% edges
+%% tree->state:        werk
+%% graph3d->state:      werk
+%% detail->state:       werk
+%% rollup->state:       werk
+%% composer->live:      werk-pane
+%% transcript->live:    werk-pane
+%% approvebar->live:    werk-approve
+%% tabs->live:          werk-multichat
+%% header->live:        werk-model-select, werk-context-pie
+%% state->foldfn:       werk
+%% foldfn->log:         werk
+%% live->runner:        werk-pane
+%% runner->child:       werk-invoke
+%% runner->chatlog:    werk-two-files
+%% runner->lock:       werk-onelock
+%% child->gate:        werk-perm-native
+%% gate->allow:        werk-perm-native
+%% gate->approvebar:   werk-approve
+%% child->cli:         werk-write
+%% cli->log:           werk-write
+%% log->tracker:       vi-backend
+%% dev->proc:          werk-hmr

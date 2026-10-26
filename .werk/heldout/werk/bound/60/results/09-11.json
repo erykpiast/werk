@@ -1,0 +1,52 @@
+[
+ {
+  "id": "09.1",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk search/find through the CLI, checked the printed lines; passes."
+ },
+ {
+  "id": "09.2",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk search/find through the CLI, checked the printed lines; passes."
+ },
+ {
+  "id": "09.3",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk search/find through the CLI, checked the printed lines; passes."
+ },
+ {
+  "id": "09.4",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk search/find through the CLI, checked the printed lines; passes."
+ },
+ {
+  "id": "09.5",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk search/find through the CLI, checked the printed lines; passes."
+ },
+ {
+  "id": "11.1",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk show through the CLI, checked the printed text; passes."
+ },
+ {
+  "id": "11.2",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk show through the CLI, checked the printed text; passes."
+ },
+ {
+  "id": "11.3",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk show through the CLI, checked the printed text; passes."
+ },
+ {
+  "id": "11.4",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk show through the CLI, checked the printed text; passes."
+ },
+ {
+  "id": "11.5",
+  "result": "pass",
+  "detail": "Wrote the log with fixture events, ran werk show through the CLI, checked the printed text; passes."
+ }
+]

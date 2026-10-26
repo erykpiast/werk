@@ -1,0 +1,97 @@
+import { afterEach, expect, test } from 'bun:test'
+import { childrenOnMap, ctx, decidedCard, fresh, logLines, ok, realCard, show, werk } from './helpers.ts'
+
+afterEach(() => ctx.p?.cleanup())
+
+const tree = () => {
+  realCard('storage', 'Storage', ['--status', 'open'])
+  realCard('cache', 'Cache', ['--status', 'open', '--parent', 'storage'])
+  realCard('index', 'Index', ['--status', 'open', '--parent', 'storage'])
+}
+
+test('66.1 an agent removes a bad branch and the log keeps its history', () => {
+  fresh()
+  tree()
+  realCard('eviction', 'Eviction', ['--status', 'open', '--parent', 'cache'])
+  const before = logLines()
+  // The remove verb requires the --actor you claim.
+  expect(werk(['remove', 'cache', '--actor', 'you']).code).toBe(0)
+  expect(show('cache')).toMatch(/state: removed/)
+  expect(show('eviction')).toMatch(/state: removed/)
+  const kids = childrenOnMap('storage')
+  expect(kids).not.toContain('cache')
+  expect(kids).not.toContain('eviction')
+  expect(kids).toContain('index')
+  expect(ok(['removed'])).toContain('#cache')
+  const after = logLines()
+  expect(after.slice(0, before.length)).toEqual(before)
+  expect(after.length).toBe(before.length + 1)
+})
+
+test('66.2 a restore brings back the card, its subtree and links', () => {
+  fresh()
+  realCard('storage', 'Storage', ['--status', 'open'])
+  realCard('cache', 'Cache', ['--status', 'open', '--parent', 'storage'])
+  realCard('eviction', 'Eviction', ['--status', 'open', '--parent', 'cache'])
+  realCard('memory-budget', 'Memory budget', ['--status', 'open'])
+  ok(['link', 'cache', 'memory-budget', '--type', 'depends_on', '--why', 'cache size'])
+  ok(['remove', 'cache', '--actor', 'you'])
+  expect(werk(['restore', 'cache']).code).toBe(0)
+  const s = show('cache')
+  expect(s).not.toMatch(/state: removed/)
+  expect(childrenOnMap('storage')).toContain('cache')
+  expect(childrenOnMap('cache')).toContain('eviction')
+  expect(s).toContain('link: depends_on -> #memory-budget')
+  expect(ok(['removed'])).not.toContain('#cache')
+})
+
+test('66.3 remove with reparent keeps the good children', () => {
+  fresh()
+  realCard('storage', 'Storage', ['--status', 'open'])
+  realCard('bad-layer', 'Bad layer', ['--status', 'open', '--parent', 'storage'])
+  realCard('write-path', 'Write path', ['--status', 'open', '--parent', 'bad-layer'])
+  realCard('read-path', 'Read path', ['--status', 'open', '--parent', 'bad-layer'])
+  expect(werk(['remove', 'bad-layer', '--actor', 'you', '--reparent']).code).toBe(0)
+  expect(show('bad-layer')).toMatch(/state: removed/)
+  const kids = childrenOnMap('storage')
+  expect(kids).toContain('write-path')
+  expect(kids).toContain('read-path')
+  expect(show('write-path')).not.toMatch(/state: removed/)
+  expect(show('read-path')).not.toMatch(/state: removed/)
+})
+
+const listed = (out: string, id: string) => new RegExp(`#${id}\\s`).test(out)
+
+test('66.4 find lists the open cards an agent can work on in a subtree', () => {
+  fresh()
+  decidedCard('later', 'Later')
+  decidedCard('wrong', 'Wrong')
+  tree()
+  realCard('backup', 'Backup', ['--status', 'open', '--parent', 'storage'])
+  realCard('quota', 'Quota', ['--status', 'open', '--parent', 'storage'])
+  ok(['link', 'backup', 'later', '--type', 'depends_on'])
+  ok(['link', 'quota', 'wrong', '--type', 'depends_on'])
+  realCard('elsewhere', 'Elsewhere', ['--status', 'open'])
+  ok(['reopen', 'later', '--reason', 'postponed', '--why', 'not now'])
+  ok(['reopen', 'wrong', '--reason', 'rejected', '--why', 'wrong'])
+  const r = werk(['find', 'storage'])
+  expect(r.code).toBe(0)
+  expect(listed(r.stdout, 'cache')).toBe(true)
+  expect(listed(r.stdout, 'index')).toBe(true)
+  expect(listed(r.stdout, 'backup')).toBe(false)
+  expect(listed(r.stdout, 'quota')).toBe(false)
+  expect(listed(r.stdout, 'elsewhere')).toBe(false)
+})
+
+test('66.5 a removed branch drops out of find and comes back after a restore', () => {
+  fresh()
+  tree()
+  ok(['remove', 'cache', '--actor', 'you'])
+  const first = ok(['find', 'storage'])
+  expect(listed(first, 'index')).toBe(true)
+  expect(listed(first, 'cache')).toBe(false)
+  ok(['restore', 'cache'])
+  const second = ok(['find', 'storage'])
+  expect(listed(second, 'index')).toBe(true)
+  expect(listed(second, 'cache')).toBe(true)
+})

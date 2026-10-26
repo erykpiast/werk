@@ -1,0 +1,82 @@
+[
+ {
+  "id": "14.1",
+  "result": "pass",
+  "detail": "Playwright: typed 'half a thought' in composer, ran `werk add fresh --title 'Fresh idea' --parent root`; map showed it, window marker survived (no reload), composer kept the draft."
+ },
+ {
+  "id": "14.2",
+  "result": "pass",
+  "detail": "Dev server on app copy; edited src/serve/routes.ts projectList. Server output contained 'reusing the live server', same pid and port, GET /api/projects returned the edited field, then `werk add` card 'After edit' appeared with no reload."
+ },
+ {
+  "id": "14.3",
+  "result": "pass",
+  "detail": "Appended to client/main.tsx in app copy; page reloaded by itself (window marker lost), same card title, composer kept 'draft that must survive'."
+ },
+ {
+  "id": "17.1",
+  "result": "pass",
+  "detail": "Four-level chain, pane <700px (viewport 1000). Opened a..d via tiles; line read '\u2026 \u203a Level c \u203a Level d' with d bold; hover overlay showed Home..Level d; clicking Level c in the overlay (it covers the line) opened c with c as the bold current crumb."
+ },
+ {
+  "id": "17.2",
+  "result": "pass",
+  "detail": "Root with open/proto/decided/stale children: total, open, proto, decided counts shown and sum to total, stale ring present, no postponed count, titles name statuses; opening c-dec changed total to 2."
+ },
+ {
+  "id": "17.3",
+  "result": "pass",
+  "detail": "14 matching ids; '#werk' gave 12 rows, 'werk' first, prefix ids before contains ids, each row has dot/title/id, stale card dot data-color=stale; Down then Up returned to row 1; Enter opened /map/werk, crumb bold title, search empty."
+ },
+ {
+  "id": "21.1",
+  "result": "pass",
+  "detail": "Sent message (usage 50k tokens), picked Opus, pie aria-label recorded; stopped and restarted server, reopened page: model Opus, same pie label; asked again and the agent was launched with --resume fake-session-1."
+ },
+ {
+  "id": "21.2",
+  "result": "pass",
+  "detail": "Scripted 'No conversation found with session ID' error after restart; one send produced 'Fresh answer' from a new launch with no --resume, no 'not delivered' text, message delivered twice by werk without a second user send."
+ },
+ {
+  "id": "21.3",
+  "result": "pass",
+  "detail": "Two crashes with 3-line stderr: exactly 2 launches (one retry), pane shows 'Your message was not delivered. Send it again.' and all three error lines; resend got an answer from a launch with --resume fake-session-1."
+ },
+ {
+  "id": "21.4",
+  "result": "fail",
+  "detail": "Login error (stderr containing 'claude auth login') crashed the agent: 1 launch, no retry, both error lines shown, but the pane shows 'Fix the problem above, then send it again.' and not 'Your message was not delivered. Send it again.' (src/chat/crash-rules.ts FATAL branch)."
+ },
+ {
+  "id": "21.5",
+  "result": "pass",
+  "detail": "Picked Sonnet (default shows 'Sonnet + Opus advisor'); pie blue before the first turn; during the turn the selector is disabled and keeps Sonnet; after the turn chose 'Sonnet + Opus advisor' (the option label differs from the step's 'with'; mapped as the same choice); no crash text; popover showed % and 'Clear context'; no crash text; next message answered."
+ },
+ {
+  "id": "23.1",
+  "result": "fail",
+  "detail": "The chat pane has one conversation per project and no tab strip (no tablist, no chips, no way to start a second conversation on another card). Not owned by any listed unbuilt ticket."
+ },
+ {
+  "id": "23.2",
+  "result": "fail",
+  "detail": "No tab strip or second conversation exists, so nothing to switch to."
+ },
+ {
+  "id": "23.3",
+  "result": "fail",
+  "detail": "No tabs, no chips and no red blink; a crash shows only in the single pane."
+ },
+ {
+  "id": "23.4",
+  "result": "fail",
+  "detail": "Model switch works and the next message gets a reply, but there is no tab chip to check; the chat pane has no tab strip."
+ },
+ {
+  "id": "23.5",
+  "result": "fail",
+  "detail": "Background-agent line and the 'merge it' button exist in the single chat (covered by e2e), but the tab strip that should count the tab as running/idle is absent."
+ }
+]

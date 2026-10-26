@@ -1,0 +1,32 @@
+[
+  {
+    "id": "14.1",
+    "result": "pass",
+    "detail": "Playwright: opened the root page, typed 'half a thought' in the Message composer, set a window marker, ran `werk add fresh --title 'Fresh idea' --parent root`; 'Fresh idea' appeared in the map pane, the marker survived (no reload), composer kept its text."
+  },
+  {
+    "id": "14.2",
+    "result": "pass",
+    "detail": "Ran werk serve in dev from an app copy with output captured; edited the /api/projects handler in src/serve/routes.ts. Server output contained 'reusing the live server'; the listener pid on the port was unchanged; the next request returned the edited response; `werk add 'After edit'` showed on the open page with no reload (marker intact)."
+  },
+  {
+    "id": "14.3",
+    "result": "pass",
+    "detail": "appCopy fixture: opened /map/c1, typed the draft, appended a comment to client/main.tsx; the page reloaded by itself (marker lost), same card title heading, composer held 'draft that must survive'."
+  },
+  {
+    "id": "17.1",
+    "result": "pass",
+    "detail": "Four levels below root, viewport 1000 (map pane <700px). Opened the cards by clicking tiles; the crumb line shows '… › Level c › Level d' with the open card in <strong>; hover shows an overlay with Home, root title and all levels; clicking the parent in the overlay opened it and the line ends with it in bold. (The path starts at Home, as the step says.)"
+  },
+  {
+    "id": "17.2",
+    "result": "pass",
+    "detail": "Opened /map/root with open, proto, decided and stale children: total, open, proto, decided dot counts add up to the total, stale ring shows 1, titles name each status; no count for zero statuses. Opening the 'Open child' (one grandchild) changed the counts to total 2, open 2, no proto/decided counts."
+  },
+  {
+    "id": "17.3",
+    "result": "pass",
+    "detail": "Typed #werk with 14 matching ids: list shows 12 rows, first is werk, prefix rows precede contains rows, each row has dot, title and id, the stale card's dot has data-color=stale and a red background. ArrowDown then ArrowUp returns to row 1; Enter opens /map/werk, crumb ends with the bold title, search box empty."
+  }
+]

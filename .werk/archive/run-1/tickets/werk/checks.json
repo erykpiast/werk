@@ -1,0 +1,1704 @@
+[
+  {
+    "file": "100.md",
+    "chars": 1421,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "Every agent werk starts that can write the map reads the card wording rules and the read-before-write rule"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1421 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches agent instructions, conversation manager"
+      }
+    ]
+  },
+  {
+    "file": "101.md",
+    "chars": 1758,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An agent edits werk's own code and the live chat turn and the composer draft both survive"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1758 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches dev runner, server, live channel, client reload, draft store, test harness"
+      }
+    ]
+  },
+  {
+    "file": "102.md",
+    "chars": 1971,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person forks a second conversation at a card and sees it as a tab at the bottom of the pane"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1971 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches conversation manager, conversation store, tab strip, map view, chat pane"
+      }
+    ]
+  },
+  {
+    "file": "103.md",
+    "chars": 1065,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "Each tab keeps its own card, map position and draft, and the keyboard switches tabs"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1065 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches tab state, tab strip, keyboard shortcuts, chat pane"
+      }
+    ]
+  },
+  {
+    "file": "104.md",
+    "chars": 1641,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "Idle tabs park behind a '…' menu and a parked conversation resumes where it stopped"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1641 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches conversation manager, idle reaper, tab strip, park menu"
+      }
+    ]
+  },
+  {
+    "file": "105.md",
+    "chars": 1583,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person sees from any tab that another tab is running, waiting on an ask, or dead"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1583 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches conversation manager, ask bar, tab strip, park menu, map view, chat pane"
+      }
+    ]
+  },
+  {
+    "file": "106.md",
+    "chars": 1066,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An agent lists its sibling conversations and reads what one of them said"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1066 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches convos verb, recall verb, session log reader"
+      }
+    ]
+  },
+  {
+    "file": "107.md",
+    "chars": 1228,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "The ticket-check verb exits 0, 1 or 2, and a set failure that no ticket owns names the ticket set"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1228 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches ticket-check verb, ticket set checks"
+      }
+    ]
+  },
+  {
+    "file": "108.md",
+    "chars": 1304,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person ends a build that goes the wrong way by archiving its building ticket"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1304 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches board view, board actions route, board log"
+      }
+    ]
+  },
+  {
+    "file": "61.md",
+    "chars": 2339,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A new repository with zero files becomes a werk project whose command line lists its registered verbs"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "2339 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches project setup, command line entry, verb registry, help verb, test harness, fake agent, coverage gate"
+      }
+    ]
+  },
+  {
+    "file": "62.md",
+    "chars": 1863,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An agent proposes a card from the command line and a person accepts it into the map"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1863 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches decision log, map fold, add verb, accept verb, show verb, edit verb"
+      }
+    ]
+  },
+  {
+    "file": "63.md",
+    "chars": 1685,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A ghost carries held links, and an accept or a discard takes its whole proposed branch"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1685 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches map fold, link verb, accept verb, discard verb, rollup"
+      }
+    ]
+  },
+  {
+    "file": "64.md",
+    "chars": 1492,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A card moves to decided only when the contract check passes, and a failure prints the next command"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1492 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches status verb, contract check, amend verb"
+      }
+    ]
+  },
+  {
+    "file": "65.md",
+    "chars": 1650,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A reopen with a reason marks dependent cards stale or paused, and the stale verb lists each mark with its reason"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1650 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches staleness marks, map fold, reopen verb, stale verb, rederive verb"
+      }
+    ]
+  },
+  {
+    "file": "66.md",
+    "chars": 1173,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An agent removes a bad branch, restores it, and finds the open cards it can work on"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1173 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches map fold, remove verb, restore verb, find verb"
+      }
+    ]
+  },
+  {
+    "file": "67.md",
+    "chars": 1095,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An agent cites a quote that werk finds verbatim in a transcript"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1095 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches quote verb, transcript reader"
+      }
+    ]
+  },
+  {
+    "file": "68.md",
+    "chars": 742,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An agent reads a card's thread and writes a note on it from the command line"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "742 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "3 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches say verb, inbox verb"
+      }
+    ]
+  },
+  {
+    "file": "69.md",
+    "chars": 1779,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person opens the map in a browser and sees it redraw when the log changes"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1779 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches serve verb, server, server lock, read API, live channel, client shell, map view, browser test harness"
+      }
+    ]
+  },
+  {
+    "file": "70.md",
+    "chars": 1144,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person sees proposed cards as ghosts in the map and accepts one with a ✓"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1144 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches map view, card view, accept route"
+      }
+    ]
+  },
+  {
+    "file": "71.md",
+    "chars": 1748,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A card id in any rendered text is a link, and fenced code renders boxed and highlighted"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1748 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches markdown renderer, card link rule, code highlighter, card view, grid tile"
+      }
+    ]
+  },
+  {
+    "file": "72.md",
+    "chars": 823,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person sees stale cards in red and paused cards in grey, each with the reopen reason"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "823 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "3 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches map view, card view"
+      }
+    ]
+  },
+  {
+    "file": "80.md",
+    "chars": 2074,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person runs the ticket checks on a folder of ticket files and reads each failure by ticket and field"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "2074 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches ticket parser, ticket own checks, ticket set checks, ticket-check verb"
+      }
+    ]
+  },
+  {
+    "file": "81.md",
+    "chars": 1523,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person opens the board, sees tickets in five columns, and reads a ticket in its drawer"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1523 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches board log, board fold, board API, board view, ticket drawer"
+      }
+    ]
+  },
+  {
+    "file": "82.md",
+    "chars": 2473,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A plan turns a decided subtree into a spec, checked tickets on the board, and proposed answers on the map"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "2473 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "8 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches plan verb, spec writer, ticket writer, answer proposer, run tier event, board log"
+      }
+    ]
+  },
+  {
+    "file": "83.md",
+    "chars": 1805,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "The builder loop builds one ticket in fresh passes until its checks pass or the retry cap stops it"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1805 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches builder loop, worktree manager, headless runner, check runner, run record, board log"
+      }
+    ]
+  },
+  {
+    "file": "84.md",
+    "chars": 1890,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A pass fails when the grader finds a gap or a reviewer finds a CRITICAL or HIGH problem"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1890 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches grader, reviewers, builder loop, run record"
+      }
+    ]
+  },
+  {
+    "file": "85.md",
+    "chars": 1233,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "An overseer keeps a build agent from staying stuck on an ask, a loop, or a frozen call"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1233 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches overseer, loop classifier, headless runner"
+      }
+    ]
+  },
+  {
+    "file": "86.md",
+    "chars": 1362,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "The held-out set runs on the run's tree, feeds a failed step to the builder, and refuses G2 while a step is red"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1362 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches held-out author, held-out binder, held-out runner, gate verb, builder loop"
+      }
+    ]
+  },
+  {
+    "file": "87.md",
+    "chars": 1849,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "The merge loop merges green tickets onto the main line one at a time and runs the held-out set after each merge"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1849 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches merge loop, gate verb, board log, board view, ticket drawer"
+      }
+    ]
+  },
+  {
+    "file": "88.md",
+    "chars": 1114,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A run builds up to 3 unblocked tickets at once, never two that touch a common module"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1114 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches scheduler, run verb"
+      }
+    ]
+  },
+  {
+    "file": "89.md",
+    "chars": 1612,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person starts the run, reorders, archives, triggers and stops tickets on the board"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1612 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches board view, board actions route, board log, restore ticket verb"
+      }
+    ]
+  },
+  {
+    "file": "90.md",
+    "chars": 920,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A building ticket pulses while its session runs, and its drawer shows the live log"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "920 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "3 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches ticket drawer, ticket pulse, live channel"
+      }
+    ]
+  },
+  {
+    "file": "95.md",
+    "chars": 2285,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "Every test runs on a fresh project in a cleaned environment that can reach only the fake agent"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "2285 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches test harness, unit test setup, browser test harness, make targets"
+      }
+    ]
+  },
+  {
+    "file": "96.md",
+    "chars": 1785,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A test scripts the fake agent as ordered events and file edits, and reads what each launch was asked"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1785 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches fake agent, fake script format"
+      }
+    ]
+  },
+  {
+    "file": "97.md",
+    "chars": 1409,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A test scripts a permission ask that stays open while a pause, a loop or a crash plays"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1409 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "5 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches fake agent"
+      }
+    ]
+  },
+  {
+    "file": "98.md",
+    "chars": 2072,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "Every agent werk starts carries a role name, and the fake picks its reply and its lifetime by that role"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "2072 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "4 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches fake agent, agent roles, headless runner, plan verb, grader, reviewers, overseer, held-out author, held-out binder"
+      }
+    ]
+  },
+  {
+    "file": "99.md",
+    "chars": 1661,
+    "checks": [
+      {
+        "check": "title",
+        "ok": true,
+        "detail": "A person types in the chat pane beside the map and the agent's reply streams back"
+      },
+      {
+        "check": "shape",
+        "ok": true,
+        "detail": "every header line and section is there"
+      },
+      {
+        "check": "size",
+        "ok": true,
+        "detail": "1661 chars"
+      },
+      {
+        "check": "what-to-build",
+        "ok": true,
+        "detail": "says what to build"
+      },
+      {
+        "check": "acceptance",
+        "ok": true,
+        "detail": "6 acceptance criteria"
+      },
+      {
+        "check": "no-file-paths",
+        "ok": true,
+        "detail": "names no file paths"
+      },
+      {
+        "check": "make-targets",
+        "ok": true,
+        "detail": "every check is a make target"
+      },
+      {
+        "check": "touches",
+        "ok": true,
+        "detail": "touches chat pane, composer, chat route, conversation manager, live channel"
+      }
+    ]
+  }
+]

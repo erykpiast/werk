@@ -1,0 +1,12 @@
+[
+{"id":"29.1","result":"pass","detail":"Plan twice via `werk plan` with the fake spec/ticket writers; tickets 01 building and 02 done; added decided card c2 and re-planned. Board kept one spec.md, 03 rewritten, new 04 (no repeated number), 01/02 unchanged in state, title and file. Second plan scope lists c2. Spec wording comes from the scripted writer; the fake records only the first prompt line, so the prompt text was not read."},
+{"id":"29.2","result":"pass","detail":"Planned two tickets, ran `werk remove c1 --actor you`, re-planned with the writer listing ticket 2 in the drops file. Ticket 2 is archived with the reason 'the current spec no longer needs it'; `werk ticket restore 02 --actor you` brought it back as app/02 in ready."},
+{"id":"29.3","result":"pass","detail":"Planned, started `werk serve`, then proposed and accepted a new title for c1. Ticket moved to blocked with a reason naming c1 and 'title changed'. A re-plan returned it to ready with marks cleared."},
+{"id":"29.4","result":"pass","detail":"With ticket 01 ready and 02 building, `werk say c1` changed nothing. A body change (propose --ops + accept) blocked 01 with 'c1 ... body changed'; 02 stayed building with no reason."},
+{"id":"29.5","result":"pass","detail":"With a running server, a new decided card c9 under the subtree made the board's plan record uncited=[c9]; both tickets stayed ready with no reason."},
+{"id":"30.1","result":"pass","detail":"Root reopened so only its two decided children count (a child cannot be decided under an open parent). ticket-check printed only '2 tickets, 0 own-check failures, 0 failures, 2 decided cards, 2 stories', exit 0."},
+{"id":"30.2","result":"pass","detail":"Ticket 2 has a path on line 12, ticket 3 has no touches. Output names no-file-paths with the path and line 12, and shape/touches for 03. No line for 01. Last line counts 3 tickets, 2 own-check failures. Exit 1."},
+{"id":"30.3","result":"pass","detail":"Decided cards a, b and a decided ghost g under the root; tickets cite root and a. One 'ticket set' line names b, no line names g, last line counts 2 decided cards, exit 1."},
+{"id":"30.4","result":"pass","detail":"Four tickets with 2<->3 cycle and 4 blocked by 3. blocked_by failures name 02 and 03 only; none for 01 or 04; exit 1."},
+{"id":"30.5","result":"pass","detail":"Spec with no User stories heading: stderr names the missing heading, stdout empty, exit 2."}
+]

@@ -1,0 +1,5 @@
+VERDICT given links ok
+VERDICT checks pass ok
+VERDICT checks fail after copy ok
+VERDICT names test-scope ok
+VERDICT checks pass after relink ok

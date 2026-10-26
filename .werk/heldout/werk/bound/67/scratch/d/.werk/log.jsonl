@@ -1,0 +1,10 @@
+{"seq":1,"at":"t","actor":"you","type":"node.added","payload":{"id":"root","kind":"card","title":"Root","status":"decided","who":"me"}}
+{"seq":0,"at":"t","actor":"you","type":"node.added","payload":{"id":"a","kind":"card","title":"a","status":"decided","who":"me","parent":"root"}}
+{"seq":0,"at":"t","actor":"you","type":"node.added","payload":{"id":"b","kind":"card","title":"b","status":"decided","who":"me","parent":"root"}}
+{"seq":0,"at":"t","actor":"you","type":"node.added","payload":{"id":"c","kind":"card","title":"c","status":"open","who":"me","parent":"root"}}
+{"seq":0,"at":"t","actor":"you","type":"node.added","payload":{"id":"d","kind":"card","title":"d","status":"decided","who":"me","parent":"root"}}
+{"seq":0,"at":"t","actor":"you","type":"edge.added","payload":{"from":"b","to":"a","type":"depends_on","why":"x"}}
+{"seq":0,"at":"t","actor":"you","type":"edge.added","payload":{"from":"c","to":"b","type":"depends_on","why":"x"}}
+{"seq":0,"at":"t","actor":"you","type":"edge.added","payload":{"from":"d","to":"c","type":"depends_on","why":"x"}}
+{"seq":2,"at":"2026-10-25T04:30:03.665Z","actor":"agent","type":"node.reopened","payload":{"id":"a","reason":"postponed","why":"the engine build waits for next quarter"}}
+{"seq":3,"at":"2026-10-25T04:31:13.457Z","actor":"agent","type":"node.reopened","payload":{"id":"b","reason":"rejected","why":"wrong"}}

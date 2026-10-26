@@ -1,0 +1,20 @@
+[
+  {
+    "id": "werk-v0-seams",
+    "title": "v0 is tested at two seams: the command line and the browser",
+    "why": "The command line is the only write path and the build's own seam, and the browser is the only place the three views exist, so no lower seam is needed for behaviour.",
+    "body": "werk v0 is tested at two seams, each the highest one for its half of the product. Both put one scripted fake agent first on the PATH, so no test reaches a real agent.\n\nThe command line, run against a temporary project and a temporary git repository, covers every write to the map — the events of each verb, the ghost and accept rules, the contract check, reopen reasons and marks, excerpts and notes — and the whole build pipeline (see #st-build-seam). Because the map is written only through the command line (#werk-write), the seam that #st-build-seam sets for the build also covers the map.\n\nThe browser, through a real server on a copy of a fixture project, covers the map, card rendering, the chat pane, multichat, and the board (#werk-test).\n\nPure code also gets unit tests under the coverage gate of #werk-test. That gate measures coverage; it is not a third seam for behaviour."
+  },
+  {
+    "id": "werk-kill-compare",
+    "title": "The from-scratch v0 is compared with the prototype by running the same user paths on both",
+    "why": "The kill criterion of #werk-base says 'too far from the prototype's behaviour' but names no measure. A shared set of user paths makes the distance a count.",
+    "body": "The kill criterion of #werk-base is measured by running the prototype's browser test paths against v0. The prototype's own browser tests are the reference paths, because they already pass on the prototype. A path that passes on the prototype and fails on v0 is one measured gap. The count of such gaps is the distance from the prototype's behaviour. A gap is first a missing or unclear card, not a reason to copy prototype code."
+  },
+  {
+    "id": "werk-client-reload",
+    "title": "In dev, Vite runs inside the werk server, and a client change it cannot apply in place reloads the page",
+    "why": "#werk-dev was decided for a client with no build step. With a Vite client (#werk-stack), the server must transform the client itself, and the reload rule must still keep the draft.",
+    "body": "In dev, the werk server runs Vite inside its own process to transform the React client, so there is one process and one port, and the server's lock and hot-reload guard (#werk-hmr) still cover everything. A client change that Vite applies in place needs no reload. A change it cannot apply in place sends the reload event on the live channel that #werk-dev decides, and the composer draft survives it in session storage, as #werk-dev requires. Each tab's draft is kept by tab (#werk-mc-follow)."
+  }
+]

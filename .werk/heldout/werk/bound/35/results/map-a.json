@@ -1,0 +1,15 @@
+[
+{"id":"05.1","result":"pass","detail":"add login under decided auth printed 'proposed', log +1 event; show login has title, proposed, auth link and a 'rollup:' line."},
+{"id":"05.2","result":"pass","detail":"second add exit 1, stderr names duplicate-id, log byte-identical, show still has first title."},
+{"id":"05.3","result":"pass","detail":"--status decided refused (exit 1: 'a card reaches decided only through the status verb, not add'); log unchanged; show pay says 'unknown card \"pay\"' (wording differs from 'not allowed'/'not found' but same meaning)."},
+{"id":"05.4","result":"pass","detail":"'#login' with parent '#auth' printed proposed; show '#login' and 'login' print identical text with refines auth and the title '#1 priority: magic links'."},
+{"id":"05.5","result":"pass","detail":"log with ghost auth, bad line (unknown parent), ghost login: show login prints it proposed; stderr 'problem at log line 2: unknown-card'; bad line still in the file. The product has no separate problems verb; show's stderr is the only listing."},
+{"id":"06.1","result":"pass","detail":"quote output says 'proposed' not 'added'; excerpt is proposed in the read shape, its supported_by edge held:true; show of decided card keeps [decided] and title, Say section marks the excerpt proposed."},
+{"id":"06.2","result":"pass","detail":"accept x:ex0 --actor you: excerpt no longer proposed, edge held:false without a second accept, show card lists it under Say with no proposed flag."},
+{"id":"08.1","result":"pass","detail":"remove auth --actor you: auth/login/session gone from show and read shape, one new log event, 'removed' lists auth with children, login->audit edge gone; restore brings all back with the edge; removed prints 'nothing is removed'."},
+{"id":"08.2","result":"pass","detail":"--reparent: login and session refine platform; restore puts them back under auth, not platform."},
+{"id":"08.3","result":"pass","detail":"edge login->session absent after restoring only login, present after restoring session."},
+{"id":"08.4","result":"pass","detail":"source rfc-6749 stays, cited by billing; add login refused with 'duplicate-id: the id \"login\" is taken by a removed card; restore it to bring it back'; log unchanged, login not in map."},
+{"id":"08.5","result":"pass","detail":"remove without --actor exit non-zero, login still in map, log unchanged."},
+{"id":"08.6","result":"pass","detail":"restore without --actor exit non-zero, login still out, log unchanged."}
+]

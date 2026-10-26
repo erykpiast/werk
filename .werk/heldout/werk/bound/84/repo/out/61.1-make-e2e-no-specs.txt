@@ -1,0 +1,5 @@
+exit 0
+bunx playwright install chromium
+CI=true bun run e2e
+$ playwright test --pass-with-no-tests
+

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+.DS_Store
+
+# A person's own Claude Code settings stay out of git (#werk-cc-perms).
+.claude/settings.local.json

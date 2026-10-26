@@ -1,0 +1,97 @@
+clone /tmp/g1-61.4.4udE/werk
+--- make test-coverage exit=0 (tail):
+ok    100.00%  src/serve/card-html.ts
+ok    100.00%  src/serve/page.ts
+ok    100.00%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok     96.20%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/turns.ts
+ok    100.00%  src/serve/open-card.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  src/serve/header.ts
+ok    100.00%  src/serve/jump.ts
+ok    100.00%  src/serve/home-html.ts
+ok    100.00%  web/crumbs.ts
+ok    100.00%  web/counts.ts
+ok    100.00%  web/diff.ts
+ok    100.00%  src/plan/scope.ts
+ok    100.00%  src/plan/answers.ts
+ok    100.00%  src/plan/board-plan.ts
+ok    100.00%  src/plan/prompts.ts
+ok    100.00%  src/agent/limits.ts
+64 pure files, 0 under 90% of lines or without an own test file.
+ok   Given: make test-coverage passes
+kept only the first two tests of src/board/rules.test.ts
+--- make test exit=0 (tail):
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 740 pass
+ 0 fail
+ 2663 expect() calls
+Ran 740 tests across 97 files. [56.36s]
+ok   make test exits with success
+--- make test-coverage exit=2 (tail):
+ok    100.00%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok     96.20%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/turns.ts
+ok    100.00%  src/serve/open-card.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  src/serve/header.ts
+ok    100.00%  src/serve/jump.ts
+ok    100.00%  src/serve/home-html.ts
+ok    100.00%  web/crumbs.ts
+ok    100.00%  web/counts.ts
+ok    100.00%  web/diff.ts
+ok    100.00%  src/plan/scope.ts
+ok    100.00%  src/plan/answers.ts
+ok    100.00%  src/plan/board-plan.ts
+ok    100.00%  src/plan/prompts.ts
+ok    100.00%  src/agent/limits.ts
+64 pure files, 1 under 90% of lines or without an own test file.
+error: script "test:coverage" exited with code 1
+make: *** [test-coverage] Error 1
+ok   make test-coverage exits with an error
+FAIL   69.05%  src/board/rules.ts
+ok   output names src/board/rules.ts with a percentage below 90
+restored src/board/rules.test.ts
+--- make test-coverage exit=0 (tail):
+ok    100.00%  src/serve/card-html.ts
+ok    100.00%  src/serve/page.ts
+ok    100.00%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok     96.20%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/turns.ts
+ok    100.00%  src/serve/open-card.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  src/serve/header.ts
+ok    100.00%  src/serve/jump.ts
+ok    100.00%  src/serve/home-html.ts
+ok    100.00%  web/crumbs.ts
+ok    100.00%  web/counts.ts
+ok    100.00%  web/diff.ts
+ok    100.00%  src/plan/scope.ts
+ok    100.00%  src/plan/answers.ts
+ok    100.00%  src/plan/board-plan.ts
+ok    100.00%  src/plan/prompts.ts
+ok    100.00%  src/agent/limits.ts
+64 pure files, 0 under 90% of lines or without an own test file.
+ok   make test-coverage exits with success again
+PASS

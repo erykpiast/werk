@@ -1,0 +1,20 @@
+{
+  "werk-stack": "641fcc9e4195",
+  "werk-stack-framework": "ee3f8e711141",
+  "werk-stack-hydration": "afda240b88a3",
+  "werk-stack-ui": "a7e7c6c54316",
+  "werk-stack-layout": "4a63e5842e32",
+  "werk-client-reload": "eaa870daff8e",
+  "werk-dev": "e7ec245080d2",
+  "werk-write-changed": "c726faf964a7",
+  "werk-write-watch-start": "14c438d4845d",
+  "vi-layout": "c316269e3df7",
+  "werk-test-visual": "a0991516ce85",
+  "werk-test-visual-judge": "564bdb71f5fb",
+  "werk-test-dom": "54617560d72a",
+  "werk-test-globals": "18bc8fff4190",
+  "werk-hmr": "9f293aed811c",
+  "werk-onelock": "b2a86bc9fd10",
+  "werk-test-runner": "3e0856d1bb80",
+  "img-subagent": "d5a4547c5817"
+}

@@ -1,0 +1,2425 @@
+{
+  "schema": "decision-map/v1",
+  "note": "Projection of plans/decision-map.html. msgIndex and span are null: quotes were hand-written, not extracted. See plans/decision-map-structure.md.",
+  "producedAt": "2026-09-01T20:08:37.052Z",
+  "counts": {
+    "cards": 47,
+    "sources": 25,
+    "options": 9,
+    "excerpts": 73,
+    "edges": 191
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "card",
+      "title": "We build and fix software with agents in one repeating pipeline.",
+      "why": "Six steps that feed back into each other. Eryk brings judgement and drive; Claude brings knowledge and speed.",
+      "body": "Agreed 2026-09-01.\n\nSix steps: intent, options, build, validate, ship, measure. Step 6 opens the next step 1. Everything below refines this one statement.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "tracker",
+      "kind": "card",
+      "title": "State lives in an external issue tracker",
+      "why": "Linear for work, GitHub Issues for side projects. The record outlives the branch and you read it on a phone.",
+      "body": "Gives three things a local folder cannot: the record outlives the branch, you read it on a phone, and step 6 can query across every past work item to find patterns.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "stages",
+      "kind": "card",
+      "title": "Six stages, three human gates",
+      "why": "intent, options, build, validate, ship, measure. You approve at G1, G2, G3 — and nowhere else.",
+      "body": "The gates are tracker workflow-state transitions, so approving works from a phone and the pipeline has no hidden state.\n\nEverything between the gates is autonomous. Your values 1 to 3 need judgement; your value 4 needs none.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "product",
+      "kind": "card",
+      "title": "The result must become a standalone product",
+      "why": "The Claude Code terminal is a temporary harness. This constraint decided the whole architecture.",
+      "body": "It is why the logic cannot live in Markdown skill files. A skill is a prompt file and cannot become a product.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "loop",
+      "kind": "card",
+      "title": "The build-and-validate loop runs without me",
+      "why": "Build, validate, fix, review, re-validate — exits on a rubric. The largest open risk in the design.",
+      "body": "A loop needs a stop condition, and “until it is good” is not one. The rubric is that condition — which is also what makes it attackable.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "align",
+      "kind": "card",
+      "title": "We align on intent before building",
+      "why": "Talking, questions, and prototypes. The research says options beat descriptions — measurably.",
+      "body": "Your values 1 and 2. Asking questions turns out to be a weak instrument; showing variants is a strong one.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "visual",
+      "kind": "card",
+      "title": "The visual artifact is the primary medium",
+      "why": "A map that is overwritten each turn, not a transcript that is appended. This file is the prototype of it.",
+      "body": "Your value 3, and your complaint 2. A chat log is append-only; a picture must be replaced each turn.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "measure",
+      "kind": "card",
+      "title": "Step 6 improves the pipeline, not only the product",
+      "why": "Checks and live metrics feed back into step 1 and into the rubric itself.",
+      "body": "Without this the pipeline repeats instead of improving.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "tk-config",
+      "kind": "card",
+      "title": "The tracker is configurable per project",
+      "why": "Linear for work, GitHub Issues for personal. One adapter hides the difference.",
+      "body": "Linear uses custom workflow states. GitHub Issues uses labels such as pipeline:options. The adapter hides which one you are on.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "tk-local",
+      "kind": "card",
+      "title": "A local folder holds ephemeral state and the worklog",
+      "why": "The seam: judgement and durability go to the tracker, execution stays local.",
+      "body": "If you must judge it, or it must outlive the branch, it goes to the tracker. If the loop must run it, it stays local.\n\nThe local folder is a cache. Delete it any time; the engine rebuilds it from the issue.\n\nThe loop posts only at milestones — entered the loop, rubric passed, blocked, done. A 200-cycle machine log would drown the issue.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "tk-gates",
+      "kind": "card",
+      "title": "The gates are tracker state transitions",
+      "why": "You approve by moving the issue. Works from a phone. No hidden state anywhere.",
+      "body": "The tracker already has workflow states, so the gates need no new interface and there is nothing to catch in a terminal.\n\nIt also means where a work item stands is a thing you can see.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "tk-verbs",
+      "kind": "card",
+      "title": "Six verbs are the whole contact with the outside",
+      "why": "getBrief, setBrief, addNote, setStage, listByStage, linkPR. A third tracker costs one file.",
+      "body": "Skills must not know which tracker they talk to. Every call goes through the adapter.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "tk-api",
+      "kind": "card",
+      "title": "Agent-session API, or plain comments?",
+      "why": "Linear now has a real agent-session API with a streaming timeline. Using it couples us to Linear’s model.",
+      "body": "Not discussed yet. It appeared in the research after the tracker decision was already made.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "st-six",
+      "kind": "card",
+      "title": "The six stages",
+      "why": "intent → options → build → validate → ship → measure → back to intent.",
+      "body": "Plus one more state: blocked. The loop enters it after three failures on the same check, and posts the check, the error, and the three attempts to the issue.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "st-gates",
+      "kind": "card",
+      "title": "Three gates: brief, option, pull request",
+      "why": "G1 the brief is right. G2 which option to build. G3 the pull request is correct.",
+      "body": "G3 approval also permits the merge.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "st-tier",
+      "kind": "card",
+      "title": "A risk tier decides how many stages run",
+      "why": "Kiro turned one small bug fix into 4 user stories and 16 acceptance criteria. Overhead scales badly downward.",
+      "body": "fix → the loop only, no gates. change → brief, loop, ship. feature → all six stages.\n\nWhere the boundaries sit is not knowable by talking. It needs real work items.\n\nThis also matches the tiered merge pattern reported across 2026: auto-merge for low risk, human-only for critical paths.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "st-merge",
+      "kind": "card",
+      "title": "Merge on green CI, after G3",
+      "why": "You picked the most aggressive of three abstract options, with no run data to judge against.",
+      "body": "You approve at G3, then the merge runs by itself when CI passes.\n\nThis is the clearest example of failure 1 in this conversation. Three descriptions, no evidence, and the pipeline is supposed to make this call on data.\n\nBoth sources attached here argue for care, not against the choice: the rubric can go green while the code drifts.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": true
+    },
+    {
+      "id": "st-safe",
+      "kind": "card",
+      "title": "pipeline pause, and a posted revert command",
+      "why": "Two safeguards that auto-merge requires to stay recoverable.",
+      "body": "One command stops all merging across every project. Every automatic merge posts its own revert command to the issue as the last note.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "pr-logic",
+      "kind": "card",
+      "title": "Logic in a program. Markdown holds prompts only.",
+      "why": "A skill is a prompt file. It cannot become a product.",
+      "body": "The state machine, the tracker adapter, the rubric runner, and the loop controller go into a small TypeScript CLI. Skills become three-line wrappers that call it.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "pr-log",
+      "kind": "card",
+      "title": "An append-only event log is the spine",
+      "why": "One object, three uses: it renders any UI, it feeds step 6, and it lets a killed loop resume.",
+      "body": "The engine must never assume a human watches a terminal. Every state change is an event. Today the terminal reads it; later your product UI reads the same log and nothing in the engine changes.\n\nThe decision map is a projection of the same kind of log.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "pr-iface",
+      "kind": "card",
+      "title": "Four interfaces, and nothing else touches outside",
+      "why": "Tracker, AgentRuntime, Renderer, Bus. Everything swappable sits behind one of them.",
+      "body": "AgentRuntime is Claude Code headless today, and the Claude Agent SDK later. Bus is a JSONL file today, a real event store later.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "pr-now",
+      "kind": "card",
+      "title": "Build the engine now, thin",
+      "why": "Day one is four pieces and about one day. Later commands get built when a real feature needs them.",
+      "body": "Tracker adapter, state machine, event log, pipeline init. Then every work item we run adds the piece it needed. Nothing is thrown away later.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "pr-first",
+      "kind": "card",
+      "title": "Which project and which feature go first",
+      "why": "This blocks the build. You have the basis to answer it and I do not.",
+      "body": "A small feature or bug, in a repo whose tests already pass.\n\nOpen since four messages ago.",
+      "status": "open",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "lp-stateless",
+      "kind": "card",
+      "title": "The loop is stateless per pass",
+      "why": "My first design used one long context. Contexts degrade; the file system and git do not.",
+      "body": "One fresh agent per pass. Give it the brief, the decision, the rubric, and the last failure. It does one unit of work and exits. The repository is the memory.\n\nThis is a correction to my own design, not an addition. It changes the engine’s shape.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "lp-rubric",
+      "kind": "card",
+      "title": "Rubrics are per-project files, written once",
+      "why": "You answered this one instantly. It was the question with a concrete preview attached.",
+      "body": "Each project gets prototype.md and production.md. I draft them from the repo, the CI workflow, and package.json. You correct them one time. Then the loop runs without further input.\n\nThe rubric is the only recurring input the loop needs from you.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "lp-split",
+      "kind": "card",
+      "title": "Split the rubric: visible and held-out checks",
+      "why": "Our rubric is the reward. A long loop learns to satisfy the rubric instead of the brief.",
+      "body": "The loop sees only the visible checks. A held-out set runs once, at the end, before the merge. The agent that writes the tests must not be the agent that writes the code. Watch composition, not isolated features.\n\nThis is the most serious problem found in the whole research pass.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "lp-two",
+      "kind": "card",
+      "title": "Two layers: deterministic checks and graded judgements",
+      "why": "Exit codes answer “did it work”. A grader agent answers “is it good”. My first version mixed them.",
+      "body": "checks:\n  CI=true pnpm test\n  pnpm typecheck\n  pnpm lint\n\njudgements:\n  every brief item has a test\n  no new public function without a doc comment\n  the screenshot matches the chosen option",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "lp-overseer",
+      "kind": "card",
+      "title": "An overseer cancels a stalled agent",
+      "why": "Stronger than my “three failures on the same check” rule, and cheap because the event log exists.",
+      "body": "A second process reads the event log in real time. It is the real safety control for auto-merge.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "lp-trend",
+      "kind": "card",
+      "title": "Trend checks, not only pass or fail",
+      "why": "Pass-or-fail gates stay green while complexity climbs. Measured over 807 projects.",
+      "body": "The rubric needs limits on the change against the merge base, not only exit codes. Step 6 reports the trend across work items.\n\nThis matters most because you chose auto-merge.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "al-sample",
+      "kind": "card",
+      "title": "Find ambiguity by sampling, not by asking",
+      "why": "Sample N implementations. Where they diverge, the requirement is ambiguous. Ask only about the fork.",
+      "body": "This is the fix for your complaint 1. Neither of us has to guess what is unclear — the machine finds the fork, then asks about the fork.\n\nIt also merges your two problems: the divergent implementations ARE the options. “A or B?” arrives with two running prototypes attached, and they exist because of real ambiguity, not invented contrast.\n\nRules: constrain questions to the divergence points, because broad questions produce off-topic answers and make results worse. Never ask you to restate the whole requirement.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "al-two",
+      "kind": "card",
+      "title": "Never show one option",
+      "why": "One option turns a decision into a rubber stamp. Judgement needs contrast.",
+      "body": "Design rules from the research: variants must be diverse along the dimension in question, cap the set, attach a short rationale to each, and always offer an explicit “I do not care” so indifference is not read as a choice.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "al-ephem",
+      "kind": "card",
+      "title": "Prototypes are ephemeral",
+      "why": "Screenshots and a trade-off note survive. The code does not.",
+      "body": "A throwaway worktree per option. Playwright screenshots. Images and a note go to the issue. Worktrees deleted.\n\nThe production implementation starts from the brief and the decision, not from prototype code — prototype code carries prototype quality into production, and the rubric would have to fight it.\n\nSafeguard: the chosen option’s diff is attached as a .patch file. A record, not living code.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "al-diff",
+      "kind": "card",
+      "title": "Propose diffs to the brief, not rewrites",
+      "why": "Reviewing a change to a brief is much faster than reviewing a rewritten brief.",
+      "body": "Also: reuse earlier artifacts so a failed gate does not restart elicitation from the beginning.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "al-profile",
+      "kind": "card",
+      "title": "A growing decision profile",
+      "why": "Capture how you decide, not what to build. Our design resets alignment every work item.",
+      "body": "When the agent hits a trade-off the profile does not cover, it stops, names the trade-off with concrete options, records your answer as a rule, and never asks that class of question again.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "vi-images",
+      "kind": "card",
+      "title": "Images on the issue are the decision record",
+      "why": "Rendered to images, not Mermaid source. One code path, both trackers, works on a phone.",
+      "body": "GitHub renders Mermaid in issue text. Linear may not. Rendering to an image is one code path everywhere.\n\nThe Mermaid source stays in the local folder so the engine can redraw it.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "vi-overwrite",
+      "kind": "card",
+      "title": "The map is overwritten, not appended",
+      "why": "That is the whole difference between a picture and a chat log.",
+      "body": "A conversation is append-only. The shape has to be replaced each turn, or the derails bury it.",
+      "status": "decided",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "vi-edges",
+      "kind": "card",
+      "title": "Four edge types. No “relates to”.",
+      "why": "“Relates to” cannot be acted on. IBIS survived 50 years on three edge types.",
+      "body": "refines — the level edge. Children get reviewed.\ndepends_on — propagates staleness through the reverse closure.\nsupported_by — evidence. Flags for review, never auto-invalidates.\nalternative_to — a rejected option, kept, restored when the decision reopens.\n\nThe grammar must be small enough to maintain during live conversation. That is the constraint, not expressiveness.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "vi-srcnode",
+      "kind": "card",
+      "title": "Evidence is a node, not inline text",
+      "why": "Many decisions link to the same evidence. 13 of the 25 sources here are cited more than once.",
+      "body": "Before this change, every source was a string copied inside one card. IBIS-style, a source is its own node and cards point at it with supported_by.\n\nThree things become possible:\n\n1. “What else rests on this paper?” is a query, not a search.\n2. Disputing a source flags every card that cites it, in one action.\n3. The finding text exists once, so it cannot drift between cards.\n\nNote the edge semantics: supported_by flags for review. It does NOT propagate staleness. Only depends_on does that. Try the button on any source page.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "vi-prop",
+      "kind": "card",
+      "title": "Propagation cannot be done by asking a model",
+      "why": "Single-hop validity checks recover only 6% to 11% of the invalidation chain.",
+      "body": "So every card records depends_on at the moment it is created. There is no recovering the edges later.\n\nFormally: reverse dependency closure, mark stale, re-derive in topological order, cost O(|S(v)|). This is the build-system model applied to meaning. Mark stale, never delete — deleting destroys the evidence chain.\n\nThis is a discipline cost on me, every turn, forever. If I skip it the map rots into a pretty outline.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "vi-levels",
+      "kind": "card",
+      "title": "Who creates the levels",
+      "why": "Cheap correction beats correct generation. I propose the split live; you promote or demote.",
+      "body": "If I generate the split, it drifts from how you think. If you make it, it is work you did not ask for.\n\nOpen: the level split in this file is mine. You said it is not wrong, but it is untested.",
+      "status": "proto",
+      "who": "proto",
+      "noBasis": false
+    },
+    {
+      "id": "vi-detail",
+      "kind": "card",
+      "title": "Every card carries its own proof",
+      "why": "Verbatim quotes, the finding with its numbers, the deps, and the rejected options — all on the card’s own page.",
+      "body": "say — verbatim excerpts from this conversation, attributed, so “how did we arrive here” is answerable without re-reading anything.\nev — a pointer to a source node, whose finding carries the numbers.\nalt — the options that were rejected, kept, never deleted.\n\nThree versions failed before this one. V1 had titles only. V2 hid the proof in a side panel that leaf cards never opened. V3 copied source text into every card.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "vi-onview",
+      "kind": "card",
+      "title": "One view = one card, detail on top, sub-cards below",
+      "why": "No side panel. Every node has a page. The shape is identical at every depth.",
+      "body": "This is what makes it genuinely fractal. The same layout renders the root statement, the deepest leaf, and now a source node.\n\nA leaf shows its full detail and an empty sub-card area, instead of an empty page — which is what version 2 did wrong.\n\nThe address bar carries the current node, so a view is shareable and survives a reload.",
+      "status": "decided",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "vi-extract",
+      "kind": "card",
+      "title": "The quotes should be extracted, not written by me",
+      "why": "Sessions are on disk. Provenance should be verifiable, not my paraphrase.",
+      "body": "Every session is at ~/.claude/projects/<encoded-cwd>/<session-id>.jsonl.\n\nThe engine should pull the excerpts with a pointer back to the exact message, so “how did we arrive here” is answerable without trusting my memory.\n\nToday I hand-write every quote in this file. That is the weakest part of it — and the same argument that made evidence a node applies here: an excerpt should be a node too.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "vi-compl",
+      "kind": "card",
+      "title": "The tool must be complementary, not competitive",
+      "why": "Your contribution is judgement. If the tool decides, it removes the thing you bring.",
+      "body": "A design principle, not a feature. It is the test to apply to every future addition.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "ms-rubric",
+      "kind": "card",
+      "title": "Step 6 writes new rubric lines",
+      "why": "The rubric grows from real failures. Without this the pipeline repeats instead of improving.",
+      "body": "When a bug reaches production, or when you reject at a gate, step 6 appends a line to the project rubric.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "ms-metrics",
+      "kind": "card",
+      "title": "Which live metrics feed step 6",
+      "why": "Candidates: PostHog, Sentry, CI timings, and the event log. You know which you trust.",
+      "body": "Open question from the design document. Nobody has answered it yet.",
+      "status": "open",
+      "who": "you",
+      "noBasis": false
+    },
+    {
+      "id": "ms-self",
+      "kind": "card",
+      "title": "Measure the pipeline, not only the product",
+      "why": "Where the loop stalled, how many fix cycles ran, which gate you rejected at.",
+      "body": "That is the data that improves the pipeline design, rather than one feature.",
+      "status": "open",
+      "who": "me",
+      "noBasis": false
+    },
+    {
+      "id": "specbench",
+      "kind": "source",
+      "title": "SpecBench: Measuring Reward Hacking in Long-Horizon Coding Agents",
+      "url": "https://arxiv.org/abs/2605.21384",
+      "tier": "benchmark",
+      "finding": "<b>Every model saturates the visible test suite on every task.</b> The reward-hacking gap grows <b>28 percentage points per tenfold increase in code size</b>. Weaker models show larger gaps. The most common exploit is feature isolation: each feature works alone and they fail to share state. The search algorithm matters less than the other factors."
+    },
+    {
+      "id": "verifhorizon",
+      "kind": "source",
+      "title": "The Verification Horizon: No Silver Bullet for Coding Agent Rewards",
+      "url": "https://arxiv.org/pdf/2606.26300",
+      "tier": "paper",
+      "finding": "Argues dynamic, co-evolving verification is essential. Shows <i>agentic quality judges plus behaviour monitoring</i> reduce reward hacking sharply."
+    },
+    {
+      "id": "cmu",
+      "kind": "source",
+      "title": "Carnegie Mellon study of 807 projects, via the agentic-SDLC guides",
+      "url": "https://www.coderabbit.ai/guides/agentic-sdlc",
+      "tier": "study",
+      "finding": "<b>807 open-source projects</b> using SonarQube: a velocity increase that <b>disappeared by month three</b>, with code analysis warnings up <b>30%</b> and complexity up <b>41%</b>. DORA calls the same effect the verification tax: time saved writing code is re-spent auditing it."
+    },
+    {
+      "id": "sdd3",
+      "kind": "source",
+      "title": "Böckeler — Understanding Spec-Driven Development: Kiro, spec-kit, Tessl",
+      "url": "https://www.martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html",
+      "tier": "practitioner",
+      "finding": "She ran Kiro on a small bug fix and received <b>4 user stories and 16 acceptance criteria</b>. On spec-kit for a mid-size feature: it generated so much repetitive Markdown that she <b>never finished the implementation</b>, and she would rather review code than review those files. Overhead scales poorly downward."
+    },
+    {
+      "id": "ralph",
+      "kind": "source",
+      "title": "Mastering Ralph loops — LinearB / Geoffrey Huntley",
+      "url": "https://linearb.io/blog/ralph-loop-agentic-engineering-geoffrey-huntley",
+      "tier": "practitioner",
+      "finding": "A coding agent inside a plain <code>while</code> loop. Each pass starts a fresh agent with a clean context; progress accumulates in files and git. Huntley built a working language and compiler in one unattended run for about <b>$297</b>. At a Y Combinator hackathon a Ralph loop produced <b>1,100 commits across 6 repositories overnight</b>. The only truth is the exit code of an external command."
+    },
+    {
+      "id": "tdp",
+      "kind": "source",
+      "title": "Task-Decoupled Planning, via the workflow-optimisation survey",
+      "url": "https://arxiv.org/html/2603.22386v1",
+      "tier": "survey",
+      "finding": "Decomposes a task into a DAG of sub-goals, each with a <b>scoped context</b> isolating its history from the global context. Reported token reductions up to <b>82%</b>. Forces one constraint: nodes must be idempotent so a retry cannot corrupt state."
+    },
+    {
+      "id": "langchain",
+      "kind": "source",
+      "title": "Introducing Rubrics for DeepAgents — LangChain",
+      "url": "https://www.langchain.com/blog/introducing-rubrics-for-deepagents",
+      "tier": "implementation",
+      "finding": "A working reference for the loop exit gate: the agent self-evaluates and iterates until every criterion passes or hits a configured cap, and a <b>separate grader sub-agent</b> reasons over the full transcript and returns per-criterion feedback."
+    },
+    {
+      "id": "openaievals",
+      "kind": "source",
+      "title": "Testing Agent Skills Systematically with Evals — OpenAI",
+      "url": "https://developers.openai.com/blog/eval-skills",
+      "tier": "guide",
+      "finding": "Start from a <b>checkable definition of done</b>. Write deterministic checks first; add a graded rubric pass only where deterministic rules cannot reach. Coverage grows from real incidents: <b>every manual fix is a signal to turn into a test</b>."
+    },
+    {
+      "id": "sica",
+      "kind": "source",
+      "title": "A Self-Improving Coding Agent — arXiv 2504.15228",
+      "url": "https://arxiv.org/pdf/2504.15228",
+      "tier": "paper",
+      "finding": "Includes a <b>system overseer</b> that monitors execution traces in real time and has authority to <b>cancel agents that stop making progress or clearly deviate — after at least one warning attempt</b>."
+    },
+    {
+      "id": "dgm",
+      "kind": "source",
+      "title": "Darwin Gödel Machine — arXiv 2505.22954",
+      "url": "https://arxiv.org/pdf/2505.22954",
+      "tier": "paper",
+      "finding": "A separate model diagnoses improvement opportunities from the chosen agent's evaluation logs and passes them to the coding agent. The extracted problem description and improvement suggestion <b>become the agent's self-modification task</b>."
+    },
+    {
+      "id": "clarifygpt",
+      "kind": "source",
+      "title": "ClarifyGPT — ACM Proceedings on Software Engineering",
+      "url": "https://dl.acm.org/doi/10.1145/3660810",
+      "tier": "paper",
+      "finding": "Detects ambiguity by a <b>code consistency check</b>: sample several solutions, compare the implementations to locate the ambiguity, then generate questions targeted at the divergence points only. GPT-4 pass@1 on MBPP-sanitized rose from <b>70.96% to 80.80%</b>. Across five benchmarks: GPT-4 <b>62.43% → 69.60%</b>, ChatGPT <b>54.32% → 62.37%</b>."
+    },
+    {
+      "id": "clarifybench",
+      "kind": "source",
+      "title": "ClarifyCodeBench — arXiv 2607.00711",
+      "url": "https://arxiv.org/pdf/2607.00711",
+      "tier": "benchmark",
+      "finding": "Evaluates clarification-question effectiveness across ambiguity types. Its protocol is a useful design constraint: the model must either output code <b>or ask exactly one clarification question</b>."
+    },
+    {
+      "id": "coshop",
+      "kind": "source",
+      "title": "Agents should help users construct preferences, not just elicit them — arXiv 2606.30863",
+      "url": "https://arxiv.org/pdf/2606.30863",
+      "tier": "paper",
+      "finding": "Much agent research assumes the user already knows what they want. On their CoShop benchmark <b>no agent exceeded 56% accuracy after five turns of dialogue</b>. Their human study: showing items that vary along one feature built a preference more reliably than explaining the feature. Rules: variants diverse along the dimension in question, cap the set, short rationale each, explicit “I do not care”."
+    },
+    {
+      "id": "care",
+      "kind": "source",
+      "title": "CARE: Collaborative Agent Reasoning Engineering — arXiv 2604.28043",
+      "url": "https://arxiv.org/pdf/2604.28043",
+      "tier": "paper",
+      "finding": "Required helper-agent capabilities: summarise intent accurately and <b>introduce no new requirements</b>; ask structured, phase-aligned questions when information is missing; propose <b>concrete revision diffs</b> the human can accept, modify, or reject; reuse earlier artifacts so a failed review gate does not re-run elicitation from scratch."
+    },
+    {
+      "id": "decisionmd",
+      "kind": "source",
+      "title": "decision — a portable DECISION.md from preference elicitation",
+      "url": "https://github.com/selinayfilizp/decision",
+      "tier": "tool",
+      "finding": "Captures how you decide, not what to build. When the agent hits an uncovered trade-off it detects the gap, flags the specific trade-off with concrete options, captures the answer as a new rule, and updates the profile <b>so it never asks the same question type again</b>."
+    },
+    {
+      "id": "ibis",
+      "kind": "source",
+      "title": "Dialogue Mapping and IBIS — Kunz & Rittel, Conklin",
+      "url": "https://www.argumentree.com/what-is/dialogue-mapping/",
+      "tier": "foundational",
+      "finding": "Introduced in <b>1970</b> to capture the reasoning behind decisions on hard planning problems. The notation is a grammar, not a set of node types: Questions respond to Ideas, Ideas respond to Questions, Arguments respond to Ideas. Two properties matter: the grammar is <b>deliberately tiny</b> so a facilitator can keep pace with live conversation, and <i>the map, not the transcript, is the record of what the conversation established</i>."
+    },
+    {
+      "id": "convtree",
+      "kind": "source",
+      "title": "Conversation Tree Architecture — arXiv 2603.21278",
+      "url": "https://arxiv.org/abs/2603.21278",
+      "tier": "paper",
+      "finding": "Flat append-only chat accumulates all context in one unbounded window, so topically distinct threads bleed into each other and degrade response quality. They call it <b>logical context poisoning</b>. Their framework: a tree of <b>context-isolated nodes</b>, each with its own local window, with rules for how context flows downstream on branch creation and upstream on deletion. Their stated gap: <i>no mainstream LLM interface lets users manage context hierarchically.</i>"
+    },
+    {
+      "id": "grokers",
+      "kind": "source",
+      "title": "Grokers: write-time intelligence over typed knowledge graphs — arXiv 2606.00050",
+      "url": "https://arxiv.org/pdf/2606.00050",
+      "tier": "paper",
+      "finding": "Let v be modified. S(v) = {u | there is a path u ⇝ v via <code>depends_on</code>}. Mark all of S(v) stale, reprocess in valid topological order, and no node is stale. Nodes outside S(v) are unaffected. Cost <b>O(|S(v)|)</b>. Framed explicitly as <i>the build-system model applied to semantic comprehension</i>."
+    },
+    {
+      "id": "temporal",
+      "kind": "source",
+      "title": "Temporal Validity in Retrieval Memory — arXiv 2606.26511",
+      "url": "https://arxiv.org/pdf/2606.26511",
+      "tier": "paper",
+      "finding": "On an invalidated-only split, <b>single-hop scoring captures only 6–11% of the chain, regardless of chain length</b>, because a single-hop judgement cannot see that an upstream update invalidated a node two or three hops away. Also: keep the model off the read path — a deterministic superseded-row filter runs at about <b>2.1s</b> against <b>16–18s</b> for model reranking."
+    },
+    {
+      "id": "tms",
+      "kind": "source",
+      "title": "Problem Solving and Truth Maintenance Systems",
+      "url": "https://cis.temple.edu/~ingargio/cis587/readings/tms.html",
+      "tier": "foundational",
+      "finding": "The classical ancestor, <b>1979</b>. A sentence's justification records which assumptions must change to invalidate it. In a JTMS, changing an assumption means relabelling nodes of a dependency network, and switching between alternative assumption sets <i>may lead to considerable work</i>."
+    },
+    {
+      "id": "sensemaking",
+      "kind": "source",
+      "title": "Guided Sensemaking: Agents in Collaborative Deliberation — arXiv 2606.02260",
+      "url": "https://arxiv.org/pdf/2606.02260",
+      "tier": "paper",
+      "finding": "Ito et al. keep conversation state in an IBIS tree and inject facilitation messages: more comprehensive discussion, higher satisfaction. Nomura et al.: humans brainstorming with IBIS-based agents produced <b>more ideas per person</b> and reported <b>less hesitation to contribute</b>. Cites Krakauer's split: a <b>complementary</b> cognitive artifact coaches users toward internalising the mental model; a <b>competitive</b> one performs the task and transfers no skill."
+    },
+    {
+      "id": "copilotlinear",
+      "kind": "source",
+      "title": "Copilot cloud agent for Linear — generally available",
+      "url": "https://github.blog/changelog/2026-07-23-copilot-cloud-agent-for-linear-is-now-generally-available/",
+      "tier": "product",
+      "finding": "GA on <b>23 July 2026</b>. Assign a Linear issue to the agent; it works in its own environment, opens a draft pull request, and streams progress into the Linear activity timeline. GA added model selection, branch control, and mid-task steering by mentioning the agent in a comment."
+    },
+    {
+      "id": "ghlinear",
+      "kind": "source",
+      "title": "Integrate coding agent with Linear — GitHub Docs",
+      "url": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/integrate-coding-agent-with-linear",
+      "tier": "docs",
+      "finding": "Linear's agent platform lets you delegate an issue to Cursor, Codex, Copilot, or Devin by assignment or mention. Triage rules can delegate with <b>no human involved</b>. The agent captures the entire issue description and comments as context, and that context is stored in the pull request."
+    },
+    {
+      "id": "archify",
+      "kind": "source",
+      "title": "Archify — architecture diagrams as an agent skill",
+      "url": "https://www.coddykit.com/pages/blog-detail?id=513039&slug=archify-the-open-source-ai-agent-skill-with-32-500-github-stars-that-turns-code-",
+      "tier": "tool",
+      "finding": "The agent emits a <b>typed JSON intermediate representation</b>; a deterministic compiler renders it to self-contained HTML and SVG with validation. <b>The agent never draws pixels.</b> Every node, edge, and label is explicitly defined."
+    },
+    {
+      "id": "gradualui",
+      "kind": "source",
+      "title": "Gradual Generation of User Interfaces — arXiv 2601.17975",
+      "url": "https://arxiv.org/pdf/2601.17975",
+      "tier": "paper",
+      "finding": "Studies intermediate user interfaces as a way to organise sets of customisations, rather than generating a final interface in one step. Cites the Ink &amp; Switch malleable-software essay alongside Lovable and Claude Artifacts."
+    },
+    {
+      "id": "tracker:opt0",
+      "kind": "option",
+      "title": "A folder in the repo, gitignored",
+      "whyNot": "Rejected: dies with the branch, no phone access, no cross-project query."
+    },
+    {
+      "id": "tracker:opt1",
+      "kind": "option",
+      "title": "A folder in the repo, committed",
+      "whyNot": "Rejected: noise in every diff, prototypes bloat the repo."
+    },
+    {
+      "id": "tracker:opt2",
+      "kind": "option",
+      "title": "A central folder outside all repos",
+      "whyNot": "Rejected: paths break, and the context sits far from the code."
+    },
+    {
+      "id": "st-merge:opt0",
+      "kind": "option",
+      "title": "Local commits only, never push",
+      "whyNot": "Rejected. You review locally, then tell me to push."
+    },
+    {
+      "id": "st-merge:opt1",
+      "kind": "option",
+      "title": "Up to a pushed draft pull request",
+      "whyNot": "Rejected. This was my recommendation: nothing reaches main without you."
+    },
+    {
+      "id": "pr-now:opt0",
+      "kind": "option",
+      "title": "Skills first, extract after 3-5 real features",
+      "whyNot": "Rejected: the extraction would be a rewrite."
+    },
+    {
+      "id": "pr-now:opt1",
+      "kind": "option",
+      "title": "Design the full CLI before any real feature",
+      "whyNot": "Rejected: about a week spent guessing requirements we have not met."
+    },
+    {
+      "id": "lp-rubric:opt0",
+      "kind": "option",
+      "title": "Derived per work item, approved at G1",
+      "whyNot": "Rejected: more precise per task, more to read at every gate."
+    },
+    {
+      "id": "lp-rubric:opt1",
+      "kind": "option",
+      "title": "Project baseline plus per-item additions",
+      "whyNot": "Rejected for now: most accurate, one extra thing to review at G1."
+    },
+    {
+      "id": "root:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Let’s design my personal software development pipeline where me and you create features and fix bugs in different software projects in a way that uses best features of each of us. I’m good at judgement and I have drive and motivation. You have access to endless knowledge resources and can very quickly write code. I see the synergy here.",
+      "context": "Opening message",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "root:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "That means these steps above are themselves a loop.",
+      "context": "Opening message, after listing the six values",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "root:ex2",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "The foundations to build on top are there but we don’t need to be limited by what’s today in the skills directory or even what Claude Code is about (it’s your wrapper at most, you’re more). Open mind!",
+      "context": "Opening message",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "root:ex3",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Your six steps are right. The part that is missing is the thing that carries state between them. Skills today are stateless prompts. Each one starts from nothing. That is why you must repeat yourself.",
+      "context": "My first reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tracker:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Where should the work-item folder live?",
+      "context": "My question — you rejected it twice before answering",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tracker:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "The state should depend on the project. A good universal option is the issue tracker — Linear for work projects, GitHub issues for my personal side projects.",
+      "context": "Your answer, which reframed the question",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tracker:ex2",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Tracker-first is better than my folder proposal. It gives you three things a folder cannot.",
+      "context": "My reply, adopting it",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "stages:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Ship - help me create PRs with concious change descriptions, clear motivation explanation and actionable testing and deployment instructions",
+      "context": "Your value 5, verbatim",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "stages:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Three gates. G1 and G2 are you. G3 is you, and then the merge runs by itself on green CI.",
+      "context": "My summary of the state machine",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "product:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "The general-purpose Claude Code TUI is good but I want to try something more advanced long-term. I don’t mean to build a system that replaces it today but what we test in this new workflow must be possible to turn into a standalone product.",
+      "context": "Your constraint",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "product:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Your constraint changes the design more than the tracker answer did. If the pipeline logic lives in 15 skill files, extracting it later is a rewrite, not a move.",
+      "context": "My reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "loop:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "autonomous implementation loop … I don’t want to be bothered to run repeated code review loops or instructions for you about how to verify changes at different levels; the system must close the loop fully - you build, validate, identify issues, fix them, re-validate, review code, apply suggestions, re-validate wheter the system works - until it’s done and the code matches the standards for the stage (prototype, production, etc.)",
+      "context": "Your value 4, verbatim",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "loop:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "The rubric is what makes step 4 possible. You want me to loop without you. A loop needs a stop condition. “Until it is good” is not one.",
+      "context": "My first reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "align:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "alignment on the intent - you must know what I want to build and why; we build this alignment by talking, asking questions and reviewing prototypes together",
+      "context": "Your value 1, verbatim",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "align:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "quick iteration … it’s often difficult to decide what to build without seeing different options; if we can discuss concretes like “it’s this or that” - may be easier to choose",
+      "context": "Your value 2, verbatim",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "align:ex2",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "the agent asks me to decide on things I’m not sure about - that’s were prototypes would help",
+      "context": "Your complaint 1 about this very conversation",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "visual:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "visual representation - I’m a visual thinker; instead of a wall of text I need diagrams, schemas, wireframes, etc. the UI must make visual content the first-class citizen on all stages",
+      "context": "Your value 3, verbatim",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "visual:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "the conversation becomes broad and wide but the full picture becomes invisible clearly and gets burried under derails - which are great that we went through them, but then reconciling the high-level picture from the conversation is difficult",
+      "context": "Your complaint 2",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "visual:ex2",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "how can we exploit people’s visual cortex to help with progress-making?",
+      "context": "Your research question, axis 3",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "measure:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Measure and analyse - run checks that we aligned on or gather live metric data; find patterns, spot gaps, ideate about improvements - so we can go back to step 1.",
+      "context": "Your value 6, verbatim",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tk-config:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Linear for work projects, GitHub issues for my personal side projects.",
+      "context": "Your answer on state",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tk-local:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Prototypes stay local, because a prototype is code that runs. loop.jsonl stays local, because 200 machine cycles would drown the issue. Its verdict goes to the tracker.",
+      "context": "My seam rule",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tk-gates:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "The best part: your gates are already built. You approve by moving the issue. You can approve G2 from your phone at a coffee shop.",
+      "context": "My proposal",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tk-verbs:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Skills must not know which tracker they talk to. Adding a third tracker later costs one file.",
+      "context": "My design",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "tk-api:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Your tracker-as-state instinct is now a shipped product pattern. Two consequences: the design is validated, and the Tracker interface should use Linear’s agent session API, not only comments.",
+      "context": "My note after research",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "st-six:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "That means these steps above are themselves a loop.",
+      "context": "Your opening message",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "st-gates:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Three gates. G1 and G2 are you. G3 is you, and then the merge runs by itself on green CI.",
+      "context": "My design",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "st-tier:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "My design puts every work item through a brief, two prototypes, three gates, and a full rubric. For a one-line null check that is waste.",
+      "context": "My largest self-correction",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "st-merge:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "How far does the autonomous loop go before it stops and waits for you?",
+      "context": "My question",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "st-merge:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Through merge on green CI",
+      "context": "Your selection — the third option, which I had not recommended",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "st-safe:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "You chose auto-merge on green CI. That is safe because G3 is still yours. Two additions make it recoverable.",
+      "context": "My reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "pr-logic:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "If the pipeline logic lives in 15 skill files, extracting it later is a rewrite, not a move. So one rule from day one: logic goes in a program, Markdown holds prompt text only.",
+      "context": "My rule",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "pr-log:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "That log is not extra work. It is the same object three times.",
+      "context": "My argument",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "pr-iface:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Four interfaces, and nothing else in the engine touches the outside world.",
+      "context": "My design",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "pr-now:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "When do we start building the extractable engine?",
+      "context": "My question",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "pr-now:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Now, thin. Grow it per work item",
+      "context": "Your selection — the option that had a concrete CLI preview attached",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "pr-first:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Name the first project and the first real feature or bug. A small one, in a repo with tests that already pass.",
+      "context": "Asked, not yet answered",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-stateless:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "I designed one long agent context that builds, validates, and fixes. That context degrades.",
+      "context": "My self-correction after research",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-stateless:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "I’ve heard about Ralph loops a year ago already",
+      "context": "Your prompt — you already knew this one",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-rubric:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Who writes the rubric that tells the loop when to stop?",
+      "context": "My question, with a rubric preview attached",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-rubric:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Per-project files, written once",
+      "context": "Your selection, made without hesitation",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-rubric:ex2",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "The two questions I attached a concrete preview to, you answered without hesitation. The abstract ones you refused. A preview is a small prototype. That is your point, measured.",
+      "context": "My later observation",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-split:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Our loop runs against a fixed rubric until it passes. That rubric is the reward. The longer the loop runs, the more it optimises for the rubric instead of the brief.",
+      "context": "My warning",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-two:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Current practice splits acceptance into two layers. Deterministic checks answer “did it work”. A graded rubric answers “is it good”. Our single list mixed them.",
+      "context": "My correction",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-overseer:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "My stop rule was “3 identical failures”. The paper uses something stronger.",
+      "context": "My correction",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "lp-trend:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Pass-or-fail gates do not catch slow drift. Every check stays green while complexity climbs.",
+      "context": "My warning",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-sample:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "What’s completely not answered is how to align with agent on what to build.",
+      "context": "Your research question, axis 2",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-sample:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "It turns alignment from an interview into a measurement.",
+      "context": "My reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-two:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "if we can discuss concretes like “it’s this or that” - may be easier to choose",
+      "context": "Your value 2",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-two:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Never show one option. Step 2 always produces at least two.",
+      "context": "My rule",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-ephem:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "images or screenshots attached to the issue as a decision record are fine. Prototypes themselves should be ephemeral.",
+      "context": "Your decision",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-diff:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "The diff detail matters. Reviewing a proposed change to a brief is much faster than reviewing a rewritten brief.",
+      "context": "My note",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "al-profile:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Our alignment is per work item and resets each time. A decision profile makes alignment cheaper on every following work item.",
+      "context": "My note",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-images:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "images or screenshots attached to the issue as a decision record are fine",
+      "context": "Your decision",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-overwrite:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "reconciling the high-level picture from the conversation is difficult",
+      "context": "Your complaint 2",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-overwrite:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "A chat log is append-only. A picture has to be overwritten every turn. That is the actual difference, and it is why text cannot do this job.",
+      "context": "My reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-edges:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "certain decisions on different levels influence, inform or at least relate to others",
+      "context": "Your description of the graph",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-edges:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "“Relates to” cannot be acted on. IBIS survived 50 years because its grammar has three edge types and a facilitator can keep pace with live speech.",
+      "context": "My objection, and the four-edge proposal",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-srcnode:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Evidence is inline, not a node. SpecBench is a string inside one card. It should be its own node that many cards point at.",
+      "context": "My list of four structural problems",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-srcnode:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Evidence is inline, not a node - yes, should be node indeed. Many decisions can link to the same evidence",
+      "context": "Your decision",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-prop:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "the decision update must be propagated and change the full picture, too",
+      "context": "Your requirement",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-prop:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "If the edges are missing, propagation is impossible and the map rots into a pretty outline.",
+      "context": "My reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-levels:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "what would be helpful is if we have this UI somehow repeated like a fractal for deeper and deeper layers. I feel what we got here is really cluterred and some cards are about nitty-grity decisions, some about the fundamental high-level ones.",
+      "context": "Your request",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-levels:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "I wouldn’t say it’s wrong, we’re prototyping here.",
+      "context": "Your reply to my level split",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-detail:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "What I’m missing now is a detail. The cards became merely titles with no proof or links to the supporting evidence.",
+      "context": "Your critique of version 1",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-detail:ex1",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Deps and sources are still not visible. Also, only the top quote is displayed.",
+      "context": "Your critique of version 2",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-onview:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "Maybe after clicking on each card the top part should be about this particular card and the sub-cards as displayed today appear below that?",
+      "context": "Your proposal",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-onview:ex1",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "Your proposal is better than my panel. Adopting it.",
+      "context": "My reply",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-extract:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "I hand-wrote every quote from memory of this conversation. That is wrong.",
+      "context": "My admission",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "vi-compl:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "I’m good at judgement and I have drive and motivation.",
+      "context": "Your opening message",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "ms-rubric:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "The rubric grows from real failures. That is what makes the pipeline improve instead of only repeat.",
+      "context": "My proposal",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "ms-metrics:ex0",
+      "kind": "excerpt",
+      "speaker": "you",
+      "text": "run checks that we aligned on or gather live metric data",
+      "context": "Your value 6",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    },
+    {
+      "id": "ms-self:ex0",
+      "kind": "excerpt",
+      "speaker": "agent",
+      "text": "loop.jsonl measures the pipeline, not only the product.",
+      "context": "My proposal",
+      "session": "ce5ad95b-63fc-4597-a5b5-cfa6079d241c",
+      "msgIndex": null,
+      "span": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "tracker",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "tracker",
+      "to": "copilotlinear",
+      "type": "supported_by"
+    },
+    {
+      "from": "tracker:opt0",
+      "to": "tracker",
+      "type": "alternative_to"
+    },
+    {
+      "from": "tracker:opt1",
+      "to": "tracker",
+      "type": "alternative_to"
+    },
+    {
+      "from": "tracker:opt2",
+      "to": "tracker",
+      "type": "alternative_to"
+    },
+    {
+      "from": "stages",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "product",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "loop",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "align",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "align",
+      "to": "coshop",
+      "type": "supported_by"
+    },
+    {
+      "from": "visual",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "visual",
+      "to": "ibis",
+      "type": "supported_by"
+    },
+    {
+      "from": "visual",
+      "to": "convtree",
+      "type": "supported_by"
+    },
+    {
+      "from": "visual",
+      "to": "sensemaking",
+      "type": "supported_by"
+    },
+    {
+      "from": "measure",
+      "to": "root",
+      "type": "refines"
+    },
+    {
+      "from": "tk-config",
+      "to": "tracker",
+      "type": "refines"
+    },
+    {
+      "from": "tk-local",
+      "to": "tracker",
+      "type": "refines"
+    },
+    {
+      "from": "tk-gates",
+      "to": "tracker",
+      "type": "refines"
+    },
+    {
+      "from": "tk-gates",
+      "to": "stages",
+      "type": "depends_on"
+    },
+    {
+      "from": "tk-verbs",
+      "to": "tracker",
+      "type": "refines"
+    },
+    {
+      "from": "tk-api",
+      "to": "tracker",
+      "type": "refines"
+    },
+    {
+      "from": "tk-api",
+      "to": "ghlinear",
+      "type": "supported_by"
+    },
+    {
+      "from": "tk-api",
+      "to": "copilotlinear",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-six",
+      "to": "stages",
+      "type": "refines"
+    },
+    {
+      "from": "st-gates",
+      "to": "stages",
+      "type": "refines"
+    },
+    {
+      "from": "st-tier",
+      "to": "stages",
+      "type": "refines"
+    },
+    {
+      "from": "st-tier",
+      "to": "st-six",
+      "type": "depends_on"
+    },
+    {
+      "from": "st-tier",
+      "to": "sdd3",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-merge",
+      "to": "stages",
+      "type": "refines"
+    },
+    {
+      "from": "st-merge",
+      "to": "st-gates",
+      "type": "depends_on"
+    },
+    {
+      "from": "st-merge",
+      "to": "specbench",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-merge",
+      "to": "cmu",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-merge:opt0",
+      "to": "st-merge",
+      "type": "alternative_to"
+    },
+    {
+      "from": "st-merge:opt1",
+      "to": "st-merge",
+      "type": "alternative_to"
+    },
+    {
+      "from": "st-safe",
+      "to": "stages",
+      "type": "refines"
+    },
+    {
+      "from": "st-safe",
+      "to": "st-merge",
+      "type": "depends_on"
+    },
+    {
+      "from": "pr-logic",
+      "to": "product",
+      "type": "refines"
+    },
+    {
+      "from": "pr-log",
+      "to": "product",
+      "type": "refines"
+    },
+    {
+      "from": "pr-iface",
+      "to": "product",
+      "type": "refines"
+    },
+    {
+      "from": "pr-iface",
+      "to": "pr-logic",
+      "type": "depends_on"
+    },
+    {
+      "from": "pr-now",
+      "to": "product",
+      "type": "refines"
+    },
+    {
+      "from": "pr-now:opt0",
+      "to": "pr-now",
+      "type": "alternative_to"
+    },
+    {
+      "from": "pr-now:opt1",
+      "to": "pr-now",
+      "type": "alternative_to"
+    },
+    {
+      "from": "pr-first",
+      "to": "product",
+      "type": "refines"
+    },
+    {
+      "from": "pr-first",
+      "to": "pr-now",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-stateless",
+      "to": "loop",
+      "type": "refines"
+    },
+    {
+      "from": "lp-stateless",
+      "to": "ralph",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-stateless",
+      "to": "tdp",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-rubric",
+      "to": "loop",
+      "type": "refines"
+    },
+    {
+      "from": "lp-rubric",
+      "to": "langchain",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-rubric:opt0",
+      "to": "lp-rubric",
+      "type": "alternative_to"
+    },
+    {
+      "from": "lp-rubric:opt1",
+      "to": "lp-rubric",
+      "type": "alternative_to"
+    },
+    {
+      "from": "lp-split",
+      "to": "loop",
+      "type": "refines"
+    },
+    {
+      "from": "lp-split",
+      "to": "lp-rubric",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-split",
+      "to": "specbench",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-split",
+      "to": "verifhorizon",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-two",
+      "to": "loop",
+      "type": "refines"
+    },
+    {
+      "from": "lp-two",
+      "to": "lp-split",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-two",
+      "to": "langchain",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-two",
+      "to": "openaievals",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-overseer",
+      "to": "loop",
+      "type": "refines"
+    },
+    {
+      "from": "lp-overseer",
+      "to": "lp-split",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-overseer",
+      "to": "pr-log",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-overseer",
+      "to": "sica",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-overseer",
+      "to": "verifhorizon",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-trend",
+      "to": "loop",
+      "type": "refines"
+    },
+    {
+      "from": "lp-trend",
+      "to": "st-merge",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-trend",
+      "to": "lp-rubric",
+      "type": "depends_on"
+    },
+    {
+      "from": "lp-trend",
+      "to": "cmu",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-sample",
+      "to": "align",
+      "type": "refines"
+    },
+    {
+      "from": "al-sample",
+      "to": "clarifygpt",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-sample",
+      "to": "clarifybench",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-sample",
+      "to": "care",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-two",
+      "to": "align",
+      "type": "refines"
+    },
+    {
+      "from": "al-two",
+      "to": "coshop",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-ephem",
+      "to": "align",
+      "type": "refines"
+    },
+    {
+      "from": "al-ephem",
+      "to": "al-two",
+      "type": "depends_on"
+    },
+    {
+      "from": "al-diff",
+      "to": "align",
+      "type": "refines"
+    },
+    {
+      "from": "al-diff",
+      "to": "care",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-profile",
+      "to": "align",
+      "type": "refines"
+    },
+    {
+      "from": "al-profile",
+      "to": "decisionmd",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-images",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-images",
+      "to": "tracker",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-images",
+      "to": "archify",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-overwrite",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-overwrite",
+      "to": "ibis",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-overwrite",
+      "to": "convtree",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-edges",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-edges",
+      "to": "vi-overwrite",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-edges",
+      "to": "ibis",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-srcnode",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-srcnode",
+      "to": "vi-edges",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-srcnode",
+      "to": "grokers",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-prop",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-prop",
+      "to": "vi-edges",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-prop",
+      "to": "grokers",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-prop",
+      "to": "temporal",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-prop",
+      "to": "tms",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-levels",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-levels",
+      "to": "gradualui",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-detail",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-detail",
+      "to": "vi-edges",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-onview",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-onview",
+      "to": "vi-detail",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-onview",
+      "to": "convtree",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-onview",
+      "to": "tdp",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-extract",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-extract",
+      "to": "vi-detail",
+      "type": "depends_on"
+    },
+    {
+      "from": "vi-compl",
+      "to": "visual",
+      "type": "refines"
+    },
+    {
+      "from": "vi-compl",
+      "to": "sensemaking",
+      "type": "supported_by"
+    },
+    {
+      "from": "ms-rubric",
+      "to": "measure",
+      "type": "refines"
+    },
+    {
+      "from": "ms-rubric",
+      "to": "lp-rubric",
+      "type": "depends_on"
+    },
+    {
+      "from": "ms-rubric",
+      "to": "openaievals",
+      "type": "supported_by"
+    },
+    {
+      "from": "ms-rubric",
+      "to": "dgm",
+      "type": "supported_by"
+    },
+    {
+      "from": "ms-metrics",
+      "to": "measure",
+      "type": "refines"
+    },
+    {
+      "from": "ms-self",
+      "to": "measure",
+      "type": "refines"
+    },
+    {
+      "from": "ms-self",
+      "to": "pr-log",
+      "type": "depends_on"
+    },
+    {
+      "from": "ms-self",
+      "to": "dgm",
+      "type": "supported_by"
+    },
+    {
+      "from": "root",
+      "to": "root:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "root",
+      "to": "root:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "root",
+      "to": "root:ex2",
+      "type": "supported_by"
+    },
+    {
+      "from": "root",
+      "to": "root:ex3",
+      "type": "supported_by"
+    },
+    {
+      "from": "tracker",
+      "to": "tracker:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "tracker",
+      "to": "tracker:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "tracker",
+      "to": "tracker:ex2",
+      "type": "supported_by"
+    },
+    {
+      "from": "stages",
+      "to": "stages:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "stages",
+      "to": "stages:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "product",
+      "to": "product:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "product",
+      "to": "product:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "loop",
+      "to": "loop:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "loop",
+      "to": "loop:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "align",
+      "to": "align:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "align",
+      "to": "align:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "align",
+      "to": "align:ex2",
+      "type": "supported_by"
+    },
+    {
+      "from": "visual",
+      "to": "visual:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "visual",
+      "to": "visual:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "visual",
+      "to": "visual:ex2",
+      "type": "supported_by"
+    },
+    {
+      "from": "measure",
+      "to": "measure:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "tk-config",
+      "to": "tk-config:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "tk-local",
+      "to": "tk-local:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "tk-gates",
+      "to": "tk-gates:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "tk-verbs",
+      "to": "tk-verbs:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "tk-api",
+      "to": "tk-api:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-six",
+      "to": "st-six:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-gates",
+      "to": "st-gates:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-tier",
+      "to": "st-tier:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-merge",
+      "to": "st-merge:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-merge",
+      "to": "st-merge:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "st-safe",
+      "to": "st-safe:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "pr-logic",
+      "to": "pr-logic:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "pr-log",
+      "to": "pr-log:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "pr-iface",
+      "to": "pr-iface:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "pr-now",
+      "to": "pr-now:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "pr-now",
+      "to": "pr-now:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "pr-first",
+      "to": "pr-first:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-stateless",
+      "to": "lp-stateless:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-stateless",
+      "to": "lp-stateless:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-rubric",
+      "to": "lp-rubric:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-rubric",
+      "to": "lp-rubric:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-rubric",
+      "to": "lp-rubric:ex2",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-split",
+      "to": "lp-split:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-two",
+      "to": "lp-two:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-overseer",
+      "to": "lp-overseer:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "lp-trend",
+      "to": "lp-trend:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-sample",
+      "to": "al-sample:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-sample",
+      "to": "al-sample:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-two",
+      "to": "al-two:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-two",
+      "to": "al-two:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-ephem",
+      "to": "al-ephem:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-diff",
+      "to": "al-diff:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "al-profile",
+      "to": "al-profile:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-images",
+      "to": "vi-images:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-overwrite",
+      "to": "vi-overwrite:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-overwrite",
+      "to": "vi-overwrite:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-edges",
+      "to": "vi-edges:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-edges",
+      "to": "vi-edges:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-srcnode",
+      "to": "vi-srcnode:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-srcnode",
+      "to": "vi-srcnode:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-prop",
+      "to": "vi-prop:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-prop",
+      "to": "vi-prop:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-levels",
+      "to": "vi-levels:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-levels",
+      "to": "vi-levels:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-detail",
+      "to": "vi-detail:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-detail",
+      "to": "vi-detail:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-onview",
+      "to": "vi-onview:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-onview",
+      "to": "vi-onview:ex1",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-extract",
+      "to": "vi-extract:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "vi-compl",
+      "to": "vi-compl:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "ms-rubric",
+      "to": "ms-rubric:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "ms-metrics",
+      "to": "ms-metrics:ex0",
+      "type": "supported_by"
+    },
+    {
+      "from": "ms-self",
+      "to": "ms-self:ex0",
+      "type": "supported_by"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/repo.test.ts:
+91 |   expect(gate2.out).toMatch(/FAIL\s+src\/coverage\/gate\.ts/)
+92 |   const plain2 = sh(['bun', 'test'], dir, { CI: undefined })
+93 |   expect(plain2.code).toBe(0)
+94 |   expect(plain2.out).not.toMatch(/coverage gate/)
+95 |   // "The run includes server tests and React component tests."
+96 |   expect({ files }).toMatchObject({ files: expect.arrayContaining([expect.stringMatching(/\.test\.tsx$/)]) })
+                         ^
+error: expect(received).toMatchObject(expected)
+
+  {
+-   "files": ExpectArrayContaining {},
++   "files": [
++     "src/cli.test.ts",
++     "werk",
++     "the command-line harness",
++     "src/server/start.test.ts",
++     "src/server/reload.test.ts",
++     "src/server/hot.test.ts",
++     "src/server/lock-text.test.ts",
++     "src/server/lock.test.ts",
++     "src/server/serve-args.test.ts",
++     "src/server/paths.test.ts",
++     "src/server/sse.test.ts",
++     "src/server/listen.test.ts",
++     "src/cli/load.test.ts",
++     "src/cli/registry.test.ts",
++     "collectVerbs",
++     "formatVerbList",
++     "resolve",
++     "src/map/fold.test.ts",
++     "src/map/view.test.ts",
++     "src/verbs/serve.test.ts",
++     "src/coverage/gate-cli.test.ts",
++     "src/coverage/gate.test.ts",
++     "parseLcov",
++     "judge",
++     "formatVerdict",
++     "src/test/fake-claude/script.test.ts",
++     "parseArgs",
++     "sessionIdFor",
++     "roleFor",
++     "chooseReply",
++     "userText",
++     "answerResult",
++     "planTurn",
++     "src/test/fake-claude/fake-claude.test.ts",
++     "a headless fake",
++     "a long-lived fake",
++     "sessions",
++     "the cases later tickets test",
++     "the record of calls",
++     "the fake on PATH",
++   ],
+  }
+
+- Expected  - 1
++ Received  + 42
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-6AQKKc/.werk-heldout/repo.test.ts:96:21)
+(fail) 01.3 the unit tests, then the coverage gate [78307.54ms]
+
+ 1 pass
+ 3 filtered out
+ 1 fail
+ 27 expect() calls
+Ran 2 tests across 1 file. [127.11s]

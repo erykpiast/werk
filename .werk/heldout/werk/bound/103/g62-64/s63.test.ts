@@ -1,0 +1,115 @@
+import { expect, setDefaultTimeout, test } from 'bun:test'
+setDefaultTimeout(60_000)
+import { join } from 'node:path'
+import { graphOf } from '../../src/map/graph.ts'
+import { readLog } from '../../src/map/log.ts'
+import { decidedReal, project, type Ctx } from './helpers.ts'
+
+const graph = (c: Ctx) => graphOf(readLog(join(c.dir, '.werk', 'log.jsonl')))
+const realCard = (c: Ctx, id: string, title: string) => {
+  c.ok(['add', id, '--title', title])
+  c.ok(['accept', id, '--actor', 'you'])
+}
+
+test('63.1 a link to a ghost is held, and goes live on accept with no extra link event', () => {
+  const c = project()
+  realCard(c, 'storage', 'Storage')
+  c.ok(['add', 'sqlite', '--title', 'Use SQLite', '--parent', 'storage'])
+  c.ok(['link', 'sqlite', 'storage', '--type', 'depends_on', '--why', 'its basis'])
+  expect(c.show('sqlite')).toContain('link: depends_on -> #storage (held)')
+  const live = graph(c).edges.filter((e) => e.from === 'storage' || e.to === 'storage')
+  expect(live.some((e) => e.from === 'sqlite' && e.type === 'depends_on')).toBe(false)
+  c.ok(['accept', 'sqlite', '--actor', 'you'])
+  const s = c.show('sqlite')
+  expect(s).toContain('link: depends_on -> #storage')
+  expect(s).not.toContain('link: depends_on -> #storage (held)')
+  const links = c.log().map((l) => JSON.parse(l)).filter((e) => e.type === 'edge.linked' && e.payload.from === 'sqlite' && e.payload.to === 'storage' && e.payload.type === 'depends_on')
+  expect(links).toHaveLength(1)
+})
+
+test('63.2 accepting a ghost child accepts its ghost parent, not a ghost it depends on', () => {
+  const c = project()
+  realCard(c, 'platform', 'Platform')
+  c.ok(['add', 'auth', '--title', 'Auth', '--parent', 'platform'])
+  c.ok(['add', 'magic', '--title', 'Magic links', '--parent', 'auth'])
+  c.ok(['add', 'email', '--title', 'Email service', '--parent', 'platform'])
+  c.ok(['link', 'magic', 'email', '--type', 'depends_on'])
+  c.ok(['accept', 'magic', '--actor', 'you'])
+  expect(c.show('magic')).toContain('state: real')
+  const auth = c.show('auth')
+  expect(auth).toContain('state: real')
+  expect(auth).toContain('parent: #platform')
+  expect(c.show('email')).toMatch(/state: ghost/)
+  expect(c.show('magic')).toContain('link: depends_on -> #email (held)')
+})
+
+test('63.3 an accept takes the card own ghost options and sources with it', () => {
+  const c = project()
+  decidedReal(c, 'storage', 'Storage')
+  c.ok(['add', 'sqlite', '--title', 'Use SQLite', '--parent', 'storage'])
+  c.ok(['add', 'pg', '--kind', 'option', '--title', 'Use Postgres', '--why-not', 'Needs a server'])
+  c.ok(['link', 'pg', 'sqlite', '--type', 'alternative_to'])
+  c.ok(['add', 'bench', '--kind', 'source', '--title', 'Benchmark notes'])
+  c.ok(['link', 'sqlite', 'bench', '--type', 'supported_by'])
+  // The contract asks for a kill criterion before a decide; the step leaves it open, so the agent records one.
+  c.ok(['kill', 'sqlite', '--form', 'manual', '--text', 'revisit when writes grow'])
+  const who = c.werk(['edit', 'sqlite', '--who', 'me'])
+  const status = c.werk(['status', 'sqlite', 'decided'])
+  c.ok(['accept', 'sqlite', '--actor', 'you'])
+  const s = c.show('sqlite')
+  expect(s).toContain('state: real')
+  expect(s).toContain('status: decided')
+  expect(s).toContain('who: me')
+  const pg = c.show('pg')
+  expect(pg).toContain('state: real')
+  expect(pg).toContain('kind: option')
+  expect(pg).toContain('why-not: Needs a server')
+  expect(c.show('bench')).toContain('state: real')
+  expect(graph(c).edges.some((e) => e.from === 'sqlite' && e.to === 'bench' && e.type === 'supported_by')).toBe(true)
+  expect(who.code).toBe(0)
+  expect(status.code).toBe(0)
+})
+
+test('63.4 discarding a ghost parent discards its whole ghost branch', () => {
+  const c = project()
+  realCard(c, 'platform', 'Platform')
+  c.ok(['add', 'auth', '--title', 'Auth', '--parent', 'platform'])
+  c.ok(['add', 'magic', '--title', 'Magic links', '--parent', 'auth'])
+  c.ok(['add', 'pw', '--kind', 'option', '--title', 'Passwords'])
+  c.ok(['link', 'pw', 'magic', '--type', 'alternative_to'])
+  c.ok(['discard', 'auth'])
+  for (const id of ['auth', 'magic', 'pw']) {
+    expect(c.werk(['show', id]).code).not.toBe(0)
+    expect(graph(c).nodes.some((n) => n.id === id)).toBe(false)
+  }
+  const pl = c.show('platform')
+  expect(pl).toContain('state: real')
+  const g = graph(c)
+  const kids = [...g.edges, ...g.ghostEdges].filter((e) => e.type === 'refines' && e.to === 'platform')
+  expect(kids).toHaveLength(0)
+})
+
+test('63.5 a ghost changes no count of a real card until it is accepted', () => {
+  const c = project()
+  decidedReal(c, 'storage', 'Storage')
+  c.ok(['add', 'cache', '--title', 'Cache', '--parent', 'storage', '--who', 'me'])
+  c.ok(['accept', 'cache', '--actor', 'you'])
+  c.ok(['kill', 'cache', '--form', 'manual', '--text', 'revisit'])
+  c.ok(['status', 'cache', 'decided', '--unchallenged'])
+  const rollupOf = () => c.show('storage').split('\n').find((l) => l.startsWith('rollup:'))
+  const before = rollupOf()
+  expect(before).toBeDefined()
+  expect(graph(c).marks['storage']).toBeUndefined()
+  c.ok(['add', 'sqlite', '--title', 'Use SQLite', '--parent', 'storage', '--who', 'me'])
+  c.ok(['add', 'pg', '--kind', 'option', '--title', 'Use Postgres', '--why-not', 'server'])
+  c.ok(['link', 'pg', 'sqlite', '--type', 'alternative_to'])
+  c.ok(['kill', 'sqlite', '--form', 'manual', '--text', 'revisit'])
+  c.ok(['status', 'sqlite', 'decided'])
+  expect(c.show('sqlite')).toContain('status: decided')
+  expect(rollupOf()).toBe(before)
+  expect(graph(c).marks['storage']).toBeUndefined()
+  c.ok(['accept', 'sqlite', '--actor', 'you'])
+  const after = rollupOf()!
+  const cards = (l: string) => Number(l.match(/rollup: (\d+) cards/)![1])
+  expect(cards(after)).toBe(cards(before!) + 1)
+})

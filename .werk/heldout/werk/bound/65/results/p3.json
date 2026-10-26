@@ -1,0 +1,117 @@
+[
+ {
+  "id": "05.1",
+  "result": "pass",
+  "detail": "add login --parent auth printed 'proposed', log +1 event; show login printed title, '[open] proposed', '-> refines auth' and a 'rollup:' line."
+ },
+ {
+  "id": "05.2",
+  "result": "pass",
+  "detail": "Second add exited 1 with stderr naming duplicate-id; log unchanged; show login still has first title."
+ },
+ {
+  "id": "05.3",
+  "result": "pass",
+  "detail": "add --status decided exited 1 ('only through the status verb, not add'); no new event; show pay exited 1 'unknown card'."
+ },
+ {
+  "id": "05.4",
+  "result": "pass",
+  "detail": "add #login --parent #auth printed proposed; show #login and show login are byte-identical, under auth, with title '#1 priority: magic links'."
+ },
+ {
+  "id": "05.5",
+  "result": "pass",
+  "detail": "Hand-written log (auth, bad line with unknown parent, login). show login prints login as proposed; the only CLI verb that lists problems is show, and it printed 'log line 3 ... unknown-card' on stderr; log still holds the bad line."
+ },
+ {
+  "id": "06.1",
+  "result": "pass",
+  "detail": "quote printed 'proposed' (not 'added'); excerpt is a ghost, supported_by edge is held, card page HTML shows tag-pending-link; card stays decided with same title/body. Checked through CLI show, read API shapeRead and renderCardPage in-process (no browser)."
+ },
+ {
+  "id": "06.2",
+  "result": "pass",
+  "detail": "accept x:ex0 --actor you: excerpt no longer proposed, edge held=false, card page lists it under 'Evidence and excerpts' with no pending tag, show prints it in Say without 'proposed'; no second accept. Card view checked via renderCardPage and show, not a real browser."
+ },
+ {
+  "id": "08.1",
+  "result": "pass",
+  "detail": "remove auth --actor you adds one node.removed event; auth/login/session gone from show, shapeRead and headerRead; removed lists 'auth (with login, session)'; link login->audit gone, then back after restore; removed prints 'nothing is removed'."
+ },
+ {
+  "id": "08.2",
+  "result": "pass",
+  "detail": "Reparent remove moves login/session under platform; restore puts auth under platform and children back under auth."
+ },
+ {
+  "id": "08.3",
+  "result": "pass",
+  "detail": "Link waits: after restoring only login, login shows with no link to session; after restoring session the link shows."
+ },
+ {
+  "id": "08.4",
+  "result": "pass",
+  "detail": "Source rfc-6749 stays, still cited by billing; add login refused (exit 1, message names restore of \"login\"); no event added, login not in map."
+ },
+ {
+  "id": "08.5",
+  "result": "pass",
+  "detail": "remove login without --actor you exited 1; login still shows; log unchanged."
+ },
+ {
+  "id": "08.6",
+  "result": "pass",
+  "detail": "restore login without --actor you exited 1; login still absent; log unchanged."
+ },
+ {
+  "id": "09.1",
+  "result": "pass",
+  "detail": "search with no term printed exactly 3 lines (decided cards, id + title); open card and a ghost with status decided (hand-written log line, the only way to make it) not listed."
+ },
+ {
+  "id": "09.2",
+  "result": "pass",
+  "detail": "search cache eviction printed two lines: cache-layout [decided] first, eviction-timer [open] second; cache-size and the removed card absent."
+ },
+ {
+  "id": "09.3",
+  "result": "pass",
+  "detail": "search sqlite found Storage format (via option why-not) and the outside open card; --under parent-topic and --status decided each gave only Storage format."
+ },
+ {
+  "id": "09.4",
+  "result": "pass",
+  "detail": "find routing printed routing then guards only; find client printed routing, theme, guards (guards after both), not client/paused/stale/postponed/billing. Marks confirmed on the fixture."
+ },
+ {
+  "id": "09.5",
+  "result": "pass",
+  "detail": "find with no id listed both open tree cards and auth-flow (reopened rejected); no [decided] line."
+ },
+ {
+  "id": "11.1",
+  "result": "pass",
+  "detail": "show root printed exactly one own line 'rollup: 4 cards: 1 open, 1 proto, 2 decided'. Fixture: c1 decided then reopened, because a card cannot be decided under an open parent."
+ },
+ {
+  "id": "11.2",
+  "result": "pass",
+  "detail": "Incoming refines row for child shows '(rollup: 3 cards: ...)'; parent's own rollup line counts 4 cards."
+ },
+ {
+  "id": "11.3",
+  "result": "pass",
+  "detail": "show x printed depends_on row with why, then Options (title + 'why not:'), then Say (speaker + exact words), then Ev (title + 'proposed' + 'finding:')."
+ },
+ {
+  "id": "11.4",
+  "result": "pass",
+  "detail": "show printed Say and Ev, no 'Options' text."
+ },
+ {
+  "id": "11.5",
+  "result": "pass",
+  "detail": "show with no id printed root title, own rollup line, and '<- refines kid' row with the kid's rollup (2 cards)."
+ }
+]

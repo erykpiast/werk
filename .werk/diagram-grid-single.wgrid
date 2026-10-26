@@ -1,0 +1,37 @@
+# Variant of .werk/diagram-grid.wgrid — same four cards and edges, but every card is forced
+# to a single cell instead of the 3x2 span the original gives mv/cp and the 3x2 span it gives
+# st/lv. No rule requires this yet (see #vi-sysdiag-grid's open question on card sizing); this
+# file is the prototype that lets Eryk look at what a single-cell default actually produces.
+#
+# The only real change from diagram-grid.wgrid is card footprint. Each path lane already sat
+# in its own single column in the original — mv/cp/st/lv's extra columns were pure card width,
+# untouched by any path cell — so the lanes below are unchanged. The one edge that does need a
+# new lane is lv->cp: in the original it entered/left through a second face of a 3-wide card
+# (cp's and lv's own top/bottom), which a 1x1 card has no room for. Here it attaches to the
+# right-hand side of cp and lv instead of their bottom, so the same two cards can carry two
+# independent edges (cp->lv down the middle, lv->cp down the side) even at one cell each.
+
+content
+  flowchart TD
+    subgraph browser [BROWSER]
+      mv["map view | the decision tree, the 3D graph, and one card's full text"]
+      cp["chat pane | where you type, and where the reply streams back"]
+    end
+    subgraph server [SERVER PROCESS]
+      st["state | GET /api/graph, one fetch of today's folded map"]
+      lv["live + sse | POST /api/chat and /api/ask, and the SSE stream back"]
+    end
+    mv -->|loads the folded map| st
+    cp -->|sends what you type| lv
+    lv -->|streams the reply back| cp
+
+    class mv,cp read
+    class st state
+    class lv agent
+
+grid
+  "mv      . cp      lv->cp "
+  "mv->st  . cp->lv  lv->cp "
+  "@mv->st . @cp->lv @lv->cp"
+  "mv->st  . cp->lv  lv->cp "
+  "st      . lv      lv->cp "

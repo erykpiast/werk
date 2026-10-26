@@ -1,0 +1,165 @@
+import { expect, test, type Werk } from '../../e2e/harness.ts'
+
+const card = (id: string) => `li[data-card-id="${id}"]`
+
+/** A decided real card under the decided fixture root "werk". */
+function decided(werk: Werk, id: string, title: string, deps: string[] = [], refines: string[] = []) {
+  werk.cli(['add', id, '--title', title, '--parent', 'werk', '--who', 'you'])
+  werk.cli(['accept', id, '--actor', 'you'])
+  werk.cli(['kill', id, '--form', 'manual', '--text', `check ${id}`])
+  for (const d of deps) werk.cli(['link', id, d, '--type', 'depends_on'])
+  for (const r of refines) werk.cli(['link', id, r, '--type', 'refines'])
+  werk.cli(['status', id, 'decided', '--unchallenged'])
+}
+
+test('71.1 known ids in a body link, other text stays plain', async ({ page, werk }) => {
+  werk.cli(['add', 'al-diff', '--title', 'Diff the alignment', '--parent', 'map'])
+  werk.cli(['add', 'align', '--title', 'Align', '--parent', 'map'])
+  const body = 'See #al-diff and #ghost-card, then al-diff and align.\n\nRun `node src/cli.ts show #al-diff` now.'
+  werk.cli(['add', 'notes-card', '--title', 'Notes', '--parent', 'map', '--body', body])
+  await page.goto(`${werk.url}#notes-card`)
+  const b = page.getByTestId('card').locator('.body')
+  await expect(b).toContainText('#ghost-card')
+  await expect(b.locator('a', { hasText: /^#al-diff$/ })).toHaveCount(1)
+  await expect(b.locator('a', { hasText: /^al-diff$/ })).toHaveCount(1)
+  await expect(b.locator('a', { hasText: 'ghost-card' })).toHaveCount(0)
+  await expect(b.locator('a', { hasText: /^align$/ })).toHaveCount(0)
+  const code = b.locator('code', { hasText: 'node src/cli.ts show #al-diff' })
+  await expect(code).toHaveCount(1)
+  await expect(code.locator('a')).toHaveCount(0)
+})
+
+test('71.2 a click on a card link in a why line opens that card', async ({ page, werk }) => {
+  werk.cli(['add', 'al-diff', '--title', 'Diff the alignment', '--parent', 'map'])
+  werk.cli(['add', 'pr-iface', '--title', 'PR interface', '--parent', 'map', '--why', 'It builds on #al-diff.'])
+  await page.goto(`${werk.url}#pr-iface`)
+  await page.getByTestId('card').locator('.why a', { hasText: '#al-diff' }).click()
+  await expect(page.getByTestId('card')).toHaveAttribute('data-card-id', 'al-diff')
+  await expect(page.getByTestId('card')).toContainText('Diff the alignment')
+})
+
+test('71.3 headings, URL fragments and fenced blocks keep their form; a code span links', async ({ page, werk }) => {
+  werk.cli(['add', 'al-diff', '--title', 'Diff the alignment', '--parent', 'map'])
+  const body = ['# al-diff', '', 'Docs: https://example.com/page#al-diff', '', 'The span `#al-diff` is a ref.', '', '```', '#al-diff', '```'].join('\n')
+  werk.cli(['add', 'doc-card', '--title', 'Doc', '--parent', 'map', '--body', body])
+  await page.goto(`${werk.url}#doc-card`)
+  const b = page.getByTestId('card').locator('.body')
+  const h = b.getByRole('heading', { name: 'al-diff' })
+  await expect(h).toHaveCount(1)
+  await expect(h.locator('a')).toHaveCount(0)
+  // The URL fragment: no card link whose text is the fragment inside the URL paragraph.
+  const urlPara = b.locator('p', { hasText: 'https://example.com/page' })
+  await expect(urlPara.locator('a[href="#al-diff"]')).toHaveCount(0)
+  await expect(b.locator('pre')).toContainText('#al-diff')
+  await expect(b.locator('pre a')).toHaveCount(0)
+  const spanPara = b.locator('p', { hasText: 'The span' })
+  await expect(spanPara.locator('a[href="#al-diff"]')).toHaveCount(1)
+})
+
+test('71.4 a tile title with a card id holds no link, a note on the open card does', async ({ page, werk }) => {
+  werk.cli(['add', 'al-diff', '--title', 'Diff the alignment', '--parent', 'map'])
+  werk.cli(['add', 'ref-card', '--title', 'Follows up on #al-diff', '--parent', 'map'])
+  werk.cli(['say', 'ref-card', '--text', 'See al-diff first'])
+  await page.goto(werk.url)
+  const tile = page.locator(`${card('ref-card')} > a`)
+  await expect(tile).toContainText('Follows up on #al-diff')
+  await expect(tile.locator('a')).toHaveCount(0)
+  await tile.click()
+  await expect(page.getByTestId('card')).toHaveAttribute('data-card-id', 'ref-card')
+  await expect(page.getByRole('region', { name: 'notes' }).locator('a', { hasText: 'al-diff' })).toHaveCount(1)
+})
+
+test('71.5 fenced code is boxed, highlighted, indented, and scrolls sideways', async ({ page, werk }) => {
+  const long = `        "deep": "${'y'.repeat(400)}"`
+  const body = ['Intro text.', '', '```json', '{', '    "a": {', long, '    }', '}', '```'].join('\n')
+  werk.cli(['add', 'code-card', '--title', 'Code', '--parent', 'map', '--body', body])
+  await page.goto(`${werk.url}#code-card`)
+  const pre = page.getByTestId('card').locator('pre')
+  await expect(pre).toHaveCSS('border-top-style', 'solid')
+  expect(await pre.locator('span[class^="tok-"]').count()).toBeGreaterThan(0)
+  expect(await pre.evaluate((el) => el.textContent)).toBe(['{', '    "a": {', long, '    }', '}'].join('\n'))
+  await expect(pre).toHaveCSS('overflow-x', 'auto')
+  expect(await pre.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true)
+  const art = page.getByTestId('card')
+  expect(await art.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})
+
+test('72.1 a rejected reopen marks only the direct dependent red', async ({ page, werk }) => {
+  decided(werk, 'ca', 'Card A')
+  decided(werk, 'cb', 'Card B', ['ca'])
+  decided(werk, 'cc', 'Card C', ['cb'])
+  werk.cli(['reopen', 'ca', '--reason', 'rejected', '--why', 'A is wrong'])
+  await page.goto(werk.url)
+  const b = page.locator(`${card('cb')} > a`)
+  await expect(b.locator('.mark')).toHaveText('stale')
+  await expect(b.locator('.mark')).toHaveCSS('background-color', 'rgb(179, 38, 30)')
+  await expect(b).toHaveAttribute('data-status', 'decided')
+  await expect(b).toHaveCSS('border-left-color', 'rgb(46, 125, 50)')
+  await expect(page.locator(`${card('cc')} > a .mark`)).toHaveCount(0)
+})
+
+test('72.2 a postponed reopen marks every downstream card grey and keeps status', async ({ page, werk }) => {
+  decided(werk, 'ca', 'Card A')
+  decided(werk, 'cb', 'Card B', ['ca'])
+  decided(werk, 'cc', 'Card C', ['cb'])
+  werk.cli(['reopen', 'ca', '--reason', 'postponed', '--why', 'Later'])
+  await page.goto(werk.url)
+  for (const id of ['cb', 'cc']) {
+    const m = page.locator(`${card(id)} > a .mark`)
+    await expect(m).toHaveText('paused')
+    await expect(m).toHaveCSS('background-color', 'rgb(117, 117, 117)')
+    await expect(page.locator(`${card(id)} > a .mark[data-mark="stale"]`)).toHaveCount(0)
+  }
+  const c = page.locator(`${card('cc')} > a`)
+  await expect(c).toHaveAttribute('data-status', 'decided')
+  await expect(c).toHaveCSS('border-left-color', 'rgb(46, 125, 50)')
+})
+
+test('72.3 the card view of a stale card explains change, link and reason', async ({ page, werk }) => {
+  decided(werk, 'ca', 'Card A')
+  decided(werk, 'cb', 'Card B', ['ca'])
+  werk.cli(['reopen', 'ca', '--reason', 'rejected', '--why', 'The vendor dropped this API'])
+  await page.goto(werk.url)
+  await page.locator(`${card('cb')} > a`).click()
+  const marks = page.getByRole('region', { name: 'marks' })
+  await expect(marks.getByRole('heading', { level: 2 })).toContainText('Why this card is stale')
+  await expect(marks).toContainText('#ca')
+  await expect(marks).toContainText('was reopened')
+  await expect(marks).toContainText('depends_on')
+  await expect(marks).toContainText('rejected')
+  await expect(marks).toContainText('The vendor dropped this API')
+})
+
+test('72.4 the card view of a paused card two hops away names the reopened card and reason', async ({ page, werk }) => {
+  decided(werk, 'ca', 'Card A')
+  decided(werk, 'cb', 'Card B', ['ca'])
+  decided(werk, 'cc', 'Card C', ['cb'])
+  werk.cli(['reopen', 'ca', '--reason', 'postponed', '--why', 'We build the engine next quarter'])
+  await page.goto(werk.url)
+  await page.locator(`${card('cc')} > a`).click()
+  const marks = page.getByRole('region', { name: 'marks' })
+  await expect(marks).toContainText('#ca')
+  await expect(marks).toContainText('was reopened')
+  await expect(marks).toContainText('postponed')
+  await expect(marks).toContainText('We build the engine next quarter')
+  await expect(marks.getByRole('heading', { level: 2 })).toContainText('Why this card is stale')
+})
+
+test('72.5 a stale mark wins over a paused mark', async ({ page, werk }) => {
+  decided(werk, 'ca', 'Card A')
+  decided(werk, 'cx', 'Card X')
+  decided(werk, 'cb', 'Card B', ['ca', 'cx'])
+  werk.cli(['reopen', 'cx', '--reason', 'postponed', '--why', 'X later'])
+  werk.cli(['reopen', 'ca', '--reason', 'rejected', '--why', 'A wrong'])
+  await page.goto(werk.url)
+  const b = page.locator(`${card('cb')} > a`)
+  await expect(b.locator('.mark[data-mark="stale"]')).toHaveCount(1)
+  await expect(b.locator('.mark[data-mark="stale"]')).toHaveCSS('background-color', 'rgb(179, 38, 30)')
+  await expect(b.locator('.mark[data-mark="paused"]')).toHaveCount(0)
+  await b.click()
+  const marks = page.getByRole('region', { name: 'marks' })
+  const t = marks.locator('li[data-cause="ca"]')
+  await expect(t).toHaveAttribute('data-reason', 'rejected')
+  await expect(t).toContainText('rejected')
+})

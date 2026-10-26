@@ -1,0 +1,2 @@
+#!/bin/sh
+exec bun /private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-nMH4XA/src/cli.ts "$@"

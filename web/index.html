@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>werk</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="shell">
+<div class="left">
+<header>
+  <div class="hrow">
+    <div class="project" id="project">
+      <button type="button" class="project-btn" id="project-btn" title="Switch project"></button>
+      <div class="project-menu" id="project-menu" hidden></div>
+    </div>
+    <div class="crumbs" id="crumbs"></div>
+  </div>
+  <div class="hbar">
+    <div class="counts" id="counts"></div>
+    <div class="view-toggle" id="view-toggle">
+      <button type="button" data-view="map" class="active">Map</button>
+      <button type="button" data-view="graph">Graph</button>
+      <button type="button" data-view="diagram">Diagram</button>
+      <button type="button" data-view="board">Board</button>
+      <button type="button" data-view="flow">Flow</button>
+      <button type="button" data-view="measure">Measure</button>
+    </div>
+    <input id="jump" type="search" placeholder="jump to a card…" autocomplete="off">
+    <span class="live" id="live">live</span>
+  </div>
+</header>
+<main>
+  <div id="map-view">
+    <div id="alarms"></div>
+    <div id="hero"></div>
+    <div id="sections"></div>
+  </div>
+  <div id="graph-view" hidden>
+    <div class="g3d-wrap">
+      <div id="graph3d"></div>
+      <div class="g3d-legend" id="g3d-legend"></div>
+      <div class="g3d-panel" id="g3d-panel" hidden></div>
+    </div>
+  </div>
+  <div id="diagram-view" hidden>
+    <div class="diagram-toolbar">
+      <div class="diagram-legend" id="diagram-legend" hidden></div>
+      <span class="diagram-sync" id="diagram-sync" hidden></span>
+    </div>
+    <div class="diagram-wrap">
+      <div class="diagram-scroll" id="diagram-scroll">
+        <div id="diagram-svg-inline"></div>
+      </div>
+      <div class="diagram-zoom" id="diagram-zoom">
+        <button type="button" data-zoom="out" title="Zoom out" aria-label="Zoom out">−</button>
+        <button type="button" data-zoom="toggle" id="diagram-zoom-level" title="Switch between the whole diagram and 100%">fit</button>
+        <button type="button" data-zoom="in" title="Zoom in" aria-label="Zoom in">+</button>
+      </div>
+      <div class="diagram-picked" id="diagram-picked" hidden></div>
+      <button type="button" class="diagram-debug-btn" id="diagram-debug-btn" title="Debug: column widths + source" aria-label="Toggle diagram debug view">🐛</button>
+    </div>
+    <pre id="diagram-source" hidden></pre>
+  </div>
+  <div id="board-view" hidden>
+    <div class="board" id="board"></div>
+    <div class="ticket-drawer" id="ticket-drawer" hidden></div>
+  </div>
+  <div id="flow-view" hidden>
+    <div class="flow" id="flow"></div>
+  </div>
+  <div id="measure-view" hidden>
+    <div class="measure" id="measure"></div>
+  </div>
+</main>
+</div>
+<div class="grip" id="grip"></div>
+<aside class="chat" id="chat">
+  <div id="chat-logs"></div>
+  <!-- #werk-mc-bgagents: its own line, pinned under the log, so a new turn's state never
+       replaces it. Shown only while the active tab has a background agent running. -->
+  <div class="bg-line" id="bg-line" hidden></div>
+  <div class="dead-bar" id="dead-bar" hidden></div>
+  <div class="asks" id="asks" hidden></div>
+  <div class="chat-head-row" id="chat-head-row">
+    <div class="chat-state-wrap" id="chat-state-wrap">
+      <span class="chat-state" id="chat-state"></span>
+      <button type="button" class="interrupt-btn" id="interrupt-btn" hidden title="Stop this turn" aria-label="Stop this turn"></button>
+    </div>
+    <div class="context-fill" id="context-fill">
+      <button type="button" class="context-pie" id="context-pie" style="--fill:0" title="Context used"></button>
+      <div class="context-pop" id="context-pop" hidden>
+        <p id="context-pop-text"></p>
+        <button type="button" id="context-clear">Clear context</button>
+      </div>
+    </div>
+    <select class="model-select" id="model-select" title="Model for this session">
+      <option value="claude-sonnet-5-5[1m]">Sonnet</option>
+      <option value="claude-opus-5-5">Opus</option>
+      <option value="sonnet+advisor">Sonnet + Opus advisor</option>
+    </select>
+  </div>
+  <form class="chat-composer" id="chat-composer">
+    <div class="cmd-menu" id="cmd-menu" hidden></div>
+    <div class="context" id="context"></div>
+    <div class="shots" id="shots"></div>
+    <textarea id="chat-input" rows="3" placeholder="Ask about the open card. Paste a screenshot. Enter sends."></textarea>
+  </form>
+  <div class="tab-strip" id="tab-strip">
+    <div class="tab-scroll" id="tab-scroll">
+      <div class="tab-chips" id="tab-chips"></div>
+    </div>
+    <div class="tab-actions" id="tab-actions">
+      <button type="button" class="tab-add" id="tab-add" title="Fork a new conversation at the open card. Hold for more.">+</button>
+      <button type="button" class="tab-more" id="tab-more" hidden></button>
+    </div>
+  </div>
+  <!-- Outside .tab-strip on purpose: that container clips overflow to make the strip
+       scroll (see #tab-chips), and a clipping ancestor clips a fixed-position descendant
+       too, not only an absolute one. Living here lets it float free of that. -->
+  <div class="tab-parked-menu" id="tab-parked-menu" hidden></div>
+  <!-- #werk-mc-split-plus: a long press on "+" opens this. A plain press forks. -->
+  <div class="tab-parked-menu tab-add-menu" id="tab-add-menu" hidden>
+    <div class="tab-parked-row active" data-add="fork"><span><svg class="add-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="4" cy="3" r="1.6"/><circle cx="4" cy="13" r="1.6"/><circle cx="12" cy="5" r="1.6"/><path d="M4 4.6v6.8M12 6.6c0 3-8 2.4-8 4.8"/></svg>Fork current conversation</span></div>
+    <div class="tab-parked-row" data-add="empty"><span><svg class="add-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5l3 3v10h-8.5z"/><path d="M9.5 1.5v3h3"/></svg>New empty conversation</span></div>
+  </div>
+</aside>
+</div>
+<div id="results" class="results" hidden></div>
+<!-- #werk-projects: in place of the map when the address names no project that opens. -->
+<div id="project-page" class="project-page" hidden></div>
+<!-- The 3D graph's postponed-node hatch needs real three.js classes (CanvasTexture), so it
+     imports three itself alongside 3d-force-graph. Both must share one three.js instance
+     or the meshes each builds are foreign objects to the other's renderer — this import
+     map is what makes "three" resolve to the same fetched module for both. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three",
+    "three/": "https://esm.sh/three/",
+    "3d-force-graph": "https://esm.sh/3d-force-graph?external=three"
+  }
+}
+</script>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

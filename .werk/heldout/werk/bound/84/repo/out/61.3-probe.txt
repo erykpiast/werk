@@ -1,0 +1,10 @@
+exit 0
+bun test v1.4.1 (4661e494f)
+
+src/test/zz-heldout-probe.test.ts:
+(pass) probe [312.04ms]
+
+ 1 pass
+ 0 fail
+ 3 expect() calls
+Ran 1 test across 1 file. [327.00ms]

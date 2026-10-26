@@ -1,0 +1,7 @@
+[
+{"id":"37.1","result":"pass","detail":"werk build with --silence-ms 400; fake builder emits one event then pauses. Pass 1 cancelled (log has act silent), pass 2 brief contains 'silent', ticket passes red,green, merged after 2 passes."},
+{"id":"37.2","result":"pass","detail":"Builder pauses 900ms before its first event with silence limit 400ms; build merged after 1 pass and the session log has no silent line."},
+{"id":"37.3","result":"pass","detail":"Scripted classifier allowed one ask (tool result 'allowed', log 'allowed Bash ls: read only') and gave no verdict on the second (log 'denied Bash pwd: the classifier gave no verdict', overseer denial reply); builder continued and merged."},
+{"id":"37.4","result":"pass","detail":"Builder repeats a tool call; classifier says looping with reason with --progress-ms 300: pass cancelled, log shows act looping and reason, next brief contains the reason. With 'not looping' verdicts and no new tool call after the first, the classifier was launched at most once."},
+{"id":"37.5","result":"pass","detail":"A ps shim that exits 1 first in PATH; long tool call (2.5s pause, flat-ms 400). Log has probe-failed, no frozen or silent act, build merged after the call returned. With a 20s pause and --agent-ms 2500 the pass ended at the wall-clock limit with no frozen cancel."}
+]

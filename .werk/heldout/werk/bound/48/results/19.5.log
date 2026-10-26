@@ -1,0 +1,57 @@
+total 0
+drwxr-xr-x@ 4 eryk.napierala  staff  128 Oct 25 02:05 .
+drwxr-xr-x@ 4 eryk.napierala  staff  128 Oct 25 02:05 ..
+lrwxr-xr-x@ 1 eryk.napierala  staff   39 Oct 25 02:05 prototyper.md -> ../../src/agent/subagents/prototyper.md
+lrwxr-xr-x@ 1 eryk.napierala  staff   39 Oct 25 02:05 test-scope.md -> ../../src/agent/subagents/test-scope.md
+VERDICT given links ok
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 378 pass
+ 0 fail
+ 1259 expect() calls
+Ran 378 tests across 47 files. [25.48s]
+VERDICT checks pass ok
+4-
+5-scripts/subagent-links.test.ts:
+6-24 |   }
+7-25 |   return root;
+8-26 | }
+9-27 | 
+10-28 | test("this repository links every shipped subagent", () => {
+11-29 |   expect(checkSubagentLinks(join(import.meta.dir, ".."))).toEqual([]);
+12-                                                               ^
+13-error: expect(received).toEqual(expected)
+14-
+15-- []
+16-+ [
+17-+   ".claude/agents/test-scope.md: a copy, not a link; replace it with a link to src/agent/subagents/test-scope.md",
+18-+ ]
+19-
+20-- Expected  - 1
+21-+ Received  + 3
+22-
+23-      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/tmp.xaekXgTT1Y/werk/scripts/subagent-links.test.ts:29:59)
+24:(fail) this repository links every shipped subagent [0.40ms]
+lines naming test-scope:
+17:+   ".claude/agents/test-scope.md: a copy, not a link; replace it with a link to src/agent/subagents/test-scope.md",
+(fail) this repository links every shipped subagent [0.40ms]
+
+ 377 pass
+ 1 fail
+ 1259 expect() calls
+Ran 378 tests across 47 files. [20.53s]
+error: script "test" exited with code 1
+make: *** [test] Error 1
+VERDICT checks fail after copy ok
+VERDICT names test-scope ok
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 378 pass
+ 0 fail
+ 1259 expect() calls
+Ran 378 tests across 47 files. [29.47s]
+VERDICT checks pass after relink ok

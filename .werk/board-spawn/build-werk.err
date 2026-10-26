@@ -1,0 +1,667 @@
+running werk in /Users/eryk.napierala/Projects/werk-v0: up to 3 tickets at once, cap 5 passes per ticket...
+building werk/18, 5 pass(es) left...
+building werk/24, 5 pass(es) left...
+building werk/49, 4 pass(es) left...
+  pass 1: green, 554s
+merging werk/49 (werk-build/werk-49-1792953882301) into main...
+  merged: main is at 7a910470
+building werk/13, 5 pass(es) left...
+held-out set: 55 step(s) on 7a910470...
+  pass 1: green, 625s
+merging werk/24 (werk-build/werk-24-1792953882225) into main...
+  merged: main is at 3f661b10
+building werk/25, 5 pass(es) left...
+held-out set: 60 step(s) on 3f661b10...
+  pass 1: green, 689s
+merging werk/18 (werk-build/werk-18-1792953882144) into main...
+  merged: main is at c0641af9
+  steps of werk/18: a source card changed (werk-write); the step author rewrites them
+building werk/19, 5 pass(es) left...
+held-out set: 60 step(s) on c0641af9...
+  pass 1: red (check), 534s
+  pass 1: red (check), 706s
+  pass 1: red (check), 716s
+  pass 2: green, 155s
+  step author: 5 step(s)
+merging werk/25 (werk-build/werk-25-1792954552079) into main...
+  pass 2: red (grade), 138s
+  red: make e2e (exit 2); back to building
+building werk/25, 3 pass(es) left...
+  pass 2: red (grade), 474s
+  pass 3: green, 171s
+merging werk/13 (werk-build/werk-13-1792954488746) into main...
+  pass 3: green, 221s
+  merged: main is at c3981a99
+  steps of werk/13: a source card changed (werk-write); the step author rewrites them
+merging werk/19 (werk-build/werk-19-1792954619044) into main...
+  conflict: git merge werk-build/werk-19-1792954619044 (exit 1); back to building
+building werk/19, 3 pass(es) left, resolving a conflict...
+building werk/21, 5 pass(es) left...
+held-out set: 60 step(s) on c3981a99...
+  not green: 14 failed, 20 not run; follow-up werk/54, werk/55
+  the next pass decides: the grader said a person must settle: The card says 'A card with no children, and a proposed card, keep the one plain question'. That implies a proposed card has a ✕ with a plain question. src/serve/card-page.ts actions() withholds the ✕ from every proposed card (`!node.proposed`), and card-page.test.ts asserts 'no ✕' on a ghost. But the fold refuses to remove a ghost (remove-target), and #al-diff-cli-btn says discard has no button. A ✕ on a ghost would therefore have to be a discard button, which that card forbids. A person must decide one of two things: does the ✕ on a proposed card discard it, which narrows #al-diff-cli-btn? Or does a proposed card have no ✕, which changes the wording of #vi-remove-btn-reparent?
+  pass 1: red (grade), 240s
+  pass 1: green, 758s
+merging werk/25 (werk-build/werk-25-1792955478528) into main...
+  the next pass decides: a pass named a spec gap as the cause of a failure: #vi-remove-btn-reparent implied a ✕ on a proposed card, while #al-diff-cli-btn forbids a discard button, and no card settled which wins.
+  pass 2: red (grade), 181s
+  not green: 14 failed, 15 not run
+  pass 1: green, 447s
+  merged: main is at e816d630
+merging werk/21 (werk-build/werk-21-1792955845915) into main...
+held-out set: 64 step(s) on e816d630...
+  not green: 15 failed, 14 not run; follow-up werk/56, werk/57
+  merged: main is at bf28cd11
+building werk/26, 5 pass(es) left...
+building werk/27, 5 pass(es) left...
+held-out set: 69 step(s) on bf28cd11...
+  pass 3: green, 225s
+merging werk/19 (werk-build/werk-19-1792955845652) into main...
+  conflict: git merge werk-build/werk-19-1792955845652 (exit 1); back to building
+building werk/19, 3 pass(es) left, resolving a conflict...
+  pass 1: red (grade), 178s
+  not green: 14 failed, 13 not run; follow-up werk/58, werk/59
+  pass 2: green, 185s
+merging werk/19 (werk-build/werk-19-1792956495021) into main...
+  merged: main is at 0f3dca35
+  steps of werk/19: a source card changed (werk-wording, werk-cli, pr-log); the step author rewrites them
+building werk/44, 5 pass(es) left...
+held-out set: 69 step(s) on 0f3dca35...
+  pass 1: red (grade), 644s
+  pass 1: red (review), 743s
+  the next pass decides: a pass named a spec gap as the cause of a failure: no card covered the command source, the commands address, the title-match ranking, the trigger-word rule or the menu placement.
+  pass 2: red (grade), 133s
+  the next pass decides: a pass named a spec gap as the cause of a failure: no decided card covered where the command list comes from or the commands address, so the earlier passes had no rule to follow for those two choices.
+  pass 3: red (grade), 172s
+  pass 2: red (grade), 208s
+  not green: 16 failed, 11 not run; follow-up werk/63, werk/64
+  the next pass decides: a pass named a spec gap as the cause of a failure: no decided card said where the command names come from; the proposed card `#werk-chat-cmdmenu-source` now says it.
+  pass 4: red (grade), 137s
+  the next pass decides: a pass named a spec gap as the cause of a failure: the cards said "saved beside the session" but gave no file shape, route address, event payloads or wire values, so the earlier passes had to decide them without recording each one.
+  pass 3: red (grade), 164s
+  pass 5: green, 139s
+merging werk/26 (werk-build/werk-26-1792956441220) into main...
+  conflict: git merge werk-build/werk-26-1792956441220 (exit 1); back to building
+building werk/26, 4 pass(es) left, resolving a conflict...
+  pass 1: red (grade), 732s
+  the next pass decides: a pass named a spec gap as the cause of a failure: no card named the settings file or said where it sits.
+  pass 4: red (review), 166s
+  pass 1: green, 155s
+merging werk/26 (werk-build/werk-26-1792957669845) into main...
+  pass 5: green, 142s
+  merged: main is at 77cc666c
+  steps of werk/26: a source card changed (werk-ticket-check-verb, st-ticket-checks-run, st-ticket, st-ticket-shape, st-ticket-own-checks, st-ticket-set-checks, lp-checks, st-iterative, st-ticket-stories, st-build-parallel, lp-checks-scripts, st-ticket-partial, werk-board-control, st-build-run, st-build-ticket, st-validate-heldout, st-g2-heldout, lp-stateless, lp-prod-judge, lp-prod-review, lp-prod-heldout, ms-store, lp-two, ms-cost, werk-mc-split, lp-trend-primary, lp-trend-size, st-spec); the step author rewrites them
+merging werk/27 (werk-build/werk-27-1792956442204) into main...
+  conflict: git merge werk-build/werk-27-1792956442204 (exit 1); back to building
+building werk/27, 3 pass(es) left, resolving a conflict...
+building werk/50, 5 pass(es) left...
+held-out set: 69 step(s) on 77cc666c...
+  not green: 14 failed, 16 not run
+  pass 2: green, 457s
+  step author: 5 step(s)
+merging werk/44 (werk-build/werk-44-1792956983896) into main...
+  conflict: git merge werk-build/werk-44-1792956983896 (exit 1); back to building
+building werk/44, 4 pass(es) left, resolving a conflict...
+  pass 1: green, 339s
+  step author: 5 step(s)
+merging werk/50 (werk-build/werk-50-1792957897793) into main...
+  pass 1: green, 382s
+  merged: main is at f9df204a
+merging werk/27 (werk-build/werk-27-1792957897580) into main...
+held-out set: 74 step(s) on f9df204a...
+  merged: main is at 077b5dcc
+building werk/28, 5 pass(es) left...
+building werk/51, 5 pass(es) left...
+held-out set: 79 step(s) on 077b5dcc...
+  pass 1: red (grade), 406s
+  pass 2: green, 390s
+merging werk/44 (werk-build/werk-44-1792958175187) into main...
+  conflict: git merge werk-build/werk-44-1792958175187 (exit 1); back to building
+building werk/44, 4 pass(es) left, resolving a conflict...
+  pass 1: red (grade), 659s
+  pass 1: red (check), 773s
+  pass 1: green, 279s
+merging werk/44 (werk-build/werk-44-1792958973747) into main...
+  pass 2: green, 177s
+  red: make e2e (exit 2); back to building
+merging werk/28 (werk-build/werk-28-1792958435264) into main...
+  pass 2: red (grade), 276s
+  merged: main is at 1ba3c1f3
+  steps of werk/28: a source card changed (stages, st-spec, st-ticket-stories, st-spec-answers, align, werk-align-v0, st-ticket, werk-propose-new, werk-loop-tier, st-iterative, lp-checks, st-tier, st-tier-default, st-six); the step author rewrites them
+building werk/44, 3 pass(es) left...
+building werk/52, 5 pass(es) left...
+held-out set: 79 step(s) on 1ba3c1f3...
+  not green: 15 failed, 15 not run
+  not green: 24 failed, 7 not run; follow-up werk/65, werk/66, werk/67, werk/68, werk/69
+  pass 3: green, 313s
+merging werk/51 (werk-build/werk-51-1792958435635) into main...
+  held-out gate: 5 step(s) of werk/51 on abdfc8df...
+  merged: main is at abdfc8df
+building werk/53, 5 pass(es) left...
+held-out set: 79 step(s) on abdfc8df...
+  not green: 15 failed, 14 not run; follow-up werk/70
+  pass 1: red (check), 745s
+  pass 1: red (grade), 767s
+  pass 1: green, 444s
+merging werk/53 (werk-build/werk-53-1792960098442) into main...
+  pass 2: red (check), 286s
+  held-out gate: 1 step(s) of werk/53 on 10a713cd...
+  pass 3: green, 360s
+  pass 2: green, 752s
+  not green: 15 failed, 14 not run
+  merged: main is at 10a713cd
+merging werk/44 (werk-build/werk-44-1792959522646) into main...
+held-out set: 79 step(s) on 10a713cd...
+  merged: main is at 567fced5
+merging werk/52 (werk-build/werk-52-1792959522795) into main...
+held-out set: 84 step(s) on 567fced5...
+  held-out gate: 6 step(s) of werk/52 on e136b678...
+  merged: main is at e136b678
+building werk/54, 5 pass(es) left...
+building werk/55, 5 pass(es) left...
+building werk/57, 5 pass(es) left...
+held-out set: 84 step(s) on e136b678...
+building werk/57, 5 pass(es) left...
+  pass 1: red (grade), 324s
+  not green: 20 failed, 7 not run; follow-up werk/71, werk/72, werk/73, werk/74, werk/75
+  pass 1: red (grade), 352s
+  pass 1: red (check), 654s
+  pass 2: red (grade), 865s
+  pass 2: red (check), 951s
+  pass 2: green, 819s
+merging werk/57 (werk-build/werk-57-1792961598095) into main...
+  pass 3: green, 339s
+  red: make test (exit 2); back to building
+merging werk/55 (werk-build/werk-55-1792961590064) into main...
+  pass 3: red (check), 476s
+  red: make test (exit 2); back to building
+building werk/32, 5 pass(es) left...
+building werk/55, 2 pass(es) left...
+  not green: 24 failed, 8 not run
+merging werk/32 (werk-build/werk-32-1792963399379) into main...
+  pass 4: red (check), 300s
+  merged: main is at e136b678
+  steps of werk/32: a source card changed (the steps record no source cards); the step author rewrites them
+held-out set: 83 step(s) on e136b678...
+  not green: 17 failed, 8 not run
+  pass 1: red (grade), 363s
+  pass 2: green, 273s
+merging werk/55 (werk-build/werk-55-1792963399540) into main...
+  held-out gate: 2 step(s) of werk/55 on 1d32a24f...
+  pass 1: red (check), 853s
+  pass 5: green, 647s
+  not green: 20 failed, 8 not run; follow-up werk/80
+  red: held-out step 23.1 (exit 1); back to building
+merging werk/54 (werk-build/werk-54-1792961589443) into main...
+  red: make test (exit 2); back to building
+  parked werk/54: it used its cap of 5 passes
+building werk/55, 1 pass(es) left...
+building werk/57, 3 pass(es) left...
+  pass 2: red (grade), 287s
+  pass 1: red (grade), 313s
+  parked werk/55: cap
+building werk/34, 5 pass(es) left...
+  not green: 13 failed, 8 not run; follow-up werk/82
+  pass 1: green, 321s
+merging werk/57 (werk-build/werk-57-1792964460121) into main...
+  held-out gate: 1 step(s) of werk/57 on e56dc90b...
+  merged: main is at e56dc90b
+  steps of werk/01: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/02: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/03: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/04: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/05: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/12: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/22: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/30: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/31: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/32: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/43: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/44: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/48: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/49: a source card changed (st-build-run); the step author rewrites them
+  steps of werk/50: a source card changed (st-build-run); the step author rewrites them
+building werk/56, 5 pass(es) left...
+held-out set: 97 step(s) on e56dc90b...
+  pass 3: red (grade), 609s
+  pass 1: red (grade), 236s
+  pass 4: green, 177s
+merging werk/32 (werk-build/werk-32-1792963399379) into main...
+  merged: main is at 4b8fbc35
+building werk/33, 5 pass(es) left...
+held-out set: 97 step(s) on 4b8fbc35...
+  pass 1: red (grade), 693s
+  not green: 9 failed, 12 not run
+  the next pass decides: the grader raised #unrecorded-decision in two passes in a row
+  pass 2: red (grade), 244s
+  not green: 0 failed, 99 not run
+  pass 2: green, 568s
+merging werk/56 (werk-build/werk-56-1792964924436) into main...
+  red: make e2e (exit 2); back to building
+building werk/56, 3 pass(es) left...
+  pass 3: green, 225s
+merging werk/34 (werk-build/werk-34-1792964774113) into main...
+  conflict: git merge werk-build/werk-34-1792964774113 (exit 1); back to building
+building werk/34, 4 pass(es) left, resolving a conflict...
+  pass 1: red (check), 678s
+  pass 1: red (grade), 213s
+  pass 1: green, 344s
+merging werk/56 (werk-build/werk-56-1792965813451) into main...
+  merged: main is at 3b8039c0
+building werk/58, 5 pass(es) left...
+held-out set: 97 step(s) on 3b8039c0...
+  pass 2: red (review), 217s
+  pass 2: green, 172s
+merging werk/34 (werk-build/werk-34-1792965939477) into main...
+  merged: main is at 8e0d0edc
+  steps of werk/34: a source card changed (the steps record no source cards); the step author rewrites them
+building werk/35, 5 pass(es) left...
+held-out set: 97 step(s) on 8e0d0edc...
+  pass 1: green, 215s
+merging werk/58 (werk-build/werk-58-1792966284694) into main...
+  pass 3: red (grade), 205s
+  not green: 9 failed, 14 not run; follow-up werk/85
+  merged: main is at 551fcc5a
+building werk/37, 5 pass(es) left...
+held-out set: 97 step(s) on 551fcc5a...
+  pass 4: green, 236s
+merging werk/33 (werk-build/werk-33-1792965410016) into main...
+  conflict: git merge werk-build/werk-33-1792965410016 (exit 1); back to building
+building werk/33, 3 pass(es) left, resolving a conflict...
+  pass 1: red (grade), 273s
+  pass 1: red (check), 755s
+  pass 2: green, 309s
+merging werk/33 (werk-build/werk-33-1792966748908) into main...
+  pass 1: red (grade), 672s
+  not green: 13 failed, 8 not run
+  merged: main is at c7ec2ee6
+  steps of werk/33: a source card changed (the steps record no source cards); the step author rewrites them
+building werk/42, 5 pass(es) left...
+held-out set: 97 step(s) on c7ec2ee6...
+  the next pass decides: the grader said a person must settle: src/build/followup-ticket.ts copies each grader gap into the follow-up ticket word for word. #lp-prod-judge tells the grader to name the file and line in each gap (for example 'src/build/grade.ts:12'), so the follow-up tickets will usually name file paths, and #st-ticket says a ticket names no file paths. The cards conflict: #st-grade-defer says to quote each gap as the grader wrote it. A person must decide whether follow-up tickets are exempt from the no-file-paths rule, or whether paths are taken out of the quoted gaps.; src/build/file-followup.ts appends ticket.planned for the follow-up without running the own-ticket checks. #st-ticket-partial says a ticket that fails its own checks gets no ticket.planned event. A follow-up whose quoted gaps contain file paths, or that is longer than 4000 characters, still goes on the board. If the checks run, such a follow-up never reaches the board, and that defeats #st-grade-defer. A person must decide which rule wins for follow-up tickets: run the checks and drop the follow-up, change the quoted text, or exempt follow-ups.
+  pass 2: red (grade), 223s
+  not green: 0 failed, 99 not run
+  pass 2: green, 179s
+  step author: 5 step(s)
+merging werk/37 (werk-build/werk-37-1792966675638) into main...
+  merged: main is at 95e27565
+building werk/59, 5 pass(es) left...
+held-out set: 102 step(s) on 95e27565...
+  pass 3: green, 299s
+  step author: 7 step(s)
+merging werk/35 (werk-build/werk-35-1792966470658) into main...
+  conflict: git merge werk-build/werk-35-1792966470658 (exit 1); back to building
+building werk/35, 4 pass(es) left, resolving a conflict...
+  pass 1: red (grade), 238s
+  pass 1: red (grade), 678s
+  not green: 0 failed, 99 not run
+  pass 2: green, 232s
+merging werk/42 (werk-build/werk-42-1792967384576) into main...
+  conflict: git merge werk-build/werk-42-1792967384576 (exit 1); back to building
+building werk/42, 5 pass(es) left, resolving a conflict...
+  pass 2: green, 683s
+merging werk/59 (werk-build/werk-59-1792967606648) into main...
+  pass 1: red (review), 781s
+  pass 1: green, 263s
+  not green: 14 failed, 2 not run
+  held-out gate: 1 step(s) of werk/59 on 8ff0768c...
+  not green: 16 failed, 4 not run
+  pass 2: green, 153s
+  red: held-out step 23.3 (exit 1); back to building
+merging werk/35 (werk-build/werk-35-1792967751332) into main...
+  merged: main is at a212bbcd
+merging werk/42 (werk-build/werk-42-1792968297157) into main...
+held-out set: 109 step(s) on a212bbcd...
+  conflict: git merge werk-build/werk-42-1792968297157 (exit 1); back to building
+building werk/42, 5 pass(es) left, resolving a conflict...
+building werk/59, 4 pass(es) left...
+building werk/36, 5 pass(es) left...
+  pass 1: green, 341s
+merging werk/42 (werk-build/werk-42-1792968742642) into main...
+  red: make test (exit 2); back to building
+building werk/42, 4 pass(es) left...
+  pass 1: red (grade), 771s
+  pass 1: green, 777s
+merging werk/59 (werk-build/werk-59-1792968742787) into main...
+  not green: 14 failed, 5 not run; follow-up werk/87
+  held-out gate: 1 step(s) of werk/59 on b1b28a22...
+  merged: main is at b1b28a22
+building werk/60, 5 pass(es) left...
+held-out set: 109 step(s) on b1b28a22...
+  pass 1: green, 482s
+merging werk/42 (werk-build/werk-42-1792969319906) into main...
+  merged: main is at 70a3695c
+  steps of werk/18: a source card changed (vi-routes); the step author rewrites them
+  steps of werk/42: a source card changed (werk-release, werk-ci, werk-dist-channel, st-build-run, lp-prod-checks, werk-dist, werk-hmr, werk-stack-layout, werk-agent-instructions, werk-stack-framework, st-build-target, product); the step author rewrites them
+  steps of werk/44: a source card changed (vi-routes); the step author rewrites them
+building werk/64, 5 pass(es) left...
+held-out set: 109 step(s) on 70a3695c...
+  pass 1: green, 205s
+merging werk/60 (werk-build/werk-60-1792969700149) into main...
+  the next pass decides: the grader raised #criterion-4 in two passes in a row
+  pass 2: red (grade), 407s
+  merged: main is at 10af7195
+building werk/61, 5 pass(es) left...
+held-out set: 109 step(s) on 10af7195...
+  pass 1: red (grade), 614s
+  pass 1: red (check), 891s
+  pass 3: red (check), 875s
+  pass 2: green, 214s
+merging werk/61 (werk-build/werk-61-1792970047948) into main...
+  not green: 0 failed, 111 not run
+  merged: main is at 4e288eeb
+building werk/62, 5 pass(es) left...
+held-out set: 113 step(s) on 4e288eeb...
+  pass 2: red (review), 228s
+  pass 1: green, 268s
+merging werk/62 (werk-build/werk-62-1792971007069) into main...
+  pass 4: red (review), 480s
+  not green: 14 failed, 3 not run; follow-up werk/131, werk/132
+  pass 3: green, 344s
+  not green: 0 failed, 111 not run
+  merged: main is at 9dc10b1e
+  steps of werk/28: a source card changed (werk-mc-live-dead); the step author rewrites them
+merging werk/64 (werk-build/werk-64-1792969889242) into main...
+  conflict: git merge werk-build/werk-64-1792969889242 (exit 1); back to building
+building werk/64, 3 pass(es) left, resolving a conflict...
+building werk/63, 5 pass(es) left...
+held-out set: 118 step(s) on 9dc10b1e...
+  pass 5: green, 256s
+  step author: 5 step(s)
+merging werk/36 (werk-build/werk-36-1792968742974) into main...
+  conflict: git merge werk-build/werk-36-1792968742974 (exit 1); back to building
+building werk/36, 1 pass(es) left, resolving a conflict...
+  pass 1: red (grade), 330s
+  pass 1: green, 370s
+merging werk/64 (werk-build/werk-64-1792971377561) into main...
+  held-out gate: 1 step(s) of werk/64 on 3850b8b0...
+  the next pass decides: a pass named a spec gap as the cause of a failure: no decided card said where the size cap is enforced or that the client may share the image rules module, so the earlier pass's choice needed a card.
+  pass 2: red (check), 377s
+  merged: main is at 3850b8b0
+building werk/65, 5 pass(es) left...
+held-out set: 123 step(s) on 3850b8b0...
+  pass 1: red (check), 599s
+  parked werk/36: cap
+building werk/69, 5 pass(es) left...
+  pass 3: red (check), 510s
+  pass 1: green, 574s
+merging werk/65 (werk-build/werk-65-1792972098373) into main...
+  held-out gate: 1 step(s) of werk/65 on 7740a94b...
+  merged: main is at 7740a94b
+building werk/70, 5 pass(es) left...
+held-out set: 128 step(s) on 7740a94b...
+  pass 4: green, 523s
+merging werk/63 (werk-build/werk-63-1792971377698) into main...
+  conflict: git merge werk-build/werk-63-1792971377698 (exit 1); back to building
+building werk/63, 3 pass(es) left, resolving a conflict...
+  pass 1: red (check), 1276s
+proposed by werk/01: #werk-hmr-swap A hot reload keeps the server and swaps in the new request handler
+proposed by werk/01: #werk-base-dir v0 keeps its own packages and checks at the root of its own repository
+proposed by werk/01: #pr-log-refuse The fold sets aside an event that breaks a map rule, and a write refuses it
+proposed by werk/01: #werk-test-pure-list-own-test-name A pure file's own test file sits beside it, with .test before the extension — waits for a person
+proposed by werk/02: #pr-log-one-event Adding a card under a parent is one event
+proposed by werk/02: #werk-verb-registry-exit-codes A call the command line cannot read exits 2, and a verb that fails with an error exits 1 — waits for a person
+proposed by werk/03: #werk-test-fake-edit-inside-cwd A scripted edit is read from the folder the fake agent was started in — waits for a person
+proposed by werk/03: #werk-v0-seams-fake-script-next-reply Each launch of a role plays the next reply that the script holds for that role — waits for a person
+proposed by werk/03: #werk-v0-seams-fake-script-launch-env A launch tells the fake agent its script and its role through two environment variables — waits for a person
+proposed by werk/04: #pr-log-refuse-report Every command that reads the map reports each set-aside log line with its line number — waits for a person
+proposed by werk/04: #pr-log-snapshot-file Each fold time is one line in a file beside the log — waits for a person
+proposed by werk/04: #pr-log-where A command finds the log in the nearest .werk folder above where it runs — waits for a person
+proposed by werk/04: #werk-propose-new-carry-options A discard drops the ghost options of each card it drops — waits for a person
+proposed by werk/04: #werk-propose-new-node-events An accept or a discard writes one event for each node it takes, in one write — waits for a person
+proposed by werk/04: #pr-log-refuse-cycle The rule against a cycle applies to the refines tree only — waits for a person
+proposed by werk/05: #pr-wf-paused-resume Deciding a postponed card again resumes its work
+proposed by werk/05: #werk-cli-decide-kill `werk kill <id>` records one kill criterion, and one flag names its form — waits for a person
+proposed by werk/05: #pr-log-snapshot-fold-time-file Each fold appends its time to a file beside the log — waits for a person
+proposed by werk/05: #werk-verb-registry-folder A verb module is a file in the verbs folder, found by scanning the folder — waits for a person
+proposed by werk/06: #al-diff-cli-cover-block A block of a body is a paragraph between blank lines, and a fenced code block is one block — waits for a person
+proposed by werk/06: #werk-cli-propose-text-diff The printed card shows a pending change as one inline diff, with removed text in [- -] and added text in {+ +} — waits for a person
+proposed by werk/06: #werk-cli-link-shape A link prints its reason, marks a held link, and exits 2 for a bad call and 1 for a refusal — waits for a person
+proposed by werk/07: #pr-wf-paused-shortest A card that a postponement reaches by two paths gets one paused mark, along the shortest path — waits for a person
+proposed by werk/07: #vi-prop-confirm-names A confirm names each depends_on target whose link reason the reviewer read — waits for a person
+proposed by werk/07: #vi-prop-same-link A mark holds only while the link it passed over is the same link — waits for a person
+proposed by werk/07: #pr-wf-paused-one-word A card reads as one mark: stale first, then postponed, then paused, then waiting — waits for a person
+proposed by werk/07: #vi-prop-events A reopen and a confirm are events of their own, and an amend is the accept of a proposal — waits for a person
+proposed by werk/07: #werk-cli-reopen-flags `werk rederive --confirm` lists the link targets read, and `werk propose --review` carries an amend's sentence — waits for a person
+proposed by werk/07: #werk-cli-notes-entries The inbox lists every note and every proposed-again marker, each at its log line — waits for a person
+proposed by werk/08: #werk-remove-restore-undo-event-names-card A removal event names only the card, and the fold works out what the removal takes — waits for a person
+proposed by werk/08: #werk-remove-names-card A removal names a card, ghost or real, and never an option, a source or an excerpt — waits for a person
+proposed by werk/08: #werk-remove-reparent-needs-parent A reparent of a card with children needs a parent, and a reparent of a card with no children is a plain removal — waits for a person
+proposed by werk/08: #werk-cli-remove `werk remove`, `werk restore` and `werk removed` take a card out, bring it back, and list what is out — waits for a person
+proposed by werk/08: #werk-remove-restore-undo-event-types A removal and its restore are two event types of their own, `node.removed` and `node.restored` — waits for a person
+proposed by werk/08: #werk-remove-restore-undo-fold-shape The fold keeps removed nodes, each removal's record and the waiting links apart from the live map — waits for a person
+proposed by werk/08: #werk-write-remove-links-new-write-refuses A new change that names a removed node refuses and names the restore — waits for a person
+proposed by werk/08: #werk-cli-decide-kill-form A kill criterion is recorded in one of four forms, and one call records one — waits for a person
+proposed by werk/08: #werk-cli-decide-ghost-basis A real card never takes a ghost as its basis or its weighed option — waits for a person
+proposed by werk/08: #werk-contract-facts-events A decide, a kill criterion and a waiver are recorded as their own log events — waits for a person
+proposed by werk/08: #werk-contract-facts-frozen-edit Every edit of a decided card is refused, who and waivers included — waits for a person
+proposed by werk/08: #werk-cli-edit-reason-value The basis and unchallenged flags of the edit take the reason as their value — waits for a person
+proposed by werk/08: #werk-contract-fix-text A refusal names each missing fact by its fact name, then its fix with the card id filled in — waits for a person
+proposed by werk/09: #werk-find-scope-cli `werk find` prints one line per card it can work on, with the id, the status and the title — waits for a person
+proposed by werk/09: #al-diff-render-word-marks A reworded block prints its changed words marked, not the whole block twice — waits for a person
+proposed by werk/09: #werk-contract-amend-scope-option-remove A decided card's option is removed one at a time, and the removal keeps an option — waits for a person
+proposed by werk/10: #werk-propose-new-discard-thread-inbox An inbox note written before its id was proposed again says it was about earlier words — waits for a person
+proposed by werk/10: #werk-cli-reopen-review-flags A review ends with a confirm list or an amend sentence, and each is typed at the rederive — waits for a person
+proposed by werk/10: #vi-prop-reopen-scope A reopen applies to a decided card or a postponed one, and a later reopen ends the earlier postponement — waits for a person
+proposed by werk/10: #vi-prop-review-clears-stale A review clears the stale marks of a card and leaves its paused marks — waits for a person
+proposed by werk/10: #werk-cli-stale-waiting The stale list names a waiting card when it is unmarked, not decided, and stands on a basis that does not hold — waits for a person
+proposed by werk/10: #pr-wf-naming-downstream-word A card downstream of a postponement carries the paused mark, and the postponed card carries the postponed mark — waits for a person
+proposed by werk/11: #werk-cli-show-rollup-zero The printed rollup line names the card count and only the other counts that are not zero — waits for a person
+proposed by werk/11: #werk-remove-restore-undo-parent-out A card whose parent is still out is not restored — waits for a person
+proposed by werk/12: #werk-excerpt-chatlog Each conversation has its own chat log file beside the decision log, with one JSON line per message
+proposed by werk/12: #werk-excerpt-event-quoted A quote writes one log event of its own type, which holds the excerpt, its pointer and the citing card — waits for a person
+proposed by werk/12: #werk-excerpt-chatlog-fields A chat log line names its parts speaker, at, session, kind and text — waits for a person
+proposed by werk/12: #werk-excerpt-once-overlap Two occurrences of a quote that overlap count as two — waits for a person
+proposed by werk/12: #werk-excerpt-event-span The map refuses an excerpt whose span is not as long as its words — waits for a person
+proposed by werk/12: #werk-excerpt-cli-form `werk quote <card> <conversation> "text"` takes the words as an argument or with --text, and prints the excerpt id and its pointer — waits for a person
+proposed by werk/13: #werk-onelock-take-wait A start that finds a live lock waits five seconds for the holder to exit, then refuses — waits for a person
+proposed by werk/13: #werk-excerpt-event-shape A quote is one log event that holds the excerpt's words and its whole pointer — waits for a person
+proposed by werk/13: #werk-excerpt-event-status A quoted excerpt is decided from the start, so a ghost excerpt shows no open mark — waits for a person
+proposed by werk/13: #werk-excerpt-event-type A quote is its own kind of log event, apart from a card proposal — waits for a person
+proposed by werk/13: #werk-excerpt-event-frozen-all Every proposed change to an excerpt refuses, not only a change of its words — waits for a person
+proposed by werk/13: #werk-cli-recall-quote-form A quote takes the citing card, the conversation and the words — waits for a person
+proposed by werk/14: #werk-client-reload-devmode werk runs in dev mode when its Vite config sits in the source it runs from — waits for a person
+proposed by werk/14: #werk-stack-layout-built-dir Outside dev mode, the server reads the built client from a folder named client beside the running program — waits for a person
+proposed by werk/14: #werk-stack-hydration-page-fill The server fills the client's one page at two marked places, the head and the view — waits for a person
+proposed by werk/14: #werk-stack-view-address-with-view A view's address enters the client with the view it opens — waits for a person
+proposed by werk/14: #werk-stack-hydration-in-page-nav A move between view addresses happens inside the page, so the chat pane stays open — waits for a person
+proposed by werk/14: #werk-stack-api-card-missing The card read of an id that the map does not hold carries the page that says so — waits for a person
+proposed by werk/14: #werk-client-reload-draft-pagehide The composer stashes its draft each time the page goes away — waits for a person
+proposed by werk/14: #werk-hmr-swap-serve-reexec The serve verb runs itself again under hot reload, and the child stops when its parent dies — waits for a person
+proposed by werk/14: #werk-serve-trust-token-carrier The page carries the token in a meta tag, and a changing request sends it in a request header — waits for a person
+proposed by werk/14: #werk-onelock-take-lockfile The lock file is named serve.lock and holds its port after the server listens — waits for a person
+proposed by werk/14: #werk-serve-trust-token-header-name The token travels in the request header named x-werk-token — waits for a person
+proposed by werk/14: #werk-stack-api-shape-data The shape read lists every node with its edges and a per-card rollup, and no full-map read exists — waits for a person
+proposed by werk/15: #werk-progress-safe-links A Markdown link or image renders only for a web, mail or in-app address — waits for a person
+proposed by werk/15: #werk-stack-hydration-open-read The server renders the open card, and the page swaps its HTML in — waits for a person
+proposed by werk/16: #st-ticket-shape Every ticket shares one fixed structure: five header lines, then three sections in a fixed order
+proposed by werk/16: #st-spec-answers During the plan, a writer returns each new answer as a card record, and the plan proposes it as a ghost under the subtree root
+proposed by werk/16: #werk-reflink-link-schemes A Markdown link renders only for a web, mail, site or page address — waits for a person
+proposed by werk/16: #werk-reflink-trailing-punct A reference token drops trailing punctuation until it names a known id — waits for a person
+proposed by werk/16: #werk-progress-renderer-place The Markdown renderer is one pure module of three parts, shared by server and client — waits for a person
+proposed by werk/17: #vi-home-howwhat-address The address /map shows the home, and the two top cards open at /map/root and /map/how
+proposed by werk/17: #vi-layout-header-read The server computes the header, the search results and the home view, and the page reads them as small replies — waits for a person
+proposed by werk/17: #vi-tabs-place-browser The browser keeps the last place on the map, once for each project — waits for a person
+proposed by werk/17: #vi-layout-header-read-wire Each header read is a GET request with no token, and its reply is one JSON object with one named field — waits for a person
+proposed by werk/17: #vi-tabs-place-browser-name The served page carries the project name in its head, beside the synchronizer token — waits for a person
+proposed by werk/17: #vi-crumbs-line-under The full-path overlay opens right under the breadcrumb line, layered over the rest of the header — waits for a person
+proposed by werk/17: #vi-routes-card-in-project A card page address names the project and then the card
+proposed by werk/17: #vi-counts-card-postponed-word The count line writes the postponed ring as postponed — waits for a person
+proposed by werk/17: #vi-onview-page-reads A card page has a named read, a postponed trace section, and a reply for an unknown card — waits for a person
+proposed by werk/18: #vi-routes-board-placeholder The board address opens a placeholder page until the board view exists
+proposed by werk/18: #vi-jump-index The header reads one index of the map's nodes, with parents and counts, from the server — waits for a person
+proposed by werk/19: #st-build-howto-titles-decided The build-rule title list holds only decided cards — waits for a person
+proposed by werk/19: #vi-remove-btn-ghost-no-x A proposed card has no ✕, because discarding is a typed correction — waits for a person
+proposed by werk/19: #vi-remove-btn-pending-removal A proposed removal is its own log event, and accept and discard reuse the existing events — waits for a person
+proposed by werk/19: #al-diff-cli-btn-accept-route Accept and remove are two posts under the project address — waits for a person
+proposed by werk/19: #vi-remove-btn-pending-removal-fold A pending removal is one field on the card, holding whether children move up — waits for a person
+proposed by werk/19: #vi-remove-btn-pending-removal-cli The remove command stages a removal when asked to propose — waits for a person
+proposed by werk/19: #vi-remove-btn-option-x An option node has a ✕ too, because nothing else can reach it — waits for a person
+proposed by werk/19: #vi-remove-btn-root-subtree-only A card with no parent offers only the subtree answer — waits for a person
+proposed by werk/19: #vi-onview-subcards-proposed-badge A tile shows the proposed badge for any pending change, red for a removal — waits for a person
+proposed by werk/20: #werk-chat-conversation-main The one conversation of a werk server is named main, and its chat log is the main chat log — waits for a person
+proposed by werk/20: #werk-chat-turn-id-events Every chat event on the live channel names its turn, and the start and the end of a turn are events of their own — waits for a person
+proposed by werk/20: #werk-chat-turn-id-unasked A reply part that arrives with no open turn opens a turn that the server names — waits for a person
+proposed by werk/20: #werk-chat-log-parts The chat log keeps the open-card line, the person's words, each finished block, and each tool call and its result — waits for a person
+proposed by werk/20: #werk-chat-log-session A chat log line waits until the agent names its session, and an agent that exits first leaves its lines with no session — waits for a person
+proposed by werk/20: #werk-chat-unknown-card A turn sent with an id that the map does not hold names the id and says the map holds no such card — waits for a person
+proposed by werk/20: #werk-chat-status-writing The header row says writing while the agent streams its reply text — waits for a person
+proposed by werk/20: #werk-chat-turn-name-limits A turn name holds at most 100 characters and does not start with a dot — waits for a person
+proposed by werk/20: #werk-chat-turn-name-page The page names each turn it sends from the time and a count of its own messages — waits for a person
+proposed by werk/20: #werk-chat-send-refused A message that the server refuses leaves the thread, and its words go back to the composer — waits for a person
+proposed by werk/20: #werk-chat-card-missing A chat message with no open card, or an empty one, names the home card — waits for a person
+proposed by werk/20: #werk-chat-card-block-layout The compact card block puts each fact of the card on its own labelled line — waits for a person
+proposed by werk/20: #werk-chat-tool-summary A collapsed run of tool calls names the latest call by its tool and the first line of its main input — waits for a person
+proposed by werk/20: #werk-chat-turn-id-exit-queued A message that waits behind a running turn ends with the agent's exit and is not sent again — waits for a person
+proposed by werk/20: #werk-chat-fresh-agent-card A new agent hears the whole open card on its first turn — waits for a person
+proposed by werk/20: #werk-projects-list-store The project list is one file of folder paths in a per-user folder — waits for a person
+proposed by werk/20: #werk-projects-locks A server holds one lock per machine and each project holds its own lock
+proposed by werk/20: #werk-projects-address Every page and every API route of a project carries the project's name
+proposed by werk/20: #werk-projects-start-attach A second start finds the running server, adds its folder and exits
+proposed by werk/20: #werk-projects-add-protocol Adding a folder asks the person to agree before it creates a git repository — waits for a person
+proposed by werk/20: #werk-projects-remove-rules A removal of a project with running turns needs confirmation, and the dev checkout refuses it — waits for a person
+proposed by werk/20: #werk-projects-names-order The dev checkout is listed first, and a third clash adds the whole parent path — waits for a person
+proposed by werk/21: #werk-model-select-requests The pane reads the chat settings, switches the model and clears the context through three separate requests — waits for a person
+proposed by werk/21: #werk-context-pie-clear-keeps-log A clear empties the pane and ends the session, and the chat log on disk keeps every line — waits for a person
+proposed by werk/21: #werk-model-select-queued A model switch and a clear refuse from the moment a message is sent until its reply ends — waits for a person
+proposed by werk/21: #werk-crashmsg-early-exit Only an agent that exits before it names its session is retried or replayed — waits for a person
+proposed by werk/22: #werk-approve-requests The pane reads the open asks and sends each answer through two separate requests — waits for a person
+proposed by werk/22: #werk-approve-live-events The live channel carries an ask event when an ask waits and an answered event when it closes — waits for a person
+proposed by werk/22: #werk-mc-askqa-log-answer A question's answer is logged with its own decision, answer, not as a deny — waits for a person
+proposed by werk/22: #werk-approve-allow-file The allow file holds one entry per conversation, each with its own rules and folders — waits for a person
+proposed by werk/22: #werk-wording-check-writers The wording rules reach every agent that can write card text — waits for a person
+proposed by werk/23: #werk-mc-split-plus A plus button at the end of the tab strip starts an empty conversation on the open card — waits for a person
+proposed by werk/24: #werk-chat-cmdmenu-source The command menu lists the slash commands that the agent names when it starts — waits for a person
+proposed by werk/24: #werk-chat-image-inline-sniff The server tells an image's type from its own first bytes — waits for a person
+proposed by werk/24: #werk-chat-image-inline-wire An image goes up with a POST to the image address and comes back with a GET to the same address by its name — waits for a person
+proposed by werk/24: #werk-chat-image-inline-message A chat message names each image by its token number and stored name, and the server turns each name into a path — waits for a person
+proposed by werk/24: #werk-chat-image-inline-folder The attachments folder sits beside the map log, ignores every file in it, and is read only by a plain file name — waits for a person
+proposed by werk/24: #werk-hash-trigger-search The card menu shows the cards that the map's id search finds for the typed text — waits for a person
+proposed by werk/24: #werk-hash-trigger-second2 A word with a second slash, hash or backtick after its trigger opens no menu — waits for a person
+proposed by werk/24: #werk-approve-answer-wire The page answers an open ask with one POST that names the ask and the choice — waits for a person
+proposed by werk/25: #werk-chat-image-inline-names A send names each stored image by its file name, and the server turns it into the path — waits for a person
+proposed by werk/26: #st-ticket-shape-number A ticket's number is the number at the start of its file name — waits for a person
+proposed by werk/26: #st-ticket-set-checks-cycle A blocked_by cycle is one failure that names every ticket on it — waits for a person
+proposed by werk/26: #werk-chat-cmdmenu-place The word menu sits above the composer, and a choice puts the trigger, the choice and one space in the text — waits for a person
+proposed by werk/26: #werk-hash-trigger-word A trigger word starts after whitespace and holds no second trigger or backtick — waits for a person
+proposed by werk/26: #werk-hash-trigger-rank The card menu lists id matches first, then title matches, and shows nothing for a bare hash — waits for a person
+proposed by werk/26: #werk-chat-cmdmenu-read The composer reads the command names with a GET to its project's commands address, with no token — waits for a person
+proposed by werk/26: #werk-chat-cmdmenu-source-names A start line replaces the kept command names, and each name is stored without its leading slash — waits for a person
+proposed by werk/27: #werk-cli-ticket-restore-number The number in `werk ticket restore <number>` is the full ticket id, `<subtree-id>/NN` — waits for a person
+proposed by werk/27: #vi-board-state-event-names A board event is named for its record and its action, and a ticket event carries the ticket id — waits for a person
+proposed by werk/27: #vi-board-state-moves A ticket moves only along a move that a decided card names, and the fold refuses every other move — waits for a person
+proposed by werk/27: #vi-board-state-replan A second planned event for an open ticket rewrites its title and blockers, and keeps its column, reason and archive — waits for a person
+proposed by werk/27: #vi-board-state-fold-scope The board fold reads only the board events whose payload a writer defines, and passes over the rest — waits for a person
+proposed by werk/27: #werk-cli-build-ticket-list `werk ticket list` prints each column's tickets in plan order, the archived tickets last, and every set-aside board log line — waits for a person
+proposed by werk/27: #vi-board-state-archive-once An archive of a ticket that is already archived is refused and appends nothing — waits for a person
+proposed by werk/27: #werk-cli-build-ticket-exits `werk ticket` exits 2 on a call it cannot read and 1 on a change the board refuses — waits for a person
+proposed by werk/27: #werk-cli-build-ticket-done-line A move, archive or restore that `werk ticket` appends prints one line with the ticket's column after it — waits for a person
+proposed by werk/27: #werk-cli-build-ticket-writes `werk ticket` writes the board with move, archive and restore, and a listing of the board waits for a reader that needs it — waits for a person
+proposed by werk/27: #vi-board-state-event-names-fields A ticket event names its payload fields id, title, blocked_by, to and reason — waits for a person
+proposed by werk/27: #vi-board-state-archive-columns A ready, blocked or building ticket can be archived, and a merging or done ticket cannot — waits for a person
+proposed by werk/27: #werk-model-select-clear-address Clear context has its own address, and a refused switch or clear answers busy — waits for a person
+proposed by werk/27: #werk-model-select-events Other tabs learn of a clear and of a model change through live events that carry the new fill — waits for a person
+proposed by werk/27: #werk-model-persist-chat-read Reading a conversation returns its saved settings next to its messages
+proposed by werk/27: #werk-model-select-wire A model pick is a family name, the server maps it to the pinned id, and Opus with an Opus advisor is refused — waits for a person
+proposed by werk/27: #werk-model-persist-settings-file A conversation's saved settings are one file beside its session file
+proposed by werk/28: #werk-mc-live-bgcount-list-event The agent's full task list arrives as one event that carries the list — waits for a person
+proposed by werk/29: #werk-base-test-project Each werk test runs on a fresh project directory with an empty map
+proposed by werk/29: #st-ticket-watch-server The werk server runs the cited-card watch when it starts and each time the decision log grows — waits for a person
+proposed by werk/29: #vi-board-state-event-shapes Board log events name their ticket, and a retry is a red pass — waits for a person
+proposed by werk/30: #st-ticket-shape-number-from-file-name A ticket's number is the leading digits of its file name, and a number held by two files names no ticket — waits for a person
+proposed by werk/31: #werk-test-fresh-tree Each check installs the locked dependencies before it runs
+proposed by werk/31: #werk-v0-pipeline-log-event-shape A pipeline event is a step start or a step end, and detail files sit in one ignored folder beside the log — waits for a person
+proposed by werk/32: #st-build-target-main-line A repository has a main line when it has a branch named main or master — waits for a person
+proposed by werk/32: #st-build-target-board-log The target repository is recorded in the project's board log — waits for a person
+proposed by werk/32: #st-spec-plan-refuse A plan over a subtree that already has tickets on the board is refused — waits for a person
+proposed by werk/32: #st-spec-decisions-write-scope A writer starts in werk's store and may write only its own plan files — waits for a person
+proposed by werk/32: #st-spec-decisions-answers-file A writer that writes no answers file fails the plan, and an empty list says there are no answers — waits for a person
+proposed by werk/32: #st-build-target-toplevel A target is the top folder of a git repository, not a folder inside one — waits for a person
+proposed by werk/32: #st-spec-plan-run A plan run starts from an empty folder of its own files and keeps the files of tickets the board holds — waits for a person
+proposed by werk/32: #st-build-target-main-line-unborn A repository with no commit yet has its main line when HEAD names main or master — waits for a person
+proposed by werk/32: #vi-board-plan-result A plan ends with the result ok, failed or stopped, and the pipeline names a plan by its subtree and start time — waits for a person
+proposed by werk/32: #st-spec-plan-files A plan writes its spec and answers into one folder, and its tickets into another, both named by the subtree — waits for a person
+proposed by werk/33: #vi-board-state-plan-events The board log records a replan, a mark and a cards-cited result as three events of their own — waits for a person
+proposed by werk/33: #st-ticket-watch-version A card version is the position of its latest counted change in the decision log — waits for a person
+proposed by werk/33: #st-plan-extend-drops The ticket writer lists the open tickets it drops, each with a reason, in a separate output — waits for a person
+proposed by werk/33: #st-plan-archive-record An archive made by a plan records the plan as the actor and states the reason — waits for a person
+proposed by werk/33: #st-ticket-watch-marked-blocked A marked ticket cannot return to ready until a plan keeps it — waits for a person
+proposed by werk/33: #st-plan-extend-guard A plan never changes a ticket that is not open, and never keeps a rewrite that fails its own checks — waits for a person
+proposed by werk/33: #st-ticket-watch-trigger The server runs the cited-card watch on each change to the decision log, and a read error skips that run — waits for a person
+proposed by werk/33: #st-plan-extend-story-numbers A spec update keeps the number of every story that still holds — waits for a person
+proposed by werk/33: #st-plan-archive-record-reason A ticket archive keeps its record only when it states a reason — waits for a person
+proposed by werk/34: #st-build-implement-tools A builder session may run make and git and the standard edit tools, and nothing else — waits for a person
+proposed by werk/34: #st-build-ticket-broke A build that breaks sends its ticket back to ready with the failure as the reason — waits for a person
+proposed by werk/34: #st-build-ticket-branch A build's branch is named by its ticket id — waits for a person
+proposed by werk/34: #st-build-card-event The build's card obligation is one event in the decision log, named by ticket and start time — waits for a person
+proposed by werk/34: #st-build-ticket-session-limit A builder session has a total time limit, and a session that runs past it fails its pass — waits for a person
+proposed by werk/34: #ms-store-archived-pass A pass ended by an archive is marked in its ended event and costs no retry — waits for a person
+proposed by werk/35: #st-grade-defer-follow-up-checks A follow-up ticket is held to the same checks as any ticket, and its quoted gaps lose file paths — waits for a person
+proposed by werk/35: #st-grade-converge-reply-shape The grader replies with one line per criterion, card and scope, and reports regressions itself — waits for a person
+proposed by werk/35: #st-grade-defer-follow-up-file A follow-up ticket takes the first free number in its plan and waits for its source ticket on the board — waits for a person
+proposed by werk/35: #lp-prod-review-unknown-severity A review finding with a missing or unknown severity is recorded and does not block — waits for a person
+proposed by werk/41: #werk-dist-printed-name A command that werk prints starts with the executable's own file name — waits for a person
+proposed by werk/42: #st-build-died-detached A restarted build runs in its own process group and outlives the server — waits for a person
+proposed by werk/42: #st-build-died-cap A fresh pass after a death uses the retry cap that the dead build ran with — waits for a person
+proposed by werk/42: #st-build-died-record A death is recorded as a red pass with no cost — waits for a person
+proposed by werk/43: #werk-cli-followup-event A follow-up record is its own board event, beside the one that links a follow-up ticket — waits for a person
+proposed by werk/43: #werk-cli-followup-correction A correction points at an original record, and corrections share the numbering — waits for a person
+proposed by werk/44: #vi-board-session-file-line-shape A session log line holds its time and the agent's event — waits for a person
+proposed by werk/44: #vi-board-state-obligation-events A build's card obligation is three kinds of log event — waits for a person
+proposed by werk/44: #vi-board-read-api The board is read from two addresses of the project API — waits for a person
+proposed by werk/44: #vi-board-redraw-signal The board redraws on a live-channel signal, and a slow poll catches a dead builder — waits for a person
+proposed by werk/44: #vi-board-ticket-decisions-gone A proposed card that the map no longer holds shows as gone in Decisions — waits for a person
+proposed by werk/44: #vi-board-session-file-path A relative session log path is read from the project's .werk folder — waits for a person
+proposed by werk/45: #werk-test-visual-renderer-page Until a werk server serves a page, a browser test mounts the renderer's output in a routed page — waits for a person
+proposed by werk/45: #werk-test-runner-e2e-suffix A browser test file ends in .e2e.ts, and only the browser runner loads that suffix — waits for a person
+proposed by werk/47: #werk-propose-new-thread-note The person writes a note on a node's thread from the map, and the server appends it in the person's name — waits for a person
+proposed by werk/48: #st-build-howto-titles-sample A sample agent starts with no build-rule titles — waits for a person
+proposed by werk/48: #werk-cc-subagents-link-check The link check for shipped subagents runs inside the lint check — waits for a person
+proposed by werk/48: #werk-cc-subagents-definition-shape A shipped subagent is one markdown file that werk reads at run time — waits for a person
+proposed by werk/49: #werk-dist-own-list werk's list of its own files is written when the code is bundled, and the executable does not hot reload — waits for a person
+proposed by werk/51: #werk-cli-show-root Show with no id prints the first real card that refines no other — waits for a person
+proposed by werk/52: #werk-excerpt-shown-position Every place that shows an excerpt shows its stored message position, counted from zero — waits for a person
+proposed by werk/54: #werk-reflink-chat-render The server renders each chat text to HTML, and a streamed update carries the whole block so far — waits for a person
+proposed by werk/54: #werk-reflink-chat-request A chat message is one request with the person's words, and its answer is the message as HTML — waits for a person
+proposed by werk/54: #werk-reflink-chat-agent-start The chat agent starts at the first message, and again at the first message after it exits — waits for a person
+proposed by werk/54: #werk-reflink-chat-wire A chat message is a POST to the chat address with a text field, and the answer holds an html field — waits for a person
+proposed by werk/54: #werk-reflink-chat-frame Each reply update on the live channel holds only the block id and the block as HTML — waits for a person
+proposed by werk/54: #vi-home-howwhat-open The bare project address opens the home, unless the project remembers the board or a card
+proposed by werk/55: #werk-propose-new-accept-request The ✓ sends one token-guarded request with the node id, and the server answers with the ids it accepted — waits for a person
+proposed by werk/55: #werk-mc-split-convo-name A conversation is named, and every request and live part carries its name — waits for a person
+proposed by werk/55: #werk-mc-tabs-new-button A plus button in the tab strip opens a new conversation on the open card — waits for a person
+proposed by werk/55: #werk-mc-split-convo-name-address A conversation name travels in the convo query parameter, and a missing name means main — waits for a person
+proposed by werk/60: #werk-write-card-neighbours A card page lists every neighbour of the card, under one heading for each link type and direction — waits for a person
+proposed by werk/61: #werk-v0-seams-fake-script The fake agent replays a script of ordered steps: an event to print, or a file to write
+proposed by werk/63: #werk-chat-image-inline-page-size-check The page refuses an oversized image before it uploads — waits for a person
+proposed by werk/64: #werk-write-add-root A card added with no parent sits under the root — waits for a person
+proposed by werk/65: #werk-write-staged-removal An agent's removal is a staged change, and its accept takes the card out — waits for a person
+proposed by werk/66: #werk-remove-restore-undo A restore undoes the whole removal, the moved children too
+proposed by werk/67: #werk-cli-retitle `werk retitle` and `werk edit --body` replace the words of an open card with one event each — waits for a person
+proposed by werk/68: #vi-prop-nolineage-ghost A ghost card cannot take its proposed parent as a depends_on basis — waits for a person
+proposed by werk/74: #werk-write-open-root-basis A root that is not decided is no basis for the cards under it — waits for a person
+proposed by werk/75: #werk-cli-show-removed Showing a removed card says that it is removed and names the restore — waits for a person
+proposed by werk/77: #ms-store-events The pipeline log has four event types, and one run id joins the events of a plan — waits for a person
+proposed by werk/77: #ms-store-addresses Detail files live in fixed folders beside the pipeline log, and git ignores them — waits for a person
+proposed by werk/77: #ms-store-plancopy-kept A kept ticket is an open ticket whose file is the same before and after the plan — waits for a person
+proposed by werk/77: #ms-store-nousage A session that reports no cost is logged as zero cost and zero tokens — waits for a person
+proposed by werk/77: #ms-store-addresses-copy-layout A plan copy folder holds the spec, a folder of tickets, and one answer file per writer — waits for a person
+proposed by werk/77: #ms-store-events-orphans A fold of the pipeline log sets aside an event that has no start before it — waits for a person
+proposed by werk/80: #kill-render-fields A criterion may name a fallback option and a minimum sample — waits for a person
+proposed by werk/82: #werk-fullerr-undelivered A failure that a retry cannot fix ends with the not-delivered line — waits for a person
+proposed by werk/83: #werk-cli-ticket-restore-list-line A ticket listing line holds the id, the column, an archived flag and the reason — waits for a person
+proposed by werk/83: #werk-cli-ticket-restore-short-number A restore accepts the full ticket id or the number after the slash, and refuses an ambiguous number — waits for a person
+proposed by werk/86: #werk-cli-notes-inbox-groups The inbox prints every note of the map, grouped by card — waits for a person
+proposed by werk/88: #st-build-parallel-names The scheduler compares touches names trimmed and in lower case
+proposed by werk/98: #st-build-seam-role-env-reviewer-area Each reviewer's role name carries its quality area
+proposed by werk/100: #werk-agent-instructions-append The agent instructions are added after the agent's own system prompt, not in its place
+proposed by werk/101: #werk-hmr-entry-settles The command line's start-up does not wait for the verb, so a hot reload can run
+proposed by werk/103: #werk-mc-tabs-step-wrap A step past the last chip goes to the first, and a step before the first goes to the last
+proposed by werk/104: #werk-mc-park-unpark An un-park keeps a live process, and resumes a stopped one at once
+proposed by werk/105: #werk-mc-live-dead A child that exits without werk stopping it marks its tab dead until the tab's next child starts
+proposed by werk/105: #werk-mc-live-bgcount A tab counts its background tasks from the last full list its agent sent
+proposed by werk/108: #werk-board-control-archive-ends-build The builder loop ends its own build when it reads that its ticket is archived
+proposed by werk/109: #werk-v0-seams-heldout-folder The product's browser test run also finds the tests in the binder's folder
+proposed by werk/110: #lp-overseer-silence-start The silence clock starts at the agent's first event
+proposed by werk/110: #werk-test-runner-parallel The unit tests run on parallel workers, with a per-test time limit that allows for the shared load
+stopped — 31 merged, $306.02

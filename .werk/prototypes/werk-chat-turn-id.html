@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Prototype — #werk-chat-turn-id</title>
+<link rel="stylesheet" href="../../web/style.css">
+<style>
+  body{padding:24px 32px 60px}
+  h1{font-size:16px;margin:0 0 4px}
+  .lede{color:var(--dim);font-size:13px;margin:0 0 6px;max-width:900px}
+  .legend{display:flex;gap:18px;font-size:12px;color:var(--dim);margin:10px 0 22px}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .sw{width:14px;height:14px;border-radius:3px}
+  .step{margin-bottom:34px}
+  .step h2{font-size:13px;margin:0 0 4px;color:var(--ink)}
+  .step p{font-size:12.5px;color:var(--dim);margin:0 0 10px;max-width:900px}
+  .pair{display:flex;gap:28px;align-items:flex-start}
+  .col{width:var(--chat-w)}
+  .col-h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+  .col-h.today{color:var(--stale)}
+  .col-h.prop{color:var(--decided)}
+  .pane{border:1px solid var(--line);border-radius:8px;background:var(--bg);overflow:hidden}
+  .pane .chat-head-row{border-top:0;border-bottom:1px solid var(--line)}
+  .pane .chat-log{overflow:visible}
+  .pulse{width:7px;height:7px;border-radius:50%;background:var(--proto);display:inline-block}
+  /* a part that arrived in this step */
+  .new{outline:1px solid var(--open);outline-offset:4px;border-radius:4px}
+  /* which reply a part belongs to — a prototype-only tag, not part of the design */
+  .tag{font-family:ui-monospace,Menlo,monospace;font-size:9.5px;padding:0 5px;border-radius:3px;margin-left:6px;vertical-align:1px}
+  .tag.a{background:#1f3a5c;color:#9ecbff}
+  .tag.b{background:#4a2f12;color:#ffc58a}
+  .wrong{background:#2a1414;border:1px solid var(--stale);border-radius:6px;padding:6px 9px;font-size:11.5px;color:#ffbdb6}
+  /* the open question: a mark under a message whose turn has not started */
+  .waiting{margin-top:6px;font-size:11px;color:var(--faint);display:flex;align-items:center;gap:6px}
+  .waiting::before{content:'';width:6px;height:6px;border-radius:50%;border:1px solid var(--faint)}
+  .opt-note{font-size:11px;color:var(--open);margin-top:4px}
+  .msg.you{position:relative}
+</style>
+</head>
+<body>
+<h1>#werk-chat-turn-id — where each part of a reply lands</h1>
+<p class="lede">Message A "Summarise the open cards" is sent. While reply A still streams, message B
+"Also list the ghosts" is sent. Each step shows the chat pane today (left) and with turn names (right).</p>
+<div class="legend">
+  <span><i class="sw" style="outline:1px solid var(--open)"></i>arrived in this step</span>
+  <span><i class="tag a">reply A</i> <i class="tag b">reply B</i> prototype labels only, not drawn in the product</span>
+</div>
+
+<!-- STEP 1 -->
+<section class="step">
+  <h2>1 · Message A is sent. The first part of reply A streams.</h2>
+  <p>The two panes are the same. Nothing differs until a second message is sent.</p>
+  <div class="pair">
+    <div class="col"><div class="col-h today">Today</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent new"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+        </div></div></div>
+    <div class="col"><div class="col-h prop">With turn names</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent new"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+        </div></div></div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step">
+  <h2>2 · Message B is sent while reply A streams.</h2>
+  <p>Both panes draw B at once, at the bottom. On the right, B shows a waiting mark until its turn
+  starts, so the person sees that B was received and is not yet answered.</p>
+  <div class="pair">
+    <div class="col"><div class="col-h today">Today</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+          <div class="msg you new"><div class="txt raw">Also list the ghosts</div></div>
+        </div></div></div>
+    <div class="col"><div class="col-h prop">With turn names</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+          <div class="new">
+            <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+            <div class="waiting">waits for the reply above</div>
+          </div>
+        </div></div></div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step">
+  <h2>3 · More parts of reply A arrive: a tool call and the rest of the text.</h2>
+  <p>Left: the parts go to the bottom, under B, and read as the answer to B. Right: the parts go
+  under the last part of reply A, above B. The view stays where it was if the reader scrolled up.</p>
+  <div class="pair">
+    <div class="col"><div class="col-h today">Today</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+          <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+          <details class="tool-group new"><summary>node src/cli.ts show werk-progress</summary></details>
+          <div class="msg agent new"><div class="txt">The oldest is <code>#werk-progress</code>. Two of the six wait for a prototype.<span class="tag a">reply A</span></div></div>
+          <div class="wrong">This reads as the answer to "Also list the ghosts".</div>
+        </div></div></div>
+    <div class="col"><div class="col-h prop">With turn names</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+          <details class="tool-group new"><summary>node src/cli.ts show werk-progress</summary></details>
+          <div class="msg agent new"><div class="txt">The oldest is <code>#werk-progress</code>. Two of the six wait for a prototype.<span class="tag a">reply A</span></div></div>
+          <div>
+            <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+            <div class="waiting">waits for the reply above</div>
+          </div>
+        </div></div></div>
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section class="step">
+  <h2>4 · Reply A ends. The turn for B starts, and the first part of reply B streams.</h2>
+  <p>Left: reply B follows reply A with nothing between them, so the two replies run together.
+  Right: the waiting mark goes away, and reply B starts under B.</p>
+  <div class="pair">
+    <div class="col"><div class="col-h today">Today</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+          <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+          <details class="tool-group"><summary>node src/cli.ts show werk-progress</summary></details>
+          <div class="msg agent"><div class="txt">The oldest is <code>#werk-progress</code>. Two of the six wait for a prototype.<span class="tag a">reply A</span></div></div>
+          <div class="msg agent new"><div class="txt">Three ghosts wait for you: <code>#werk-chat-turn-id</code>, <code>#werk-hmr</code>, <code>#werk-progress-bar</code>.<span class="tag b">reply B</span></div></div>
+        </div></div></div>
+    <div class="col"><div class="col-h prop">With turn names</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state busy"><i class="pulse"></i>working</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.<span class="tag a">reply A</span></div></div>
+          <details class="tool-group"><summary>node src/cli.ts show werk-progress</summary></details>
+          <div class="msg agent"><div class="txt">The oldest is <code>#werk-progress</code>. Two of the six wait for a prototype.<span class="tag a">reply A</span></div></div>
+          <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+          <div class="msg agent new"><div class="txt">Three ghosts wait for you: <code>#werk-chat-turn-id</code>, <code>#werk-hmr</code>, <code>#werk-progress-bar</code>.<span class="tag b">reply B</span></div></div>
+        </div></div></div>
+  </div>
+</section>
+
+<!-- STEP 5 -->
+<section class="step">
+  <h2>5 · Reply B ends. The agent is idle.</h2>
+  <p>Right: the chat reads as two question-and-answer pairs. Left: B has three parts under it,
+  and only the last one answers it.</p>
+  <div class="pair">
+    <div class="col"><div class="col-h today">Today</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state">idle</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.</div></div>
+          <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+          <details class="tool-group"><summary>node src/cli.ts show werk-progress</summary></details>
+          <div class="msg agent"><div class="txt">The oldest is <code>#werk-progress</code>. Two of the six wait for a prototype.</div></div>
+          <div class="msg agent"><div class="txt">Three ghosts wait for you: <code>#werk-chat-turn-id</code>, <code>#werk-hmr</code>, <code>#werk-progress-bar</code>.</div></div>
+        </div></div></div>
+    <div class="col"><div class="col-h prop">With turn names</div>
+      <div class="pane"><div class="chat-head-row"><span class="chat-title">Chat</span><span class="chat-state">idle</span></div>
+        <div class="chat-log">
+          <div class="msg you"><div class="txt raw">Summarise the open cards</div></div>
+          <div class="msg agent"><div class="txt">There are six open cards.</div></div>
+          <details class="tool-group"><summary>node src/cli.ts show werk-progress</summary></details>
+          <div class="msg agent"><div class="txt">The oldest is <code>#werk-progress</code>. Two of the six wait for a prototype.</div></div>
+          <div class="msg you"><div class="txt raw">Also list the ghosts</div></div>
+          <div class="msg agent"><div class="txt">Three ghosts wait for you: <code>#werk-chat-turn-id</code>, <code>#werk-hmr</code>, <code>#werk-progress-bar</code>.</div></div>
+        </div></div></div>
+  </div>
+</section>
+</body>
+</html>

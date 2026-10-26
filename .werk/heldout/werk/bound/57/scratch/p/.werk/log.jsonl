@@ -1,0 +1,20 @@
+{"type":"node.proposed","id":"root","kind":"card","title":"We build software with agents","status":"open","why":"One repeating pipeline keeps the work in step."}
+{"type":"node.accepted","id":"root","actor":"you"}
+{"type":"node.proposed","id":"x","kind":"card","title":"Title x","status":"open","parent":"root"}
+{"type":"node.accepted","id":"x","actor":"you"}
+{"type":"node.proposed","id":"p","kind":"card","title":"Title p","status":"proto","parent":"root"}
+{"type":"node.accepted","id":"p","actor":"you"}
+{"type":"node.proposed","id":"c","kind":"card","title":"Title c","status":"open","parent":"root"}
+{"type":"node.accepted","id":"c","actor":"you"}
+{"type":"node.edited","id":"c","who":"me","noBasis":"test"}
+{"type":"criterion.added","id":"c","form":"revisit"}
+{"type":"node.decided","id":"c"}
+{"type":"node.proposed","id":"g","kind":"card","title":"Title g","status":"open","parent":"c"}
+{"type":"node.accepted","id":"g","actor":"you"}
+{"type":"node.proposed","id":"y","kind":"card","title":"Title y","status":"open","parent":"root"}
+{"type":"node.accepted","id":"y","actor":"you"}
+{"type":"node.edited","id":"y","who":"me","noBasis":"test"}
+{"type":"criterion.added","id":"y","form":"revisit"}
+{"type":"node.decided","id":"y"}
+{"type":"edge.added","from":"y","to":"x","link":"depends_on","why":"y takes x"}
+{"type":"node.reopened","id":"x","at":"2026-10-10T09:00:00.000Z"}

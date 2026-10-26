@@ -1,0 +1,3 @@
+#!/bin/sh
+# The fake agent. Every test puts this directory first on PATH, so `claude` is this file.
+exec bun "$(dirname "$0")/fake-agent.ts" "$@"

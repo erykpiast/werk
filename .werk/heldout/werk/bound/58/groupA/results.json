@@ -1,0 +1,19 @@
+[
+{"id":"02.1","result":"pass","detail":"Temp project copy with its own PURE_FILES list, one pure file and its own full test; `make test-coverage` printed one gate line 'ok 100.0% src/pure/a.ts' and exited 0."},
+{"id":"02.2","result":"pass","detail":"After deleting the own test (another test still runs all lines), `make test-coverage` printed 'FAIL 0.0% src/pure/a.ts (missing test file src/pure/a.test.ts)' and exited non-zero."},
+{"id":"02.3","result":"pass","detail":"Own test ran part of the file; gate line 'FAIL 30.0% src/pure/a.ts', exit non-zero."},
+{"id":"02.4","result":"pass","detail":"Types-only pure file with no test: gate line 'ok 100.0% ... (no executable lines)', exit 0."},
+{"id":"02.5","result":"pass","detail":"`make test` ran the unit tests (1 pass), printed no coverage line, no file name, no 'missing test file'; exit 0."},
+{"id":"03.1","result":"unbuilt","owner":"werk/35","detail":"Real `werk build` with builder and grader scripted: the builder launched once and its note.txt reached branch r/01, but no grader launch happened (launch record holds only the builder). The grader pass belongs to werk/35. The fake agent alone plays builder/grader replies by role, not by prompt (checked with 'Build the ticket'). The build prompt itself could not be changed."},
+{"id":"03.2","result":"pass","detail":"Fake chat role with two replies: first message gave reply 1 and the process stayed alive; second gave reply 2; closing stdin ended it with exit 0."},
+{"id":"03.3","result":"pass","detail":"Ask, pause, event, crash 9: control_request printed, the later event played before any answer, no tool result and no result line, exit 9."},
+{"id":"03.4","result":"fail","detail":"Script: ask, edit to ../outside.txt, exit 0. The fake rejects the whole reply before any step: no permission request is shown, stderr names the escaping edit path, exit code is 1 not the script's 0. Outside file kept its content. The ask/answer flow and script exit code in the step do not happen."},
+{"id":"03.5","result":"pass","detail":"Fake launched with no WERK_FAKE_SCRIPT: exits non-zero at once, stdout empty, stderr 'no script installed'."},
+{"id":"05.1","result":"pass","detail":"Decided card auth (hand-written events); `add login --title 'Use magic links' --parent auth` printed 'proposed', log grew by 1; `show login` shows the title, 'proposed', 'refines auth' and a rollup line."},
+{"id":"05.2","result":"pass","detail":"Second add of login exited 1 with 'refused: duplicate-id: the id \"login\" is taken'; log count unchanged; show login keeps the first title."},
+{"id":"05.3","result":"pass","detail":"add --status decided exited 1 ('a card reaches decided only through the status verb, not add'); no new event; `show pay` says 'unknown card \"pay\"' (read as 'not found')."},
+{"id":"05.4","result":"pass","detail":"add '#login' --title '#1 priority: magic links' --parent '#auth' printed proposed; show '#login' and show login print identical output with parent auth and the full title with its hash."},
+{"id":"05.5","result":"pass","detail":"Log with auth, a hand-written node.proposed under unknown parent, then login: show login prints login as proposed. The only place werk lists map problems is show's stderr: 'problem at log line 3: unknown-card: no card \"nowhere\"'. Log file unchanged and still holds the bad line. There is no separate 'problems' verb; I used show."},
+{"id":"06.1","result":"pass","detail":"`quote x pricing ...` printed 'proposed' (not 'added'); show x:ex0 is a ghost ('proposed'); show x lists the Say line marked 'proposed' (the pending link as the CLI shows it); the card keeps status decided and its words. Checked in the CLI, not the browser map."},
+{"id":"06.2","result":"pass","detail":"`accept x:ex0 --actor you` exit 0; show x:ex0 no longer proposed; show x Say section lists the excerpt without 'proposed', with no second accept."}
+]

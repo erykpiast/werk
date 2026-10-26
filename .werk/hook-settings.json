@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/eryk.napierala/conductor/workspaces/werk/iqaluit/src/ask.ts\"",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

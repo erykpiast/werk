@@ -1,0 +1,9 @@
+bun test v1.4.1 (4661e494f)
+
+repo/f69_5.test.ts:
+69.5 make e2e exit 0, 25 tests, 25 results, 25 screenshots
+
+ 1 pass
+ 0 fail
+ 7 expect() calls
+Ran 1 test across 1 file. [28.41s]

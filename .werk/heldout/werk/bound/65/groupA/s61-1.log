@@ -1,0 +1,153 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/groupA/s61-1.test.ts:
+roots [ "3de3c4244ce6da1a54f97404b0f46123111ea43d" ]
+first commit files: ""
+commits 216 not descending from root 0
+browser specs present in clone: 10
+[make test] exit 2
+a discard drops an excerpt with its card, and an accept keeps the other excerpt's pointer [14099.82ms]
+
+src/verbs/remove.test.ts:
+(pass) a restore names the removal: a card that went out with another, or that sits under one still out, is refused [7106.54ms]
+
+7 tests failed:
+(fail) a card with who me needs no option; a card with who you does [15006.94ms]
+  ^ this test timed out after 15000ms.
+(fail) a depends_on link needs a reason, and never points to an ancestor or a descendant [15030.69ms]
+  ^ this test timed out after 15000ms.
+(fail) accepting a ghost child also accepts its ghost parents, sources and options, and its held links go live [15014.32ms]
+  ^ this test timed out after 15000ms.
+(fail) discarding a ghost keeps a ghost source another card cites, and drops one that only it cited [15016.95ms]
+  ^ this test timed out after 15000ms.
+(fail) an excerpt takes a note, and goes with its citing ghost on a discard and on an accept [15012.88ms]
+  ^ this test timed out after 15000ms.
+(fail) removing a card with two children removes three cards in one event, and a restore brings all three back with their links [15021.92ms]
+  ^ this test timed out after 15000ms.
+(fail) removing login, then session, then restoring login keeps the link between them out until session is restored [15014.99ms]
+  ^ this test timed out after 15000ms.
+
+ 616 pass
+ 7 fail
+ 7 errors
+ 2198 expect() calls
+Ran 623 tests across 82 files. [139.61s]
+error: script "test" exited with code 1
+make: *** [test] Error 1
+
+[make test-coverage] exit 0
+ src/map/commit.ts
+ok     91.90%  src/map/fold.ts
+ok     93.26%  src/map/rules.ts
+ok     98.60%  src/map/show.ts
+ok    100.00%  src/map/rollup.ts
+ok    100.00%  src/map/stage.ts
+ok    100.00%  src/map/tree.ts
+ok    100.00%  src/map/types.ts
+ok    100.00%  src/map/removal.ts
+ok    100.00%  src/map/contract.ts
+ok    100.00%  src/map/ops.ts
+ok    100.00%  src/map/notes.ts
+ok    100.00%  src/map/chat.ts
+ok    100.00%  src/agent/prompt.ts
+ok    100.00%  src/map/marks.ts
+ok    100.00%  src/map/trace.ts
+ok    100.00%  src/map/stale.ts
+ok    100.00%  src/map/review.ts
+ok    100.00%  src/tickets/parse.ts
+ok    100.00%  src/tickets/own-checks.ts
+ok    100.00%  src/tickets/set-checks.ts
+ok    100.00%  src/tickets/spec.ts
+ok    100.00%  src/tickets/cards.ts
+ok    100.00%  src/tickets/check.ts
+ok    100.00%  src/tickets/report.ts
+ok    100.00%  src/serve/card-html.ts
+ok    100.00%  src/serve/page.ts
+ok    100.00%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok    100.00%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  src/serve/header.ts
+ok    100.00%  src/serve/jump.ts
+ok    100.00%  src/serve/home-html.ts
+ok    100.00%  web/crumbs.ts
+ok    100.00%  web/counts.ts
+ok    100.00%  web/diff.ts
+54 pure files, 0 under 90% of lines or without an own test file.
+$ bun scripts/coverage-gate.ts
+
+[make typecheck] exit 0
+bun run typecheck
+$ tsc --noEmit -p tsconfig.json
+
+[make lint] exit 0
+bun run lint
+$ biome check --error-on-warnings .
+Checked 228 files in 80ms. No fixes applied.
+
+[make e2e] exit 2
+.6s)
+
+
+  1) [spec] › e2e/header.e2e.ts:142:0 › the home view shows the root and the build rules side by side, each with its children 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 89
+    Received: undefined
+
+      155 |   const left = await what.boundingBox();
+      156 |   const right = await how.boundingBox();
+    > 157 |   expect(left?.y).toBe(right?.y);
+          |                  ^
+      158 |   expect(Math.abs((left?.width ?? 0) - (right?.width ?? 0))).toBeLessThan(2);
+      159 |   expect((left?.x ?? 0) + (left?.width ?? 0)).toBeLessThanOrEqual(right?.x ?? 0);
+      160 |   await expect(crumbs(p).locator('[aria-current="page"]')).toHaveText("Home");
+        at /private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldoutA-kb0tzy/werk/e2e/header.e2e.ts:157:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/header.e2e.ts-the-home-vie-4424b-side-each-with-its-children-spec/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/header.e2e.ts-the-home-vie-4424b-side-each-with-its-children-spec/error-context.md
+
+  1 failed
+    [spec] › e2e/header.e2e.ts:142:0 › the home view shows the root and the build rules side by side, each with its children 
+  39 passed (25.7s)
+$ playwright test --pass-with-no-tests
+error: script "e2e" exited with code 1
+make: *** [e2e] Error 1
+
+23 |     for (const t of ["test", "test-coverage", "typecheck", "lint", "e2e"]) {
+24 |       const r = sh(dir, ["make", t]);
+25 |       codes[t] = r.code;
+26 |       console.log(`[make ${t}] exit ${r.code}\n${r.out.slice(-1500)}`);
+27 |     }
+28 |     expect(codes).toEqual({ test: 0, "test-coverage": 0, typecheck: 0, lint: 0, e2e: 0 });
+                       ^
+error: expect(received).toEqual(expected)
+
+@@ -1,5 +1,5 @@
+  {
+-   "e2e": 0,
++   "e2e": 2,
+    "lint": 0,
+-   "test": 0,
++   "test": 2,
+    "test-coverage": 0,
+
+- Expected  - 2
++ Received  + 2
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-VqOAUf/.werk-heldout/groupA/s61-1.test.ts:28:19)
+(fail) 61.1 fresh clone, empty first commit, every check passes [237556.30ms]
+
+ 0 pass
+ 1 fail
+ 5 expect() calls
+Ran 1 test across 1 file. [237.92s]

@@ -1,0 +1,3 @@
+# The list of pure files is a set. A merge keeps every entry from both sides, so a branch's
+# pure file never drops out of the coverage check (#werk-test-pure-list-union).
+src/test/pure-files.txt merge=union

@@ -1,0 +1,40 @@
+exit 0
+bun run e2e
+$ playwright test --pass-with-no-tests
+
+Running 32 tests using 5 workers
+
+  ✓   2 [spec] › e2e/map-load.e2e.ts:11:1 › a card added while the server was down shows on the first page load, with its neighbours (5.7s)
+  ✓   1 [spec] › e2e/client.e2e.ts:27:1 › a card address shows that card's title, and Back and Forward move between visited cards (6.6s)
+  ✓   3 [spec] › e2e/notes.e2e.ts:19:1 › an agent's note appears on the card's thread, marked as the agent's (6.5s)
+  ✓   4 [spec] › e2e/card-page.e2e.ts:18:1 › /map opens the root card page with its sub-card tiles, ghosts last and blue, each tile one link (7.5s)
+  ✓   7 [spec] › e2e/client.e2e.ts:50:1 › a link to another card opens it in the page, and Back returns without a reload (2.2s)
+  ✓   6 [spec] › e2e/map-load.e2e.ts:53:1 › a card added with no parent while the server was down shows on the root's page (3.7s)
+  ✓   5 [spec] › e2e/excerpt.e2e.ts:26:1 › a new excerpt for a card stages as a ghost, on a pending link, and the card keeps its words (8.5s)
+  ✓   9 [spec] › e2e/card-page.e2e.ts:45:1 › a card shows its option, source and excerpt with their words, and its depends_on rows with their reasons (2.4s)
+  ✓  10 [spec] › e2e/client.e2e.ts:65:1 › an unknown id shows a page that says the map does not hold it (2.4s)
+  ✓   8 [spec] › e2e/notes.e2e.ts:34:1 › the inbox reads the person's notes after a log position, capped by count (4.3s)
+  ✓  11 [spec] › e2e/proposal.e2e.ts:23:1 › a pending edit shows only its changed words, and the ✓ amends the card without a reload (2.4s)
+  ✓  12 [spec] › e2e/excerpt.e2e.ts:51:1 › an accepted excerpt stops being a ghost, and its link from the card goes live (2.7s)
+  ✓  13 [spec] › e2e/card-page.e2e.ts:90:1 › a stale card is tinted red, keeps its status edge, and lists its trace (2.1s)
+  ✓  14 [spec] › e2e/client.e2e.ts:74:1 › a command-line add while the page is open redraws it without a reload (2.4s)
+  ✓  17 [spec] › e2e/rendered-text.e2e.ts:20:1 › every form of a card reference in a card body becomes the same link to that card (2.3s)
+  ✓  16 [spec] › e2e/proposal.e2e.ts:59:1 › the ✓ on a ghost makes it real, and the page redraws without a reload (3.0s)
+  ✓  15 [spec] › e2e/notes.e2e.ts:59:1 › a corrected ghost keeps its earlier notes, with one marker where the new words begin (3.5s)
+  ✓  18 [spec] › e2e/card-page.e2e.ts:110:1 › a postponed card shows grey stripes and a postponed tag on its page and its tile (2.8s)
+  ✓  20 [spec] › e2e/rendered-text.e2e.ts:47:1 › text that only looks like a reference stays text (2.4s)
+  ✓  21 [spec] › e2e/proposal.e2e.ts:70:1 › the ✕ on a card with two children offers the subtree and the reparent with their counts (3.0s)
+  ✓  23 [spec] › e2e/card-page.e2e.ts:128:1 › a click on the id in the tag row copies it as a reference (2.4s)
+  ✓  19 [spec] › e2e/client.e2e.ts:94:1 › a page whose server restarts shows a write made while the server was down (4.8s)
+  ✓  22 [spec] › e2e/notes.e2e.ts:86:1 › a note on a discarded ghost stays in the inbox and comes back on the thread (3.6s)
+  ✓  24 [spec] › e2e/rendered-text.e2e.ts:86:1 › fenced code in a card is boxed, labelled and highlighted by its tag (1.8s)
+  ✓  25 [spec] › e2e/proposal.e2e.ts:101:1 › a write from the page without the token is refused (1.4s)
+  ✓  28 [spec] › e2e/notes.e2e.ts:103:1 › an agent's note on an excerpt shows on the excerpt's thread (1.4s)
+  ✓  26 [spec] › e2e/write-trust.e2e.ts:46:1 › only the person's own page can write to the map (1.8s)
+  ✓  29 [spec] › e2e/rendered-text.e2e.ts:127:1 › card text with a script tag shows the tag as text and runs nothing (1.3s)
+  ✓  27 [spec] › e2e/client.e2e.ts:115:1 › in dev, an edit of a route handler changes the response with no new process and no dropped channel (2.0s)
+  ✓  31 [spec] › e2e/client.e2e.ts:143:1 › a client edit that cannot apply in place reloads the page and keeps the composer draft (1.8s)
+  ✓  32 [spec] › e2e/client.e2e.ts:166:1 › the harness refuses to start when the fake agent is not first on the search list (0ms)
+  ✓  30 [spec] › e2e/rendered-text.e2e.ts:141:1 › references link in chat messages but not in a grid tile summary (3.5s)
+
+  32 passed (26.5s)

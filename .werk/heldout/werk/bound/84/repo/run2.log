@@ -1,0 +1,23 @@
+bun test v1.4.1 (4661e494f)
+
+repo/f61.test.ts:
+120 | 
+121 | test('61.4 the coverage gate fails below 90% on a pure file and passes again at 90% or above', () => {
+122 |   const dir = clone()
+123 |   const base = sh(dir, 'make test-coverage')
+124 |   save('61.4-coverage-before.txt', base)
+125 |   expect(base.code).toBe(0)
+                          ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 2
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-lTpvsW/.werk-heldout/repo/f61.test.ts:125:21)
+(fail) 61.4 the coverage gate fails below 90% on a pure file and passes again at 90% or above [179233.38ms]
+
+ 1 pass
+ 2 filtered out
+ 1 fail
+ 84 expect() calls
+Ran 2 tests across 1 file. [494.22s]

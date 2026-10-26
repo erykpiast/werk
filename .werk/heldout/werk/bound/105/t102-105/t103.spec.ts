@@ -1,0 +1,80 @@
+/** Held-out steps 103.1 to 103.5: a tab owns its map position and its draft, and the tab keys. */
+import { expect, test } from '../../e2e/harness.ts'
+import { addCards, chatRuns, navigate, parts, reply, send, STANDARD, tabsAt, textOf } from './helpers.ts'
+
+test('103.1 Focusing a tab moves the map to that tab\'s card', async ({ page, werk }) => {
+  addCards(werk, STANDARD)
+  werk.scriptAgent({ steps: [], roles: { chat: [reply('Ok.')] } })
+  await tabsAt(page, werk, ['alpha', 'beta'])
+  const { chips, card, scope, transcript } = parts(page)
+  await expect(chips.nth(0)).toHaveAttribute('aria-selected', 'true')
+  await expect(card).toHaveAttribute('data-card-id', 'alpha')
+
+  await chips.nth(1).click()
+  await expect(card).toHaveAttribute('data-card-id', 'beta')
+  await expect(scope).toContainText('#beta')
+  await expect(scope).not.toContainText('#alpha')
+
+  await send(page, 'What is this card?')
+  await expect(transcript).toContainText('Ok.')
+  await expect.poll(() => chatRuns(werk)[0]?.inputs.length ?? 0).toBeGreaterThan(0)
+  const input = textOf(chatRuns(werk)[0]!.inputs[0])
+  expect(input).toContain('#beta')
+  expect(input).not.toContain('#alpha')
+})
+
+test('103.2 Each tab restores its own map position after a switch', async ({ page, werk }) => {
+  addCards(werk, STANDARD)
+  await tabsAt(page, werk, ['alpha', 'beta'])
+  const { chips, card, scope } = parts(page)
+  await navigate(page, werk, 'gamma')
+  await expect(scope).toContainText('#gamma')
+  await chips.nth(1).click()
+  await expect(card).toHaveAttribute('data-card-id', 'beta')
+  await chips.nth(0).click()
+  await expect(card).toHaveAttribute('data-card-id', 'gamma')
+  await expect(scope).toContainText('#gamma')
+  await chips.nth(1).click()
+  await expect(card).toHaveAttribute('data-card-id', 'beta')
+})
+
+test('103.3 An unsent draft stays with its tab', async ({ page, werk }) => {
+  addCards(werk, STANDARD)
+  await tabsAt(page, werk, ['alpha', 'beta'])
+  const { chips, composer, transcript } = parts(page)
+  await composer.fill('half-written note about alpha')
+  await chips.nth(1).click()
+  await expect(chips.nth(1)).toHaveAttribute('aria-selected', 'true')
+  await expect(composer).not.toHaveValue(/half-written note about alpha/)
+  await expect(transcript).not.toContainText('half-written note about alpha')
+  await chips.nth(0).click()
+  await expect(composer).toHaveValue(/half-written note about alpha/)
+  await expect(transcript).not.toContainText('half-written note about alpha')
+  expect(werk.agentLaunches()).toEqual([])
+})
+
+test('103.4 Cmd+number selects a tab by its position', async ({ page, werk }) => {
+  addCards(werk, STANDARD)
+  await tabsAt(page, werk, ['alpha', 'beta', 'gamma'])
+  const { chips, card } = parts(page)
+  await page.keyboard.press('Meta+2')
+  await expect(chips.nth(1)).toHaveAttribute('aria-selected', 'true')
+  await expect(card).toHaveAttribute('data-card-id', 'beta')
+  await page.keyboard.press('Meta+3')
+  await expect(chips.nth(2)).toHaveAttribute('aria-selected', 'true')
+  await expect(card).toHaveAttribute('data-card-id', 'gamma')
+})
+
+test('103.5 Cmd+] and Cmd+[ step to the next and previous tab', async ({ page, werk }) => {
+  addCards(werk, STANDARD)
+  await tabsAt(page, werk, ['alpha', 'beta', 'gamma'])
+  const { chips, card } = parts(page)
+  await page.keyboard.press('Meta+BracketRight')
+  await expect(chips.nth(1)).toHaveAttribute('aria-selected', 'true')
+  await expect(card).toHaveAttribute('data-card-id', 'beta')
+  await page.keyboard.press('Meta+BracketRight')
+  await expect(chips.nth(2)).toHaveAttribute('aria-selected', 'true')
+  await page.keyboard.press('Meta+BracketLeft')
+  await expect(chips.nth(1)).toHaveAttribute('aria-selected', 'true')
+  await expect(card).toHaveAttribute('data-card-id', 'beta')
+})

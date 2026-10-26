@@ -1,0 +1,47 @@
+# Grid resolver prototype — #vi-sysdiag-grid, step 1 of #vi-sysdiag-grid-mvp.
+# Hand-authored, no tool assistance, to measure what authoring actually costs.
+#
+# Two sections. CONTENT is Mermaid flowchart syntax: what exists, what connects to
+# what, what it says. GRID is placement: which cell holds what. The split is
+# #penrose's Substance/Style, and neither half can express the other's job.
+
+content
+  flowchart TD
+    subgraph browser [BROWSER]
+      mv["map view | the decision tree, the 3D graph, and one card's full text"]
+      cp["chat pane | where you type, and where the reply streams back"]
+    end
+    subgraph server [SERVER PROCESS]
+      st["state | GET /api/graph, one fetch of today's folded map"]
+      lv["live + sse | POST /api/chat and /api/ask, and the SSE stream back"]
+    end
+    mv -->|loads the folded map| st
+    cp -->|sends what you type| lv
+    lv -->|streams the reply back| cp
+
+    class mv,cp read
+    class st state
+    class lv agent
+
+# An edge's id is <from>-><to>. Mermaid does not name edges, and it does not need to:
+# the pair is already unique and already written above. `->` (not `_`) is what
+# #vi-sysdiag-grid-gaps's gap 5 asked for: no card id can contain `->`, so a grid token
+# is unambiguous, always — a card id containing `_` used to collide with a derived edge id.
+#
+# Four tokens, everything else is derived:
+#   .        empty cell
+#   <card>   a cell of that card
+#   <edge>   a cell of that edge's path
+#   @<edge>  a cell of that edge's label
+#
+# Corners, junctions and arrowheads are inferred from neighbours, per #svgbob.
+# Group frames are the bounding box of their members, per the subgraph above.
+
+grid
+  "mv mv      mv . . cp      cp cp      . ."
+  "mv mv      mv . . cp      cp cp      . ."
+  ".  mv->st  .  . . cp->lv  .  lv->cp  . ."
+  ".  @mv->st .  . . @cp->lv .  @lv->cp . ."
+  ".  mv->st  .  . . cp->lv  .  lv->cp  . ."
+  "st st      st . . lv      lv lv      . ."
+  "st st      st . . lv      lv lv      . ."

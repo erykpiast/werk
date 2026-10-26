@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3268 1303" width="3268" height="1303" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif">
+<rect x="0" y="0" width="3268" height="1303" fill="#0a0d12"/>
+<g id="debug-columns" style="display:none">
+<rect x="48" y="0" width="199.33" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="487.69" y="0" width="163.38" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="706.1" y="0" width="131.98" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="892.08" y="0" width="26" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="972.08" y="0" width="134.2" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="1160.28" y="0" width="26" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="1334.4" y="0" width="26.37" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="1525.26" y="0" width="26.37" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="1605.63" y="0" width="124.57" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="1871.49" y="0" width="26" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="1951.49" y="0" width="135.42" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="2246.16" y="0" width="134.53" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="2472.06" y="0" width="140.45" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="2774.96" y="0" width="0" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="2828.96" y="0" width="124.18" height="1303" fill="#ff5ca8" opacity="0.08"/>
+<rect x="3007.14" y="0" width="213.18" height="1303" fill="#ff5ca8" opacity="0.08"/>
+</g>
+<defs>
+<marker id="arrow-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5fb0c9"/></marker>
+<marker id="arrow-state" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5c8fd6"/></marker>
+<marker id="arrow-agent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9d7bd8"/></marker>
+<marker id="arrow-perm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d99a4e"/></marker>
+<marker id="arrow-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5fbf8f"/></marker>
+<marker id="arrow-ext" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a93a6"/></marker>
+<marker id="arrow-dev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9718a"/></marker>
+</defs>
+<rect x="30" y="30" width="1134.28" height="132" rx="12" fill="none" stroke="#2a3a4d" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="46" font-size="11" letter-spacing="0.06em" fill="#5c7086">MAP VIEW</text>
+<rect x="1316.4" y="30" width="1694.75" height="132" rx="12" fill="none" stroke="#2a3a4d" stroke-width="1" stroke-dasharray="3 4"/><text x="1328.4" y="46" font-size="11" letter-spacing="0.06em" fill="#5c7086">CHAT PANE</text>
+<rect x="30" y="252" width="3208.32" height="790" rx="12" fill="none" stroke="#2a3a4d" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="268" font-size="11" letter-spacing="0.06em" fill="#5c7086">SERVER PROCESS</text>
+<rect x="469.69" y="696" width="1780.47" height="555" rx="12" fill="none" stroke="#2a3a4d" stroke-width="1" stroke-dasharray="3 4"/><text x="481.69" y="712" font-size="11" letter-spacing="0.06em" fill="#5c7086">STORE</text>
+<g class="wd-node" data-node="tree" data-cards=""><rect x="48" y="64" width="199.33" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="147.66" y="84" font-weight="700" font-size="12.5">refines tree</tspan><tspan x="147.66" y="106" font-size="10" fill="#9fb0c4">the decision tree, as a list you open</tspan><tspan x="147.66" y="119" font-size="10" fill="#9fb0c4">and close</tspan></text></g>
+<g class="wd-node" data-node="graph3d" data-cards=""><rect x="261.33" y="64" width="212.36" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="367.51" y="84" font-weight="700" font-size="12.5">3d graph</tspan><tspan x="367.51" y="106" font-size="10" fill="#9fb0c4">the same cards, drawn as a 3D web of</tspan><tspan x="367.51" y="119" font-size="10" fill="#9fb0c4">links</tspan></text></g>
+<g class="wd-node" data-node="detail" data-cards=""><rect x="665.07" y="64" width="213.01" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="771.58" y="90.5" font-weight="700" font-size="12.5">card detail</tspan><tspan x="771.58" y="112.5" font-size="10" fill="#9fb0c4">the full text of one card</tspan></text></g>
+<g class="wd-node" data-node="rollup" data-cards=""><rect x="932.08" y="64" width="214.2" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="1039.18" y="84" font-weight="700" font-size="12.5">rollup bar</tspan><tspan x="1039.18" y="106" font-size="10" fill="#9fb0c4">counts of decided, open, and stale</tspan><tspan x="1039.18" y="119" font-size="10" fill="#9fb0c4">cards</tspan></text></g>
+<g class="wd-node" data-node="approvebar" data-cards=""><rect x="1334.4" y="64" width="217.23" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="1443.01" y="90.5" font-weight="700" font-size="12.5">approval bar</tspan><tspan x="1443.01" y="112.5" font-size="10" fill="#9fb0c4">asks you to allow or deny a risky action</tspan></text></g>
+<g class="wd-node" data-node="composer" data-cards=""><rect x="1605.63" y="64" width="291.86" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="1751.56" y="90.5" font-weight="700" font-size="12.5">composer</tspan><tspan x="1751.56" y="112.5" font-size="10" fill="#9fb0c4">the box where you type</tspan></text></g>
+<g class="wd-node" data-node="transcript" data-cards=""><rect x="1951.49" y="64" width="429.2" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2166.09" y="90.5" font-weight="700" font-size="12.5">transcript</tspan><tspan x="2166.09" y="112.5" font-size="10" fill="#9fb0c4">the chat history</tspan></text></g>
+<g class="wd-node" data-node="tabs" data-cards=""><rect x="2472.06" y="64" width="288.9" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2616.51" y="90.5" font-weight="700" font-size="12.5">tab strip</tspan><tspan x="2616.51" y="112.5" font-size="10" fill="#9fb0c4">one tab per chat</tspan></text></g>
+<g class="wd-node" data-node="header" data-cards=""><rect x="2788.96" y="64" width="204.18" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2891.05" y="84" font-weight="700" font-size="12.5">model + context header</tspan><tspan x="2891.05" y="106" font-size="10" fill="#9fb0c4">which model runs, and how much</tspan><tspan x="2891.05" y="119" font-size="10" fill="#9fb0c4">context is left</tspan></text></g>
+<g class="wd-node" data-node="state" data-cards=""><rect x="48" y="286" width="1058.28" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="577.14" y="306" font-weight="700" font-size="12.5">state</tspan><tspan x="577.14" y="328" font-size="10" fill="#9fb0c4">GET /api/graph, one fetch of today's</tspan><tspan x="577.14" y="341" font-size="10" fill="#9fb0c4">folded map</tspan></text></g>
+<g class="wd-node" data-node="live" data-cards=""><rect x="1374.76" y="286" width="1578.38" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2163.95" y="306" font-weight="700" font-size="12.5">live + sse</tspan><tspan x="2163.95" y="328" font-size="10" fill="#9fb0c4">POST /api/chat, /api/ask, and the SSE</tspan><tspan x="2163.95" y="341" font-size="10" fill="#9fb0c4">stream back</tspan></text></g>
+<g class="wd-node" data-node="foldfn" data-cards=""><rect x="487.69" y="508" width="204.42" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="589.9" y="528" font-weight="700" font-size="12.5">fold</tspan><tspan x="589.9" y="550" font-size="10" fill="#9fb0c4">turns the log of past decisions into</tspan><tspan x="589.9" y="563" font-size="10" fill="#9fb0c4">today's state</tspan></text></g>
+<g class="wd-node" data-node="runner" data-cards=""><rect x="1565.63" y="508" width="1209.33" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2170.29" y="534.5" font-weight="700" font-size="12.5">agent runner</tspan><tspan x="2170.29" y="556.5" font-size="10" fill="#9fb0c4">runs the agent that answers you</tspan></text></g>
+<g class="wd-node" data-node="gate" data-cards=""><rect x="1911.49" y="944" width="320.67" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2071.83" y="970.5" font-weight="700" font-size="12.5">permission gate</tspan><tspan x="2071.83" y="992.5" font-size="10" fill="#9fb0c4">decides if a tool call may run</tspan></text></g>
+<g class="wd-node" data-node="lock" data-cards=""><rect x="2472.06" y="730" width="302.9" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2623.51" y="756.5" font-weight="700" font-size="12.5">one-server lock</tspan><tspan x="2623.51" y="778.5" font-size="10" fill="#9fb0c4">stops two servers running at once</tspan></text></g>
+<g class="wd-node" data-node="dev" data-cards=""><rect x="3007.14" y="508" width="213.18" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="3113.73" y="528" font-weight="700" font-size="12.5">dev reload</tspan><tspan x="3113.73" y="550" font-size="10" fill="#9fb0c4">reloads code changes without losing a</tspan><tspan x="3113.73" y="563" font-size="10" fill="#9fb0c4">live chat</tspan></text></g>
+<g class="wd-node" data-node="log" data-cards=""><rect x="487.69" y="730" width="204.42" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="589.9" y="756.5" font-weight="700" font-size="12.5">log.jsonl</tspan><tspan x="589.9" y="778.5" font-size="10" fill="#9fb0c4">every decision, ever made, in order</tspan></text></g>
+<g class="wd-node" data-node="chatlog" data-cards=""><rect x="1565.63" y="730" width="291.86" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="1711.56" y="756.5" font-weight="700" font-size="12.5">chat.jsonl</tspan><tspan x="1711.56" y="778.5" font-size="10" fill="#9fb0c4">the saved chat messages</tspan></text></g>
+<g class="wd-node" data-node="allow" data-cards=""><rect x="1911.49" y="1166" width="320.67" height="67" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2071.83" y="1186" font-weight="700" font-size="12.5">allow.json</tspan><tspan x="2071.83" y="1208" font-size="10" fill="#9fb0c4">tool calls you already said yes to</tspan></text></g>
+<g class="wd-node" data-node="cli" data-cards=""><rect x="2246.16" y="944" width="211.9" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2352.11" y="964" font-weight="700" font-size="12.5">cli</tspan><tspan x="2352.11" y="986" font-size="10" fill="#9fb0c4">the commands that read and write the</tspan><tspan x="2352.11" y="999" font-size="10" fill="#9fb0c4">map</tspan></text></g>
+<g class="wd-node" data-node="child" data-cards=""><rect x="1951.49" y="730" width="429.2" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="2166.09" y="750" font-weight="700" font-size="12.5">claude code child</tspan><tspan x="2166.09" y="772" font-size="10" fill="#9fb0c4">the Claude Code process doing the</tspan><tspan x="2166.09" y="785" font-size="10" fill="#9fb0c4">work</tspan></text></g>
+<g class="wd-node" data-node="tracker" data-cards=""><rect x="487.69" y="944" width="204.42" height="80" rx="8" fill="#1b2536" stroke="#3a4a5f" stroke-width="1.4"/><text text-anchor="middle" fill="#eef2f7"><tspan x="589.9" y="970.5" font-weight="700" font-size="12.5">issue tracker</tspan><tspan x="589.9" y="992.5" font-size="10" fill="#9fb0c4">an outside tool, like Linear or GitHub</tspan></text></g>
+<g class="wd-edge" data-edge="tree-&gt;state" data-cards="">
+<path class="wd-hitarea" d="M147.66,144 L147.66,171 L147.66,215 L147.66,259 L147.66,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M147.66,144 L147.66,171 L147.66,215 L147.66,259 L147.66,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="48" y="198" width="199.33" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="147.66" y="218">loads the card tree</tspan></text>
+</g>
+<g class="wd-edge" data-edge="graph3d-&gt;state" data-cards="">
+<path class="wd-hitarea" d="M367.51,144 L367.51,171 L367.51,215 L367.51,259 L367.51,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M367.51,144 L367.51,171 L367.51,215 L367.51,259 L367.51,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="261.33" y="198" width="212.36" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="367.51" y="218">loads nodes and edges</tspan></text>
+</g>
+<g class="wd-edge" data-edge="detail-&gt;state" data-cards="">
+<path class="wd-hitarea" d="M772.09,144 L772.09,171 L772.09,215 L772.09,259 L772.09,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M772.09,144 L772.09,171 L772.09,215 L772.09,259 L772.09,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="706.1" y="198" width="131.98" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="772.09" y="218">loads one card's full text</tspan></text>
+</g>
+<g class="wd-edge" data-edge="rollup-&gt;state" data-cards="">
+<path class="wd-hitarea" d="M1039.18,144 L1039.18,171 L1039.18,215 L1039.18,259 L1039.18,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M1039.18,144 L1039.18,171 L1039.18,215 L1039.18,259 L1039.18,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="972.08" y="198" width="134.2" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="1039.18" y="212">loads decided, open, and</tspan><tspan x="1039.18" y="224">stale counts</tspan></text>
+</g>
+<g class="wd-edge" data-edge="approvebar-&gt;live" data-cards="">
+<path class="wd-hitarea" d="M1443.01,144 L1443.01,171 L1443.01,215 L1443.01,259 L1443.01,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M1443.01,144 L1443.01,171 L1443.01,215 L1443.01,259 L1443.01,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="1374.76" y="198" width="136.5" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="1443.01" y="212">asks before a risky action</tspan><tspan x="1443.01" y="224">runs</tspan></text>
+</g>
+<g class="wd-edge" data-edge="composer-&gt;live" data-cards="">
+<path class="wd-hitarea" d="M1800.85,144 L1800.85,171 L1800.85,215 L1800.85,259 L1800.85,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M1800.85,144 L1800.85,171 L1800.85,215 L1800.85,259 L1800.85,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="1744.2" y="198" width="113.29" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="1800.85" y="218">sends what you type</tspan></text>
+</g>
+<g class="wd-edge" data-edge="transcript-&gt;live" data-cards="">
+<path class="wd-hitarea" d="M2166.54,144 L2166.54,171 L2166.54,215 L2166.54,259 L2166.54,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2166.54,144 L2166.54,171 L2166.54,215 L2166.54,259 L2166.54,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="2100.91" y="198" width="131.25" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="2166.54" y="212">streams the reply as it is</tspan><tspan x="2166.54" y="224">written</tspan></text>
+</g>
+<g class="wd-edge" data-edge="tabs-&gt;live" data-cards="">
+<path class="wd-hitarea" d="M2542.29,144 L2542.29,171 L2542.29,215 L2542.29,259 L2542.29,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2542.29,144 L2542.29,171 L2542.29,215 L2542.29,259 L2542.29,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="2472.06" y="198" width="140.45" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="2542.29" y="218">switches which chat is live</tspan></text>
+</g>
+<g class="wd-edge" data-edge="header-&gt;live" data-cards="">
+<path class="wd-hitarea" d="M2891.05,144 L2891.05,171 L2891.05,215 L2891.05,259 L2891.05,286" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2891.05,144 L2891.05,171 L2891.05,215 L2891.05,259 L2891.05,286" fill="none" stroke="#5fb0c9" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-read)"/>
+<rect x="2828.96" y="198" width="124.18" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fb0c9"><tspan x="2891.05" y="212">shows the model and</tspan><tspan x="2891.05" y="224">context left</tspan></text>
+</g>
+<g class="wd-edge" data-edge="state-&gt;foldfn" data-cards="">
+<path class="wd-hitarea" d="M569.38,366 L569.38,393 L569.38,437 L569.38,481 L569.38,508" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M569.38,366 L569.38,393 L569.38,437 L569.38,481 L569.38,508" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="487.69" y="420" width="163.38" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="569.38" y="440">asks for today's state</tspan></text>
+</g>
+<g class="wd-edge" data-edge="foldfn-&gt;log" data-cards="">
+<path class="wd-hitarea" d="M569.38,588 L569.38,615 L569.38,659 L569.38,703 L569.38,730" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M569.38,588 L569.38,615 L569.38,659 L569.38,703 L569.38,730" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="487.69" y="642" width="163.38" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="569.38" y="662">reads every past decision</tspan></text>
+</g>
+<g class="wd-edge" data-edge="live-&gt;runner" data-cards="">
+<path class="wd-hitarea" d="M2166.54,366 L2166.54,393 L2166.54,437 L2166.54,481 L2166.54,508" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2166.54,366 L2166.54,393 L2166.54,437 L2166.54,481 L2166.54,508" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="2100.91" y="420" width="131.25" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="2166.54" y="434">starts the agent for a</tspan><tspan x="2166.54" y="446">message</tspan></text>
+</g>
+<g class="wd-edge" data-edge="runner-&gt;child" data-cards="">
+<path class="wd-hitarea" d="M2166.54,588 L2166.54,615 L2166.54,659 L2166.54,703 L2166.54,730" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2166.54,588 L2166.54,615 L2166.54,659 L2166.54,703 L2166.54,730" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="2100.91" y="642" width="131.25" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="2166.54" y="662">runs the agent</tspan></text>
+</g>
+<g class="wd-edge" data-edge="runner-&gt;chatlog" data-cards="">
+<path class="wd-hitarea" d="M1667.92,588 L1667.92,615 L1667.92,659 L1667.92,703 L1667.92,730" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M1667.92,588 L1667.92,615 L1667.92,659 L1667.92,703 L1667.92,730" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="1605.63" y="642" width="124.57" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="1667.92" y="662">saves the conversation</tspan></text>
+</g>
+<g class="wd-edge" data-edge="runner-&gt;lock" data-cards="">
+<path class="wd-hitarea" d="M2693.74,588 L2693.74,615 L2693.74,659 L2693.74,703 L2693.74,730" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2693.74,588 L2693.74,615 L2693.74,659 L2693.74,703 L2693.74,730" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="2626.51" y="642" width="134.45" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="2693.74" y="656">checks no other server is</tspan><tspan x="2693.74" y="668">running</tspan></text>
+</g>
+<g class="wd-edge" data-edge="child-&gt;gate" data-cards="">
+<path class="wd-hitarea" d="M2019.2,810 L2019.2,837 L2019.2,877 L2019.2,917 L2019.2,944" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2019.2,810 L2019.2,837 L2019.2,877 L2019.2,917 L2019.2,944" fill="none" stroke="#9d7bd8" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-agent)"/>
+<rect x="1951.49" y="864" width="135.42" height="26" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#9d7bd8"><tspan x="2019.2" y="880">checks before a tool runs</tspan></text>
+</g>
+<g class="wd-edge" data-edge="gate-&gt;allow" data-cards="">
+<path class="wd-hitarea" d="M2019.2,1024 L2019.2,1051 L2019.2,1095 L2019.2,1139 L2019.2,1166" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2019.2,1024 L2019.2,1051 L2019.2,1095 L2019.2,1139 L2019.2,1166" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="1951.49" y="1078" width="135.42" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="2019.2" y="1092">checks the saved yes/no</tspan><tspan x="2019.2" y="1104">list</tspan></text>
+</g>
+<g class="wd-edge" data-edge="gate-&gt;approvebar" data-cards="">
+<path class="wd-hitarea" d="M1924.49,944 L1924.49,917 L1884.49,917 L1800.85,917 L1667.92,917 L1578.63,917 L1538.45,917 L1443.01,917 L1347.58,917 L1260.34,917 L1260.34,877 L1260.34,837 L1260.34,770 L1260.34,703 L1260.34,659 L1260.34,615 L1260.34,548 L1260.34,481 L1260.34,437 L1260.34,393 L1260.34,326 L1260.34,259 L1260.34,215 L1260.34,171 L1260.34,104 L1334.4,104" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M1924.49,944 L1924.49,917 L1884.49,917 L1800.85,917 L1667.92,917 L1578.63,917 L1538.45,917 L1443.01,917 L1347.58,917 L1260.34,917 L1260.34,877 L1260.34,837 L1260.34,770 L1260.34,703 L1260.34,659 L1260.34,615 L1260.34,548 L1260.34,481 L1260.34,437 L1260.34,393 L1260.34,326 L1260.34,259 L1260.34,215 L1260.34,171 L1260.34,104 L1334.4,104" fill="none" stroke="#5c8fd6" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-state)"/>
+<rect x="1200.28" y="420" width="120.12" height="34" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5c8fd6"><tspan x="1260.34" y="440">asks you when unsure</tspan></text>
+</g>
+<g class="wd-edge" data-edge="child-&gt;cli" data-cards="">
+<path class="wd-hitarea" d="M2313.43,810 L2313.43,837 L2313.43,877 L2313.43,917 L2313.43,944" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2313.43,810 L2313.43,837 L2313.43,877 L2313.43,917 L2313.43,944" fill="none" stroke="#9d7bd8" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-agent)"/>
+<rect x="2246.16" y="864" width="134.53" height="26" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#9d7bd8"><tspan x="2313.43" y="880">changes the map</tspan></text>
+</g>
+<g class="wd-edge" data-edge="cli-&gt;log" data-cards="">
+<path class="wd-hitarea" d="M2426.38,1024 L2426.38,1051 L2426.38,1095 L2426.38,1139 L2426.38,1199.5 L2426.38,1260 L2313.43,1260 L2166.54,1260 L2019.2,1260 L1924.49,1260 L1884.49,1260 L1800.85,1260 L1667.92,1260 L1578.63,1260 L1538.45,1260 L1443.01,1260 L1347.58,1260 L1260.34,1260 L1173.28,1260 L1133.28,1260 L1039.18,1260 L945.08,1260 L905.08,1260 L865.08,1260 L772.09,1260 L772.09,1199.5 L772.09,1139 L772.09,1095 L772.09,1051 L772.09,984 L772.09,917 L772.09,877 L772.09,837 L772.09,770 L692.1,770" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M2426.38,1024 L2426.38,1051 L2426.38,1095 L2426.38,1139 L2426.38,1199.5 L2426.38,1260 L2313.43,1260 L2166.54,1260 L2019.2,1260 L1924.49,1260 L1884.49,1260 L1800.85,1260 L1667.92,1260 L1578.63,1260 L1538.45,1260 L1443.01,1260 L1347.58,1260 L1260.34,1260 L1173.28,1260 L1133.28,1260 L1039.18,1260 L945.08,1260 L905.08,1260 L865.08,1260 L772.09,1260 L772.09,1199.5 L772.09,1139 L772.09,1095 L772.09,1051 L772.09,984 L772.09,917 L772.09,877 L772.09,837 L772.09,770 L692.1,770" fill="none" stroke="#9d7bd8" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-agent)"/>
+<rect x="1374.76" y="1247" width="136.5" height="26" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#9d7bd8"><tspan x="1443.01" y="1263">appends the change</tspan></text>
+</g>
+<g class="wd-edge" data-edge="log-&gt;tracker" data-cards="">
+<path class="wd-hitarea" d="M569.38,810 L569.38,837 L569.38,877 L569.38,917 L569.38,944" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M569.38,810 L569.38,837 L569.38,877 L569.38,917 L569.38,944" fill="none" stroke="#5fbf8f" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-write)"/>
+<rect x="487.69" y="864" width="163.38" height="26" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#5fbf8f"><tspan x="569.38" y="880">copies a decision out</tspan></text>
+</g>
+<g class="wd-edge" data-edge="dev-&gt;runner" data-cards="">
+<path class="wd-hitarea" d="M3007.14,548 L2980.14,548 L2891.05,548 L2801.96,548 L2774.96,548" fill="none" stroke="transparent" stroke-width="11"/>
+<path class="wd-line" d="M3007.14,548 L2980.14,548 L2891.05,548 L2801.96,548 L2774.96,548" fill="none" stroke="#d9718a" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#arrow-dev)"/>
+<rect x="2828.96" y="508" width="124.18" height="80" rx="3" fill="#0a0d12"/>
+<text text-anchor="middle" font-size="9.5" fill="#d9718a"><tspan x="2891.05" y="545">reloads the server on a</tspan><tspan x="2891.05" y="557">code change</tspan></text>
+</g>
+</svg>

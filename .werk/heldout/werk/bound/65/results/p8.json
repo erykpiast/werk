@@ -1,0 +1,52 @@
+[
+ {
+  "id": "24.1",
+  "result": "pass",
+  "detail": "Added card werk-shots to the project log, typed 'Look at #wer'; menu listed #werk-shots with its title, Arrow keys + Enter gave 'Look at #werk-shots ', menu closed; '`#wer' opened no menu. Position 'below the caret' not measured."
+ },
+ {
+  "id": "24.2",
+  "result": "pass",
+  "detail": "Pasted a PNG after 'What is wrong here? '; composer got [Image #1], chip showed thumbnail; Enter sent; agent turn had '[Image #1] = <.werk/attachments path>' and 'Open each image above with Read'; git status -uall shows nothing from attachments."
+ },
+ {
+  "id": "24.3",
+  "result": "pass",
+  "detail": "Dropped a 25 MB PNG; [Image #1] and chip appeared with a refusal naming 20 MB; after Enter the agent turn had no image path and the attachments folder held no file."
+ },
+ {
+  "id": "24.4",
+  "result": "pass",
+  "detail": "Pasted PNG then JPEG; removed chip 1; token [Image #1] remained, one chip with the JPEG thumbnail (same src); agent turn mapped [Image #1] to the .jpg path, no #2."
+ },
+ {
+  "id": "24.5",
+  "result": "pass",
+  "detail": "Empty name, missing name, and ../ names answered 404 with no file content; then '/' opened the /review /recall menu."
+ },
+ {
+  "id": "25.1",
+  "result": "pass",
+  "detail": "Held the upload 1.5 s: spinner visible, then thumbnail; message showed image under [Image #1] in chat; agent turn had the stored path and the Read instruction, no image bytes."
+ },
+ {
+  "id": "25.2",
+  "result": "pass",
+  "detail": "Pasted 2 MB PNG then 25 MB PNG; chip 1 thumbnail, chip 2 refusal 'larger than 20 MB'; removing chip 2 removed [Image #2]; agent turn listed only [Image #1]."
+ },
+ {
+  "id": "25.3",
+  "result": "pass",
+  "detail": "Two PNGs; removed chip 1; one chip reads [Image #1], text holds [Image #1] once and no #2; agent path matches the remaining image."
+ },
+ {
+  "id": "25.4",
+  "result": "pass",
+  "detail": "Delayed the upload POST; Enter while the spinner showed sent nothing for 800 ms; after release the message went out with [Image #1] mapped to the stored path."
+ },
+ {
+  "id": "25.5",
+  "result": "pass",
+  "detail": "Empty-name and climbing-name requests answered 404; a later paste showed a thumbnail and the chat answered a second turn."
+ }
+]

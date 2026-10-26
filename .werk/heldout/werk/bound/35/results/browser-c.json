@@ -1,0 +1,12 @@
+[
+{"id":"24.1","result":"pass","detail":"Added and accepted card werk-shots via CLI; typed 'Look at #wer' in the composer; Cards listbox opened with werk-shots and its title; arrows+Enter gave 'Look at #werk-shots'; menu closed; '`#wer' opened no menu."},
+{"id":"24.2","result":"pass","detail":"Typed text, pasted PNG (upload held to see the spinner): '[Image #1]' at caret, spinner then thumbnail; Enter: agent turn maps [Image #1] to .werk/attachments/*.png with the 'Open each image above with Read' line; git status (all untracked) lists no attachments."},
+{"id":"24.3","result":"pass","detail":"Dropped a 25 MB PNG on the composer: '[Image #1]' and chip with a '20 MB' refusal; after adding words and Enter, the turn has no [Image token or path and the attachments folder is empty."},
+{"id":"24.4","result":"pass","detail":"Pasted PNG then JPEG; removed chip 1: composer reads '[Image #1]', one chip left with the .jpg thumbnail; the turn maps [Image #1] to the stored .jpg path."},
+{"id":"24.5","result":"pass","detail":"Empty name, '../log.jsonl' and '../../../../etc/passwd' name requests all answered 404; after a first message (so the agent named its commands via a scripted init line), typing '/' opened the Commands menu."},
+{"id":"25.1","result":"fail","detail":"Paste shows spinner chip, '[Image #1]' at caret, then thumbnail; the turn carries the stored path, the Read instruction and no image bytes. But after Enter the chat log shows the message with no image under '[Image #1]': the chat pane has no img element (client/app/chat-log.tsx has no image rendering)."},
+{"id":"25.2","result":"pass","detail":"Pasted 2 MB then 25 MB PNG: first chip has a thumbnail, second shows a 20 MB refusal; removing the second removes '[Image #2]' from the text; the turn lists only [Image #1] with its path; one file stored."},
+{"id":"25.3","result":"pass","detail":"Pasted two PNGs, removed chip 1: text has '[Image #1]' once and no '[Image #2]', the remaining chip shows [Image #1]; the turn maps it to the second upload's stored name."},
+{"id":"25.4","result":"pass","detail":"Held the upload so the spinner stayed; typed a question and pressed Enter: no message reached the agent; after the upload finished the message went out with [Image #1] mapped to the stored path."},
+{"id":"25.5","result":"pass","detail":"Empty-name and climbing-name image requests answered 404; the server stayed up: a later paste showed its thumbnail and a send got a reply."}
+]

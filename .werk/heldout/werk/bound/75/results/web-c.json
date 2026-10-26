@@ -1,0 +1,77 @@
+[
+ {
+  "id": "18.1",
+  "result": "pass",
+  "detail": "web-c-18.e2e.ts: `werk add sqlite --parent storage`, clicked tile into /map/sqlite. The hero has a blue border rgb(80,162,255) and a blue background rgb(239,246,255), the tag 'proposed', a \u2713 (Accept) in [data-role=actions], and no discard control. A click on \u2713 redraws with window flag kept: data-proposed=false, no tag, border grey rgb(209,213,220). The log gains one change.accepted {id:sqlite} with actor 'you', the same type/actor/payload shape as `werk accept twin --actor you`."
+ },
+ {
+  "id": "18.2",
+  "result": "pass",
+  "detail": "Seeded decided 'Cache layer', `werk propose cache --ops` five->ten, opened /map/cache. The border is blue rgb(80,162,255) and the background is white rgb(255,255,255), with no 'proposed' tag. <ins>ten</ins> and <del>five</del> have background rgb(219,234,254) and del has line-through, and only 2 marks are in the hero. \u2713 redraws without reload, and the body reads 'Entries expire after ten minutes.' with 0 marks."
+ },
+ {
+  "id": "18.3",
+  "result": "pass",
+  "detail": "Decided card body = 10-item list + paragraph. Proposed ops: insert 'brand new item' after item 5, and change the paragraph into a 2-item list. The rendered body has 11 li, only the new li holds ins[data-diff=added] (bg rgb(219,234,254)), and the 10 old li have no marks. The old paragraph is in div[data-diff=removed] (blue bg, line-through), and the new list is in div[data-diff=added] (blue bg)."
+ },
+ {
+  "id": "18.4",
+  "result": "pass",
+  "detail": "Server>Auth>{Tokens,Sessions}. \u2715 on /map/auth opens one dialog with 3 buttons: 'Remove the subtree: 3 cards leave the map', 'Remove only #auth: 1 card leaves, 2 children move up to #server Server', 'Cancel'. The reparent redraws /map/server with no reload: auth tile gone, tokens and sessions tiles shown, and one new node.removed {id:auth, reparent:true} event. After `werk restore auth --actor you`, the auth tile shows live, tokens/sessions leave server, and /map/auth has the same article HTML and child tiles as before."
+ },
+ {
+  "id": "18.5",
+  "result": "pass",
+  "detail": "After `werk propose legacy --remove`, the legacy tile has a red border rgb(255,100,103) and a red background rgb(254,242,242). \u2715 on 'Old notes' then Cancel: the card stays and the log text is unchanged. A Node POST /api/remove {id:notes} with no x-werk-token gets 403, the log is unchanged, and the page HTML is unchanged with the window flag kept."
+ },
+ {
+  "id": "70.1",
+  "result": "fail",
+  "detail": "`werk add refunds --parent payments`. On /map/payments the 'refunds' tile shows under Payments and is dashed, and Payments is solid with a grey border rgb(209,213,220). The ghost is blue, not grey: border rgb(80,162,255) (oklch 0.707 0.165 254.6), background rgb(239,246,255). The product draws ghosts blue on purpose (card-look.ts proposalLook), so this is not a binder error."
+ },
+ {
+  "id": "70.2",
+  "result": "pass",
+  "detail": "Clicked the ghost tile into /map/refunds and pressed \u2713. The log has one new change.accepted {id:refunds} with actor 'you', and the article has data-proposed=false and no Accept button. The 'Refines' link back to /map/payments shows the refunds tile with data-proposed=false, and the window flag is kept (no reload)."
+ },
+ {
+  "id": "70.3",
+  "result": "pass",
+  "detail": "Ghosts refunds (under payments) and partial (under refunds). \u2713 on /map/partial makes partial data-proposed=false. Following the Refines links shows refunds real with the partial tile real under it, and payments with the refunds tile real."
+ },
+ {
+  "id": "70.4",
+  "result": "fail",
+  "detail": "Ghosts refunds + chargebacks under payments, and refunds has a ghost option (alternative_to) and a ghost source (supported_by). /map/payments has 0 Accept-like buttons, so no joint accept. \u2713 on /map/refunds makes refunds real, and its option and source rows lose '(proposed)' and have data-pending=false. The chargebacks tile is still a dashed ghost, but blue (border rgb(80,162,255), bg rgb(239,246,255)), not grey as the step says. Same cause as 70.1."
+ },
+ {
+  "id": "70.5",
+  "result": "pass",
+  "detail": "Two browser contexts: window 1 on /map/refunds and window 2 on /map/payments, both with the ghost tile data-proposed=true. \u2713 in window 1, then window 2's refunds tile turns data-proposed=false with no reload (window flag kept), through the live channel."
+ },
+ {
+  "id": "72.1",
+  "result": "pass",
+  "detail": "Seeded decided A, B->A, C->B, then `werk reopen a --reason rejected --why ...`. Tile b has data-stale=true and tile c has data-stale=false. On /map/b the 'stale' tag is red rgb(193,0,7), the box tint is red rgb(254,242,242), and the left edge stays decided green rgb(0,166,62) with the status tag 'decided'. /map/c has no stale or paused tag and no mark sections."
+ },
+ {
+  "id": "72.2",
+  "result": "pass",
+  "detail": "`werk reopen a --reason postponed`. /map/b and /map/c each show a 'paused' tag with grey text rgb(74,85,101) and border rgb(153,161,175) (Tailwind gray, HSL saturation <0.25), keep the green decided edge rgb(0,166,62) and status 'decided', and have no stale tag. Reading: the mark is checked on the card view, because the map tiles show no paused indicator at all (tile b meta is only '#b I decide')."
+ },
+ {
+  "id": "72.3",
+  "result": "pass",
+  "detail": "`werk reopen a --reason rejected --why 'The vendor dropped this API'`. /map/b shows the heading 'Why this card is stale' and 'STALE from #a Card A, rejected, <date> / The vendor dropped this API / #b \u2192 #a Card A depends_on'. The cause line names card A with its reopen reason, which the binder reads as 'card A was reopened'; the link, the reason and the sentence also show."
+ },
+ {
+  "id": "72.4",
+  "result": "fail",
+  "detail": "`werk reopen a --reason postponed --why 'We build the engine next quarter'`. /map/c shows the heading 'Why this card is paused', not 'Why this card is stale'. The section names '#a Card A', 'postponed', the sentence and 'via #b', but has no text that says card A was reopened."
+ },
+ {
+  "id": "72.5",
+  "result": "fail",
+  "detail": "B depends on A and X. `werk reopen x --reason postponed`, then `werk reopen a --reason rejected`. /map/b tag row reads [card, decided, stale, paused, I decide]: the red stale tag shows and the stale section names #a and 'rejected', but the grey 'paused' tag also shows. card-html.ts tagRow renders isStale and isPaused independently."
+ }
+]

@@ -1,0 +1,9 @@
+exit 0
+CI=true bun run test
+$ bun test
+bun test v1.4.1 (4661e494f)
+
+ 419 pass
+ 0 fail
+ 1765 expect() calls
+Ran 419 tests across 45 files. [136.86s]

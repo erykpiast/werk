@@ -1,0 +1,4 @@
+#!/bin/sh
+# The fake agent under the real agent's name. The test run puts this folder first on PATH
+# (#werk-test-env), so every process a test starts runs the fake, never the real agent.
+exec bun "$(dirname "$0")/../fake-agent.ts" "$@"

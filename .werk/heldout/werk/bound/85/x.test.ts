@@ -1,0 +1,20 @@
+import { test } from "bun:test";
+import { freshProject } from "../src/test/project.ts";
+import { seed, root, decided, card, edge, ok, w } from "./h.ts";
+test("x", async () => {
+  const p = freshProject();
+  seed(p, [...root(), decided("a"), decided("b"), decided("c"), edge("b","a"), edge("c","b")]);
+  console.log(JSON.stringify(await w(p,["reopen","a","--reason","rejected","--why","the storage choice is wrong"])));
+  console.log((await w(p,["stale"])).out);
+  console.log((await w(p,["show","b"])).out);
+  console.log((await w(p,["show","c"])).out);
+  console.log(JSON.stringify(await w(p,["rederive","b","--confirm","a"])));
+  console.log((await w(p,["stale"])).out);
+  const q = freshProject();
+  seed(q, [...root(), decided("a"), decided("b"), decided("c"), decided("d"), edge("b","a"), edge("c","b"), edge("d","c")]);
+  await w(q,["reopen","a","--reason","postponed","--why","waits"]);
+  console.log((await w(q,["stale"])).out);
+  console.log((await w(q,["show","d"])).out);
+  console.log((await w(q,["status","a","decided"])).err);
+  console.log((await w(q,["stale"])).out);
+});

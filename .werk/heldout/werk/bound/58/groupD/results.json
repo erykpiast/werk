@@ -1,0 +1,132 @@
+[
+ {
+  "id": "24.1",
+  "result": "pass",
+  "detail": "Typed 'Look at #wer'; menu listed werk-shots with title; ArrowDown/Up + Enter gave 'Look at #werk-shots'; menu closed; '`#wer' opened no menu."
+ },
+ {
+  "id": "24.2",
+  "result": "pass",
+  "detail": "Pasted PNG: [Image #1] at caret, chip spinner then thumbnail; Enter sent turn mapping [Image #1] to .werk/attachments path with an open-image instruction; git status shows no attachments file."
+ },
+ {
+  "id": "24.3",
+  "result": "pass",
+  "detail": "25 MB paste showed [Image #1] chip with '20 MB' refusal alert. Enter with only the refused token sends no turn (token is stripped, text empty), so no turn carries a path and the attachments folder stays empty. Read 'turn carries no path' as vacuously true when no turn goes out."
+ },
+ {
+  "id": "24.4",
+  "result": "pass",
+  "detail": "Pasted PNG then JPEG; removed chip 1; composer reads [Image #1], one chip left; turn maps [Image #1] to a .jpg path."
+ },
+ {
+  "id": "24.5",
+  "result": "pass",
+  "detail": "Empty name and ../ climbing name on /api/projects/project/image answered 404 with no file content; typing '/' in the composer then opened the slash menu."
+ },
+ {
+  "id": "25.1",
+  "result": "fail",
+  "detail": "Paste showed spinner chip then thumbnail, [Image #1] in composer; agent turn carried the path, Read instruction, no bytes. But after sending, the chat log shows the message text with no image shown under [Image #1] (no img in the chat pane); client chat-log has no image rendering."
+ },
+ {
+  "id": "25.2",
+  "result": "pass",
+  "detail": "2 MB PNG chip ok, 25 MB chip showed 20 MB refusal; removing it dropped [Image #2]; turn listed only [Image #1] with its path."
+ },
+ {
+  "id": "25.3",
+  "result": "pass",
+  "detail": "Two pastes, removed chip 1; composer '[Image #1]' once, no #2; turn mapped [Image #1] to the remaining image's path."
+ },
+ {
+  "id": "25.4",
+  "result": "pass",
+  "detail": "Upload delayed 2.5 s; Enter during spinner sent nothing; after the thumbnail the message went out with [Image #1] path."
+ },
+ {
+  "id": "25.5",
+  "result": "pass",
+  "detail": "Empty name and ../ name on /api/projects/project/image answered 404; a further paste showed a thumbnail and chat answered."
+ },
+ {
+  "id": "44.1",
+  "result": "fail",
+  "detail": "Five columns in order, cards in right columns, blocker count 2 and retry count 3 shown. But 'werk ticket move r/06 building' exits 2: the ticket verb only knows 'restore'. The move/archive/list subverbs are missing (27's own work)."
+ },
+ {
+  "id": "44.2",
+  "result": "pass",
+  "detail": "Title clamps to 2 lines with ellipsis, title attribute holds full text, clicking opens a drawer beneath the board with id above the full title."
+ },
+ {
+  "id": "44.3",
+  "result": "pass",
+  "detail": "Live dot at top-left of building card while pid alive; after killing the process with no session end, dot vanished and title did not sit further right."
+ },
+ {
+  "id": "44.4",
+  "result": "pass",
+  "detail": "Drawer shows live log with timed lines, sidebar (cites, blockers, retries, checks, stories, touches), Decisions with proposal; cite click opens /map/root; rail state kept after reload; moving ticket out of building removes live log, text and sidebar remain."
+ },
+ {
+  "id": "44.5",
+  "result": "pass",
+  "detail": "At 600 px the board scrolls sideways, columns >= 200 px, done column reachable; at 1600 px no overflow and five columns fill the width."
+ },
+ {
+  "id": "27.1",
+  "result": "fail",
+  "detail": "'werk ticket move auth/01 blocked --reason ...' exits 2 (unknown flag --reason / only restore subverb). move, archive and list subverbs do not exist."
+ },
+ {
+  "id": "27.2",
+  "result": "fail",
+  "detail": "'ticket move auth/01 blocked' exits 2 with the restore usage, not a message asking for a reason; ticket list does not exist."
+ },
+ {
+  "id": "27.3",
+  "result": "pass",
+  "detail": "restore of a never-archived ticket (02) and of unknown 99 both exit 1; board.jsonl byte-for-byte unchanged."
+ },
+ {
+  "id": "27.4",
+  "result": "fail",
+  "detail": "'ticket archive auth/03' exits 2 with the restore usage; no 'done ticket cannot be archived' message and no 'ticket list'."
+ },
+ {
+  "id": "27.5",
+  "result": "fail",
+  "detail": "'ticket move ... --reason' fails with unknown flag; archive and list subverbs are missing."
+ },
+ {
+  "id": "29.1",
+  "result": "unbuilt",
+  "detail": "After a first plan (tickets 1-3) and a changed map, 'werk plan app' again is refused: 'app has 3 ticket(s) on the board. Archive them before a new plan.' No spec extension or number continuation.",
+  "owner": "werk/33"
+ },
+ {
+  "id": "29.2",
+  "result": "unbuilt",
+  "detail": "Re-plan after removing a card is refused the same way (3 tickets on the board); no archive with reason.",
+  "owner": "werk/33"
+ },
+ {
+  "id": "29.3",
+  "result": "unbuilt",
+  "detail": "After a retitle of cited card c1, ticket app/02 stays ready with no block reason; re-plan refused.",
+  "owner": "werk/33"
+ },
+ {
+  "id": "29.4",
+  "result": "unbuilt",
+  "detail": "After a body change on cited card c1, ready ticket app/02 stays ready; no blocking from changed cited cards.",
+  "owner": "werk/33"
+ },
+ {
+  "id": "29.5",
+  "result": "unbuilt",
+  "detail": "'werk add' under a planned subtree prints only 'proposed'; no cards-cited failure naming the new card.",
+  "owner": "werk/33"
+ }
+]

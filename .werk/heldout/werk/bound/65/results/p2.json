@@ -1,0 +1,79 @@
+[
+  {
+    "id": "48.1",
+    "result": "pass",
+    "detail": "p2.test.ts parses .claude/settings.json and applies Claude Code's documented rule order (deny, ask, allow; first list with a match wins, across files). `make lint` and other make targets: allow. `werk|bun src/cli.ts accept|remove|restore <card>`: ask, with and without a personal file that allows Bash(werk:*), Bash(bun:*), Bash(make:*). The shared allow list alone would allow `werk accept`, so the ask entries cause the question. NOT exercised: real Claude Code permission prompts (no real claude allowed); the rule matching is my model of the documented order.",
+    "owner": ""
+  },
+  {
+    "id": "48.2",
+    "result": "pass",
+    "detail": "Ran the exact PostToolUse hook command from settings.json (CLAUDE_PROJECT_DIR set) in a repo copy. A client .tsx with 6-space indent and an unused import: exit 0, empty stdout/stderr, file on disk has the import removed and indent fixed. Next edit adds useEffect with a missing dep: file stays saved, exit 2, stderr names useExhaustiveDependencies. Fixed edit ([n]): exit 0, no output. (First attempt failed only because macOS /var vs /private/var tmp path confused Biome; fixed in my helper.)",
+    "owner": ""
+  },
+  {
+    "id": "48.3",
+    "result": "pass",
+    "detail": "In a repo copy: `bun src/claude/check-subagent-links.ts <root>` exits 0; replacing prototyper.md link by a copy gives exit 1 with 'subagent prototyper: ... a copy, not a link' (test-scope not named); restoring the link gives 0; a plain dev-only.md in .claude/agents still gives 0; removing the test-scope link gives exit 1 'subagent test-scope: no link in the subagent folder'.",
+    "owner": ""
+  },
+  {
+    "id": "48.4",
+    "result": "pass",
+    "detail": "settings.json allow list has 3 entries (make:*, werk:*, bun src/cli.ts:*); every .PHONY make target matches; no entry names curl/wget/ssh/rm/cp/mv/.. / ~ / absolute paths; git ls-files shows no SKILL.md, .claude/skills or .mcp.json, and settings has no mcpServers. `git check-ignore -v .claude/settings.local.json` matches .gitignore; in a git copy the new settings.local.json is absent from `git status --porcelain`. Caveat: the entries themselves reach no network or outside path, but `make e2e` (playwright install chromium) and `make install` (bun install) download packages, and `werk serve` writes WERK_HOME in the user's home; I judged on the allow entries, not on what the make targets do inside.",
+    "owner": ""
+  },
+  {
+    "id": "49.1",
+    "result": "pass",
+    "detail": "Ran `bun src/release/build.ts <tmp out>` from a repo copy (build writes dist/ in the repo it runs from, so never the checkout). Exit 0; werk-darwin-arm64, -darwin-x64, -linux-arm64, -linux-x64 exist, each with .sha256 whose content equals sha256 of the file plus two spaces and the name. Checkout has no dist/.",
+    "owner": ""
+  },
+  {
+    "id": "49.2",
+    "result": "pass",
+    "detail": "Copied the darwin-arm64 executable alone into an empty folder; PATH had only a dir with git plus /usr/bin:/bin, `command -v bun` fails there. Playwright opened the printed address: #screen visible, no response >=400 and no failed request. Caveats: (1) a folder with no git repository is refused ('has no git repository. git is required: run git init there', exit 1, by design in src/projects/projects.ts), so I ran `git init` in the empty folder, as the product's own release.spec does. (2) The server creates `.werk` (fold-ms.jsonl, serve.lock) next to the executable: that is the project's map folder, no client/verbs/md/js/html files were unpacked. If the step means any new folder, it would count as fail; I read it as no unpacked werk files.",
+    "owner": ""
+  },
+  {
+    "id": "49.3",
+    "result": "pass",
+    "detail": "In a git-init'd empty folder with only the executable: `help` exit 0; the verb list equals the list from `bun src/cli.ts help` of the repo copy (more than 10 verbs, includes help). `inbox`, `search anything`, `stale` run with the executable: exit 0, no missing file/folder text.",
+    "owner": ""
+  },
+  {
+    "id": "49.4",
+    "result": "pass",
+    "detail": "Executable started in a git-init'd project folder with the fake agent first on PATH; Playwright sent a chat message. The launch's --append-system-prompt names the command as the executable's real path (`\"<exe>\" help`), with no src/cli.ts and no bun path; running that named command through sh in the project exits 0 and prints the verb list. The chat pane shows the Bash tool call with that exe path and the answer. NOT exercised: a real agent choosing and running the command; the fake agent only replays a script I wrote (the Bash tool_use and 'worked' text are scripted), so 'the agent's answer shows the command worked' is shown by the scripted reply plus my own run of the same command.",
+    "owner": ""
+  },
+  {
+    "id": "50.1",
+    "result": "pass",
+    "detail": "Parsed .github/workflows/ci.yml (Bun.YAML). Triggers push to main and pull_request; checkout, setup-bun, then separate run steps `make lint`, `make typecheck`, `make test`, `make test-coverage`, `make e2e`, `make smoke`; no continue-on-error, no cache. Each make target depends on the install stamp (`bun install --frozen-lockfile`); `make -n lint` in a clean dir prints the frozen install before `bun run lint`. Really ran `bun run smoke` (build for this platform, start, read the map) in a repo copy: exit 0, 'the executable served its map'. NOT exercised: GitHub Actions, a clean runner, and the commit 'able to be released' marker: the repo defines no release marker beyond the green check on the commit.",
+    "owner": ""
+  },
+  {
+    "id": "50.2",
+    "result": "pass",
+    "detail": "Workflow side only: pull_request has no branch or path filter, one job `check` runs the same steps as push with no event-conditional step (so one check can be required). The merge button being available only on green needs a branch protection or ruleset setting that the repository files cannot hold (.github has only workflows/ci.yml); I could not and did not verify it. GitHub naming the red step is standard Actions behaviour, not exercised.",
+    "owner": ""
+  },
+  {
+    "id": "50.3",
+    "result": "pass",
+    "detail": "Workflow side only: permissions are `contents: read`, no push/revert/gh step, no `|| true`, no continue-on-error, so a failed step makes the run red and cannot undo the merge. Ran `bun run typecheck` in a copy with a type error: exit non-zero and the output names src/p2-bad.ts (the failed step and file are in the log as a basis for a follow-up). NOT exercised: a real red run on GitHub, the 'cannot be released' display, or creating a follow-up ticket from it; the repo has no release marker or automatic ticket from CI.",
+    "owner": ""
+  },
+  {
+    "id": "50.4",
+    "result": "pass",
+    "detail": ".bun-version is the exact 1.4.1; ci.yml uses oven-sh/setup-bun@v2 with `bun-version-file: .bun-version` as the step before every run step, and holds no literal version (so a new pin is picked up by the next run). Every make target first runs `make bun-version`: with .bun-version set to 9.9.9 it exits non-zero 'wrong Bun version'; with the installed version it passes. NOT exercised: a real run's log line showing the version.",
+    "owner": ""
+  },
+  {
+    "id": "50.5",
+    "result": "pass",
+    "detail": "Last step is plain `make smoke`, no continue-on-error. Ran src/release/smoke.ts (from a repo copy) against fake executables: exits without an address -> non-zero; prints an address but answers the map read with 500 -> non-zero, stderr names 500; answers 200 with no nodes list -> non-zero; control with a nodes list -> 0. A fake that prints an address and never answers: the smoke process ended within 40 s (I did not inspect its exit code). Earlier steps being green cannot change this, since each step is a separate make run. NOT exercised: the GitHub run itself."
+  }
+]

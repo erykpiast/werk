@@ -1,0 +1,6 @@
+[test]
+# Runs before any test file imports src/. Points every log path at a scratch directory and
+# puts a fake `claude` first on PATH, so no test can touch the real .werk or a real agent.
+preload = ["./src/test/setup.ts"]
+# bun test also picks up *.spec.ts. Those are Playwright's, under e2e/, and run with `bun run e2e`.
+root = "./src"

@@ -1,0 +1,68 @@
+[
+ {
+  "id": "14.1",
+  "result": "pass",
+  "detail": "Server with root 'Root', typed 'half a thought' in composer, `werk add` from CLI; 'Fresh idea' tile appeared, window marker survived (no reload), composer kept draft.",
+  "owner": ""
+ },
+ {
+  "id": "14.2",
+  "result": "pass",
+  "detail": "Dev server on app copy; edited src/serve/routes.ts fallback response; next request returned edited body, server output had 'reusing the live server on port N', one 'serving' line (same pid/port); `werk add` then showed 'After edit' with no reload.",
+  "owner": ""
+ },
+ {
+  "id": "14.3",
+  "result": "pass",
+  "detail": "Dev server on app copy; appended to client/main.tsx; page reloaded by itself (marker lost), same card title, composer kept 'draft that must survive'.",
+  "owner": ""
+ },
+ {
+  "id": "17.1",
+  "result": "pass",
+  "detail": "Viewport 1000 (left pane <700); clicked tiles root>a>b>c>d. Line shows '\u2026 \u203a Level c \u203a Level d' with current in bold, hover overlay shows Home \u203a Root card \u203a \u2026 \u203a Level d; clicking 'Level c' in the overlay opened it, path ends with it in bold. (The overlay covers the line, so the click goes to the overlay's Level c; the full path starts with a 'Home' crumb.)",
+  "owner": ""
+ },
+ {
+  "id": "17.2",
+  "result": "pass",
+  "detail": "Opened /map/root (counts do not show on the Home view by design): total + open/proto/decided dots sum to total, stale ring shown, no postponed count, titles name the status; opening a child with a smaller subtree changed total to 2.",
+  "owner": ""
+ },
+ {
+  "id": "17.3",
+  "result": "pass",
+  "detail": "#werk gives 12 rows, first is werk, prefix ids before contains ids, each row has dot/title/id, stale row has data-color=stale, Down then Up returns to first row, Enter opens /map/werk, crumb bold title, search box empty.",
+  "owner": ""
+ },
+ {
+  "id": "44.1",
+  "result": "fail",
+  "detail": "Five columns in order, cards in right columns, blockers \u22982 and retries \u21bb3 shown. Then `werk ticket move r/06 building` exits 2: the `ticket` verb has only the `restore` subverb ('ticket needs the subverb restore'). The command line move is the job of werk/27, not an unbuilt ticket. A move written to the board log redraws the board without reload (diagnostic 44.1b passes).",
+  "owner": ""
+ },
+ {
+  "id": "44.2",
+  "result": "pass",
+  "detail": "Viewport 600: title needs >=4 lines, card shows 2 lines (line-clamp 2), title attribute holds full title (native tooltip not observable headless), drawer opens below the board, header has id 'r/02' above the full title heading.",
+  "owner": ""
+ },
+ {
+  "id": "44.3",
+  "result": "pass",
+  "detail": "Dot visible in top-left corner with pulse animation while sleeper process lives, title indented 8-24px; after SIGKILL of process (no session end written) dot gone and indent <2px; building ticket with no session start never shows a dot.",
+  "owner": ""
+ },
+ {
+  "id": "44.4",
+  "result": "pass",
+  "detail": "Live log (61 lines, scrollable, above ticket text, full time 2026-10-25 10:00:00), sidebar Cites/Retries/Checks/Stories/Touches (Blockers hidden when none), Decisions lists proposal; cite click opens /map/root; folded rail survives reload; after ticket leaves building the live log is gone and text and sidebar stay.",
+  "owner": ""
+ },
+ {
+  "id": "44.5",
+  "result": "pass",
+  "detail": "600px: board scrollWidth > clientWidth, all five columns >=200px, Done reachable by scrolling; 1600px: no sideways overflow, five columns reach the right edge.",
+  "owner": ""
+ }
+]

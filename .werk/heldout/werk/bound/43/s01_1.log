@@ -1,0 +1,73 @@
+bun test v1.4.1 (4661e494f)
+
+s01_1.test.ts:
+--- make test ---
+ bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
++ @biomejs/biome@2.6.3
++ @playwright/test@1.64.1
++ @types/bun@1.4.4
++ typescript@7.0.2
+
+12 packages installed [27.00ms]
+bun run test
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+$ bun test --parallel=4 --timeout=15000
+
+ 142 pass
+ 0 fail
+ 347 expect() calls
+Ran 142 tests across 18 files. [3.97s]
+
+--- make test-coverage ---
+ bun run test:coverage
+ok    100.00%  scripts/coverage.ts
+ok    100.00%  web/highlight.ts
+ok    100.00%  web/md.ts
+ok    100.00%  web/reflink.ts
+ok    100.00%  web/escape.ts
+ok    100.00%  src/cli/args.ts
+ok    100.00%  src/cli/card-id.ts
+ok    100.00%  src/cli/help.ts
+ok    100.00%  src/cli/registry.ts
+ok    100.00%  src/cli/start.ts
+ok    100.00%  src/test/clean-env.ts
+ok    100.00%  src/test/fake-script.ts
+12 pure files, 0 under 90% of lines or without an own test file.
+$ bun scripts/coverage-gate.ts
+
+--- make test-coverage (after delete) ---
+ bun run test:coverage
+FAIL    0.00%  scripts/coverage.ts  (missing own test file scripts/coverage.test.ts)
+ok    100.00%  web/highlight.ts
+ok    100.00%  web/md.ts
+ok    100.00%  web/reflink.ts
+ok    100.00%  web/escape.ts
+ok    100.00%  src/cli/args.ts
+ok    100.00%  src/cli/card-id.ts
+ok    100.00%  src/cli/help.ts
+ok    100.00%  src/cli/registry.ts
+ok    100.00%  src/cli/start.ts
+ok    100.00%  src/test/clean-env.ts
+ok    100.00%  src/test/fake-script.ts
+12 pure files, 1 under 90% of lines or without an own test file.
+$ bun scripts/coverage-gate.ts
+error: script "test:coverage" exited with code 1
+make: *** [test-coverage] Error 1
+
+--- make test (after delete) ---
+ bun run test
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+$ bun test --parallel=4 --timeout=15000
+
+ 127 pass
+ 0 fail
+ 327 expect() calls
+Ran 127 tests across 17 files. [4.17s]
+
+
+ 1 pass
+ 0 fail
+ 46 expect() calls
+Ran 1 test across 1 file. [11.16s]

@@ -1,0 +1,67 @@
+[
+ {
+  "id": "05.1",
+  "result": "pass",
+  "detail": "Built a decided card auth via CLI, ran `werk add login --title 'Use magic links' --parent auth`: printed 'proposed', log +1 event; `werk show login` showed the title, proposed, refines auth and a rollup line."
+ },
+ {
+  "id": "05.2",
+  "result": "pass",
+  "detail": "Second add of login exited 1 with duplicate-id, log count unchanged, show login still had first title."
+ },
+ {
+  "id": "05.3",
+  "result": "pass",
+  "detail": "add --status decided exited 1 with message that decided comes only through the status verb; no new event; show pay says unknown card. (Wording 'not allowed on add' matched as 'not through ... add'.)"
+ },
+ {
+  "id": "05.4",
+  "result": "pass",
+  "detail": "add '#login' --title '#1 priority: magic links' --parent '#auth' printed proposed; show '#login' and show 'login' gave identical output with refines auth and the full title."
+ },
+ {
+  "id": "05.5",
+  "result": "pass",
+  "detail": "Hand-wrote log with a bad unknown-parent line between auth and login; show login prints Login as proposed, stderr lists 'problem at log line 2: unknown-card'; log file unchanged. The 'problems' ask was mapped to the show verb, the only place problems print."
+ },
+ {
+  "id": "06.1",
+  "result": "pass",
+  "detail": "Playwright: decided root, wrote a chat log, `werk quote root pricing ...` printed 'proposed'; the card page shows the excerpt row with is-proposed and a 'pending' link tag; root stays decided with its words."
+ },
+ {
+  "id": "06.2",
+  "result": "pass",
+  "detail": "Playwright: opened the excerpt's page, clicked the \u2713 (Accept the proposal); the \u2713 went away, and on the root card page the excerpt row under 'Evidence and excerpts' has no ghost class and no pending tag."
+ },
+ {
+  "id": "08.1",
+  "result": "pass",
+  "detail": "Removed decided auth with login and session and a link login->audit: one new event, show of all three refuses, `removed` lists all, audit no longer shows the link; restore brought back children and link; removed prints 'nothing is removed'."
+ },
+ {
+  "id": "08.2",
+  "result": "pass",
+  "detail": "remove auth --reparent: login and session refine platform; after restore they refine auth and not platform."
+ },
+ {
+  "id": "08.3",
+  "result": "pass",
+  "detail": "Removed login and session, restored login: link absent; restored session: link depends_on session shows."
+ },
+ {
+  "id": "08.4",
+  "result": "pass",
+  "detail": "Removed login; source rfc-6749 still shows and billing's Ev lists it; add login refused with message naming restore; no new event, login not in map."
+ },
+ {
+  "id": "08.5",
+  "result": "pass",
+  "detail": "`werk remove login` without --actor exited non-zero; login still shows; no new event."
+ },
+ {
+  "id": "08.6",
+  "result": "pass",
+  "detail": "`werk restore login` without --actor exited non-zero; login still absent; no new event."
+ }
+]

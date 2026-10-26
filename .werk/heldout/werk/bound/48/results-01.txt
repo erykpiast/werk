@@ -1,0 +1,10 @@
+VERDICT given ok
+VERDICT make test passes
+VERDICT make test no coverage check ok
+VERDICT test-coverage passes
+VERDICT one line per pure file with percent ok
+VERDICT 0% for src/cli/card-id.ts ok
+VERDICT test-coverage fails ok
+VERDICT names missing test ok
+VERDICT make test passes after delete ok
+VERDICT make test no coverage failure ok

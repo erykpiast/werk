@@ -1,0 +1,20 @@
+[
+  {
+    "id": "werk-board-events-first",
+    "title": "The board log defines every ticket, run and plan event type before any pipeline step writes one",
+    "why": "The plan, the builder loop, the merge loop and the held-out run all write board events. When each of them adds its own event types to the board fold, they all change one module and cannot build at the same time.",
+    "body": "To let the pipeline steps build independently, the board log and its fold come first and hold every event type that the board card lists: the ticket events, the run events, and the plan events (plan started, plan step, plan ended). A later pipeline step writes these events through the board log and does not change the fold. A step that needs a new event type changes the board log module in its own ticket."
+  },
+  {
+    "id": "werk-agent-runner-one",
+    "title": "One pipeline agent runner starts every agent of the build pipeline",
+    "why": "Every pipeline agent needs the same things at launch: its role in the environment, the model of its role, a session log, a wall-clock limit, start and end events in the pipeline log, and the overseer. One runner gives all of them the same launch, so a fix applies to every role at once.",
+    "body": "The spec writer, the ticket writer, the builder, the grader, the reviewers, the step author, the binder and the overseer classifiers all start through one runner. The runner builds the launch from the role, writes the session log and the pipeline log events, enforces the wall-clock limit, and holds the overseer. A role differs only in its prompt, its tool list and the reply it parses. The chat conversation is not a pipeline agent and has its own child, with the same launch options for its role."
+  },
+  {
+    "id": "werk-chatlog-quote-first",
+    "title": "The quote operation is built before the chat pane, and the chat pane writes its chat log in the form the quote reads",
+    "why": "The quote operation needs only a chat log to read, and it is part of the map's write path, so it can be built and tested on a hand-written chat log early. The conversation then writes the same form, so no second reader is needed.",
+    "body": "The quote ticket defines how a chat log holds a message: its position, its speaker, whether it is spoken, its text, its session and its time. Its tests use a hand-written chat log in a fresh project. The conversation ticket writes each line of the chat log in that form, so a quote of a real conversation works with no change to the quote operation."
+  }
+]

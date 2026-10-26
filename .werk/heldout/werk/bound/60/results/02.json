@@ -1,0 +1,12 @@
+[
+{"id":"02.1","result":"pass","detail":"Copied the app into a small project (Makefile, one pure file src/pure/add.ts with its own add.test.ts, PURE_FILES = that file, other tests removed). `make test-coverage` printed 'ok 100.0% src/pure/add.ts' and exited 0.","owner":""},
+{"id":"02.2","result":"pass","detail":"Same project plus another test that runs add.ts. First run passed at 100%. After deleting add.test.ts, `make test-coverage` printed 'FAIL 0.0% src/pure/add.ts (missing test file src/pure/add.test.ts)' and exited non-zero.","owner":""},
+{"id":"02.3","result":"pass","detail":"Pure file with four functions, own test calls one. Output showed a percentage below 90 for the file and make exited non-zero.","owner":""},
+{"id":"02.4","result":"pass","detail":"Listed a file with only a type and an interface and no own test. Output 'ok 100.0% src/pure/shape.ts' and exit 0.","owner":""},
+{"id":"02.5","result":"pass","detail":"Listed a pure file with no own test. `make test` ran the unit test (1 pass), printed no line for the pure file, no 'missing test file', exit 0.","owner":""},
+{"id":"03.1","result":"pass","detail":"Scripted builder (edit note.txt + event) and grader replies; sent 'Build the ticket' to the builder. note.txt appeared, builder printed its own event, grader printed its own event, and the launch log held two launch records with roles builder and grader and their args.","owner":""},
+{"id":"03.2","result":"pass","detail":"Chat role with two replies: first message gave reply 1 and a result and the process stayed alive; second gave reply 2; closing stdin made it exit 0.","owner":""},
+{"id":"03.3","result":"pass","detail":"Ask, pause, event, crash 9: control_request printed first, the later event played before any answer, exit code 9, no user tool_result line and no result line.","owner":""},
+{"id":"03.4","result":"fail","detail":"Script: ask, edit to ../outside.txt, exit 0. The fake rejects the whole reply before any step plays, so no permission request is ever printed (test waited and saw no control_request) and the agent exits with error code 1 naming the path. The outside file stayed unchanged, but the ask/answer/exit-code-0 flow the step describes does not happen.","owner":""},
+{"id":"03.5","result":"pass","detail":"Started `claude` with a role but no WERK_FAKE_SCRIPT: it exited non-zero within 5 s, printed nothing to stdout, and stderr said no script installed.","owner":""}
+]

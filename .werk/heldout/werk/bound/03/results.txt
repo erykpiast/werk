@@ -1,0 +1,207 @@
+bun test v1.4.1 (4661e494f)
+
+01-platform.test.ts:
+01.1 page: "werk-project-ydSEY2The map has no cards yet.", react keys __reactContainer$to52h96lil
+01.1 server output: "werk: serving /private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-project-ydSEY2 at http://localhost:61400 (pid 77128)\n"
+01.2 hello before {"pid":77141,"bootId":"d41f00c4-c090-42b8-abc8-4da203101506","startedAt":"2026-10-19T01:12:52.138Z","children":[{"name":"chat","pid":77142}]} after {"pid":77141,"bootId":"d41f00c4-c090-42b8-abc8-4da203101506","startedAt":"2026-10-19T01:12:52.138Z","children":[{"name":"chat","pid":77142}]}
+01.3 bun test exit 0; tail:  184 pass /  0 fail /  553 expect() calls / Ran 184 tests across 18 files. [17.16s]
+01.3 files run: tools/coverage.test.ts, src/args.test.ts, src/cli.test.ts, test/fake-agent/fake-agent.test.ts, src/server/reload.test.ts, src/server/local.test.ts, src/server/hot.test.ts, src/server/chat.test.ts, src/server/watch.test.ts, src/server/sse.test.ts, src/map/events.test.ts, src/map/log.test.ts, src/map/fold.test.ts, src/map/view.test.ts, src/map/contract.test.ts, src/client/App.test.tsx, src/client/CardPage.test.tsx, src/client/route.test.ts
+01.3 test:coverage exit 0; gate:  553 expect() calls / Ran 184 tests across 18 files. [17.15s]
+01.3 after removal: exit 1; FAIL  src/map/contract.ts  27.27%; error: script "test:coverage" exited with code 1
+01.4 e2e exit 0; passed 7 failed 0; evidence 7; serving line: werk: serving /private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-e2e-4977/demo at http://localhost:4977 (pid 79267)
+
+02-map.test.ts:
+02.5: controls on the page of #b: 0
+107 |   const { page } = await openPage(`http://localhost:${server.port}/#b`)
+108 |   await page.getByRole('heading', { level: 1, name: 'Cards fold from it' }).waitFor({ timeout: 10_000 })
+109 |   // When: the user uses a control on the page that changes card "b".
+110 |   const controls = await page.locator('input, textarea, select, button, form, [contenteditable], [role=button]').count()
+111 |   console.log(`02.5: controls on the page of #b: ${controls}`)
+112 |   expect(controls).toBeGreaterThan(0)
+                         ^
+error: expect(received).toBeGreaterThan(expected)
+
+Expected: > 0
+Received: 0
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/02-map.test.ts:112:20)
+(fail) 02.5 a page control changes a card only by appending an event [841.97ms]
+
+03-contract.test.ts:
+03.1 refusal:
+werk: #c cannot be decided: 1 fact is missing.
+  #c has no kill criterion.
+    werk kill c "<what must become true to revisit this decision>"
+
+03.2 c1: werk edit c1 --who <you|me|prototype>
+03.2 c2: werk link c2 <card-it-needs> --type depends_on --why "<what #c2 takes from it>"
+03.2 c3: werk add c3:opt0 --kind option --title "<the alternative>" --why-not "<why it lost>" --alternative-to c3
+03.2 c4: werk kill c4 "<what must become true to revisit this decision>"
+03.3 page detail: Use an append-only log#c decided
+119 |   expect(card.noBasis).toBe('it is the first decision of the project')
+120 |   expect(card.unchallenged).toBe('no other storage was named')
+121 |   const text = await pageText('c')
+122 |   console.log(`03.3 page detail: ${text}`)
+123 |   expect(text).toContain('decided')
+124 |   expect(text).toContain('it is the first decision of the project')
+                     ^
+error: expect(received).toContain(expected)
+
+Expected to contain: "it is the first decision of the project"
+Received: "Use an append-only log#c decided"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/03-contract.test.ts:124:16)
+(fail) 03.3 a stated lack of basis and an unchallenged flag satisfy the check [1171.34ms]
+03.4 remove-kill attempt (exit 1):
+werk: edit: unknown option: --kill
+
+usage: werk <command>
+
+commands:
+  serve [--port <n>]                    serve the map of the project in the current directory
+  show [<id>]                           print the page of a card, or the root page, as JSON
+  add <id> --title <t> [--kind card|option|source] [--why <w>] [--body <b>]
+           [--why-not <w>] [--parent <id>] [--alternative-to <id>] [--who you|me|prototype]
+                                        with --parent, the card refines it; with
+                                        --alternative-to, the option is weighed against it
+  link <from> <to> --type refines|depends_on|supported_by|alternative_to [--why <w>]
+  retitle <id> <title>
+  edit <id> --body|--why|--why-not <text>
+  edit <id> --who you|me|prototype      who decides the card
+  edit <id> --no-basis <reason>         the card needs no depends_on target and no decided parent
+  edit <id> --unchallenged <reason>     no option was weighed against the card
+  kill <id> <criterion>                 add one kill criterion: what must become true to revisit it
+  decide <id>                           runs the decide check first; a failure prints the fix
+  reopen <id> --why <w>
+  status <id> decided|open [--why <w>]  the same as decide, or reopen with its --why
+  remove <id>
+  restore <id>
+  say <id> <text> --who <name>          a verbatim excerpt, attributed
+  dispute <source> --why <w>            flag every card the source supports for review
+  help                                  print this text
+
+every command that writes appends exactly one event to .werk/log.jsonl
+
+03.4 page detail: Use an append-only log#c decidedThe second text.
+147 |   expect(body.code).toBe(0)
+148 |   expect(show(project, 'c').json.card.body).toBe('The second text.')
+149 |   const text = await pageText('c')
+150 |   console.log(`03.4 page detail: ${text}`)
+151 |   expect(text).toContain('The second text.')
+152 |   expect(text).toContain('the test map changes')
+                     ^
+error: expect(received).toContain(expected)
+
+Expected to contain: "the test map changes"
+Received: "Use an append-only log#c decidedThe second text."
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/03-contract.test.ts:152:16)
+(fail) 03.4 an amend of a decided card cannot remove a required fact [1479.66ms]
+03.5 status open: exit 1 "werk: status: open needs --why"; with --why: exit 1 "werk: #c is not decided"
+167 |   const withWhy = project.run(['status', 'c', 'open', '--why', 'still being weighed'])
+168 |   console.log(`03.5 status open: exit ${bare.code} "${bare.stderr.split('\n')[0]}"; with --why: exit ${withWhy.code} "${withWhy.stderr.split('\n')[0]}"`)
+169 |   const decided = project.run(['status', 'c', 'decided'])
+170 |   expect(decided.code).not.toBe(0)
+171 |   expect(show(project, 'c').json.card.status).toBe('open')
+172 |   expect(bare.code === 0 || withWhy.code === 0).toBe(true)
+                                                      ^
+error: expect(received).toBe(expected)
+
+Expected: true
+Received: false
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/03-contract.test.ts:172:49)
+(fail) 03.5 adding a card and setting it open are not checked [1275.15ms]
+
+05-stale.test.ts:
+05.1 reopen with no reason: exit 1: werk: reopen: --why is required
+05.1 staleness listing: exit 1: werk: unknown command: stale
+42 |   expect(r.code).not.toBe(0)
+43 |   expect(show(project, 'pricing').json.card.status).toBe('decided')
+44 |   expect(marks(project, 'checkout')).toEqual([])
+45 |   const l = listing(project)
+46 |   console.log(`05.1 staleness listing: exit ${l.code}: ${l.out.split('\n')[0]}`)
+47 |   expect(out).toMatch(/postponed/)
+                   ^
+error: expect(received).toMatch(expected)
+
+Expected substring or pattern: /postponed/
+Received: "werk: reopen: --why is required\n\nusage: werk <command>\n\ncommands:\n  serve [--port <n>]                    serve the map of the project in the current directory\n  show [<id>]                           print the page of a card, or the root page, as JSON\n  add <id> --title <t> [--kind card|option|source] [--why <w>] [--body <b>]\n           [--why-not <w>] [--parent <id>] [--alternative-to <id>] [--who you|me|prototype]\n                                        with --parent, the card refines it; with\n                                        --alternative-to, the option is weighed against it\n  link <from> <to> --type refines|depends_on|supported_by|alternative_to [--why <w>]\n  retitle <id> <title>\n  edit <id> --body|--why|--why-not <text>\n  edit <id> --who you|me|prototype      who decides the card\n  edit <id> --no-basis <reason>         the card needs no depends_on target and no decided parent\n  edit <id> --unchallenged <reason>     no option was weighed against the card\n  kill <id> <criterion>                 add one kill criterion: what must become true to revisit it\n  decide <id>                           runs the decide check first; a failure prints the fix\n  reopen <id> --why <w>\n  status <id> decided|open [--why <w>]  the same as decide, or reopen with its --why\n  remove <id>\n  restore <id>\n  say <id> <text> --who <name>          a verbatim excerpt, attributed\n  dispute <source> --why <w>            flag every card the source supports for review\n  help                                  print this text\n\nevery command that writes appends exactly one event to .werk/log.jsonl\n"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/05-stale.test.ts:47:15)
+(fail) 05.1 a reopen without a reason is refused and leaves the map unchanged [1199.49ms]
+05.2 staleness listing: exit 1: werk: unknown command: stale
+05.2 marks: api [{"because":"storage","seq":10,"via":"depends_on","why":"rejected"}] schema [{"because":"storage","seq":10,"via":"refines","why":"rejected"}] client []
+05.2 browser #api stale part: "Stale#storage changed, over depends_on: rejected", detail color rgb(0, 0, 0)
+05.2 after amend: api [{"because":"storage","seq":10,"via":"depends_on","why":"rejected"}] schema [{"because":"storage","seq":10,"via":"refines","why":"rejected"}] client [{"because":"api","seq":11,"via":"depends_on"}]
+77 |   const amend = project.run(['edit', 'api', '--body', 'Reviewed against the new storage.'])
+78 |   expect(amend.code).toBe(0)
+79 |   console.log(`05.2 after amend: api ${JSON.stringify(marks(project, 'api'))} schema ${JSON.stringify(marks(project, 'schema'))} client ${JSON.stringify(marks(project, 'client'))}`)
+80 |   expect(marks(project, 'schema').length).toBeGreaterThan(0)
+81 |   expect(marks(project, 'client')).toMatchObject([{ because: 'api' }])
+82 |   expect(l.code).toBe(0)
+                      ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/05-stale.test.ts:82:18)
+(fail) 05.2 a rejected reopen marks only the next hop as stale, and a review moves the mark one hop on [3521.66ms]
+05.3 staleness listing: exit 1: werk: unknown command: stale
+05.3 marks: {"parser":{"status":"decided","stale":[{"because":"engine","seq":13,"via":"depends_on","why":"postponed"}]},"renderer":{"status":"open","stale":[]},"export":{"status":"open","stale":[]}}
+102 |   expect(project.run(['reopen', 'engine', '--why', 'postponed']).code).toBe(0)
+103 |   const l = listing(project)
+104 |   console.log(`05.3 staleness listing: exit ${l.code}: ${l.out.split('\n')[0]}`)
+105 |   const all = Object.fromEntries(['parser', 'renderer', 'export'].map((id) => [id, show(project!, id).json.card]))
+106 |   console.log(`05.3 marks: ${JSON.stringify(Object.fromEntries(Object.entries(all).map(([k, c]) => [k, { status: c.status, stale: c.stale, paused: c.paused }])))}`)
+107 |   expect(l.code).toBe(0)
+                       ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/05-stale.test.ts:107:18)
+(fail) 05.3 a postponed reopen marks every downstream card as paused in grey and keeps its status colour [1969.63ms]
+05.4 staleness listing: exit 1: werk: unknown command: stale
+05.4 billing [{"because":"auth","seq":14,"via":"depends_on","why":"postponed"},{"because":"ledger","seq":15,"via":"depends_on","why":"rejected"}] report stale [] paused undefined
+05.4 browser #billing stale part: "Stale#auth changed, over depends_on: postponed#ledger changed, over depends_on: rejected"
+134 |   console.log(`05.4 billing ${JSON.stringify(billing.stale)} report stale ${JSON.stringify(report.stale)} paused ${JSON.stringify(report.paused)}`)
+135 |   const page = await browserCard('billing')
+136 |   const staleText = (await page.getByRole('region', { name: 'stale' }).textContent()) ?? ''
+137 |   console.log(`05.4 browser #billing stale part: "${staleText}"`)
+138 |   await page.close()
+139 |   expect(l.code).toBe(0)
+                       ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/05-stale.test.ts:139:18)
+(fail) 05.4 stale wins when a postponement and an invalidation reach the same card [2469.48ms]
+05.5 confirm search unchanged: exit 1: werk: #search cannot be decided: 1 fact is missing.
+  #search waits on its basis: #index is open.
+    werk status index decided
+05.5 staleness listing: exit 1: werk: unknown command: stale
+05.5 marks: search [{"because":"index","seq":13,"via":"depends_on","why":"rejected"}] filters [{"because":"index","seq":13,"via":"depends_on","why":"rejected"}]
+162 |   console.log(`05.5 staleness listing: exit ${l.code}: ${l.out.split('\n')[0]}`)
+163 |   console.log(`05.5 marks: search ${JSON.stringify(marks(project, 'search'))} filters ${JSON.stringify(marks(project, 'filters'))}`)
+164 |   const page = await browserCard('search')
+165 |   const searchStale = await page.getByRole('region', { name: 'stale' }).count()
+166 |   await page.close()
+167 |   expect(confirm.code).toBe(0)
+                             ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-7EklK5/.werk-heldout/tests/05-stale.test.ts:167:24)
+(fail) 05.5 clearing one stale mark leaves the other marks in place [2655.53ms]
+
+ 12 pass
+ 9 fail
+ 148 expect() calls
+Ran 21 tests across 4 files. [121.85s]

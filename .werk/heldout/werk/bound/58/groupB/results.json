@@ -1,0 +1,132 @@
+[
+ {
+  "id": "08.1",
+  "result": "pass",
+  "detail": "seeded decided auth/login/session/audit + link; remove --actor you wrote one event, subtree hidden from show/search, removed lists children, link gone; restore brought all back"
+ },
+ {
+  "id": "08.2",
+  "result": "pass",
+  "detail": "--reparent moved children under platform; restore put them back under auth"
+ },
+ {
+  "id": "08.3",
+  "result": "pass",
+  "detail": "link hidden until both ends restored, then shown"
+ },
+ {
+  "id": "08.4",
+  "result": "pass",
+  "detail": "source stayed cited by billing; add login refused naming restore; no new event"
+ },
+ {
+  "id": "08.5",
+  "result": "pass",
+  "detail": "remove without --actor you refused, card kept, no event"
+ },
+ {
+  "id": "08.6",
+  "result": "pass",
+  "detail": "restore without --actor you refused, card stays removed, no event"
+ },
+ {
+  "id": "09.1",
+  "result": "pass",
+  "detail": "search lists 3 decided cards only (no open, no decided ghost)"
+ },
+ {
+  "id": "09.2",
+  "result": "pass",
+  "detail": "two lines, Cache layout first then Eviction timer; Cache size and removed card absent"
+ },
+ {
+  "id": "09.3",
+  "result": "pass",
+  "detail": "option why-not found; --under and --status narrow to Storage format"
+ },
+ {
+  "id": "09.4",
+  "result": "pass",
+  "detail": "find routing / client order and exclusions correct (paused, stale, postponed hidden)"
+ },
+ {
+  "id": "09.5",
+  "result": "pass",
+  "detail": "find with no id lists both open trees and the rejected-reopened card, no decided"
+ },
+ {
+  "id": "11.1",
+  "result": "pass",
+  "detail": "one rollup line: 4 cards: 1 open, 1 proto, 2 decided (grandchild decided then child reopened, since product refuses decided under open parent)"
+ },
+ {
+  "id": "11.2",
+  "result": "pass",
+  "detail": "child link shows rollup 3 cards; parent 4"
+ },
+ {
+  "id": "11.3",
+  "result": "pass",
+  "detail": "depends-on with reason, Options, Say, Ev with proposed"
+ },
+ {
+  "id": "11.4",
+  "result": "pass",
+  "detail": "Say and Ev, no Options"
+ },
+ {
+  "id": "11.5",
+  "result": "pass",
+  "detail": "root title, rollup and child link with rollup"
+ },
+ {
+  "id": "30.1",
+  "result": "pass",
+  "detail": "last line 2 tickets, 0,0, 2 decided, 2 stories; exit 0"
+ },
+ {
+  "id": "30.2",
+  "result": "pass",
+  "detail": "path line 12, shape touches, last line 3 tickets 2 own failures, exit 1"
+ },
+ {
+  "id": "30.3",
+  "result": "pass",
+  "detail": "one ticket set line naming uncited card, ghost not named, 2 decided cards, exit 1"
+ },
+ {
+  "id": "30.4",
+  "result": "pass",
+  "detail": "blocked_by lines for tickets 2 and 3 only, exit 1"
+ },
+ {
+  "id": "30.5",
+  "result": "pass",
+  "detail": "stderr names missing User stories heading, no stdout, exit 2"
+ },
+ {
+  "id": "43.1",
+  "result": "pass",
+  "detail": "recorded; list shows build miss, after-merge, reason, check could catch: yes"
+ },
+ {
+  "id": "43.2",
+  "result": "pass",
+  "detail": "recorded; plan miss, review, no catchable"
+ },
+ {
+  "id": "43.3",
+  "result": "pass",
+  "detail": "both refused with messages; list empty"
+ },
+ {
+  "id": "43.4",
+  "result": "pass",
+  "detail": "not-done and missing ticket refused; nothing recorded"
+ },
+ {
+  "id": "43.5",
+  "result": "pass",
+  "detail": "correction lines show class in force plan, then build"
+ }
+]

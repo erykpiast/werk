@@ -1,0 +1,423 @@
+# #vi-sysdiag-grid at scale — the real 21-card architecture (see .werk/diagram.mmd for the
+# source Mermaid this was translated from), not the 4-card mv/cp/st/lv prototype.
+#
+# Two known losses in the translation, both worth recording on #vi-sysdiag-grid-gaps:
+#   - Mermaid's three dotted edges (child->gate, gate->approvebar, log->tracker) become solid
+#     here. The grid pipeline has no dashed-stroke option yet.
+#   - `dev -->|reloads the server| proc` targeted a SUBGRAPH, not a card. A grid edge must
+#     touch a card (R3), so it is retargeted to `runner` here.
+#
+# Third variant, from scratch, per #vi-sysdiag-grid-singlecell-scale: diagram-grid-full.wgrid
+# gave every card 2 rows (bookkeeping only) and 3+ columns (padding around 1 real touch
+# column). diagram-grid-full-flat.wgrid proved the 2nd row was dead weight. diagram-grid-
+# full-flat-narrow.wgrid then deleted only the padding columns no edge anywhere ever touched
+# — 8 of 39. That mechanical approach was exhausted: most of the remaining width came from the
+# 2 long detour lanes (gate_approvebar, cli_log) eating columns other cards would otherwise
+# give up, not from any card's own need.
+#
+# This file is authored from scratch instead: every card starts at 1 row x 1 column, and is
+# widened only when it has more than 1 edge attaching from the SAME single direction (a single
+# cell already has all 4 neighbours at once, so edges on different faces never force width).
+# Counting from the edge list above:
+#   - state:  4 columns — 3 edges arrive from the north (tree, detail, rollup); one north column is now unused; its
+#     own south edge (to foldfn) reuses one of those 4 columns.
+#   - live:   5 columns — 5 edges arrive from the north (approvebar, composer, transcript,
+#     tabs, header); its own south edge (to runner) reuses one of those 5.
+#   - runner: 3 columns — 3 edges leave south (to chatlog, lock, child); its north edge (from
+#     live) and east edge (from dev) each reuse one of those 3 columns.
+#   - child:  2 columns — 2 edges leave south (to gate, to cli), placed contiguously; its own
+#     north edge (from runner) reuses one of the 2.
+# Every other card, including gate and cli, stayed 1x1: gate receives child_gate from the
+# north and gate_allow leaves south (1 each), and gate_approvebar is routed to touch gate's
+# WEST face instead of north — a different face, so it adds no width. Symmetrically cli
+# receives child_cli from the north, and cli_log is routed to touch cli's EAST face instead —
+# again a different face. Both of gate/cli would have needed 2 columns had the detour lanes
+# reused the same face as the existing fan-in edge; routing them to a free face instead is
+# what keeps gate and cli at 1x1. (This corrects the task's own working guess that gate would
+# need width — a smarter face assignment for the detour avoids it.)
+#
+# The 2 detours run in their own dedicated lane, never sharing a column with a card's own
+# span:
+#   - gate_approvebar: a single column (separate from every card's columns) running the full
+#     height from approvebar's row down to gate's row, then a short 2-cell horizontal jog at
+#     gate's own row to reach gate's west face.
+#   - cli_log: a column just east of log, running down to the bottom row, a horizontal jog
+#     along that otherwise-empty bottom row, then a second column just east of cli, running
+#     back up to touch cli's east face. This is a genuine U-shape (down, across, back up), so
+#     it still trips the same "U-shaped detour" warning the wider versions did — narrower
+#     authored cells, not a straighter line.
+#
+# Every edge in the content section carries a label, and R4 requires a label to split its
+# path into two pieces it bridges (never sit beside an unbroken path) — so every hop between
+# two directly-connected card rows still costs the same 3 gap rows (path, label, path) as the
+# earlier variants. Row count is therefore close to unchanged; only column width shrank.
+#
+# Added `diagram`, in MAP VIEW alongside tree/graph3d/detail/rollup: this picture drawn from
+# this very file. It has no edges — the Diagram tab reads .werk/diagram-*.svg/wgrid straight
+# off disk (server.ts's /api/diagram-svg, /api/diagram-source), not through GET /api/graph the
+# way tree/detail/rollup do, so wiring it to `state` the way they are would be a false
+# edge, not a simplification. What the addition actually cost: 1 line in the content section,
+# and 1 new column, inserted once between rollup's column and the gate->approvebar lane and
+# carried down every row (as `.`, except where a horizontal run — cli->log's bottom-row detour
+# — was already crossing that exact point, where it had to extend through instead of getting
+# cut in two). Placing `diagram` in that new column's row 0, next to rollup rather than off in
+# some unrelated row, is what keeps MAP VIEW's own frame from stretching down into SERVER
+# PROCESS's rows — the failure mode #vi-sysdiag-grid-groupshape wants a checker rule for.
+#
+# `child -->|writes the diagram source directly, no log entry| diagram` — #vi-sysdiag-grid-
+# lanewall's edge, drawn for real. It is the one honest connection: unlike everything else
+# here, which goes through `child -->|changes the map| cli -->|appends the change| log`, this
+# file is edited directly by the agent, no log entry, no audit trail. Drawing it required two
+# things, not one:
+#   - Junction cells (#vi-sysdiag-grid-junction): a new `<edgeA>+<edgeB>` token where two
+#     edges cross at one cell, each blind to the other, check.ts's R6. Necessary but not
+#     sufficient — a junction only crosses a LONG edge with a real pass-through cell
+#     (gate->approvebar, cli->log); a short 1-hop bridge edge (child->gate, child->cli,
+#     runner->child, live->runner, dev->runner) has none, every one of its cells touches
+#     either its card or its own label.
+#   - Reordering runner's south fan. `child` used to be the fan member farthest from
+#     gate->approvebar's lane (past chatlog and lock), which meant reaching it crossed not
+#     just the lane but that whole cluster of uncrossable short edges. Moved `child` to be
+#     the fan member NEXT to the lane instead (chatlog and lock shifted over), so the only
+#     thing between column 4 (diagram's own clear column, and now child->diagram's own
+#     vertical run) and `child` is gate->approvebar itself — one junction, at (row 12,
+#     col 5), then a single plain cell into child's west face. live->runner and runner's own
+#     card now also reuse child's column (8) as their through-line, so live -> runner ->
+#     child sits on one straight vertical spine; chatlog and lock moved to columns 9 and 10,
+#     gate and cli shifted 1 column left to stay under child->gate/child->cli, and
+#     dev->runner's horizontal bridge shifted right to keep clear of the wider runner span.
+#   Verified, not assumed: every original card and edge is still present (23 cards, 23 edges,
+#   diffed by id against the pre-change set), 0 build errors, and the new edge's resolved path
+#   was read back programmatically to confirm it actually starts at `diagram` and ends at
+#   `child` — not just that the token parses.
+
+#
+# Redraw for the build-loop and sampling scout report (a restructure, not a local edit): new
+# BUILD LOOP group (planner, builder, merger, held-out set, overseer) sits on the far left under
+# the new ticket board, so MAP VIEW's frame stays one row wide and never covers CHAT PANE.
+# accept sits left of state, fed by two lanes from tree and detail. tree->live runs over the
+# top. child is 6 columns wide for its 5 south edges; the band under child is 5 rows so that
+# gate->allow crosses child's south edges on one junction row. allow moved under runner. The
+# old gate->allow (@werk-prefix) cells were removed; the new gate->allow is a different route.
+#
+# Redraw for #st-build-ticket (a restructure inside BUILD LOOP only): the single `builder` card
+# is split into a nested BUILDER LOOP group of its four steps — implement, check, grade,
+# review. implement is one column wide and 10 rows tall (rows 7-16), so its east face takes the
+# forward edge to check plus the three "a new pass" back-edges, each on its own row, and its
+# west face takes overseer and heldout. check is 2 rows tall so implement->check and
+# check->implement each get their own row. check, grade, review stack in one column east of
+# implement; merger sits under both, 9 columns wide, so review->merger, merger->implement and
+# merger->heldout each leave its north face on a different column. merger->heldout is now a
+# straight vertical hop (the old U-shape is gone). No junctions. The left block grew from 5 to
+# 10 columns; every card and edge right of it (planner onward) moved 5 columns east, unchanged.
+# overseer sits on implement's top row (7) on purpose: resolve.ts sizes a group frame from its
+# DIRECT members only, so BUILD LOOP's frame does not grow to hold BUILDER LOOP's cards. With
+# overseer on row 7 and merger on row 20, the outer frame covers the inner one anyway (the two
+# frames share a top edge).
+#
+# Local edit for #ms-outcome-interv-chat: `flow` (the Flow tab) joins MAP VIEW at row 3, 1x2,
+# in two new columns between `diagram` and the gate->approvebar lane. measure->asks runs down the
+# east one and turns east at the asks row onto asks's west face. chatlog had no free face, so a
+# new row under runner's fan makes chatlog (and child, log, planner, allow) 2 rows tall; measure->
+# chatlog runs down the west column to a new bottom row, east along it, and back up to
+# chatlog's new east face — a U-shaped detour. Junctions: both flow edges cross child->diagram,
+# measure->chatlog also crosses cli->log, planner->cli and gate->allow.
+#
+# Local edit for #vi-sysdiag-quiet: `diagramsync` (the background job that runs the scout and
+# the updater) joins SERVER PROCESS at row 21, in one new column east of child->diagram's
+# column. `diagram` widens into that column, so diagramsync->diagram runs straight up it and
+# crosses child->diagram's east turn on one junction. log->diagramsync leaves log's free west
+# face, runs down beside it and east along row 21, crossing cli->log on one junction.
+#
+# Local edit for #vi-flow-localrate: two new edges into `pipelog`, which grows to 2 rows (22-23)
+# so it has two free faces; implement->pipelog now ends on its west face. diagramsync->pipelog
+# leaves diagramsync's south face and bends round its label onto pipelog's upper east face.
+# flow widens by one new column (22, between measure->asks and the gate->approvebar lane);
+# measure->pipelog runs down it, crosses child->diagram on one junction, turns west at row 24,
+# crosses measure->asks and measure->chatlog on two junctions, and ends on pipelog's south face.
+#
+# Local edit for #st-ticket-watch: `ticketwatch` joins BUILD LOOP at row 7, in one new column
+# (12) between planner->board's column and accept, so ticketwatch->board runs straight up it
+# onto board's east face. log widens into a second new column (15, between accept->log and
+# foldfn->log); log->ticketwatch leaves log's new free north face, runs up that column, crosses
+# accept->log on one junction at row 9, and turns up into ticketwatch's south face.
+#
+# Local edit for #werk-board-build-subtree: two new edges, no new card. tree widens east into one
+# new column (16, between log->ticketwatch's column and tree->state); tree->planner leaves tree's
+# new free south face, runs down that column to row 13, turns west, crosses log->ticketwatch and
+# accept->log on two junctions, and ends on planner's north face. planner widens to 2 columns
+# (11-12), so planner->pipelog starts one cell east. planner->merger leaves planner's new south
+# face, runs down column 12, crosses planner->cli on one junction at row 22, and ends on merger's
+# south face.
+#
+# Local edit for #st-build-missing-decision: one new edge, no new card. cli widens east into one
+# new column (between chatlog's column and measure->chatlog's column), so cli has a free south face.
+# A new far-left column and a new bottom row carry implement->cli: it leaves implement's west
+# face at row 16, crosses merger->board and implement->pipelog on two junctions, runs down the
+# new left column, east along the new bottom row, and up the new column into cli's south face,
+# crossing measure->chatlog on one junction at row 29.
+#
+# Restructure for #vi-flowtab: the old `flow` card splits in two. `measure` (the Measure tab)
+# takes the old flow cells at row 3 and the three data-read edges, so every lane above that
+# names measure->chatlog, measure->asks or measure->pipelog is unchanged in shape; the earlier
+# comments that describe the `flow` card's cells and widening describe `measure` now. `flow`
+# (the Flow tab, counts from the map cards only) sits in the free row 2 cells directly above
+# measure, 3 columns wide.
+#
+# Local edit for #vi-flowtab-removed: one new edge, no new card. flow->accept leaves flow's north
+# face, crosses tree->live on one junction, runs west along a new top row (its label in the
+# middle), turns down column 15, crosses detail->accept on one junction, and ends on accept's
+# north face. tree->accept moves one column east to make room: it leaves tree's west face, runs
+# down column 16, and ends on accept's east face.
+#
+# Local edit for #werk-mc-bgagents: `bgline` (the background-agents line) joins CHAT PANE in the
+# free row 4 cell east of `header`. It has no edges, so no lane changes.
+#
+# Local edit for #werk-mc-live-dead: `deadbar` (the attention bar) joins CHAT PANE in the
+# free row 4 cell east of `bgline`. It has no edges, so no lane changes.
+#
+# Local edit for #st-build-ticket-hand-off: one new edge, no new card. Two new columns (8-9) sit
+# between implement and its east lanes; every horizontal edge and card that spanned that gap
+# (board, merger, the three "a new pass" back-edges, implement->check, implement->pipelog,
+# implement->cli) grows by two cells. implement->board leaves implement's east face at row 10,
+# runs up column 9, crosses implement->check and check->implement on two junctions, and ends on
+# board's south face, its label at row 6. A column number above 7 in an earlier comment is now 2
+# higher.
+#
+# Local edit for #werk-ci: `ci` joins TEST HARNESS, two columns wide, directly above unittest and
+# e2e. Two new rows under live hold it (one empty row, then ci). ci->unittest and ci->e2e run
+# straight down into the north faces of unittest and e2e. e2e->live moves off e2e's north face: a
+# new column between e2e and runner carries it from e2e's east face up to live's south face. A
+# row number above 8 or a column number above 31 in an earlier comment is now higher.
+#
+# Local edit for #werk-release and #werk-dist-channel: top-level `release` and `tap` sit east of
+# ci, one row tall, on a new row 10 between live and ci. ci->release leaves ci's north face,
+# crosses e2e->live and live->runner on two junctions, and ends on release's west face.
+# release->tap runs straight east into tap. A row number above 9 in an earlier comment is now
+# one higher.
+#
+# Local edit for #vi-flow-ms-tests: measure widens east by one new column (29). Column 29 in an
+# earlier comment is now 30, and a column number above 29 there is now two higher. The edge that
+# column carried (measure to unittest) is gone, and so is column 31's cell of it; measure keeps
+# its fourth column.
+#
+# Local edit for #vi-jump, #vi-tabs and #werk-chat-image-inline: `search` and `viewtabs` join
+# MAP VIEW in the free row 4 cells west of switcher. They have no edges. `attachments` joins
+# STORE on a new east column (48), east of projectlist. live->attachments leaves live's south
+# face at column 42, runs east along row 9, crosses switcher->projectlist on one junction, and
+# runs down column 48 into attachments' north face. The image upload has no edge of its own: an
+# edge id is its from->to pair, so it shares the composer->live edge and its label.
+#
+# Local edit for #ms-col-time: measure->board is a new edge. A new empty row 0 on top of the grid
+# carries it. It leaves measure's north face at column 29, runs up that column, crosses
+# tree->live on one junction, runs west along row 0, and runs down column 14 onto board's north
+# face. Its label sits at row 0, column 21. A row number in an earlier comment is now one higher.
+#
+# Local edit for #ms-store-plan: runner->pipelog is a new edge. Two new rows (20-21) under
+# runner's south fan lengthen runner->child, child->e2e and child->unittest, so row 20 can cross
+# them. A new row (31) makes pipelog 3 rows tall and gives it a free east face. The edge leaves
+# runner's south face at column 36, runs west along row 20 (junctions on runner->child,
+# child->e2e, child->unittest, gate->approvebar), down column 29 (junction on child->diagram,
+# label at row 27), and west along row 31 (junctions on measure->pipelog, measure->asks,
+# measure->chatlog) onto pipelog's lowest east face. A row number above 19 in an earlier comment
+# is now two higher, and above 28 three higher.
+#
+# Local edit for #werk-cli-followup: cli->board is a new edge. A new empty row 0 on top of the
+# grid and a new empty east column (49) carry it. It leaves cli's north face at column 40, runs
+# east along row 29, crosses measure->chatlog on one junction, runs up column 49, west along
+# row 0, and down column 13 onto board's north face. Its label sits at row 0, column 30. A row
+# number in an earlier comment is now one higher.
+
+content
+  flowchart TD
+    subgraph mapview [MAP VIEW]
+      tree["refines tree | the decision tree, as a list you open and close; a proposed card shows as a ghost; a decided card carries a Build button"] @vi-onview,vi-overwrite,werk-propose-new,vi-onview-postponed,vi-board-plan,werk-board-build-subtree,vi-onview-root,vi-board-plan-controls,vi-home-howwhat,vi-home-howwhat-address,vi-home-howwhat-open
+      graph3d["3d graph | the same cards, drawn as a 3D web of links"] @vi-graph3d-highlight,vi-graph3d-paused
+      detail["card detail | the full text of one card"] @vi-detail,vi-onview,werk-reflink,werk-codeblock,vi-onview-postponed,vi-onview-hero,vi-onview-subcards,vi-onview-look,werk-reflink-inview,werk-codeblock-langs,werk-reflink-label,werk-reflink-guard,al-diff-render,vi-routes-card-in-project
+      rollup["rollup bar | counts of decided, open, and stale cards"] @rollup,ro-axes,ro-inline,vi-onview-postponed
+      diagram["system diagram | this picture, drawn by the grid pipeline from a hand-authored .wgrid file"] @vi-sysdiag,vi-sysdiag-link,vi-sysdiag-declare,vi-sysdiag-compare,vi-sysdiag-nokind,vi-sysdiag-grid,vi-sysdiag-metrics,vi-sysdiag-grid-inline-label,vi-sysdiag-grid-gaps,vi-sysdiag-file
+      board["ticket board | one column per ticket state: blocked, ready, building, merging, done"] @werk-board,vi-board,werk-board-columns,werk-board-control,vi-board-plan,vi-board-details,werk-board-colwidth,st-ticket-restore,vi-board-session-file,vi-board-plan-controls,vi-board-title-clamp,vi-board-ticket-decisions-2
+      flow["flow tab | counts from the map cards: the status loop, totals for each subtree, and a flat list of all cards"] @vi-flowtab-removed
+      measure["measure tab | measures from the pipeline log, the board log, the conversations and the background jobs: chat-pane waits, the share of local diagram redraws, each ticket's time per board column, and kill-criterion gauges"] @ms-outcome-interv-chat,vi-flow-localrate,lp-overseer-psfail-metric,werk-write-measure-signal,ms-col-time
+      switcher["project switcher | the current project's name at the left of the sticky header; its menu lists every project, marks each one with a running agent turn or a dead agent, and ends with Add project…, which opens the operating system's folder dialog; a switch reopens that project's last card and view"] @werk-projects-switcher,werk-projects-add,werk-projects-background,werk-projects-display,werk-projects-names,werk-v0-onechat
+      search["search box | a box in the header that opens any card, option, source or excerpt by its id or its words; a query that starts with # matches ids only, exact id first; each result shows a status-color dot and the card id"] @vi-jump,vi-jump-hash,vi-jump-row
+      viewtabs["view tabs | one tab per view in the header; a click opens that view at its own address, and the view in use is kept per project"] @vi-tabs,vi-routes
+    end
+    subgraph pane [CHAT PANE]
+      approvebar["approval bar | shows the call and the CLI's reason; allow once, always allow, or deny"] @werk-approve,werk-approve-bar
+      composer["composer | the box where you type"] @werk-chat,werk-shot-chip,werk-hash-trigger,werk-chat-cmdmenu,werk-chat-image-inline
+      transcript["transcript | the chat history, with a button for the suggested next action"] @werk-progress,werk-tool-collapse,werk-mc-askqa,werk-mc-nextbtn,werk-chat-turn-id,werk-mc-tab-bottom
+      bgline["background-agents line | a line pinned under the chat log while a background agent of this tab still runs"] @werk-mc-bgagents,werk-mc-bg-line
+      deadbar["attention bar | one line per tab that needs the person, shown in the pane of every other tab, naming the tab and its reason in the reason's color: dead, permission, question, or offer"] @werk-mc-live-dead,werk-mc-live-line
+      tabs["tab strip | one tab per conversation; its dot blinks in the color of what the tab needs: dead, permission, question, or offer"] @werk-mc-tabs,werk-mc-park,werk-mc-keys,werk-mc-asks,werk-mc-asks-dot,werk-mc-live,werk-mc-bgagents,werk-mc-live-bgcount,werk-mc-tabs-step-wrap,werk-mc-live-dead,werk-mc-live-line,werk-mc-split-plus
+      header["model + context header | which model runs, how much context is left, and a dead mark while the conversation's agent has exited on its own"] @werk-model-select,werk-context-pie,werk-head-bottom,werk-model-persist,werk-v0-dead-mark
+    end
+    subgraph proc [SERVER PROCESS]
+      state["state | GET /api/graph under the project's own address, one fetch of today's folded map; a name not on the project list is refused"] @werk,vi-edges,vi-overwrite,werk-write-watch-start,werk-write-changed,werk-projects,werk-projects-address
+      live["live + sse | POST /api/chat, /api/ask, POST /api/upload for a pasted image, and the SSE stream back"] @werk-pane,werk-progress,werk-crash,werk-serve-trust,werk-chat-image-inline,werk-projects-address,werk-serve-trust-token-header-name,werk-serve-trust-token-carrier
+      foldfn["fold | turns the log of past decisions into today's state"] @werk,pr-log,pr-log-refuse,pr-log-one-event,pr-log-fold-marks,pr-wf-paused-resume,pr-wf-paused-reach,vi-prop-trace-reason,vi-prop-amended
+      runner["conversation manager | one agent per conversation, each at a home card, either forked from its parent's session or started empty"] @werk-invoke,werk-chat-stdin,werk-resume,werk-mc-fork,werk-mc-split,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,werk-mc-park-unpark,werk-chat-no-card-line,werk-chat-opnames,werk-projects,werk-projects-background,werk-mc-split-plus,werk-v0-onechat
+      gate["ask queue | holds the calls Claude Code's own engine could not decide; werk decides nothing itself"] @werk-perm-native,werk-perm-mode,werk-approve
+      accept["accept + remove | commits a ghost with its ghost parents, or removes a card with its subtree"] @werk-propose-new,werk-remove,werk-remove-restore-undo,werk-propose-new-carry,werk-write-remove-links,werk-write-staged-removal
+      lock["server locks | one lock per machine holds the running server's pid and port, and each project holds its own lock in its map folder; a project another live server holds shows as locked"] @werk-onelock,werk-onelock-take,werk-projects-one-process,werk-projects-locks,werk-projects-start-attach
+      dev["dev reload | reloads code changes without losing a live chat"] @werk-dev,werk-hmr,werk-client-reload,werk-hmr-swap,werk-stack-layout,werk-hmr-entry-settles,werk-projects-one-process
+      diagramsync["diagram sync job | a background job that runs the scout and the updater when the decided cards change; no chat shows it"] @vi-sysdiag-quiet,vi-sysdiag-agents
+    end
+    subgraph store [STORE]
+      log["log.jsonl | every decision, ever made, in order"] @pr-log,werk,werk-two-files
+      chatlog["conversations | an append-only log beside the map log, one line per session (tab, session id, home card, parent session), plus one chat.jsonl per conversation and, beside its session file, one saved-settings file (model, advisor, last context fill)"] @werk-two-files,werk-resume,werk-blockid,werk-mc-fork,werk-mc-shared-convo-log,werk-excerpt-chatlog,werk-model-persist-settings-file
+      allow["allow.json | always-allow rules the CLI suggested, kept per conversation and given to that conversation's next child"] @werk-perm-native,werk-approve,werk-mc-allow
+      asks["asks.jsonl | every answered approval question"] @werk-approve-log
+      pipelog["pipeline log | every step of every stage: its start, its end, its cost and result, and for a red step its gate and cause; committed to git; each agent session's transcript and each check run's full output sit beside it as untracked files, named by the step's ended event"] @ms-store,ms-cost,ms-store-files,ms-store-git,werk-v0-pipeline-log
+      projectlist["project list | the projects of one person, stored once per user outside every project; a project is named by its folder name; in dev mode werk's own checkout is added on top, never written"] @werk-projects-list,werk-projects-names,werk-projects-dev-self,werk-projects-list-store
+      attachments["attachments | one image file per pasted screenshot, outside version control; a message carries only its path, and the agent reads the file"] @werk-shots,werk-chat-image-inline
+    end
+    subgraph test [TEST HARNESS]
+      unittest["bun test | src/ and React component tests; 90% line gate on the pure modules"] @werk-test-runner,werk-test-scope,werk-v0-seams,werk-test-env,werk-test-dom,werk-base-test-project,werk-test-store,werk-test-external,werk-test-pure-list,werk-test-fake-ask-open,werk-v0-seams-fake-script,werk-test-fake-edit-inside,werk-test-fake-launch-log,werk-test-pure-list-union,werk-reflink-own-test-coverage,st-build-seam-role-env,werk-chat-fake-role,werk-test-globals,werk-test-runner-parallel
+      e2e["playwright e2e | boots the real server in Chromium, asserts on the DOM, writes a PNG as evidence"] @werk-test-visual,werk-test-visual-judge,werk-v0-seams,werk-test-env,werk-base-test-project,werk-test-store,werk-test-external,werk-test-app-copy,werk-test-fake-ask-open,werk-v0-seams-fake-script,werk-test-fake-edit-inside,werk-test-fake-launch-log,st-build-seam-role-env,werk-chat-fake-role,werk-v0-seams-heldout-folder
+      ci["github actions ci | after each merge to the main line, a clean machine installs from the lockfile, runs every check, builds and starts werk; green gates a release, not a merge"] @werk-ci,werk-dist,werk-devex-toolver
+    end
+    subgraph buildloop [BUILD LOOP]
+      planner["planner | one decided subtree becomes one spec, then tracer-bullet tickets"] @werk-loop,st-spec,st-ticket,st-ticket-stories,st-ticket-own-checks,st-ticket-set-checks,st-plan-extend,st-ticket-shape,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,st-spec-linked,st-build-howto-titles,st-model-per-role,werk-agent-runner-one
+      ticketwatch["ticket watch | plain code that reads each log change and blocks every open ticket that cites a changed card"] @st-ticket-watch,st-build-missing-decision
+      subgraph builderloop [BUILDER LOOP]
+        implement["implement | a fresh builder agent does one unit of work toward the ticket, in its own worktree"] @st-build-ticket,st-build-implement,werk-loop-fanout,werk-loop,st-build-parallel,st-build-target,st-build-implement-search,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,st-build-howto-titles,lp-agent-sees,st-model-per-role,werk-agent-runner-one
+        check["check | one command per check, exit code only"] @lp-checks,st-build-ticket,werk-test-fresh-tree,ms-fail-cause,lp-prod-checks,werk-checks,werk-lint,werk-typecheck,st-build-tip-in
+        grade["grade | a grader agent reads the diff against each decided card, score 1-5"] @lp-prod-judge,st-build-ticket,lp-prod-judge-scope,lp-prod-judge-read-only,st-build-howto-titles,st-model-per-role,st-grade-converge,st-grade-defer,st-build-card-proposed-recorded,werk-agent-runner-one
+        review["review | five reviewer agents, one per quality area, read the diff"] @lp-prod-review,st-build-ticket,lp-prod-judge-read-only,st-build-seam-role-env-reviewer-area,st-build-howto-titles,st-model-per-role,werk-agent-runner-one
+      end
+      merger["merge loop | merges one finished ticket at a time, and files a follow-up for a red check"] @werk-loop,st-build-run,st-build-run-mechanics,st-plan-main,st-build-conflict,st-build-stop-ready,st-build-target,st-build-conflict-resolve,st-build-stuck-park,st-run-start-guard,st-build-cap-spec-gap,st-heldout-followup-gate,ms-merge-red-follow-up,st-followup-one-open
+      heldout["held-out set | Given/When/Then steps the builder never sees, bound to tests by a binder agent"] @werk-loop,st-validate-heldout,lp-prod-heldout,lp-heldout-steps,lp-heldout-author,lp-heldout-binder,st-heldout-notrun,st-heldout-step-fresh,lp-heldout-mechanics,st-build-howto-titles,st-model-per-role,st-heldout-unbuilt-capability,st-heldout-step-contradiction,st-heldout-unbuilt-close,werk-agent-runner-one
+      overseer["overseer | plain code that watches every agent session and acts on a stuck one"] @werk-loop,lp-overseer,lp-overseer-det,lp-overseer-silence-tokens,lp-overseer-inflight,lp-overseer-silence-start,st-model-per-role,lp-overseer-cap-extend,werk-agent-runner-one
+    end
+    subgraph sampling [SAMPLING]
+      sampler["sample runner | N one-shot claude --print agents on one brief; a fork is where their manifests diverge"] @al-sample-runner,al-sample-noask,al-sample-diverge,al-sample-budget
+      prototyper["prototype runner | builds one artifact per option of a fork, in parallel"] @al-sample-proto-agent,al-sample-artifact,al-sample-build-isolation,al-sample-when
+    end
+    cli["cli | stages every new card and checks the contract before decided"] @werk-contract,werk-contract-where,werk-propose-new,werk-verb-registry,werk-ticket-check-verb,werk-ticket-check-verb-form,st-ticket-checks-run,werk-cli-ticket-restore,werk-cli-search,pr-wf-paused-basis,werk-find-scope,werk-contract-amend-scope,werk-contract-waiver-reason,werk-contract-no-decider,werk-contract-all-missing,werk-propose-new-discard-thread,werk-excerpt-event,werk-excerpt-pointer,werk-excerpt-once,vi-detail-cli-proof,werk-propose-new-real-under-ghost,werk-cli-hash-id,werk-propose-new-carry,werk-cli-followed,werk-cli-followup,werk-contract-amend-who
+    child["claude code child | the Claude Code process doing the work"] @werk-invoke,werk-chat-stdin
+    tracker["issue tracker | an outside tool, like Linear or GitHub"] @tracker,tk-verbs,vi-backend
+    release["release run | a GitHub Actions run that a person's version tag on a green main-line commit starts; builds one executable per platform, with the runtime and the built client inside, attaches the files and their checksums to a GitHub release, and updates the Homebrew formula"] @werk-release,werk-dist,werk-devex-toolver
+    tap["homebrew tap | a formula repository werk owns; users install and update the werk executable through it"] @werk-dist-channel
+
+    tree -->|loads the card tree| state @vi-onview
+    detail -->|loads one card's full text| state @vi-detail
+    rollup -->|loads decided, open, and stale counts| state @rollup
+    switcher -->|lists the projects, and adds a folder picked in the folder dialog| projectlist @werk-projects-list,werk-projects-add,werk-projects-add-protocol
+    tree -->|the check button accepts a ghost| accept @werk-propose-new
+    detail -->|its remove control removes the card| accept @werk-remove,vi-remove-btn,vi-remove-btn-reparent
+    flow -->|its removed filter's restore button restores the card| accept @vi-flowtab-removed
+    tree -->|shift+click forks a conversation at that card| live @werk-mc-open
+    accept -->|appends the events| log @werk-propose-new,werk-remove
+    approvebar -->|asks before a risky action runs| live @werk-approve
+    composer -->|sends what you type, and uploads each pasted image at once, before the send| live @werk-chat,werk-chat-image-inline
+    transcript -->|streams the reply as it is written| live @werk-progress,werk-chat-turn-id
+    tabs -->|switches which chat is live| live @werk-mc-follow
+    header -->|shows the model and context left| live @werk-model-select,werk-model-persist-chat-read
+    state -->|asks for today's state| foldfn @werk,vi-overwrite
+    foldfn -->|reads every past decision| log @pr-log
+    live -->|starts the agent for a message| runner @werk-chat-stdin
+    runner -->|runs one child per conversation| child @werk-invoke
+    runner -->|saves each conversation| chatlog @werk-two-files,werk-mc-shared-convo-log
+    runner -->|checks no other server is running| lock @werk-onelock
+    runner -->|starts the next child with the saved rules| allow @werk-perm-native
+    runner -->|records each chat turn's cost, conversation and open card when the turn ends| pipelog @ms-store-plan
+    live -->|checks and stores each pasted image, and serves its thumbnail| attachments @werk-chat-image-inline,werk-shots
+    child -->|sends a call its own engine could not decide| gate @werk-perm-native
+    gate -->|keeps the always-allow rules| allow @werk-perm-native
+    gate -->|appends each answered question| asks @werk-approve-log
+    gate -->|asks you when unsure| approvebar @werk-approve
+    child -->|proposes a change to the map| cli @werk-propose-new,werk-contract-where
+    cli -->|appends the change| log @pr-log,pr-log-refuse
+    cli -->|lists sibling conversations and reads one transcript| chatlog @werk-mc-recall,werk-cli-recall
+    cli -->|appends a follow-up record for a done ticket to the board log| board @werk-cli-followup,ms-outcome-followup
+    measure -->|reads each conversation's button waits from its chat history| chatlog @ms-outcome-interv-chat,ms-outcome-interv-chat-q
+    measure -->|reads when each structured question went up and resolved| asks @ms-outcome-interv-chat,ms-outcome-interv-chat-q
+    measure -->|reads the diagram job's ended runs for the local-redraw share| pipelog @vi-flow-localrate
+    measure -->|folds each ticket's time in each column from the board's moves| board @ms-col-time
+    log -->|copies a decision out| tracker @vi-backend,tk-verbs
+    dev -->|reloads the server on a code change| runner @werk-hmr
+    child -->|runs the two test commands itself| unittest @werk-test
+    child -->|runs the browser flows itself| e2e @werk-test
+    ci -->|runs the test commands on a clean machine| unittest @werk-ci
+    ci -->|runs the browser flows on a clean machine| e2e @werk-ci
+    ci -->|a green run lets a person tag that commit as a release| release @werk-release,werk-ci
+    release -->|updates the formula to the new version and its checksums| tap @werk-release,werk-dist-channel
+    e2e -->|boots the real server and drives the live routes| live @werk-test-visual
+    child -->|writes the diagram source directly, no log entry| diagram @vi-sysdiag-grid-junction
+    log -->|a change in the decided cards starts one run| diagramsync @vi-sysdiag-quiet
+    diagramsync -->|runs the scout and the updater, which redraw the diagram source| diagram @vi-sysdiag-quiet,vi-sysdiag-agents
+    diagramsync -->|records each run's end: result, declared outcome, starting cards, time, cost| pipelog @vi-flow-localrate
+    tree -->|its Build button plans the card's subtree, in one detached process| planner @werk-board-build-subtree,werk-board-restart
+    planner -->|reads one decided subtree, writes any new decision back| cli @st-spec,st-spec-answers
+    planner -->|puts the tickets on the board| board @st-ticket,vi-board,st-plan-archive,vi-board-plan
+    planner -->|starts the merge loop over the planned tickets, with no pause| merger @werk-board-build-subtree
+    log -->|each change to a cited card| ticketwatch @st-ticket-watch
+    ticketwatch -->|moves each open ticket that cites it to blocked, with the reason| board @st-ticket-watch
+    board -->|triggers one ticket's build; archiving the ticket ends it| implement @werk-board-control,st-build-died,werk-board-control-archive-ends-build
+    implement -->|when a build the board started ends, moves its ticket to merging on green, or back to ready with the reason at the retry cap| board @st-build-ticket-hand-off
+    implement -->|runs the checks on the diff| check @st-build-ticket
+    check -->|green: grade the diff| grade @st-build-ticket
+    grade -->|pass: review the diff| review @st-build-ticket
+    check -->|red: a new pass with the failure| implement @st-build-ticket,lp-stateless
+    grade -->|fail: a new pass with the gap| implement @lp-prod-judge,lp-stateless
+    review -->|CRITICAL or HIGH: a new pass with the findings| implement @lp-prod-review,lp-stateless
+    review -->|queues a finished ticket| merger @st-build-run
+    merger -->|sends a conflicting ticket back with the conflict| implement @st-build-run
+    merger -->|runs the held-out set on the merged tree| heldout @st-build-run,st-validate-heldout,st-heldout-beside
+    heldout -->|sends the text of a failed step| implement @lp-heldout-feedback,st-heldout-followup-per-ticket
+    planner -->|records each plan, spec, and ticket step, with the scope cards each plan read, and keeps a copy of the spec and tickets each plan wrote| pipelog @ms-store,ms-store-scope,ms-store-plancopy
+    implement -->|records each builder pass's start, end, and cost| pipelog @ms-store,werk-v0-pipeline-log
+    implement -->|proposes a card for a decision no card makes, or names the cards it followed, to close the build's card obligation| cli @st-build-missing-decision,st-build-card
+    merger -->|moves tickets through merging and done| board @werk-board-columns
+    overseer -->|watches each agent session for a stuck one| implement @lp-overseer,lp-overseer-det
+    child -->|spawns the prototyper subagent| prototyper @al-sample-proto-agent,al-ask-own-options
+
+    class tree,graph3d,detail,rollup,diagram,board,flow,measure,switcher,search,viewtabs,approvebar,composer,transcript,bgline,deadbar,tabs,header read
+    class state,live,foldfn,runner,gate,accept,lock,overseer,diagramsync,ticketwatch state
+    class dev,unittest,e2e dev
+    class log,chatlog,allow,asks,pipelog,projectlist,attachments write
+    class cli,child,planner,implement,grade,review,merger,heldout,sampler,prototyper agent
+    class tracker,tap ext
+
+grid
+  ". . . . . . . . . . . . . cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board @cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board"
+  ". . . . . . . . . . . . . cli->board measure->board measure->board measure->board measure->board measure->board measure->board measure->board @measure->board measure->board measure->board measure->board measure->board measure->board measure->board measure->board measure->board . . . . . . . . . . . . . . . . . . . cli->board"
+  ". . . . . . . . . . . . . cli->board measure->board . . flow->accept flow->accept flow->accept flow->accept @flow->accept @flow->accept @flow->accept flow->accept flow->accept flow->accept flow->accept . measure->board . . . . . . . . . . . . . . . . . . . cli->board"
+  ". . . . . . . . . . . . . cli->board measure->board . . flow->accept . . tree->live tree->live tree->live tree->live tree->live tree->live tree->live flow->accept+tree->live tree->live tree->live+measure->board tree->live tree->live tree->live tree->live tree->live @tree->live tree->live tree->live tree->live tree->live tree->live tree->live tree->live tree->live . . . . . cli->board"
+  ". . . . . . . . . . . . . cli->board measure->board . detail->accept detail->accept+flow->accept detail->accept detail->accept tree->live+detail->accept detail->accept detail->accept . . . . flow->accept . measure->board . . . . . . . . . . . . . tree->live . . . . . cli->board"
+  ". . . . . . . . . . . . . cli->board measure->board . detail->accept flow->accept . . tree->live . detail->accept . . . flow flow flow measure->board . . . . . . . . . . . . . tree->live . . . . . cli->board"
+  ". . board board board board board board board board board board board board board ticketwatch->board detail->accept flow->accept tree->accept tree tree graph3d detail rollup diagram diagram measure measure measure measure gate->approvebar gate->approvebar approvebar composer . transcript tabs header bgline deadbar . . . tree->live . search viewtabs switcher . cli->board"
+  ". . merger->board . . . . board->implement . implement->board . . . . planner->board ticketwatch->board detail->accept flow->accept tree->accept tree->planner tree->state . detail->state rollup->state child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . approvebar->live composer->live . transcript->live tabs->live header->live . . . . . tree->live . . . switcher->projectlist . cli->board"
+  ". . merger->board . . . . @board->implement . @implement->board . . . . planner->board @ticketwatch->board @detail->accept flow->accept @tree->accept @tree->planner @tree->state . @detail->state @rollup->state child->diagram diagramsync->diagram @measure->chatlog @measure->asks @measure->pipelog . gate->approvebar . @approvebar->live @composer->live . @transcript->live @tabs->live @header->live . . . . . tree->live . . . switcher->projectlist . cli->board"
+  ". . merger->board . . . . board->implement . implement->board . . . . planner->board ticketwatch->board detail->accept flow->accept tree->accept tree->planner tree->state . detail->state rollup->state child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . approvebar->live composer->live . transcript->live tabs->live header->live . . . . . tree->live . . . switcher->projectlist . cli->board"
+  ". . merger->board overseer overseer->implement @overseer->implement overseer->implement implement implement->check implement->check+implement->board implement->check @implement->check implement->check check planner->board ticketwatch accept accept tree->accept tree->planner state state state state child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . live live live live live live live live live live live tree->live . . . switcher->projectlist . cli->board"
+  ". . merger->board . . . . implement . implement->board . . . check planner->board log->ticketwatch . accept->log . tree->planner state->foldfn . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . . . e2e->live live->runner . . . . . . live->attachments live->attachments live->attachments live->attachments live->attachments switcher->projectlist+live->attachments live->attachments cli->board"
+  ". . merger->board . . . . implement . implement->board . . . check planner->board log->ticketwatch . accept->log . tree->planner state->foldfn . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . . ci->release e2e->live+ci->release live->runner+ci->release ci->release @ci->release ci->release release release release release->tap @release->tap release->tap tap tap switcher->projectlist live->attachments cli->board"
+  ". . merger->board . . . . implement . implement->board . . . check planner->board log->ticketwatch . accept->log . tree->planner state->foldfn . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . ci ci e2e->live live->runner . . . . . . . . . . . @switcher->projectlist live->attachments cli->board"
+  ". . merger->board . . . . implement check->implement check->implement+implement->board check->implement @check->implement check->implement check planner->board log->ticketwatch . accept->log . tree->planner state->foldfn . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . ci->unittest ci->e2e e2e->live live->runner . . . . . . . . . . . switcher->projectlist live->attachments cli->board"
+  ". . merger->board . . . . implement implement->board implement->board . . . check->grade @planner->board log->ticketwatch log->ticketwatch accept->log+log->ticketwatch log->ticketwatch tree->planner @state->foldfn . . . @child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . @gate->approvebar . @ci->unittest @ci->e2e @e2e->live @live->runner . . . . . . . . . . . switcher->projectlist @live->attachments cli->board"
+  ". implement->pipelog merger->board+implement->pipelog implement->pipelog @implement->pipelog implement->pipelog implement->pipelog implement . . . . . @check->grade planner->board . . accept->log log->ticketwatch tree->planner state->foldfn . . . child->diagram @diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . ci->unittest ci->e2e e2e->live live->runner . . . . . . . . . . . switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog merger->board . . . . implement . . . . . check->grade planner->board . . @accept->log @log->ticketwatch tree->planner foldfn . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . unittest e2e e2e->live runner runner runner runner runner runner runner runner dev->runner @dev->runner dev->runner dev switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog @merger->board . . . . implement grade->implement grade->implement grade->implement @grade->implement grade->implement grade planner->board . . accept->log log->ticketwatch tree->planner foldfn->log . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . child->unittest child->e2e . runner->child runner->pipelog . . runner->chatlog . runner->lock runner->allow . . . . switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog merger->board . . . . implement . . . . . grade->review planner->board tree->planner tree->planner accept->log+tree->planner log->ticketwatch+tree->planner tree->planner @foldfn->log . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . @child->unittest @child->e2e . @runner->child runner->pipelog . . @runner->chatlog . @runner->lock @runner->allow . . . . switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog merger->board . . . . implement . . . . . @grade->review planner->board tree->planner . accept->log log->ticketwatch . foldfn->log . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . child->unittest child->e2e . runner->child runner->pipelog . . runner->chatlog . runner->lock runner->allow . . . . switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog merger->board . . . . implement . . . . . grade->review planner->board tree->planner . accept->log log->ticketwatch . foldfn->log . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar+runner->pipelog runner->pipelog child->unittest+runner->pipelog child->e2e+runner->pipelog runner->pipelog runner->child+runner->pipelog runner->pipelog . . runner->chatlog . runner->lock runner->allow . . . . switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog merger->board . . . . implement . . . . . grade->review planner->board tree->planner . accept->log log->ticketwatch . foldfn->log . . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar . child->unittest child->e2e . runner->child . . . runner->chatlog . runner->lock runner->allow . . . . switcher->projectlist live->attachments cli->board"
+  ". implement->pipelog merger->board . . . . implement . . . . . grade->review planner planner planner->pipelog accept->log log log log cli->log . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar . child child child child child child child chatlog . lock allow . . . . projectlist attachments cli->board"
+  "implement->cli implement->pipelog+implement->cli merger->board+implement->cli implement->cli implement->cli implement->cli implement->cli implement . . . . . grade->review planner planner planner->pipelog log->diagramsync log log log cli->log . . child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar . child child child child child child child chatlog measure->chatlog measure->chatlog allow . . . . . . cli->board"
+  "implement->cli implement->pipelog merger->board heldout heldout->implement @heldout->implement heldout->implement implement review->implement review->implement review->implement @review->implement review->implement review planner->cli planner->merger planner->pipelog log->diagramsync . . log->tracker cli->log . . child->diagram child->diagram+diagramsync->diagram child->diagram+measure->chatlog child->diagram+measure->asks child->diagram+measure->pipelog child->diagram+runner->pipelog gate->approvebar+child->diagram child->diagram child->diagram child->gate . . . child->prototyper child->cli cli->chatlog . measure->chatlog gate->allow . . . . . . cli->board"
+  "implement->cli implement->pipelog merger->board merger->heldout . . . merger->implement . . . . . review->merger planner->cli planner->merger planner->pipelog log->diagramsync . . @log->tracker cli->log . . . diagramsync->diagram measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar . . child->gate . gate->allow gate->allow child->prototyper+gate->allow child->cli+gate->allow cli->chatlog+gate->allow gate->allow gate->allow+measure->chatlog gate->allow . . . . . . cli->board"
+  "implement->cli implement->pipelog merger->board @merger->heldout . . . @merger->implement . . . . . @review->merger planner->cli @planner->merger @planner->pipelog @log->diagramsync . . log->tracker cli->log . . . diagramsync->diagram measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar . . child->gate . gate->allow . child->prototyper child->cli cli->chatlog . measure->chatlog . . . . . . . cli->board"
+  "implement->cli implement->pipelog merger->board merger->heldout . . . merger->implement . . . . . review->merger planner->cli planner->merger planner->pipelog log->diagramsync . . tracker cli->log . . . diagramsync->diagram measure->chatlog measure->asks measure->pipelog @runner->pipelog gate->approvebar . . @child->gate . @gate->allow . @child->prototyper @child->cli @cli->chatlog . measure->chatlog . . . . . . . cli->board"
+  "implement->cli implement->pipelog merger->board merger merger merger merger merger merger merger merger merger merger merger planner->cli planner->merger planner->pipelog log->diagramsync log->diagramsync log->diagramsync log->diagramsync cli->log+log->diagramsync log->diagramsync log->diagramsync log->diagramsync diagramsync measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar . . child->gate . gate->allow . child->prototyper child->cli cli->chatlog cli->board measure->chatlog+cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board cli->board"
+  "implement->cli implement->pipelog . . . . . . . . . . . planner->merger planner->cli+planner->merger planner->merger planner->pipelog planner->pipelog planner->pipelog planner->pipelog planner->pipelog cli->log+planner->pipelog planner->pipelog pipelog @diagramsync->pipelog diagramsync->pipelog measure->chatlog measure->asks measure->pipelog runner->pipelog gate->approvebar gate->approvebar gate->approvebar gate gate->allow gate->allow sampler prototyper cli cli cli measure->chatlog . . . . . . . ."
+  "implement->cli implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog planner->cli+implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog implement->pipelog cli->log+implement->pipelog implement->pipelog pipelog diagramsync->pipelog . measure->chatlog measure->asks measure->pipelog runner->pipelog . . . gate->asks . . . . cli->log planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . planner->cli . . . . . . cli->log . pipelog runner->pipelog runner->pipelog measure->chatlog+runner->pipelog measure->asks+runner->pipelog measure->pipelog+runner->pipelog runner->pipelog . . . gate->asks . . . . cli->log planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . planner->cli . . . . . . cli->log . measure->pipelog measure->pipelog measure->pipelog measure->chatlog+measure->pipelog measure->asks+measure->pipelog measure->pipelog . . . . @gate->asks . . . . cli->log planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . planner->cli . . . . . . cli->log . . . . measure->chatlog measure->asks . . . . . gate->asks . . . . cli->log planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . planner->cli . . . . . . cli->log . . . . measure->chatlog measure->asks measure->asks measure->asks measure->asks measure->asks measure->asks asks . . . . cli->log planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . planner->cli . . . . . . cli->log cli->log cli->log cli->log cli->log cli->log+measure->chatlog cli->log cli->log cli->log cli->log cli->log @cli->log cli->log cli->log cli->log cli->log cli->log cli->log planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli @planner->cli planner->cli planner->cli planner->cli+measure->chatlog planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli planner->cli implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli . . . . . . . . . . . . . . . . . . . . . . . . . measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog measure->chatlog+implement->cli measure->chatlog . . . . . . . ."
+  "implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli @implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli implement->cli . . . . . . . . ."

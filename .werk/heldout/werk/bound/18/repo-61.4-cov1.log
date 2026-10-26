@@ -1,0 +1,55 @@
+exit 2
+bun run test:coverage
+$ bun scripts/coverage-gate.ts
+ok    100.00%  scripts/coverage.ts
+ok    100.00%  web/highlight.ts
+ok    100.00%  web/md.ts
+ok    100.00%  web/reflink.ts
+ok    100.00%  web/escape.ts
+ok    100.00%  src/cli/args.ts
+ok    100.00%  src/cli/card-id.ts
+ok    100.00%  src/cli/help.ts
+ok    100.00%  src/cli/registry.ts
+ok    100.00%  src/cli/start.ts
+ok    100.00%  src/test/clean-env.ts
+ok    100.00%  src/test/fake-script.ts
+ok    100.00%  src/map/commit.ts
+ok     91.63%  src/map/fold.ts
+ok     92.97%  src/map/rules.ts
+ok    100.00%  src/map/show.ts
+ok    100.00%  src/map/rollup.ts
+ok    100.00%  src/map/stage.ts
+ok    100.00%  src/map/tree.ts
+ok    100.00%  src/map/types.ts
+ok    100.00%  src/map/removal.ts
+ok    100.00%  src/map/contract.ts
+ok    100.00%  src/map/ops.ts
+ok    100.00%  src/map/notes.ts
+ok    100.00%  src/map/chat.ts
+ok    100.00%  src/agent/prompt.ts
+ok    100.00%  src/map/marks.ts
+ok    100.00%  src/map/trace.ts
+ok    100.00%  src/map/stale.ts
+ok    100.00%  src/map/review.ts
+ok    100.00%  src/tickets/parse.ts
+ok    100.00%  src/tickets/own-checks.ts
+ok    100.00%  src/tickets/set-checks.ts
+ok    100.00%  src/tickets/spec.ts
+ok    100.00%  src/tickets/cards.ts
+ok    100.00%  src/tickets/check.ts
+ok    100.00%  src/tickets/report.ts
+ok    100.00%  src/serve/card-html.ts
+ok    100.00%  src/serve/page.ts
+FAIL   10.34%  src/map/search.ts
+ok    100.00%  src/map/find.ts
+ok    100.00%  src/serve/chat-stream.ts
+ok    100.00%  web/chat-thread.ts
+ok    100.00%  src/serve/map-api.ts
+ok    100.00%  web/routes.ts
+ok    100.00%  web/page-store.ts
+ok    100.00%  src/serve/card-look.ts
+ok    100.00%  src/serve/card-marks.ts
+ok    100.00%  web/diff.ts
+49 pure files, 1 under 90% of lines or without an own test file.
+error: script "test:coverage" exited with code 1
+make: *** [test-coverage] Error 1

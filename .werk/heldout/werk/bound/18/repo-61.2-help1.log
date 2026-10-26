@@ -1,0 +1,122 @@
+exit 0
+Usage: werk <verb> [arguments] [flags]
+
+A card id may start with one #: #auth and auth name the same card.
+
+Verbs:
+
+  accept <id>
+      Accept one ghost, with its ghost parents, options and evidence, or a pending change. Only the person accepts.
+      --actor <text>  you: the person asked for this accept.
+
+  add <id>
+      Propose a card, an option or a source as a ghost. The person accepts it in the map.
+      --title <text>    The title: one sentence about the node's own rule.
+      --why <text>      Why the node holds.
+      --body <text>     The details.
+      --parent <id>     The card it refines. A card defaults to the root.
+      --kind <text>     card (the default), option or source.
+      --status <text>   open (the default) or proto.
+      --who <text>      Who decides: you, me or prototype.
+      --why_not <text>  For an option: why it lost.
+      --url <text>      For a source: where it is.
+      --finding <text>  For a source: what it found.
+
+  discard <id>
+      Drop one ghost, with its ghost descendants and the evidence that only they cite, or a pending change.
+
+  edit <id>
+      Set who decides a card, or waive its basis or its option with a written reason.
+      --who <text>           Who decides: you, me or prototype.
+      --no-basis <text>      Why no decided card is a basis of this card.
+      --unchallenged <text>  Why no option was weighed against this card.
+
+  find [<id>]
+      List the open and proto cards under a card, breadth first, or in the whole map, without the paused, stale and postponed ones.
+
+  help
+      Print every verb with its arguments and flags.
+
+  inbox
+      Print the notes typed in the map, in log order.
+      --since <text>  Start after this log position.
+      -n <text>       Print at most this many notes (default 20).
+
+  kill <id>
+      Record one kill criterion on a card: what must become true to revisit the decision.
+      --metric <text>     The metric to track. Needs --source, --threshold and --window.
+      --source <text>     Where the metric comes from.
+      --threshold <text>  The value that fires the criterion.
+      --window <text>     The time window the metric is read over.
+      --manual <text>     The test the author runs by hand.
+      --no-metric <text>  Why no metric applies.
+      --revisit           Revisit at any time.
+
+  link <from> <to>
+      Add one typed link from one node to another. A depends_on link needs --why.
+      --type <text>  refines, depends_on, supported_by or alternative_to.
+      --why <text>   For depends_on: what <from> takes from <to>.
+
+  propose <id>
+      Stage a change to a node's title, why or body. The person accepts it in the map.
+      --title <text>   The new title.
+      --why <text>     The new why.
+      --ops <text>     The body as a JSON list of ops: {"tag":"elaborated","old","new"}, {"tag":"new","new"} or {"tag":"removed","old"}. Every block of the body is the old of one op.
+      --review <text>  On a decided card: the sentence that ends its review in an amend. The trace of each card the amend marks shows it.
+
+  quote <card> <conversation> [<text>]
+      Quote the words of one spoken message of a conversation as an excerpt that supports a card.
+      --text <text>  The words to quote, exactly as they were said.
+
+  rederive <id>
+      Confirm a stale card unchanged and clear its stale marks. An amend goes through werk propose instead.
+      --confirm <text>  The depends_on targets whose link reasons you read and confirm, separated by commas.
+      --status <text>   decided: also decide the card, through the contract check.
+
+  remove <id>
+      Take a card out of the map with its subtree, or with --reparent only the card. Only the person removes.
+      --actor <text>  you: the person asked for this.
+      --reparent      Move the card's direct children up to its parent.
+
+  removed
+      List each removal: the card it named, and every node it took out.
+
+  reopen <id>
+      Reopen a decided card. Invalidated and rejected mark the next hop stale; postponed pauses every card downstream.
+      --reason <text>  postponed, invalidated or rejected. The default is invalidated.
+      --why <text>     The text that the trace of each marked card shows.
+
+  restore <id>
+      Undo the removal that named a card: the card and all it took come back. Only the person restores.
+      --actor <text>  you: the person asked for this.
+
+  say <id> <text>
+      Write one note on the thread of a card. The map shows it on the card.
+
+  search [<term>] ...
+      With no term, print the id and title of every decided card. With terms, print the cards whose words hold every term, the most hits first.
+      --status <text>  decided, open or proto: keep the cards with that status only.
+      --under <id>     Keep the refines subtree of this card only.
+
+  serve
+      Start the map in the browser, on the loopback address.
+      --port <text>  The port (default 4000). 0 takes any free port.
+
+  show [<id>]
+      Print one node, or the root card when no id is given: its rollup, links and marks, and the words of its options, excerpts and sources.
+
+  stale [<id>]
+      List the stale, paused and waiting cards, a basis before the card on it, each with the reason of its mark.
+      --kind <text>  stale, paused or waiting: list one kind of mark only.
+
+  status <id> <status>
+      Decide a card. The contract check needs who, a basis, an option and a kill criterion.
+
+  ticket-check <folder>
+      Check a folder of tickets: the own checks on each ticket, then the set checks. Exit 0 pass, 1 fail, 2 malformed call.
+      --root <id>    The card whose decided subtree the tickets must cite
+      --spec <text>  The spec whose User stories the tickets must deliver
+
+  unlink <from> <to>
+      Remove one typed link from the map. The log keeps it.
+      --type <text>  refines, depends_on, supported_by or alternative_to.

@@ -1,0 +1,106 @@
+[
+ {
+  "id": "09.1",
+  "result": "pass",
+  "detail": "Seeded 3 decided, 1 open, 1 ghost carrying decided status; `werk search` printed exactly 3 id+title lines, no open or ghost card."
+ },
+ {
+  "id": "09.2",
+  "result": "pass",
+  "detail": "Seeded the four cards; `werk search cache eviction` printed 2 lines: Cache layout [decided] first, Eviction timer [open] second; no Cache size, no removed card."
+ },
+ {
+  "id": "09.3",
+  "result": "pass",
+  "detail": "Option why-not 'SQLite needs a native build' found Storage format [decided] and the open card; --under parent and --status decided each returned only Storage format."
+ },
+ {
+  "id": "09.4",
+  "result": "pass",
+  "detail": "Built Client subtree with paused/stale/postponed marks (verified by fold), option, source, Billing; find routing and find client gave the expected order and exclusions."
+ },
+ {
+  "id": "09.5",
+  "result": "pass",
+  "detail": "Reopened decided card as rejected; `werk find` listed both tree cards and Auth flow, no [decided] line."
+ },
+ {
+  "id": "11.1",
+  "result": "pass",
+  "detail": "Root rollup line counted 4 cards with 1 open, 1 proto, 2 decided."
+ },
+ {
+  "id": "11.2",
+  "result": "pass",
+  "detail": "Parent rollup counts 4 cards; incoming '<- refines child' row shows '3 cards'."
+ },
+ {
+  "id": "11.3",
+  "result": "pass",
+  "detail": "show printed depends_on with reason, then Options (title, why not), Say (Ada: words), Ev (title, finding) with 'proposed' on the ghost source."
+ },
+ {
+  "id": "11.4",
+  "result": "pass",
+  "detail": "Say and Ev sections printed; no Options section."
+ },
+ {
+  "id": "11.5",
+  "result": "pass",
+  "detail": "`werk show` with no id printed root title, rollup line, and incoming refines row with the kid's rollup."
+ },
+ {
+  "id": "27.1",
+  "result": "unbuilt",
+  "detail": "`werk ticket move` exits 2: the ticket verb only knows the subverb restore; archive and list are missing too. Restore itself exists. Assumed owner is the board-archive ticket.",
+  "owner": "werk/45"
+ },
+ {
+  "id": "27.2",
+  "result": "unbuilt",
+  "detail": "`werk ticket move auth/01 blocked` exits 2 with the usage for restore; no move subverb.",
+  "owner": "werk/45"
+ },
+ {
+  "id": "27.3",
+  "result": "pass",
+  "detail": "`ticket restore 02` (not archived) and `restore 99` both exit 1 and leave board.jsonl byte-identical."
+ },
+ {
+  "id": "27.4",
+  "result": "unbuilt",
+  "detail": "`werk ticket archive` is not a subverb (exit 2 with restore usage); ticket list also missing.",
+  "owner": "werk/45"
+ },
+ {
+  "id": "27.5",
+  "result": "unbuilt",
+  "detail": "`werk ticket move` and `archive` and `list` are not subverbs; exit 2.",
+  "owner": "werk/45"
+ },
+ {
+  "id": "43.1",
+  "result": "pass",
+  "detail": "followup recorded; --list shows record 1 with build, after-merge, reason, catchable yes."
+ },
+ {
+  "id": "43.2",
+  "result": "pass",
+  "detail": "Plan miss recorded; list shows plan, review, reason, no catchable text."
+ },
+ {
+  "id": "43.3",
+  "result": "pass",
+  "detail": "Both wrong-catchable calls exit 1 with the right messages; list is empty."
+ },
+ {
+  "id": "43.4",
+  "result": "pass",
+  "detail": "Building ticket refused with 'not done'; app/99 refused; list for app/02 empty."
+ },
+ {
+  "id": "43.5",
+  "result": "pass",
+  "detail": "Correction shows '1. corrected by 2, in force: plan' and '2. correction of 1'; second correction puts class build in force."
+ }
+]

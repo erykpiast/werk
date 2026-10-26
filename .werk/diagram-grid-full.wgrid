@@ -1,0 +1,102 @@
+# #vi-sysdiag-grid at scale — the real 21-card architecture (see .werk/diagram.mmd for the
+# source Mermaid this was translated from), not the 4-card mv/cp/st/lv prototype.
+#
+# Two known losses in the translation, both worth recording on #vi-sysdiag-grid-gaps:
+#   - Mermaid's three dotted edges (child->gate, gate->approvebar, log->tracker) become solid
+#     here. The grid pipeline has no dashed-stroke option yet.
+#   - `dev -->|reloads the server| proc` targeted a SUBGRAPH, not a card. A grid edge must
+#     touch a card (R3), so it is retargeted to `runner` here.
+
+content
+  flowchart TD
+    subgraph mapview [MAP VIEW]
+      tree["refines tree | the decision tree, as a list you open and close"]
+      graph3d["3d graph | the same cards, drawn as a 3D web of links"]
+      detail["card detail | the full text of one card"]
+      rollup["rollup bar | counts of decided, open, and stale cards"]
+    end
+    subgraph pane [CHAT PANE]
+      approvebar["approval bar | asks you to allow or deny a risky action"]
+      composer["composer | the box where you type"]
+      transcript["transcript | the chat history"]
+      tabs["tab strip | one tab per chat"]
+      header["model + context header | which model runs, and how much context is left"]
+    end
+    subgraph proc [SERVER PROCESS]
+      state["state | GET /api/graph, one fetch of today's folded map"]
+      live["live + sse | POST /api/chat, /api/ask, and the SSE stream back"]
+      foldfn["fold | turns the log of past decisions into today's state"]
+      runner["agent runner | runs the agent that answers you"]
+      gate["permission gate | decides if a tool call may run"]
+      lock["one-server lock | stops two servers running at once"]
+      dev["dev reload | reloads code changes without losing a live chat"]
+    end
+    subgraph store [STORE]
+      log["log.jsonl | every decision, ever made, in order"]
+      chatlog["chat.jsonl | the saved chat messages"]
+      allow["allow.json | tool calls you already said yes to"]
+    end
+    cli["cli | the commands that read and write the map"]
+    child["claude code child | the Claude Code process doing the work"]
+    tracker["issue tracker | an outside tool, like Linear or GitHub"]
+
+    tree -->|loads the card tree| state
+    graph3d -->|loads nodes and edges| state
+    detail -->|loads one card's full text| state
+    rollup -->|loads decided, open, and stale counts| state
+    approvebar -->|asks before a risky action runs| live
+    composer -->|sends what you type| live
+    transcript -->|streams the reply as it is written| live
+    tabs -->|switches which chat is live| live
+    header -->|shows the model and context left| live
+    state -->|asks for today's state| foldfn
+    foldfn -->|reads every past decision| log
+    live -->|starts the agent for a message| runner
+    runner -->|runs the agent| child
+    runner -->|saves the conversation| chatlog
+    runner -->|checks no other server is running| lock
+    child -->|checks before a tool runs| gate
+    gate -->|checks the saved yes/no list| allow
+    gate -->|asks you when unsure| approvebar
+    child -->|changes the map| cli
+    cli -->|appends the change| log
+    log -->|copies a decision out| tracker
+    dev -->|reloads the server on a code change| runner
+
+    class tree,graph3d,detail,rollup,approvebar,composer,transcript,tabs,header read
+    class state,live,foldfn,runner,gate,lock state
+    class dev dev
+    class log,chatlog,allow write
+    class cli,child agent
+    class tracker ext
+
+grid
+  ".    .            .     .     .       .               .       .              .       .              .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                .                .            .                 .           .        .      .           .             .      .           .             .           .   .   .  "
+  "tree tree         tree  .     graph3d graph3d         graph3d .              detail  detail         detail   .        rollup   rollup         rollup   .        gate->approvebar  approvebar       approvebar        approvebar       .                composer         composer         composer         .                transcript   transcript        transcript  .        tabs   tabs        tabs          .      header      header        header      .   .   .  "
+  "tree tree         tree  .     graph3d graph3d         graph3d .              detail  detail         detail   .        rollup   rollup         rollup   .        gate->approvebar  approvebar       approvebar        approvebar       .                composer         composer         composer         .                transcript   transcript        transcript  .        tabs   tabs        tabs          .      header      header        header      .   .   .  "
+  ".    tree->state  .     .     .       graph3d->state  .       .              .       detail->state  .        .        .        rollup->state  .        .        gate->approvebar  .                approvebar->live  .                .                .                composer->live   .                .                .            transcript->live  .           .        .      tabs->live  .             .      .           header->live  .           .   .   .  "
+  ".    @tree->state .     .     .       @graph3d->state .       .              .       @detail->state .        .        .        @rollup->state .        .        gate->approvebar  .                @approvebar->live .                .                .                @composer->live  .                .                .            @transcript->live .           .        .      @tabs->live .             .      .           @header->live .           .   .   .  "
+  ".    tree->state  .     .     .       graph3d->state  .       .              .       detail->state  .        .        .        rollup->state  .        .        gate->approvebar  .                approvebar->live  .                .                .                composer->live   .                .                .            transcript->live  .           .        .      tabs->live  .             .      .           header->live  .           .   .   .  "
+  ".    state        state state state   state           state   state          state   state          state    state    state    state          .        .        gate->approvebar  .                live              live             live             live             live             live             live             live         live              live        live     live   live        live          live   live        live          .           .   .   .  "
+  ".    state        state state state   state           state   state          state   state          state    state    state    state          .        .        gate->approvebar  .                live              live             live             live             live             live             live             live         live              live        live     live   live        live          live   live        live          .           .   .   .  "
+  ".    .            .     .     .       .               .       state->foldfn  .       .              .        .        .        .              .        .        gate->approvebar  .                .                 .                .                .                .                .                .                .            live->runner      .           .        .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       @state->foldfn .       .              .        .        .        .              .        .        @gate->approvebar .                .                 .                .                .                .                .                .                .            @live->runner     .           .        .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       state->foldfn  .       .              .        .        .        .              .        .        gate->approvebar  .                .                 .                .                .                .                .                .                .            live->runner      .           .        .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               foldfn  foldfn         foldfn  .              .        .        .        .              .        .        gate->approvebar  .                .                 .                runner           runner           runner           runner           runner           runner       runner            runner      runner   runner runner      runner        runner dev->runner @dev->runner  dev->runner dev dev dev"
+  ".    .            .     .     .       .               foldfn  foldfn         foldfn  .              .        .        .        .              .        .        gate->approvebar  .                .                 .                runner           runner           runner           runner           runner           runner       runner            runner      runner   runner runner      runner        runner .           .             .           dev dev dev"
+  ".    .            .     .     .       .               .       foldfn->log    .       .              .        .        .        .              .        .        gate->approvebar  .                .                 .                .                runner->chatlog  .                .                .                .            runner->child     .           .        .      .           runner->lock  .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       @foldfn->log   .       .              .        .        .        .              .        .        gate->approvebar  .                .                 .                .                @runner->chatlog .                .                .                .            @runner->child    .           .        .      .           @runner->lock .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       foldfn->log    .       .              .        .        .        .              .        .        gate->approvebar  .                .                 .                .                runner->chatlog  .                .                .                .            runner->child     .           .        .      .           runner->lock  .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               log     log            log     .              .        .        .        .              .        .        gate->approvebar  .                .                 .                chatlog          chatlog          chatlog          .                .                child        child             child       .        .      lock        lock          lock   .           .             .           .   .   .  "
+  ".    .            .     .     .       .               log     log            log     cli->log       .        .        .        .              .        .        gate->approvebar  .                .                 .                chatlog          chatlog          chatlog          .                .                child        child             child       .        .      lock        lock          lock   .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       log->tracker   .       cli->log       .        .        .        .              .        .        gate->approvebar  .                .                 .                .                .                .                .                .                child->gate  .                 child->cli  .        .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       @log->tracker  .       cli->log       .        .        .        .              .        .        gate->approvebar  .                .                 .                .                .                .                .                .                @child->gate .                 @child->cli .        .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       log->tracker   .       cli->log       .        .        .        .              .        .        gate->approvebar  gate->approvebar gate->approvebar  gate->approvebar gate->approvebar gate->approvebar gate->approvebar gate->approvebar gate->approvebar child->gate  .                 child->cli  .        .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               tracker tracker        tracker cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                gate             gate         gate              cli         cli      cli    .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               tracker tracker        tracker cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                gate             gate         gate              cli         cli      cli    .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       .              .       cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                .                gate->allow  .                 .           cli->log .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       .              .       cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                .                @gate->allow .                 .           cli->log .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       .              .       cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                .                gate->allow  .                 .           cli->log .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       .              .       cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                allow            allow        allow             .           cli->log .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       .              .       cli->log       .        .        .        .              .        .        .                 .                .                 .                .                .                .                .                allow            allow        allow             .           cli->log .      .           .             .      .           .             .           .   .   .  "
+  ".    .            .     .     .       .               .       .              .       cli->log       cli->log cli->log cli->log cli->log       cli->log cli->log cli->log          cli->log         @cli->log         cli->log         cli->log         cli->log         cli->log         cli->log         cli->log         cli->log     cli->log          cli->log    cli->log .      .           .             .      .           .             .           .   .   .  "

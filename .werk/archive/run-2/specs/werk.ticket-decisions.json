@@ -1,0 +1,14 @@
+[
+  {
+    "id": "werk-plancopy-answers",
+    "title": "A plan's copy also keeps the answer records that each writer returned",
+    "why": "Two plans of one subtree can differ in the decisions their writers proposed, and the proposed cards alone do not show which plan wrote which answer.",
+    "body": "When a plan ends, its copy folder beside the pipeline log holds the spec and the tickets it wrote or changed, and also the list of answer records that the spec writer and the ticket writer returned. A comparison of two plans then shows which answers each plan added. The copy is a record only: no plan or build reads it, and git does not track it."
+  },
+  {
+    "id": "werk-kill-state-v0",
+    "title": "In v0, every recorded kill criterion shows the state recorded, in the neutral look",
+    "why": "v0 records kill criteria but watches none of them, so it has no fired or unmonitored state to show, and the word monitored would claim a watch that does not run.",
+    "body": "The kill criteria section on a card page shows a state chip on each row. Because v0 builds no scheduled check, no event trigger and no review-date trigger, every criterion's chip reads recorded, with the neutral border. The fired and unmonitored looks arrive with the watch that sets those states."
+  }
+]

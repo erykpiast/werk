@@ -1,0 +1,32 @@
+{
+  "name": "werk",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "A visual layer over Claude Code. An append-only decision log, folded into a map.",
+  "bin": {
+    "werk": "./src/cli.ts"
+  },
+  "scripts": {
+    "werk": "bun src/cli.ts",
+    "serve": "bun src/cli.ts serve",
+    "dev": "WERK_DEV=1 bun --hot src/cli.ts serve",
+    "test": "bun test --parallel=4 --timeout=15000 --reporter=junit --reporter-outfile=.werk/test-run.xml; c=$?; bun src/test/record-run.ts; exit $c",
+    "test:coverage": "bun run test && bun src/test/coverage-gate.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src web",
+    "lint:fix": "oxlint --fix src web",
+    "test:live": "node src/permission.live.mjs",
+    "e2e": "playwright test"
+  },
+  "engines": {
+    "bun": ">=1.4"
+  },
+  "devDependencies": {
+    "@happy-dom/global-registrator": "^21.0.4",
+    "@playwright/test": "^1.63.0",
+    "@types/bun": "^1.4.2",
+    "oxlint": "^1.85.0",
+    "typescript": "^7.0.2"
+  }
+}

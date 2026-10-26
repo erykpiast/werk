@@ -1,0 +1,10 @@
+bun test v1.4.1 (4661e494f)
+
+s61.test.ts:
+61.4 gate line:   FAIL    0.0%  src/map/stale-text.ts  (no test loads this file)
+
+ 4 pass
+ 0 fail
+ 118 expect() calls
+Ran 4 tests across 1 file. [573.45s]
+EXIT 0

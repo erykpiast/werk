@@ -1,0 +1,488 @@
+{
+  "run": "werk",
+  "end": "stuck",
+  "builds": [
+    {
+      "ticket": "werk/01",
+      "result": "green",
+      "passes": 3,
+      "branch": "werk-build/werk-01-1792368443617",
+      "loopRun": "werk-01-1792368443617"
+    },
+    {
+      "ticket": "werk/02",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-02-1792370144979",
+      "loopRun": "werk-02-1792370144979"
+    },
+    {
+      "ticket": "werk/28",
+      "result": "green",
+      "passes": 2,
+      "branch": "werk-build/werk-28-1792370145017",
+      "loopRun": "werk-28-1792370145017"
+    },
+    {
+      "ticket": "werk/28",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-28-1792371073739",
+      "loopRun": "werk-28-1792371073739"
+    },
+    {
+      "ticket": "werk/03",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-03-1792371073772",
+      "loopRun": "werk-03-1792371073772"
+    },
+    {
+      "ticket": "werk/05",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-05-1792371073801",
+      "loopRun": "werk-05-1792371073801"
+    },
+    {
+      "ticket": "werk/05",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-05-1792372512942",
+      "loopRun": "werk-05-1792372512942"
+    },
+    {
+      "ticket": "werk/06",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-06-1792372513016",
+      "loopRun": "werk-06-1792372513016"
+    },
+    {
+      "ticket": "werk/04",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-04-1792372512980",
+      "loopRun": "werk-04-1792372512980"
+    },
+    {
+      "ticket": "werk/06",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-06-1792373645431",
+      "loopRun": "werk-06-1792373645431"
+    },
+    {
+      "ticket": "werk/04",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-04-1792373645392",
+      "loopRun": "werk-04-1792373645392"
+    },
+    {
+      "ticket": "werk/06",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-06-1792373986374",
+      "loopRun": "werk-06-1792373986374"
+    },
+    {
+      "ticket": "werk/07",
+      "result": "green",
+      "passes": 2,
+      "branch": "werk-build/werk-07-1792373645469",
+      "loopRun": "werk-07-1792373645469"
+    },
+    {
+      "ticket": "werk/07",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-07-1792374959708",
+      "loopRun": "werk-07-1792374959708"
+    },
+    {
+      "ticket": "werk/06",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-06-1792374839529",
+      "loopRun": "werk-06-1792374839529"
+    },
+    {
+      "ticket": "werk/07",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-07-1792375333738",
+      "loopRun": "werk-07-1792375333738"
+    },
+    {
+      "ticket": "werk/16",
+      "result": "green",
+      "passes": 2,
+      "branch": "werk-build/werk-16-1792374839566",
+      "loopRun": "werk-16-1792374839566"
+    },
+    {
+      "ticket": "werk/07",
+      "result": "cap",
+      "passes": 1,
+      "branch": "werk-build/werk-07-1792375979804",
+      "loopRun": "werk-07-1792375979804"
+    },
+    {
+      "ticket": "werk/16",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-16-1792375979842",
+      "loopRun": "werk-16-1792375979842"
+    },
+    {
+      "ticket": "werk/29",
+      "result": "green",
+      "passes": 1,
+      "branch": "werk-build/werk-29-1792375979877",
+      "loopRun": "werk-29-1792375979877"
+    }
+  ],
+  "merges": [
+    {
+      "ticket": "werk/01",
+      "green": true,
+      "commit": "d0822cf9f73e6eb861b4bff789be2b597ba5f9ca"
+    },
+    {
+      "ticket": "werk/02",
+      "green": true,
+      "commit": "cbaf209b1cf5d0758b9aa64c402cdbced01f46e1"
+    },
+    {
+      "ticket": "werk/28",
+      "green": false,
+      "detail": "git merge werk-build/werk-28-1792370145017 (exit 1)"
+    },
+    {
+      "ticket": "werk/28",
+      "green": true,
+      "commit": "c7da273b1375ee8a2a29b53d580529aef69a832c"
+    },
+    {
+      "ticket": "werk/03",
+      "green": true,
+      "commit": "5579c15bc70c9ae9d4f20b224fe49d79f6e23a55"
+    },
+    {
+      "ticket": "werk/05",
+      "green": false,
+      "detail": "git merge werk-build/werk-05-1792371073801 (exit 1)"
+    },
+    {
+      "ticket": "werk/05",
+      "green": true,
+      "commit": "54fd65aa6ca64f4a068bad16889e6110bb0d7200"
+    },
+    {
+      "ticket": "werk/04",
+      "green": false,
+      "detail": "git merge werk-build/werk-04-1792372512980 (exit 1)"
+    },
+    {
+      "ticket": "werk/06",
+      "green": false,
+      "detail": "git merge werk-build/werk-06-1792372513016 (exit 1)"
+    },
+    {
+      "ticket": "werk/06",
+      "green": false,
+      "detail": "make test (exit 2)"
+    },
+    {
+      "ticket": "werk/04",
+      "green": true,
+      "commit": "3a902621bb56e962c881f93f086a6d184e9d408a"
+    },
+    {
+      "ticket": "werk/06",
+      "green": false,
+      "detail": "git merge werk-build/werk-06-1792373986374 (exit 1)"
+    },
+    {
+      "ticket": "werk/07",
+      "green": false,
+      "detail": "git merge werk-build/werk-07-1792373645469 (exit 1)"
+    },
+    {
+      "ticket": "werk/07",
+      "green": false,
+      "detail": "make test-coverage (exit 2)"
+    },
+    {
+      "ticket": "werk/06",
+      "green": true,
+      "commit": "54574a5ac47295d14beb33fed7247245da900c53"
+    },
+    {
+      "ticket": "werk/07",
+      "green": false,
+      "detail": "git merge werk-build/werk-07-1792375333738 (exit 1)"
+    },
+    {
+      "ticket": "werk/16",
+      "green": false,
+      "detail": "git merge werk-build/werk-16-1792374839566 (exit 1)"
+    },
+    {
+      "ticket": "werk/16",
+      "green": true,
+      "commit": "cefab328b78c061e765ae374286e43c7185ad092"
+    },
+    {
+      "ticket": "werk/29",
+      "green": false,
+      "detail": "git merge werk-build/werk-29-1792375979877 (exit 1)"
+    }
+  ],
+  "heldout": [
+    {
+      "after": "werk/01",
+      "green": false,
+      "failed": [
+        "01.2 An agent edits a server module while a live session runs, and the session survives"
+      ],
+      "binderErrors": [],
+      "followUp": "werk/28"
+    },
+    {
+      "after": "werk/02",
+      "green": false,
+      "failed": [
+        "01.2 An agent edits a server module while a live session runs, and the session survives",
+        "01.5 A command-line test runs a werk command against a temporary project",
+        "02.2 A card added from the command line appears in an open page without a reload",
+        "02.5 A page control changes a card only by appending an event"
+      ],
+      "binderErrors": [],
+      "followUp": "werk/29"
+    },
+    {
+      "after": "werk/28",
+      "green": false,
+      "failed": [
+        "02.2 A card added from the command line appears in an open page without a reload",
+        "02.5 A page control changes a card only by appending an event",
+        "03.1 A card with a missing fact cannot become decided, and the printed command fixes it",
+        "03.2 Each missing fact prints its own fixing command",
+        "03.3 A stated lack of basis and an unchallenged flag satisfy the check",
+        "03.4 An amend of a decided card cannot remove a required fact",
+        "03.5 Adding a card and setting it open are not checked",
+        "05.1 A reopen without a reason is refused and leaves the map unchanged",
+        "05.2 A rejected reopen marks only the next hop as stale, and a review moves the mark one hop on",
+        "05.3 A postponed reopen marks every downstream card as paused in grey and keeps its status colour",
+        "05.4 Stale wins when a postponement and an invalidation reach the same card",
+        "05.5 Clearing one stale mark leaves the other marks in place"
+      ],
+      "binderErrors": [],
+      "followUp": "werk/30"
+    },
+    {
+      "after": "werk/03",
+      "green": false,
+      "failed": [],
+      "binderErrors": [
+        "01.1 A user starts werk in a project and sees the empty map shell: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.2 An agent edits a server module while a live session runs, and the session survives: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.3 The agent runs the unit tests and then the coverage gate: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.4 The agent runs the browser tests and gets screenshot evidence without a real agent: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.5 A command-line test runs a werk command against a temporary project: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.1 A retitle appends one event and the map shows only the new title: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.2 A card added from the command line appears in an open page without a reload: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.3 A status change from the command line shows in the browser and in the command line: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.4 A card id in the location hash opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.5 A page control changes a card only by appending an event: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.1 A card with a missing fact cannot become decided, and the printed command fixes it: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.2 Each missing fact prints its own fixing command: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.3 A stated lack of basis and an unchallenged flag satisfy the check: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.4 An amend of a decided card cannot remove a required fact: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.5 Adding a card and setting it open are not checked: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.1 A reopen without a reason is refused and leaves the map unchanged: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.2 A rejected reopen marks only the next hop as stale, and a review moves the mark one hop on: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.3 A postponed reopen marks every downstream card as paused in grey and keeps its status colour: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.4 Stale wins when a postponement and an invalidation reach the same card: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.5 Clearing one stale mark leaves the other marks in place: the binder session failed: killed after 600000ms wall-clock cap"
+      ]
+    },
+    {
+      "after": "werk/05",
+      "green": false,
+      "failed": [],
+      "binderErrors": [
+        "01.1 A user starts werk in a project and sees the empty map shell: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.2 An agent edits a server module while a live session runs, and the session survives: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.3 The agent runs the unit tests and then the coverage gate: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.4 The agent runs the browser tests and gets screenshot evidence without a real agent: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.5 A command-line test runs a werk command against a temporary project: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.1 A retitle appends one event and the map shows only the new title: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.2 A card added from the command line appears in an open page without a reload: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.3 A status change from the command line shows in the browser and in the command line: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.4 A card id in the location hash opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.5 A page control changes a card only by appending an event: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.1 A card with a missing fact cannot become decided, and the printed command fixes it: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.2 Each missing fact prints its own fixing command: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.3 A stated lack of basis and an unchallenged flag satisfy the check: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.4 An amend of a decided card cannot remove a required fact: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.5 Adding a card and setting it open are not checked: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.1 An agent's new card waits as a ghost until the person accepts it with a ✓: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.2 Accepting a ghost child also accepts its ghost parent, and its held edge goes live with no further event: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.3 Discarding a ghost parent drops its ghost children: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.4 The words of a ghost are frozen, but an agent can still propose it as already decided: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.5 An accept from the command line needs the statement that the person asked for it: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.1 A reopen without a reason is refused and leaves the map unchanged: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.2 A rejected reopen marks only the next hop as stale, and a review moves the mark one hop on: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.3 A postponed reopen marks every downstream card as paused in grey and keeps its status colour: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.4 Stale wins when a postponement and an invalidation reach the same card: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.5 Clearing one stale mark leaves the other marks in place: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.1 An exact quote becomes a ghost excerpt that cites its source: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.2 The excerpt span selects the quoted text exactly: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.3 A quote with one changed character fails and writes nothing: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.4 A quote that occurs in two messages fails and names the ambiguity: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.5 An accepted excerpt shows in the card view with speaker and session: the binder session failed: killed after 600000ms wall-clock cap"
+      ]
+    },
+    {
+      "after": "werk/04",
+      "green": false,
+      "failed": [],
+      "binderErrors": [
+        "01.1 A user starts werk in a project and sees the empty map shell: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.2 An agent edits a server module while a live session runs, and the session survives: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.3 The agent runs the unit tests and then the coverage gate: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.4 The agent runs the browser tests and gets screenshot evidence without a real agent: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.5 A command-line test runs a werk command against a temporary project: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.1 A retitle appends one event and the map shows only the new title: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.2 A card added from the command line appears in an open page without a reload: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.3 A status change from the command line shows in the browser and in the command line: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.4 A card id in the location hash opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.5 A page control changes a card only by appending an event: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.1 A card with a missing fact cannot become decided, and the printed command fixes it: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.2 Each missing fact prints its own fixing command: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.3 A stated lack of basis and an unchallenged flag satisfy the check: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.4 An amend of a decided card cannot remove a required fact: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.5 Adding a card and setting it open are not checked: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.1 An agent's new card waits as a ghost until the person accepts it with a ✓: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.2 Accepting a ghost child also accepts its ghost parent, and its held edge goes live with no further event: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.3 Discarding a ghost parent drops its ghost children: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.4 The words of a ghost are frozen, but an agent can still propose it as already decided: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.5 An accept from the command line needs the statement that the person asked for it: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.1 A reopen without a reason is refused and leaves the map unchanged: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.2 A rejected reopen marks only the next hop as stale, and a review moves the mark one hop on: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.3 A postponed reopen marks every downstream card as paused in grey and keeps its status colour: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.4 Stale wins when a postponement and an invalidation reach the same card: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.5 Clearing one stale mark leaves the other marks in place: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.1 An exact quote becomes a ghost excerpt that cites its source: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.2 The excerpt span selects the quoted text exactly: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.3 A quote with one changed character fails and writes nothing: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.4 A quote that occurs in two messages fails and names the ambiguity: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.5 An accepted excerpt shows in the card view with speaker and session: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.1 A known card reference in a card body opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.2 Bare ids and code spans link only when they have the shape of an id: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.3 The link rule leaves fenced blocks, headings and URL fragments alone: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.4 A grid tile summary shows a reference without a link: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.5 Fenced code in a card is boxed, highlighted and scrolls sideways without reformatting: the binder session failed: killed after 600000ms wall-clock cap"
+      ]
+    },
+    {
+      "after": "werk/06",
+      "green": false,
+      "failed": [],
+      "binderErrors": [
+        "01.1 A user starts werk in a project and sees the empty map shell: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.2 An agent edits a server module while a live session runs, and the session survives: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.3 The agent runs the unit tests and then the coverage gate: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.4 The agent runs the browser tests and gets screenshot evidence without a real agent: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.5 A command-line test runs a werk command against a temporary project: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.1 A retitle appends one event and the map shows only the new title: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.2 A card added from the command line appears in an open page without a reload: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.3 A status change from the command line shows in the browser and in the command line: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.4 A card id in the location hash opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.5 A page control changes a card only by appending an event: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.1 A card with a missing fact cannot become decided, and the printed command fixes it: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.2 Each missing fact prints its own fixing command: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.3 A stated lack of basis and an unchallenged flag satisfy the check: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.4 An amend of a decided card cannot remove a required fact: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.5 Adding a card and setting it open are not checked: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.1 An agent's new card waits as a ghost until the person accepts it with a ✓: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.2 Accepting a ghost child also accepts its ghost parent, and its held edge goes live with no further event: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.3 Discarding a ghost parent drops its ghost children: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.4 The words of a ghost are frozen, but an agent can still propose it as already decided: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.5 An accept from the command line needs the statement that the person asked for it: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.1 A reopen without a reason is refused and leaves the map unchanged: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.2 A rejected reopen marks only the next hop as stale, and a review moves the mark one hop on: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.3 A postponed reopen marks every downstream card as paused in grey and keeps its status colour: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.4 Stale wins when a postponement and an invalidation reach the same card: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.5 Clearing one stale mark leaves the other marks in place: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.1 An exact quote becomes a ghost excerpt that cites its source: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.2 The excerpt span selects the quoted text exactly: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.3 A quote with one changed character fails and writes nothing: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.4 A quote that occurs in two messages fails and names the ambiguity: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.5 An accepted excerpt shows in the card view with speaker and session: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.1 A known card reference in a card body opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.2 Bare ids and code spans link only when they have the shape of an id: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.3 The link rule leaves fenced blocks, headings and URL fragments alone: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.4 A grid tile summary shows a reference without a link: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.5 Fenced code in a card is boxed, highlighted and scrolls sideways without reformatting: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.1 A plan over a decided subtree writes one spec, then tickets, and puts each ticket on the board: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.2 Every answer the writers give that no card gives comes back as a proposed card under the subtree: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.3 A ticket set that misses a required card or a story fails the set check and blocks only the named tickets: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.4 blocked_by follows the depends_on edges between the cited cards: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.5 A ticket's own check passes an empty stories line and fails a file path or a missing field: the binder session failed: killed after 600000ms wall-clock cap"
+      ]
+    },
+    {
+      "after": "werk/16",
+      "green": false,
+      "failed": [],
+      "binderErrors": [
+        "01.1 A user starts werk in a project and sees the empty map shell: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.2 An agent edits a server module while a live session runs, and the session survives: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.3 The agent runs the unit tests and then the coverage gate: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.4 The agent runs the browser tests and gets screenshot evidence without a real agent: the binder session failed: killed after 600000ms wall-clock cap",
+        "01.5 A command-line test runs a werk command against a temporary project: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.1 A retitle appends one event and the map shows only the new title: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.2 A card added from the command line appears in an open page without a reload: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.3 A status change from the command line shows in the browser and in the command line: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.4 A card id in the location hash opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "02.5 A page control changes a card only by appending an event: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.1 A card with a missing fact cannot become decided, and the printed command fixes it: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.2 Each missing fact prints its own fixing command: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.3 A stated lack of basis and an unchallenged flag satisfy the check: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.4 An amend of a decided card cannot remove a required fact: the binder session failed: killed after 600000ms wall-clock cap",
+        "03.5 Adding a card and setting it open are not checked: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.1 An agent's new card waits as a ghost until the person accepts it with a ✓: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.2 Accepting a ghost child also accepts its ghost parent, and its held edge goes live with no further event: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.3 Discarding a ghost parent drops its ghost children: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.4 The words of a ghost are frozen, but an agent can still propose it as already decided: the binder session failed: killed after 600000ms wall-clock cap",
+        "04.5 An accept from the command line needs the statement that the person asked for it: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.1 A reopen without a reason is refused and leaves the map unchanged: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.2 A rejected reopen marks only the next hop as stale, and a review moves the mark one hop on: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.3 A postponed reopen marks every downstream card as paused in grey and keeps its status colour: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.4 Stale wins when a postponement and an invalidation reach the same card: the binder session failed: killed after 600000ms wall-clock cap",
+        "05.5 Clearing one stale mark leaves the other marks in place: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.1 An exact quote becomes a ghost excerpt that cites its source: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.2 The excerpt span selects the quoted text exactly: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.3 A quote with one changed character fails and writes nothing: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.4 A quote that occurs in two messages fails and names the ambiguity: the binder session failed: killed after 600000ms wall-clock cap",
+        "06.5 An accepted excerpt shows in the card view with speaker and session: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.1 A known card reference in a card body opens that card: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.2 Bare ids and code spans link only when they have the shape of an id: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.3 The link rule leaves fenced blocks, headings and URL fragments alone: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.4 A grid tile summary shows a reference without a link: the binder session failed: killed after 600000ms wall-clock cap",
+        "07.5 Fenced code in a card is boxed, highlighted and scrolls sideways without reformatting: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.1 A plan over a decided subtree writes one spec, then tickets, and puts each ticket on the board: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.2 Every answer the writers give that no card gives comes back as a proposed card under the subtree: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.3 A ticket set that misses a required card or a story fails the set check and blocks only the named tickets: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.4 blocked_by follows the depends_on edges between the cited cards: the binder session failed: killed after 600000ms wall-clock cap",
+        "16.5 A ticket's own check passes an empty stories line and fails a file path or a missing field: the binder session failed: killed after 600000ms wall-clock cap"
+      ]
+    }
+  ],
+  "costUsd": 123.32885399999998,
+  "detail": "werk/07: cap"
+}

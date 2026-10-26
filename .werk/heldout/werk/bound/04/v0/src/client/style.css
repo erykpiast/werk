@@ -1,0 +1,139 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+body {
+  margin: 0;
+}
+.bar {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+}
+.brand {
+  font-weight: 700;
+}
+.project {
+  opacity: 0.7;
+}
+.page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+.subcards {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+}
+.subcards h2 {
+  font-size: 1rem;
+}
+.empty {
+  opacity: 0.6;
+}
+a {
+  color: inherit;
+}
+.brand {
+  text-decoration: none;
+}
+.trail {
+  font-size: 0.875rem;
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+}
+.meta {
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+.status {
+  font-size: 0.75rem;
+  padding: 0 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+}
+.status.decided {
+  color: #2e8b57;
+}
+.why {
+  font-style: italic;
+}
+.body {
+  white-space: pre-wrap;
+}
+.part h2 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin: 1.25rem 0 0.25rem;
+}
+.part ul,
+.cards {
+  padding-left: 1.25rem;
+  margin: 0;
+}
+.say {
+  margin: 0.5rem 0;
+}
+.say blockquote {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid color-mix(in srgb, currentColor 30%, transparent);
+}
+.say figcaption {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+.why-not,
+.mark {
+  opacity: 0.75;
+}
+.mark {
+  color: #c0392b;
+}
+.mark.stale {
+  color: #c0392b;
+  opacity: 1;
+}
+/* A paused card reads calm: grey text, and its status badge keeps its own colour. */
+.mark.paused,
+li.paused > a,
+.part.paused {
+  color: #8a8a8a;
+}
+.reopen {
+  font-style: italic;
+}
+.traces {
+  font-size: 0.875rem;
+  opacity: 0.85;
+  padding-left: 1.25rem;
+}
+/* A ghost (#werk-propose-new): this node does not exist yet. Grey and dashed, never a tint. */
+.ghost {
+  color: GrayText;
+  border: 1px dashed GrayText;
+  border-radius: 0.25rem;
+  padding: 0 0.4rem;
+}
+li.ghost {
+  margin: 0.25rem 0;
+}
+.detail.ghost {
+  padding: 0.5rem 1rem;
+}
+.status.proposed {
+  margin-left: 0.25rem;
+  border-style: dashed;
+}
+.accept {
+  font: inherit;
+  line-height: 1;
+  padding: 0.1rem 0.4rem;
+  cursor: pointer;
+}

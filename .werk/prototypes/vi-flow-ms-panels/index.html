@@ -1,0 +1,75 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Flow panels — pipeline measures (made-up data)</title>
+<style>
+:root{--bg:#14161a;--card:#1c1f25;--fg:#d8dce3;--dim:#8a919e;--band:#3b82f633;--blue:#3b82f6;--dot:#cbd5e1;--warn:#f59e0b;--bad:#ef4444}
+body{background:var(--bg);color:var(--fg);font:14px system-ui;margin:0;padding:24px;max-width:980px}
+h1{font-size:18px}h2{font-size:15px;margin:0 0 2px}
+.p{background:var(--card);border-radius:8px;padding:14px 16px;margin:14px 0}
+.do{color:var(--dim);font-size:12.5px;margin:2px 0 6px}.do b{color:var(--fg)}
+.lg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--dim);margin:4px 0 8px}
+.lg i{display:inline-block;width:14px;height:10px;margin-right:5px;vertical-align:middle;border-radius:2px}
+svg{width:100%;height:auto;display:block}text{fill:var(--dim);font-size:11px}
+.tag{font-size:11px;color:var(--warn)}
+</style>
+<h1>Flow — pipeline measures <span class="tag">made-up data · bands are learned guesses</span></h1>
+<div id="root"></div>
+<script>
+let s=7;const r=()=>(s=(s*16807)%2147483647)/2147483647;
+const svg=(w,h,b)=>`<svg viewBox="0 0 ${w} ${h}">${b}</svg>`;
+const sw=(c,shape)=>shape=='line'?`<i style="height:2px;background:${c}"></i>`:shape=='dash'?`<i style="height:0;border-top:2px dashed ${c};background:none"></i>`:shape=='dot'?`<i style="width:10px;border-radius:50%;background:${c}"></i>`:`<i style="background:${c}"></i>`;
+const legend=items=>`<div class="lg">${items.map(([c,t,sh])=>`<span>${sw(c,sh)}${t}</span>`).join('')}</div>`;
+function panel(title,doIt,lg,body){root.insertAdjacentHTML('beforeend',`<div class="p"><h2>${title}</h2><div class="do"><b>Then:</b> ${doIt}</div>${lg}${body}</div>`)}
+const sorted=a=>[...a].sort((x,y)=>x-y),med=a=>sorted(a)[a.length>>1],p90=a=>sorted(a)[Math.floor(a.length*.9)];
+function axisY(x0,x1,y,ticks,fmt){return ticks.map(t=>`<line x1="${x0}" x2="${x1}" y1="${y(t)}" y2="${y(t)}" stroke="#2a2e36"/><text x="${x0-6}" y="${y(t)+4}" text-anchor="end">${fmt(t)}</text>`).join('')}
+
+// 1 effort per story
+{const n=30,v=[];for(let i=0;i<n;i++)v.push(2+r()*1.2+i*.04+(i==11?3:0)+(i==24?2.6:0));
+const base=v.slice(0,10),lo=med(base),hi=p90(base),al=lo*1.2,cur=med(v.slice(-10)),W=900,H=230,x=i=>60+i*(W-80)/(n-1),y=d=>H-30-d*24;
+let b=axisY(60,W-20,y,[0,2,4,6],t=>'$'+t);
+b+=`<rect x="${x(0)}" y="${y(hi)}" width="${x(9)-x(0)}" height="${y(lo)-y(hi)}" fill="var(--blue)" fill-opacity=".35"/>`;
+b+=`<rect x="${x(9)}" y="${y(hi)}" width="${x(n-1)-x(9)}" height="${y(lo)-y(hi)}" fill="var(--band)"/>`;
+b+=`<line x1="60" x2="${W-20}" y1="${y(al)}" y2="${y(al)}" stroke="var(--warn)" stroke-dasharray="5 4" stroke-width="1.5"/>`;
+b+=`<line x1="${x(20)}" x2="${x(29)}" y1="${y(cur)}" y2="${y(cur)}" stroke="var(--blue)" stroke-width="3"/>`;
+v.forEach((d,i)=>{const c=d>al*1.5?'var(--bad)':d>hi?'var(--warn)':'var(--dot)';b+=`<circle cx="${x(i)}" cy="${y(d)}" r="${c=='var(--bad)'?6:4}" fill="${c}"><title>ticket ${i+1}: $${d.toFixed(2)} per story of size</title></circle>`});
+b+=`<text x="${x(0)}" y="${H-8}">ticket 1</text><text x="${x(9)}" y="${H-8}">10 — end of base</text><text x="${x(29)}" y="${H-8}" text-anchor="end">30</text>`;
+b+=`<text x="${x(20)}" y="${y(cur)-8}" fill="var(--blue)">$${cur.toFixed(2)}</text>`;
+panel('Is effort per ticket going up?','open the red tickets. If the current-window median stays above the alert line, look at ticket size and spec quality.',
+legend([['var(--dot)','one ticket, effort adjusted for its size','dot'],['var(--warn)','above the band','dot'],['var(--bad)','far above the alert line','dot'],['#3b82f659','base band: median–p90 of tickets 1–10 (learned, n=10)'],['var(--warn)','alert line: base median +20%','dash'],['var(--blue)','median of the last 10 tickets','line']]),svg(W,H,b));}
+
+// 2 stage cost lines
+{const st=['plan','spec','tickets','build','checks','grader','review','merge'],base=[3,2,1,9,2,3,3,1],col=['#94a3b8','#a78bfa','#e879f9','#ef4444','#22c55e','#f59e0b','#3b82f6','#14b8a6'];
+const W=900,H=230,x=w=>60+w*(W-140)/7,y=d=>H-30-d*11;let b=axisY(60,W-80,y,[0,5,10,15],t=>'$'+t);
+st.forEach((n,i)=>{const pts=[];for(let w=0;w<8;w++)pts.push(base[i]*(1+(i==3?w*.1:0)+(r()-.5)*.25));
+b+=`<polyline fill="none" stroke="${col[i]}" stroke-width="${i==3?3:1.5}" points="${pts.map((d,w)=>`${x(w)},${y(d)}`).join(' ')}"/>`;
+if(i==3)b+=`<text x="${x(7)+6}" y="${y(pts[7])+4}" fill="${col[i]}">${n}</text>`});
+for(let w=0;w<8;w++)b+=`<text x="${x(w)}" y="${H-8}" text-anchor="middle">wk ${w+1}</text>`;
+panel('Which stage costs the most, and is it growing?','build costs the most and rises every week. Open its tickets and transcripts for the last two weeks.',
+legend(st.map((n,i)=>[col[i],n,'line'])),svg(W,H,b));}
+
+// 3/4 fails, two cause sets
+function fails(title,doIt,gates,causes,col,data,mark){
+const W=900,rowH=30,H=gates.length*rowH+10,unit=20;let b='';
+data.forEach((row,i)=>{const t=row.reduce((a,z)=>a+z,0);let x=130;b+=`<text x="4" y="${24+i*rowH}">${gates[i]}</text>`;
+row.forEach((n,j)=>{if(!n)return;b+=`<rect x="${x}" y="${8+i*rowH}" width="${n*unit}" height="22" fill="${col[j]}"><title>${gates[i]} / ${causes[j]}: ${n}</title></rect><text x="${x+n*unit/2}" y="${23+i*rowH}" text-anchor="middle" fill="#0b0d10" font-weight="700" font-size="12">${n}</text>`;x+=n*unit});
+const m=mark(row,t);if(m)b+=`<text x="${x+8}" y="${24+i*rowH}" fill="var(--warn)">${m}</text>`});
+panel(title,doIt,legend(causes.map((c,j)=>[col[j],c])),svg(W,H,b));}
+fails('Why do checks fail?','unit test has 5 infrastructure and flaky fails: fix the test runner, not the builder.',
+['type check','lint','unit test','build'],['code breaks the check','test is wrong','check infrastructure','flaky'],['#cbd5e1','#c4b5fd','#fb923c','#facc15'],
+[[9,0,0,0],[6,0,1,0],[8,2,2,3],[3,0,1,0]],(row,t)=>row[2]+row[3]>=3?`${row[2]+row[3]} not the code's fault — fix the check`:'');
+fails('Why do the grader and the reviews fail?','the grader has 7 false findings out of 16 fails (44%). Fix the grader prompt.',
+['grader','review: security','review: tests','review: style'],['diff misses the spec','spec gap','false finding'],['#cbd5e1','#93c5fd','#fbbf24'],
+[[4,5,7],[2,1,0],[3,2,1],[1,0,3]],(row,t)=>row[2]/t>.2?`false findings ${Math.round(row[2]/t*100)}% > 20%`:'');
+
+// 5 waits, colour-coded
+{const k=[['agent question',34],['permission prompt',22],['merge conflict',16],['spec gap stop',6]],W=900,X=m=>200+Math.min(m,60)*10.5;
+let b=[0,15,30,45,60].map(t=>`<line x1="${X(t)}" x2="${X(t)}" y1="6" y2="160" stroke="#2a2e36"/><text x="${X(t)}" y="176" text-anchor="middle">${t}${t==60?'+':''} min</text>`).join('');
+k.forEach(([n,c],i)=>{const v=Array.from({length:c},(_,j)=>(4+r()*8)*(1+i*.4)*(j>=c-3&&i==0?(j==c-1?5:2.2):1)),y=24+i*38;b+=`<text x="4" y="${y+4}">${n} (n=${c})</text>`;
+const enough=c>=10,b0=enough?sorted(v.slice(0,10)):null,lo=enough?med(b0):0,hi=enough?p90(b0):0;
+if(enough)b+=`<rect x="${X(lo)}" y="${y-13}" width="${X(hi)-X(lo)}" height="26" fill="var(--band)"/>`;
+v.forEach(a=>{const c=!enough?'var(--dot)':a>hi*1.5?'var(--bad)':a>hi?'var(--warn)':'var(--dot)';b+=`<circle cx="${X(a)}" cy="${y+(r()-.5)*16}" r="${c=='var(--bad)'?5:3.5}" fill="${c}" fill-opacity=".9"><title>${n}: ${a.toFixed(0)} min</title></circle>`});
+if(enough){const m=med(v.slice(-10));b+=`<line x1="${X(m)}" x2="${X(m)}" y1="${y-14}" y2="${y+14}" stroke="var(--blue)" stroke-width="3"/>`}
+else b+=`<text x="${X(40)}" y="${y+4}" fill="var(--warn)">no band yet: ${10-c} more waits needed</text>`});
+panel('Where does the pipeline wait for a person?','open the red agent questions. Check whether the map could have answered them.',
+legend([['var(--dot)','one wait, within the band','dot'],['var(--warn)','above the band','dot'],['var(--bad)','more than 1.5× the band top','dot'],['#3b82f633','band: median–p90 of the first 10 waits (learned)'],['var(--blue)','median of the last 10 waits','line']]),svg(W,185,b));}
+</script>

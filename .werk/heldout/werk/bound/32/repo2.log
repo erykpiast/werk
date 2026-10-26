@@ -1,0 +1,37 @@
+bun test v1.4.1 (4661e494f)
+
+.werk-heldout/repo.test.ts:
+76 |   const dir = clone()
+77 |   install(dir)
+78 |   // The agent's own shell: no CI variable, so bun test names each test file.
+79 |   const plain = sh(['bun', 'test'], dir, { CI: undefined })
+80 |   expect(plain.code).toBe(0)
+81 |   expect(plain.out).toMatch(/src\/server\/\S+\.test\.ts/)
+                         ^
+error: expect(received).toMatch(expected)
+
+Expected substring or pattern: /src\/server\/\S+\.test\.ts/
+Received: "bun test v1.4.1 (4661e494f)\n\n 149 pass\n 0 fail\n 276 expect() calls\nRan 149 tests across 19 files. [14.32s]\n"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-6AQKKc/.werk-heldout/repo.test.ts:81:21)
+(fail) 01.3 the unit tests, then the coverage gate [14815.41ms]
+152 |   expect({ code: r.code, tail: r.out.slice(-2000) }).toMatchObject({ code: 0 })
+153 |   expect(r.out).toMatch(/ 0 fail/)
+154 |   expect(Number(r.out.match(/(\d+) pass/)?.[1])).toBe(baseline + 1)
+155 |   // The new test by name, in the same harness.
+156 |   const one = sh(['bun', 'run', 'test', 'src/verbs/hello.test.ts'], dir, { CI: undefined })
+157 |   expect(one.out).toMatch(/\(pass\) werk hello|✓ werk hello/)
+                        ^
+error: expect(received).toMatch(expected)
+
+Expected substring or pattern: /\(pass\) werk hello|\u2713 werk hello/
+Received: "bun test v1.4.1 (4661e494f)\n$ PATH=\"$PWD/src/test/fake-claude/bin:$PATH\" bun test src/verbs/hello.test.ts\n\n 1 pass\n 0 fail\n 3 expect() calls\nRan 1 test across 1 file. [306.00ms]\n"
+
+      at <anonymous> (/private/var/folders/xc/_stjh9891jq3t3gsp9j1vy4h0000gn/T/werk-heldout-wt-6AQKKc/.werk-heldout/repo.test.ts:157:19)
+(fail) 31.3 a new verb in its own module shows in the list and runs through the harness [29777.00ms]
+
+ 1 pass
+ 2 filtered out
+ 2 fail
+ 26 expect() calls
+Ran 3 tests across 1 file. [54.09s]

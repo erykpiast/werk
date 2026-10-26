@@ -1,0 +1,523 @@
+exit 0
+bun install --frozen-lockfile
+bun install v1.4.1 (4661e494f)
+
+Checked 35 installs across 97 packages (no changes) [19.00ms]
+touch node_modules/.installed
+CI=true bun run test
+$ bun test
+bun test v1.4.1 (4661e494f)
+
+src/repo.test.ts:
+(pass) the history has one root commit, and its tree holds no files [98.29ms]
+
+src/test/harness.test.ts:
+(pass) the project is a git repository whose one commit holds no files [575.07ms]
+(pass) the fake agent is first on the PATH as claude [358.89ms]
+(pass) the fake agent replays its scripted events and edits a file in the project [837.31ms]
+(pass) the fake agent exits with its scripted code [485.20ms]
+(pass) the fake agent replays the reply of its role, and the top-level steps for any other role [900.44ms]
+(pass) the fake agent replays a list of replies for a role in launch order, and repeats the last one [1100.64ms]
+(pass) the fake agent refuses an edit outside the project [924.56ms]
+(pass) the fake agent accepts a file name that starts with two dots [638.88ms]
+(pass) the fake agent refuses a step that is neither an event nor an edit [550.88ms]
+(pass) werk runs in the project directory [1044.84ms]
+
+src/board/fold.test.ts:
+(pass) the board has the five columns in order, empty for an empty log [0.22ms]
+(pass) a planned ticket is in ready, and each move puts it in the column the move names [0.22ms]
+(pass) a move out of blocked drops the blocking reason [0.03ms]
+(pass) a column keeps its tickets in the order they joined the board [0.09ms]
+(pass) each retry counts, and a retry does not move the ticket [0.15ms]
+(pass) unmet blockers count the blocked_by tickets that are not done [0.07ms]
+(pass) a blocker that is not on the board counts as unmet [0.01ms]
+(pass) a second planned event replaces the fields and keeps the column and the retries [0.02ms]
+(pass) a move or a retry of a ticket that was never planned changes nothing [0.02ms]
+(pass) a ticket keeps its fields for the drawer [0.04ms]
+(pass) an archived ticket leaves the columns and keeps its reason [0.05ms]
+(pass) a planned event for an archived ticket puts it back in ready, and an archive of an unknown ticket changes nothing [0.02ms]
+(pass) a tier event changes no column [0.02ms]
+
+src/plan/answers.test.ts:
+(pass) a JSON array of records reads as answers [0.24ms]
+(pass) a file that is not a JSON array is one error [0.08ms]
+(pass) a record with a missing field or a bad slug is an error that names it, and the other records still read [0.07ms]
+(pass) an answer proposes a ghost that refines the root, decided by the agent, with the root id and the slug as its id [0.26ms]
+(pass) an answer whose id is already in the map cannot be proposed [0.03ms]
+
+src/plan/board-plan.test.ts:
+(pass) a passed ticket goes on the board with its fields, its root and its make checks [1.45ms]
+(pass) a ticket that names a failed ticket as its blocker goes to blocked, and its correct blocker goes to ready [0.44ms]
+(pass) an open ticket of the subtree that no new file numbers is archived with the reason [0.17ms]
+(pass) a fixed ticket leaves blocked, and an open ticket whose new file fails its own checks goes to blocked [0.16ms]
+(pass) a ticket in building stays as it is, and is not archived [0.12ms]
+(pass) a ticket with no number, a second file of one number, and a number of another subtree are problems [0.24ms]
+
+src/markdown/reflink.test.ts:
+(pass) a #id links when the map knows the id, a single word too [0.19ms]
+(pass) a #id that the map does not know stays text [0.02ms]
+(pass) a bare id links only when it holds a hyphen or a colon [0.02ms]
+(pass) a bare id with a dot and no hyphen or colon stays text [0.01ms]
+(pass) the segments keep every character of the text, and a link holds its text and href [0.02ms]
+(pass) trailing punctuation is not part of the id [0.01ms]
+(pass) a hash after a word character or a slash is a URL fragment, not a reference
+(pass) a bare id inside a URL path or after a hash-less word stays text
+(pass) a bare id in a query or before the @ of an email address stays text
+(pass) a longer token that only starts with a known id stays text
+(pass) a heading marker is not a reference, because it has a space after it
+(pass) a text with no reference is one segment, and an empty text has none [0.01ms]
+(pass) a code span links when it holds only an id, with or without the hash [0.20ms]
+(pass) a code span with more than an id, or an unknown id, stays code [0.08ms]
+
+src/markdown/escape.test.ts:
+(pass) escapeHtml escapes the five characters HTML reads as markup, and adds no # [0.06ms]
+
+src/markdown/render.test.ts:
+(pass) a body with known, unknown, bare and command references links each known id once [1.25ms]
+(pass) a heading, a URL fragment and a fenced block that hold an id render with no link [0.16ms]
+(pass) a code span that holds only an id links, with or without the hash, and keeps its code look [0.02ms]
+(pass) with no map, nothing links [0.01ms]
+(pass) everything is escaped before any rule runs
+(pass) bold, italic and strikethrough render, and stay literal inside a code span [0.02ms]
+(pass) an underscore inside a word does not start italic [0.01ms]
+(pass) a card link in bold text still links [0.01ms]
+(pass) a link renders with its text, and an unsafe scheme stays text [0.01ms]
+(pass) a reference inside a link text does not nest a second link [0.01ms]
+(pass) lines of a paragraph keep their breaks, and a blank line starts a new paragraph [0.01ms]
+(pass) headings of each level, and a heading marker with no space is text
+(pass) a rule, a block quote, and lists render [0.10ms]
+(pass) a blank line between items keeps one list [0.01ms]
+(pass) a link to another host with no scheme stays text
+(pass) a fence named after an object member is plain, not a crash
+(pass) a list item keeps its indented lines, and a nested list [0.02ms]
+(pass) a fenced block is boxed, highlighted by its language, and keeps every space [0.04ms]
+(pass) a fence with no language is boxed and plain, and inline rules never run inside it
+(pass) an unclosed fence still renders to the end of the text [0.06ms]
+(pass) a shorter fence inside a longer one does not close it [0.01ms]
+(pass) digits in the text, and stray private-use marks, do not disturb the set-aside pieces [0.09ms]
+(pass) an empty text renders nothing
+
+src/markdown/highlight.test.ts:
+(pass) json: keys, strings, numbers and the three words each get a class [0.06ms]
+(pass) js and ts: comments, strings, numbers and keywords, and a keyword inside a word stays plain [0.11ms]
+(pass) bash: comments, strings, variables and keywords, and a # inside a word stays plain [0.05ms]
+(pass) the language name is read in any case
+(pass) another language, or none, is escaped and left plain
+(pass) highlighting never changes a character of the code, its indentation too [0.10ms]
+(pass) an unclosed string or comment still renders, to the end of its line or of the code [0.01ms]
+
+src/cli/dispatch.test.ts:
+(pass) runs the named verb with the rest of argv and returns its exit code [0.12ms]
+(pass) runs help when argv is empty [0.03ms]
+(pass) an unknown verb exits 2 and names the help command [0.03ms]
+
+src/cli/quote.test.ts:
+(pass) a quote that occurs once proposes a ghost excerpt with its pointer, supported_by the card [1723.05ms]
+(pass) a quote with one changed character fails and appends nothing [816.35ms]
+(pass) a quote that occurs in two messages fails and names both [928.92ms]
+(pass) a quote refuses an unknown session, an unknown card, and a missing --text [2187.46ms]
+(pass) a session found in two project directories fails instead of guessing [617.99ms]
+
+src/cli/remove.test.ts:
+(pass) a remove appends one event, show reports the card and its children as removed, and the log keeps every earlier event [2441.78ms]
+(pass) a restore brings back the card, its subtree and their links [3935.84ms]
+(pass) a remove with reparent keeps the children in the map under the grandparent [2107.03ms]
+(pass) find prints the open cards of a subtree and leaves out a paused card and a stale card [1966.86ms]
+(pass) remove, restore and find refuse a wrong call and append nothing [3748.88ms]
+
+src/cli/ticket-check.test.ts:
+(pass) a folder of valid tickets passes with exit code zero [525.19ms]
+(pass) each own-check fixture fails, and the output names the ticket, the check and the field [613.25ms]
+(pass) a broken set fails each set check, naming the card, the story and the tickets that must not start [645.94ms]
+(pass) a malformed call exits 2, names the problem and prints the usage [1424.76ms]
+(pass) a folder, spec or root that is not there exits 1 and names it [1716.18ms]
+(pass) a folder named like a ticket file is not read as a ticket [442.76ms]
+
+src/cli/serve.test.ts:
+(pass) serve prints its address, serves the fold of the log, and drops the lock on SIGTERM [1104.26ms]
+(pass) a second serve on the same project says it waits, then refuses with the holder pid within about 5 seconds [5885.17ms]
+(pass) a signal during the lock wait stops the waiting start at once, and keeps the holder lock [960.28ms]
+(pass) a stale lock from a dead process is ignored [619.90ms]
+(pass) serve retries the listen while the port is busy, and listens once it is free [1022.06ms]
+(pass) the event channel pushes changed when a verb appends to the log [756.26ms]
+(pass) serve sends the fold of the board log, and pushes changed when the board log changes [523.95ms]
+(pass) a board log line that is not JSON gives a 500 that names the line [916.84ms]
+(pass) serve refuses a malformed call with exit 2 [1175.26ms]
+(pass) a POST to the accept route appends one accept event by the person, and a ghost child brings its ghost parent [2176.58ms]
+(pass) the accept route refuses a real card, an unknown id, a GET, and a call from another origin, and appends nothing [2042.56ms]
+
+src/cli/build.test.ts:
+(pass) a builder that fails once then passes gives two pass commits on a branch off the main line, and a green result [2416.51ms]
+(pass) the worktree starts at the tip of the main line even when another branch is checked out [1746.40ms]
+(pass) each pass gets a fresh prompt with the ticket, its stories and cards, and the second one holds the cut first failure [1963.84ms]
+(pass) the run record has one line per pass with its check results, time and cost [2017.80ms]
+(pass) the board shows the ticket in building with its retry count [2725.87ms]
+(pass) a builder that never passes stops at 5 passes, and the branch stays [2445.90ms]
+(pass) the cap is a flag [1979.35ms]
+(pass) the checks stop at the first red one, and a ticket with no checks uses the rubric defaults [3352.03ms]
+(pass) every time limit is a flag: a builder or a check past its limit is stopped, and the pass goes on [2392.64ms]
+(pass) only a ready ticket with no open blocker builds [3539.75ms]
+(pass) the build refuses bad arguments and a missing main line [1842.55ms]
+(pass) red checks start no grader and no reviewer [1129.07ms]
+(pass) a grader that scores a card 2 fails the pass, and the next prompt holds the gap [1742.39ms]
+(pass) the grader gets one line per criterion and per decided card in the closure, a card the ticket does not cite too [1580.20ms]
+(pass) a grader that marks a card part as not built yet, with score 3, lets the pass go on to the review [1342.94ms]
+(pass) the judges get the read tools only, and no prompt host for the overseer to allow [1642.74ms]
+(pass) five reviewers start for one pass, one per area, each with the diff and no card [1429.43ms]
+(pass) a HIGH finding fails the pass, and the next prompt holds it [2178.41ms]
+(pass) a pass with only MEDIUM and LOW findings goes green, and the run record holds them per ticket [1544.31ms]
+(pass) a permission ask gets an answer from the overseer, and the agent goes on [1502.63ms]
+(pass) an agent that goes silent past the limit is cancelled, and the builder starts a new pass that hears why [3247.56ms]
+(pass) a tool call still in flight past the silence limit is not cancelled as silence [6141.76ms]
+(pass) a classifier that answers looping makes the overseer warn the agent, then cancel the session [1376.04ms]
+(pass) a classifier that answers progressing leaves the agent alone [1856.62ms]
+
+src/cli/args.test.ts:
+(pass) splits positionals from flags in both forms [0.10ms]
+(pass) a value may start with dashes when given with = [0.01ms]
+(pass) refuses an unknown flag and a flag with no value [0.02ms]
+(pass) a switch takes no value, and reads as true [0.01ms]
+
+src/cli/plan.test.ts:
+(pass) a plan writes the feature tier first, proposes the writers answers as ghosts under the root, and puts the tickets in ready [957.96ms]
+(pass) an answer whose id is already in the map makes the plan exit non-zero and name the record [568.75ms]
+(pass) a writer that writes no answers file, or a broken record, is reported [1062.37ms]
+(pass) a ticket with a missing header line is not on the board, the card only it cites is uncited, and its dependent goes to blocked while its other blocker goes to ready [616.63ms]
+(pass) a second plan archives an open ticket the new spec drops, with the reason on the board log [1254.41ms]
+(pass) no plan option sets a tier: a tier flag is a malformed call, and it writes no event [982.38ms]
+(pass) a root that is not a decided card stops before the run, with no tier event [554.05ms]
+(pass) a writer that fails or writes no spec stops the plan after its tier event [1324.33ms]
+
+src/cli/registry.test.ts:
+(pass) registry > lists registered verbs sorted by name [0.51ms]
+(pass) registry > finds a verb by name, and nothing for an unknown name [0.01ms]
+(pass) registry > refuses a second verb with the same name [0.02ms]
+(pass) registry > refuses a name that is not lower case letters, digits and hyphens [0.03ms]
+
+src/cli/contract.test.ts:
+(pass) a card without a kill criterion stays open, and decides after the printed command runs [2073.76ms]
+(pass) a bare card lists every missing fact in order, and the printed commands fix it [1948.18ms]
+(pass) a card waits on an open basis, and the printed command decides that basis [1501.85ms]
+(pass) a ghost whose held edges hold every fact is decided, and a ghost without them is refused the same way [2783.60ms]
+(pass) a card cannot be proposed already decided without the facts [478.92ms]
+(pass) an amend that removes a required fact is refused, and the card keeps its decided words [2721.78ms]
+(pass) a card decided before the kill fact was required takes the fact, and waits on it at a frozen change [1343.65ms]
+(pass) kill and edit refuse a malformed call and append nothing [1483.18ms]
+(pass) a card that lacks a kill criterion stays open, and the printed command fixes it [3271.50ms]
+(pass) a card with only a title and a body reports each missing fact with its own command [3514.28ms]
+(pass) an amend that removes the depends_on edge is refused, and the decided card stays the same [2968.92ms]
+(pass) an amend that keeps every fact succeeds, and the log shows it as a reopen and a decide [2548.96ms]
+(pass) amend refuses a card that is not decided, a depends_on edge it does not have, and a call with no change [2409.44ms]
+
+src/cli/map-verbs.test.ts:
+(pass) add proposes a ghost, show marks it, and accept with the actor claim makes it real [976.20ms]
+(pass) every kind enters as a ghost [1209.42ms]
+(pass) edit, retitle and a second add on a ghost exit non-zero and append nothing [973.58ms]
+(pass) after a retitle, show prints only the new title, and the old title stays in the log [1020.16ms]
+(pass) a child under a ghost parent is held, and accepting the child accepts the parent too [1197.47ms]
+(pass) a malformed call exits 2, a refused one exits 1, and neither appends [1200.02ms]
+(pass) say appends one note that names the card, on a real card and a ghost, and show prints it [1689.55ms]
+(pass) inbox prints every note of a card in order, grouped by card [1540.46ms]
+(pass) say on an unknown card, with no text, or with an empty text exits non-zero and appends nothing [1350.08ms]
+(pass) a link between a ghost and a real card is held, and goes live on accept with no extra link event [1294.61ms]
+(pass) accepting a ghost child accepts its ghost parent and its own options, and leaves a ghost depends_on target a ghost [1994.39ms]
+(pass) discarding a ghost parent discards its ghost children, and the id can be proposed again [1540.62ms]
+(pass) discard refuses a real card [707.60ms]
+(pass) status and who change a ghost without a refusal, so a card can be proposed already decided [2109.10ms]
+
+src/cli/cli.test.ts:
+(pass) help prints the name of every registered verb [340.65ms]
+(pass) no verb runs help, and an unknown verb exits 2 [766.55ms]
+(pass) a new verb module is listed by help with no edit to any other module [682.16ms]
+
+src/cli/stale.test.ts:
+(pass) an empty map prints that nothing is marked [418.57ms]
+(pass) a rejected reopen marks the direct dependent stale, and the stale verb prints the reason and the cause [960.78ms]
+(pass) a postponed reopen pauses a card three hops away, and its status stays decided [1263.14ms]
+(pass) a card reached by a postponed and a rejected reopen shows as stale [731.84ms]
+(pass) rederive clears the mark on one card and leaves the others [1112.68ms]
+(pass) an amend clears the card and marks its own next hop stale [963.62ms]
+(pass) reopen and rederive refuse a wrong call and append nothing [2232.41ms]
+
+src/cli/help-text.test.ts:
+(pass) help prints one line per verb with the names in one column [0.06ms]
+(pass) help with no verbs prints the header only
+
+src/map/rules.test.ts:
+(pass) propose > stages every kind as one node.proposed event, with no undefined fields [0.04ms]
+(pass) propose > keeps the parent, and refuses a parent the log does not hold [0.02ms]
+(pass) propose > refuses a second add on a ghost, because its words are frozen
+(pass) propose > refuses an add on a real node
+(pass) propose > refuses an unknown kind, and a why-not on anything but an option [0.01ms]
+(pass) accept > refuses without the actor claim [0.02ms]
+(pass) accept > with the actor claim, accepts a ghost as the person
+(pass) accept > refuses an unknown id and a node that is already real
+(pass) retitle and edit > change the words of a real node by one event [0.05ms]
+(pass) retitle and edit > refuse on a ghost [0.01ms]
+(pass) retitle and edit > refuse on an unknown id, an empty title, and an edit with no words [0.01ms]
+(pass) say > writes one note.said event on a real node and on a ghost [0.02ms]
+(pass) say > refuses an unknown id and an empty note
+(pass) quote > proposes an excerpt under the first free :exN id, supported_by the citing card [0.05ms]
+(pass) quote > a ghost card can cite, and its edge waits for both accepts
+(pass) quote > refuses an unknown card, and an excerpt as the citing node [0.01ms]
+(pass) quote > refuses a quote the reader did not find once, and names the session
+(pass) edit with --who > changes the who of a ghost, because who is not a word
+(pass) edit with --who > still refuses a body or a why on a ghost, even with a who
+(pass) edit with --who > refuses an unknown id
+(pass) edit with --no-basis > records the written reason on a ghost too, because it is a contract fact
+(pass) edit with --no-basis > refuses an empty reason
+(pass) kill > records each form with its own parts, on a ghost [0.10ms]
+(pass) kill > refuses a missing part, a part of another form, and a min sample that is not a whole number [0.04ms]
+(pass) kill > refuses an unknown form, an unknown id, and a node that is not a card [0.01ms]
+(pass) link > links a ghost to a real node with one edge.linked event [0.05ms]
+(pass) link > refuses an unknown type, an unknown end, and a link to itself [0.01ms]
+(pass) link > refuses the same link twice, held or live, and a second parent [0.04ms]
+(pass) link refines > refuses a loop, and a real node under a ghost [0.04ms]
+(pass) setStatus > sets the status of a ghost and of a real node [0.02ms]
+(pass) setStatus > keeps the unchallenged statement on a decide, and refuses it on any other status
+(pass) setStatus > refuses an unknown status and an unknown id
+(pass) discard > drops a ghost with one node.discarded event [0.01ms]
+(pass) discard > refuses a real node and an unknown id
+(pass) reopen > reopens a decided card with its reason and why [0.03ms]
+(pass) reopen > refuses a ghost, a node that is not a card, a card that is not decided, an unknown reason and an empty why [0.03ms]
+(pass) amend > writes a reopen, each change, and a decide that keeps the unchallenged statement [0.06ms]
+(pass) amend > writes only the changes it is given [0.04ms]
+(pass) amend > refuses a ghost, a card that is not decided, no change, an empty title or summary, and a link the card does not have [0.02ms]
+(pass) rederive > ends the review of a stale card with its outcome and why [0.18ms]
+(pass) rederive > refuses an unknown outcome, a paused card, a card with no mark, and an empty why [0.06ms]
+
+src/map/remove.test.ts:
+(pass) remove > a removal takes the card, its refines subtree, its option and its source out of the map [0.12ms]
+(pass) remove > a restore brings back every node and edge as it was [0.10ms]
+(pass) remove > with reparent, the direct children move up to the grandparent and only the card goes [0.11ms]
+(pass) remove > a source that a card outside the branch also cites stays in the map [0.04ms]
+(pass) remove > a ghost under a removed card goes with it, and its held edge leaves ghostEdges [0.04ms]
+(pass) remove > a branch removed earlier stays out when its parent is removed and restored [0.04ms]
+(pass) remove > a removal or restore of an id that the event cannot apply to changes nothing [0.04ms]
+(pass) remove and the marks > a removed card makes nothing stale, and a reparented child is born under its new parent [0.08ms]
+(pass) the remove and restore rules > remove appends one event for a real node, with reparent only when asked [0.03ms]
+(pass) the remove and restore rules > remove refuses an agent without the actor claim, a ghost, an unknown or removed id, and reparent on a root [0.03ms]
+(pass) the remove and restore rules > restore takes the id a removal names, and refuses a node in the map, a node another removal took, or an unknown id [0.03ms]
+(pass) the remove and restore rules > a removed node takes no other change, and its id is not free for an add [0.02ms]
+
+src/map/derive.test.ts:
+(pass) unchallenged > flags a real decided card of yours with the statement and no option against it [0.09ms]
+(pass) unchallenged > does not flag a card without the statement, of who me, or not decided [0.04ms]
+(pass) unchallenged > a live option challenges the card [0.02ms]
+(pass) unchallenged > a ghost decided card is not flagged
+(pass) rollup > counts the real cards of the live refines subtree, the card included [0.06ms]
+(pass) rollup > a ghost has no rollup, and neither has an unknown id or a node that is not a card [0.02ms]
+(pass) rollup > a refines cycle does not hang the walk [0.02ms]
+(pass) rollup > a ghost branch changes no rollup count and no unchallenged count until it is accepted [0.06ms]
+
+src/map/subtree.test.ts:
+(pass) the decided cards are the root and its refines descendants at any depth, breadth first [0.04ms]
+(pass) a root that is a ghost or not in the map gives null
+
+src/map/fold.test.ts:
+(pass) fold > an unlinked edge leaves the map, and the other edges stay [0.02ms]
+(pass) fold > an empty log folds to an empty map
+(pass) fold > a proposed node is a ghost with all its fields [0.01ms]
+(pass) fold > a kill criterion appends to the node, and a no-basis reason sets on it, a ghost too [0.02ms]
+(pass) fold > a reopen moves the card back to open and drops the unchallenged statement, and a review changes no field [0.02ms]
+(pass) fold > an accept makes the ghost real
+(pass) fold > a retitle replaces the title, and the latest one wins [0.01ms]
+(pass) fold > an edit replaces only the words it names [0.02ms]
+(pass) fold > an excerpt keeps its pointer, and its supported_by edge goes live once both ends are real [0.05ms]
+(pass) fold > an event for an unknown id changes nothing [0.01ms]
+(pass) fold > a ghost's refines edge waits in ghostEdges, and goes live once both ends are real [0.02ms]
+(pass) fold > accepting a child accepts its ghost ancestors up to the first real one [0.02ms]
+(pass) fold > the fold does not change the events it reads [0.04ms]
+(pass) fold > notes collect on the thread of their node in log order, on a ghost too, and leave its words alone [0.03ms]
+(pass) fold > a link that names a ghost is held, and goes live with no second event once the ghost is accepted [0.02ms]
+(pass) fold > a link between two real nodes is live at once [0.01ms]
+(pass) fold > an accept brings the own ghost options and sources of each node it makes real, never a depends_on target [0.04ms]
+(pass) fold > a discard drops the ghost, its ghost descendants and their own ghost options and sources, with their edges [0.06ms]
+(pass) fold > a discarded id can be proposed again, and it starts with no edges and no notes [0.02ms]
+(pass) fold > a discard of a real node or an unknown id changes nothing [0.01ms]
+(pass) fold > a status and a who change a ghost, and a later status drops the unchallenged statement [0.02ms]
+(pass) fold > only an option and a source come with an accept, so a ghost card linked as an alternative stays under its ghost parent [0.02ms]
+(pass) fold > a discard keeps a ghost option that a node outside the branch also holds [0.02ms]
+(pass) fold > a quoted excerpt is an own source of its card, so the card accept brings it and the card discard drops it [0.02ms]
+
+src/map/transcript.test.ts:
+(pass) messagesOf > keeps user and assistant lines with text, indexed by their line in the file [0.09ms]
+(pass) findQuote > a quote that occurs once gives its message index, span and speaker [0.09ms]
+(pass) findQuote > a quote with one changed character is no match [0.01ms]
+(pass) findQuote > text only in thinking, a tool result or a meta line is no match
+(pass) findQuote > a quote across the join of two text blocks is no match
+(pass) findQuote > a quote in two messages fails and names both [0.02ms]
+(pass) findQuote > a quote twice inside one message fails [0.01ms]
+(pass) findQuote > an empty quote fails
+
+src/map/stale-text.test.ts:
+(pass) staleText > an empty list says that nothing is marked [0.07ms]
+(pass) staleText > each card prints its mark, and each trace its reason, its cause, its link and why [0.10ms]
+
+src/map/thread-text.test.ts:
+(pass) a thread lists its notes in order, and indents the later lines of a note [0.03ms]
+(pass) a node with no notes has no thread section
+(pass) the inbox groups every note by node, in the order of each first note, and marks a ghost [0.03ms]
+(pass) the inbox of one node prints only its thread
+(pass) an empty inbox says so
+
+src/map/graph.test.ts:
+(pass) toGraph turns the fold into plain JSON that keeps every node, edge and note [0.04ms]
+(pass) refinesTree draws every node under its parent in log order, a ghost under its proposed parent [0.07ms]
+(pass) refinesTree nests a chain of ghosts the same way, and marks each one as proposed [0.02ms]
+(pass) refinesTree stops at a cycle that a hand-edited log could hold [0.01ms]
+(pass) ancestorsOf lists the refines chain from the root down to the parent [0.04ms]
+(pass) ancestorsOf climbs through ghost parents too [0.01ms]
+(pass) only a refines link makes a parent: the other link types leave the tree as it is [0.02ms]
+(pass) graphOf sends the marks with the graph: stale on the next hop of a rejected reopen, each with its trace [0.05ms]
+(pass) graphOf marks every card downstream of a postponed reopen as paused, and the card keeps its status [0.03ms]
+(pass) toGraph with no marks sends an empty mark table
+
+src/map/contract.test.ts:
+(pass) missingFacts > a bare card lacks every fact, in the fixed order [0.11ms]
+(pass) missingFacts > each missing fact names the command that fixes it, with the card id filled in [0.03ms]
+(pass) missingFacts > a card with every fact lacks nothing, and its text is not read [0.04ms]
+(pass) missingFacts > the basis is a decided parent, a decided depends_on target, or a written no-basis reason [0.02ms]
+(pass) missingFacts > an open basis makes the card wait, and the command decides that basis [0.02ms]
+(pass) missingFacts > a you card needs an option weighed against it, or the unchallenged statement [0.04ms]
+(pass) missingFacts > a card with no decider needs the option fact, and a me or prototype card does not [0.04ms]
+(pass) missingFacts > the option command takes the first free option id [0.01ms]
+(pass) missingFacts > a ghost reads its held edges the same way a real card reads live ones [0.03ms]
+(pass) missingFacts > an unknown id lacks nothing
+(pass) checkChange > a move to decided refuses with every missing fact, and passes when they all hold [0.05ms]
+(pass) checkChange > a card proposed already decided obeys the same rule [0.01ms]
+(pass) checkChange > a status other than decided, and an event that names no card, are not checked [0.02ms]
+(pass) checkChange > a decide of a decided card runs every fact again [0.02ms]
+(pass) checkChange > an amend of a frozen field needs every fact, also one the card never had [0.06ms]
+(pass) checkChange > a free change to a decided card refuses only when it removes a fact the card had [0.05ms]
+(pass) checkChange > a link is a change to the node it points from [0.02ms]
+(pass) checkAmend > an amend needs every fact on the card as it would leave it [0.02ms]
+(pass) refusalText > a refused decide prints the count, then the reason and the command of each fact [0.03ms]
+(pass) refusalText > a refused amend says the card is decided, and one missing fact reads as one [0.04ms]
+
+src/map/staleness.test.ts:
+(pass) deriveMarks > a log with no reopen marks nothing [0.03ms]
+(pass) deriveMarks > a rejected reopen marks the direct dependent stale, and a card two hops away carries no mark [0.03ms]
+(pass) deriveMarks > a rejected reopen marks the direct children stale along refines [0.03ms]
+(pass) deriveMarks > a postponed reopen marks a card three hops away as paused, and its status stays as it was [0.03ms]
+(pass) deriveMarks > a postponed reopen follows refines children at any distance too [0.02ms]
+(pass) deriveMarks > a card reached by both a postponed and a rejected reopen shows as stale [0.03ms]
+(pass) deriveMarks > a link made after the change carries no mark from it [0.02ms]
+(pass) deriveMarks > a confirm clears the stale mark on one card and leaves the others [0.03ms]
+(pass) deriveMarks > an amend clears the mark on the card and marks its own next hop stale [0.02ms]
+(pass) deriveMarks > the reopen of an amend marks the next hop stale, and the decide in the same write does not clear it [0.02ms]
+(pass) deriveMarks > a review older than the change does not clear it [0.01ms]
+(pass) deriveMarks > the paused marks clear when the postponed card is decided again [0.02ms]
+(pass) deriveMarks > a later postponement of the same card marks again [0.03ms]
+(pass) deriveMarks > a ghost, an option and a loop take no mark [0.02ms]
+(pass) fixOrder > lists stale cards before paused ones, and a basis before the card that depends on it [0.05ms]
+(pass) fixOrder > a basis prints first even when its mark is newer [0.03ms]
+
+src/map/show-text.test.ts:
+(pass) a ghost shows its fields and its proposed state [0.09ms]
+(pass) a real node with no optional fields shows only its title, state and kind [0.02ms]
+(pass) an option shows its why-not reason [0.01ms]
+(pass) an unknown id shows nothing
+(pass) a node with notes shows its thread after its words [0.01ms]
+(pass) an excerpt shows its transcript pointer, and the card shows the excerpt that supports it [0.04ms]
+(pass) a link to a ghost shows as held on both ends, and as live once the ghost is accepted [0.03ms]
+(pass) the parent edge shows once, as the parent, and a child shows as a link on its parent [0.02ms]
+(pass) a decide with the unchallenged statement shows it [0.02ms]
+(pass) a card with real children shows its rollup, and a ghost child changes it not [0.04ms]
+(pass) a card shows its no-basis reason and each kill criterion in the words of its form [0.04ms]
+(pass) a removed node shows its removal, what went with it, its links, and how to bring it back [0.06ms]
+(pass) a removal that moved the children up names them and their new parent [0.02ms]
+
+src/map/find.test.ts:
+(pass) lists the open and proto cards of a subtree, breadth first, and leaves out a paused, a stale and a postponed card [0.11ms]
+(pass) a status filter keeps one status, and no root reads the whole map [0.06ms]
+(pass) a postponed card is open to work again once its status is set after the reopen [0.03ms]
+(pass) a removed card is not found, and a root that is not in the map finds nothing [0.06ms]
+
+src/ticket/check.test.ts:
+(pass) a ticket that fails its own checks does not count in the set checks [0.27ms]
+
+src/ticket/own-checks.test.ts:
+(pass) every valid fixture ticket passes all eight checks [0.22ms]
+(pass) the title fixture breaks only the %s check [0.06ms]
+(pass) the shape fixture breaks only the %s check [0.06ms]
+(pass) the size fixture breaks only the %s check [0.14ms]
+(pass) the what-to-build fixture breaks only the %s check [0.05ms]
+(pass) the acceptance fixture breaks only the %s check [0.05ms]
+(pass) the no-file-paths fixture breaks only the %s check [0.07ms]
+(pass) the make-targets fixture breaks only the %s check [0.05ms]
+(pass) the touches fixture breaks only the %s check [0.05ms]
+(pass) a ticket with no touches line fails shape, and the failure names the touches field [0.06ms]
+(pass) a file with no title is not parsed, so only the title check fails [0.01ms]
+(pass) shape names each missing header line and each missing heading [0.03ms]
+(pass) shape fails header lines and sections out of order, and an item that is not a number [0.07ms]
+(pass) size counts characters, and a file of exactly the limit passes [0.10ms]
+(pass) what-to-build and acceptance fail on a missing heading too [0.03ms]
+(pass) no-file-paths lists each path with its line and field, and lets the other tokens pass [0.06ms]
+(pass) no-file-paths finds a path with a line suffix, paths joined by a comma, an indented files line, and a path under an unknown heading [0.05ms]
+(pass) make-targets passes an empty Checks section and a make target with or without backticks [0.10ms]
+(pass) touches fails an empty line, a slash, a backslash and a file extension [0.05ms]
+
+src/ticket/set-checks.test.ts:
+(pass) a set that cites every card, delivers every story and has an acyclic order passes [0.06ms]
+(pass) cards-cited and stories name the card and the story, and no ticket [0.03ms]
+(pass) blocked_by names the ticket with an unknown blocker and each ticket on a cycle, not the tickets they wait for [0.07ms]
+
+src/ticket/spec.test.ts:
+(pass) the stories are the numbered lines under the User stories heading, sub-headings included [0.10ms]
+(pass) a story number listed twice counts once, and the list ends at a heading of the same level
+(pass) a spec with no User stories heading is an error
+(pass) the story texts are the lines that the numbers name, in the order of the numbers [0.02ms]
+(pass) a story number with no line, or a spec with no User stories heading, gives the bare number [0.01ms]
+
+src/build/brief.test.ts:
+(pass) the closure is the decided cards that the cites reach along depends_on, breadth first [0.05ms]
+(pass) the closure leaves out ghosts, options, cards that are not decided, and ids not in the map [0.01ms]
+(pass) a failure that fits keeps its whole output, after the command and the exit code [0.02ms]
+(pass) a long failure keeps the end of its output and stays within the limit [0.02ms]
+(pass) a stopped command has no exit code, and a tiny limit still names the command
+(pass) the prompt holds the ticket, its stories, its cards, its checks and the last failure [0.05ms]
+(pass) the first prompt says that nothing has failed, and names no story or card when there is none
+
+src/build/usage.test.ts:
+(pass) the usage is the cost, the turns and the reply of the last result event [0.06ms]
+(pass) a stream with no result event, or a result with no numbers, gives an unknown cost
+
+src/build/judge.test.ts:
+(pass) the acceptance criteria are the bullets of their section only
+(pass) the grader gets one delivery line per criterion and one contradiction line per card in the closure, cited or not [0.04ms]
+(pass) the grader's brief holds the rule that an unbuilt part of a card passes its contradiction line [0.01ms]
+(pass) a long diff is cut, with a note that names the git command for the rest
+(pass) a reply object is read from the whole reply, a fenced block, or the braces in prose [0.07ms]
+(pass) every line at 3 or more passes, and a line at 2 fails with its gap [0.08ms]
+(pass) an unbuilt card part scored 3 passes [0.02ms]
+(pass) a missing line, a bad score, or an unreadable reply fails the grade with a problem [0.02ms]
+(pass) each reviewer prompt names one area and holds only the diff [0.03ms]
+(pass) a finding needs a known severity; the review failure lists only CRITICAL and HIGH, worst first [0.07ms]
+(pass) a long failure keeps its start and stays within the limit [0.22ms]
+(pass) a grader fail stops the pass before the review, and the failure holds the gap [5.78ms]
+(pass) after the grader passes, five reviewers run at the same time, one per area [11.47ms]
+(pass) a HIGH finding fails the review; MEDIUM and LOW pass and stay in the judgement [22.87ms]
+(pass) a reviewer with no readable reply fails the review, and an unknown cost stays unknown [11.46ms]
+
+src/coverage/gate-cli.test.ts:
+(pass) the gate fails when a pure file is below 90% [144.31ms]
+(pass) the gate passes when every pure file is at 90% or above [422.42ms]
+(pass) the gate fails when the lcov report is missing [214.50ms]
+(pass) every file on the pure-file list exists [0.21ms]
+
+src/coverage/lcov.test.ts:
+(pass) reads lines found and hit per file [0.07ms]
+(pass) drops a record with no end, and ignores an end with no file [0.01ms]
+
+src/coverage/gate.test.ts:
+(pass) the threshold is 90%
+(pass) a listed file at 90% passes and one below 90% fails [0.06ms]
+(pass) a file not on the list is not judged [0.01ms]
+(pass) a listed file that no test loads, or that has no lines, counts as 0% [0.01ms]
+(pass) the report names each file and the verdict [0.05ms]
+
+ 417 pass
+ 0 fail
+ 1739 expect() calls
+Ran 417 tests across 46 files. [169.25s]

@@ -1,0 +1,12 @@
+[
+{"id":"27.1","result":"fail","detail":"Seeded a planned ticket auth/01 in .werk/board.jsonl and ran `werk ticket move auth/01 blocked --reason ...`. The ticket verb only knows the subverb restore (exit 2, usage 'ticket restore <number>'). move, archive and list do not exist. The board fold already has ticket.moved/ticket.archived events, but no CLI writes them. This CLI is the job of werk/27 itself; werk/45 covers the board UI, not these commands.","owner":""},
+{"id":"27.2","result":"fail","detail":"`werk ticket move auth/01 blocked` exits 2 with the restore-only usage text, not a message that asks for a reason. The board log is unchanged, but the move verb is missing (own ticket werk/27).","owner":""},
+{"id":"27.3","result":"pass","detail":"Seeded auth/02 in ready. `werk ticket restore 02` and `restore 99` both exit 1, and board.jsonl stays byte-for-byte the same.","owner":""},
+{"id":"27.4","result":"fail","detail":"Seeded auth/03 as done (planned, then moved building, merging, done). `werk ticket archive auth/03` exits 2 with the restore-only usage, not a 'done ticket cannot be archived' message. archive and list verbs are missing (own ticket werk/27); the fold alone would refuse the event.","owner":""},
+{"id":"27.5","result":"fail","detail":"`werk ticket move auth/02 blocked --reason ...` exits 2; the verbs move, archive and list do not exist, so no listing can be read (own ticket werk/27).","owner":""},
+{"id":"43.1","result":"pass","detail":"Seeded done ticket app/01. `werk followup app/01 --class build --found after-merge --why ... --catchable yes` printed 'recorded'. --list shows '1. build miss, found after-merge, check could catch: yes - <reason>'.","owner":""},
+{"id":"43.2","result":"pass","detail":"Plan miss recorded without --catchable. The list shows plan miss, found review, the reason, and no catch answer.","owner":""},
+{"id":"43.3","result":"pass","detail":"A build miss with no --catchable and a plan miss with --catchable no both exit non-zero with a message naming catchable. The list for app/01 stays empty.","owner":""},
+{"id":"43.4","result":"pass","detail":"A building ticket app/02 gives a 'not done' refusal. app/99 gives 'no ticket' refusal. The list for app/02 is empty.","owner":""},
+{"id":"43.5","result":"pass","detail":"Seeded record 1 (build, catchable). A plan correction with --of 1 lists '1. corrected by 2, in force: plan miss' and '2. correction of 1'. A build correction then lists record 1 with build in force (corrected by 3).","owner":""}
+]

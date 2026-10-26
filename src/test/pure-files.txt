@@ -1,0 +1,45 @@
+# Every pure module in werk: a plain function of its input, where a bug answers quietly
+# instead of throwing. A new pure file joins this list the day it is written. types.ts is
+# pure too, but it holds types only — there is no line in it to run.
+#
+# The list is a set: one path per line, the order has no effect, a repeat counts once.
+# A merge keeps every entry from both sides (#werk-test-pure-list-union). .gitattributes
+# gives this file the union merge driver, so git does that by itself. A path leaves the
+# list only when its file is deleted or stops being pure, in a change that says so.
+src/fold.ts
+src/permission.ts
+src/log.ts
+src/board.ts
+src/board-text.ts
+src/stage.ts
+src/convo-names.ts
+src/loop-prompt.ts
+src/plan-tickets.ts
+src/ticket-watch.ts
+src/ticket.ts
+src/rubric.ts
+src/build-prompt.ts
+src/fails.ts
+src/pipeline.ts
+src/run-state.ts
+src/heldout-text.ts
+src/overseer-text.ts
+src/spec-text.ts
+src/grade-parse.ts
+src/search.ts
+src/review-parse.ts
+src/kill.ts
+src/cost.ts
+src/stale-list.ts
+web/diff.js
+web/md.js
+src/gridsys/parse.ts
+src/gridsys/check.ts
+src/gridsys/resolve.ts
+src/gridsys/render.ts
+src/gridsys/metrics.ts
+src/plan-record.ts
+src/col-time.ts
+src/outcomes.ts
+src/build-rules.ts
+src/hot-reexec.ts

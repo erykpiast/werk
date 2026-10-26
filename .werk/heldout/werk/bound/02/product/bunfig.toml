@@ -1,0 +1,4 @@
+[test]
+# Runs before every test file. It puts the fake agent first on PATH and clears every
+# variable that could point a test at a real project. See test/setup.ts.
+preload = ["./test/setup.ts"]

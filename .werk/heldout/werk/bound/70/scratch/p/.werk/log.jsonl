@@ -1,0 +1,5 @@
+{"seq":1,"at":"2026-10-25T04:30:17.772Z","actor":"agent","type":"node.proposed","payload":{"id":"root","kind":"card","title":"Root card"}}
+{"seq":2,"at":"2026-10-25T04:30:18.156Z","actor":"you","type":"change.accepted","payload":{"id":"root"}}
+{"seq":3,"at":"2026-10-25T04:30:18.354Z","actor":"agent","type":"node.proposed","payload":{"id":"checkout","kind":"card","title":"Checkout flow","parent":"root"}}
+{"seq":4,"at":"2026-10-25T04:30:18.542Z","actor":"you","type":"change.accepted","payload":{"id":"checkout"}}
+{"seq":5,"at":"2026-10-25T04:30:18.739Z","actor":"agent","type":"node.proposed","payload":{"id":"retry","kind":"card","title":"Retry payment","why":"w","parent":"checkout"}}

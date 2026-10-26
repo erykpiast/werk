@@ -1,0 +1,14 @@
+{"type":"added","id":"werk","kind":"card","title":"werk v0","why":"A design tool that keeps the map of a conversation.","body":"The map is folded from an append-only log.","seq":1,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"added","id":"werk-hmr","kind":"card","title":"The dev server reloads its own modules","why":"A restart kills the live agent mid-turn.","body":"bun --hot reloads a changed module in the same process.","seq":2,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"linked","from":"werk-hmr","to":"werk","link":"refines","seq":3,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"added","id":"werk-hmr-guard","kind":"card","title":"A guard on the global object keeps one server","why":"A second evaluation must not listen twice.","seq":4,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"linked","from":"werk-hmr-guard","to":"werk-hmr","link":"refines","seq":5,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"added","id":"werk-test","kind":"card","title":"The agent runs every test layer","why":"The agent cannot see what it builds.","seq":6,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"linked","from":"werk-test","to":"werk","link":"refines","seq":7,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"added","id":"werk-hmr:src0","kind":"source","title":"Runtime research","body":"Bun --hot keeps the global object across reloads.","seq":8,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"added","id":"werk-hmr:opt0","kind":"option","title":"Keep node --watch","whyNot":"A restart kills in-flight agent children.","seq":9,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"linked","from":"werk-hmr","to":"werk-hmr:src0","link":"supported_by","why":"the finding on bun --hot","seq":10,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"linked","from":"werk-hmr:opt0","to":"werk-hmr","link":"alternative_to","seq":11,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"linked","from":"werk-test","to":"werk-hmr","link":"depends_on","why":"the tests boot the dev server","seq":12,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"said","id":"werk-hmr","who":"Eryk","text":"a restart kills my session every time I save","seq":13,"at":"2026-10-19T09:00:00.000Z"}
+{"type":"decided","id":"werk-hmr","seq":14,"at":"2026-10-19T09:00:00.000Z"}

@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>werk — ticket board (v0 mockup)</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3240; --line2:#3a4557;
+  --ink:#e6edf3; --dim:#8b98a8; --faint:#5d6b7d;
+  --decided:#3fb950; --open:#d29922; --proto:#58a6ff; --stale:#f85149; --paused:#8b98a8;
+  --merged:#a371f7;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);
+  font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:#0b0f14;padding:1px 4px;border-radius:3px}
+
+header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px}
+header h1{font-size:15px;margin:0;font-weight:600}
+header .sub{color:var(--dim);font-size:12.5px}
+.heldout-card-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--stale);
+  flex:none}
+.heldout-card-badge svg{width:12px;height:12px}
+
+.board{display:flex;gap:14px;padding:18px 20px;overflow-x:auto;align-items:flex-start}
+.column{background:var(--panel);border:1px solid var(--line);border-radius:8px;width:250px;flex:none;
+  display:flex;flex-direction:column;max-height:calc(100vh - 90px);position:relative}
+.drop-overlay{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:6px;border-radius:8px;font-size:12px;font-weight:600;z-index:5;
+  pointer-events:none;text-align:center;padding:10px}
+.drop-overlay.show{display:flex}
+.drop-overlay.start{background:rgba(19,52,26,.92);border:2px dashed var(--decided);color:#9be79b}
+.drop-overlay.stop{background:rgba(58,20,18,.92);border:2px dashed var(--stale);color:#ffb4ae}
+.drop-overlay svg{width:22px;height:22px}
+.column-head{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.column-head .name{font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--dim)}
+.column-head .count{margin-left:auto;font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.column-body{padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.column[data-col="blocked"] .column-head .name{color:var(--stale)}
+.column[data-col="ready"] .column-head .name{color:var(--open)}
+.column[data-col="building"] .column-head .name{color:var(--proto)}
+.column[data-col="merging"] .column-head .name{color:var(--merged)}
+.column[data-col="done"] .column-head .name{color:var(--decided)}
+
+.ticket{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:10px;cursor:pointer;
+  display:flex;align-items:center;gap:8px}
+.ticket.dragging{opacity:.4}
+.ticket.selected{border-color:var(--proto)}
+.ticket.active-session{border-color:var(--proto);animation:ticket-pulse 1.8s ease-in-out infinite}
+@keyframes ticket-pulse{
+  0%, 100%{background:var(--panel2)}
+  50%{background:#1e3350}
+}
+.ticket .title{font-size:13px;font-weight:500;flex:1;min-width:0}
+.ticket .actions{display:flex;align-items:center;gap:4px;flex:none}
+.retry-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--open);
+  flex:none;font-variant-numeric:tabular-nums}
+.retry-badge svg{width:11px;height:11px}
+.blocked-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--stale);
+  flex:none;font-variant-numeric:tabular-nums}
+.blocked-badge svg{width:11px;height:11px}
+.icon-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  background:transparent;border:1px solid transparent;border-radius:5px;cursor:pointer;color:var(--faint)}
+.icon-btn:hover{border-color:var(--line2);color:var(--ink)}
+.icon-btn.play:hover{color:#9be79b;border-color:#2f5a35;background:#173420}
+.icon-btn.trash:hover{color:var(--stale);border-color:var(--stale)}
+.icon-btn svg{width:13px;height:13px;pointer-events:none}
+
+.note{padding:0 20px 20px;color:var(--faint);font-size:12px;max-width:760px}
+.note code{color:var(--dim)}
+
+/* ---------- shared field styles, used in the drawer sidebar ---------- */
+.field-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);
+  margin:14px 0 6px}
+.field-label:first-of-type{margin-top:0}
+.cites{display:flex;flex-wrap:wrap;gap:6px}
+.cite{font-size:11.5px;font-family:ui-monospace,Menlo,monospace;background:#0b0f14;
+  color:#79c0ff;border:1px solid var(--line);padding:2px 7px;border-radius:4px;cursor:pointer}
+.cite:hover{border-color:var(--line2)}
+.cite.ticket-ref{color:var(--open)}
+.plain{font-size:12.5px;color:var(--dim)}
+.file-list, .check-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.file-list li{font-size:11.5px;font-family:ui-monospace,Menlo,monospace;color:var(--dim);word-break:break-all}
+.check-list li{font-size:11.5px;font-family:ui-monospace,Menlo,monospace;color:#9be79b;
+  background:#0b0f14;border:1px solid var(--line);border-radius:4px;padding:3px 7px;word-break:break-all}
+
+/* ---------- ticket drawer: full width, beneath the board ---------- */
+.drawer{border-top:2px solid var(--line2);background:var(--panel);position:relative}
+.drawer[hidden]{display:none}
+.drawer-inner{display:flex;gap:28px;padding:22px 24px 32px;max-width:1400px}
+.drawer-main{flex:1;min-width:0}
+.drawer-head{margin-bottom:14px}
+.drawer-head h2{font-size:17px;margin:0;font-weight:600;padding-right:28px}
+.drawer-close{position:absolute;top:16px;right:20px;width:28px;height:28px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;line-height:1;color:var(--dim);
+  background:none;border:1px solid transparent;border-radius:6px;cursor:pointer}
+.drawer-close:hover{color:var(--ink);border-color:var(--line2)}
+.drawer-slice{font-size:13px;color:var(--ink);line-height:1.7;max-width:72ch}
+.drawer-slice p{margin:0 0 14px}
+.drawer-slice p:last-child{margin-bottom:0}
+.agent-log{margin-bottom:20px;max-width:72ch}
+.agent-log[hidden]{display:none}
+.agent-log-label{display:flex;align-items:center;gap:7px;font-size:11px;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--faint);margin-bottom:6px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--proto);animation:dot-pulse 1.2s ease-in-out infinite}
+@keyframes dot-pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.agent-log-body{background:#0b0f14;border:1px solid var(--line);border-radius:6px;height:170px;
+  overflow-y:auto;padding:10px 12px;margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11.5px;line-height:1.6;color:var(--dim);white-space:pre-wrap}
+.agent-log-body .cmd{color:#79c0ff}
+.agent-log-body .ok{color:#9be79b}
+.agent-log-body .err{color:#ff8b82}
+.drawer-side{width:270px;flex:none;border-left:1px solid var(--line);padding-left:22px}
+.drawer-actions{display:flex;gap:6px;margin-top:16px}
+
+/* ---------- archive confirmation ---------- */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;
+  justify-content:center;z-index:10}
+.backdrop[hidden]{display:none}
+.confirm-modal{background:var(--panel);border:1px solid var(--line2);border-radius:10px;
+  width:320px;max-width:calc(100vw - 40px);padding:18px}
+.confirm-modal h2{font-size:14.5px;margin:0 0 8px}
+.confirm-modal p{font-size:12.5px;color:var(--dim);margin:0 0 16px;line-height:1.5}
+.confirm-modal .row{display:flex;justify-content:flex-end;gap:8px}
+.confirm-modal .btn-cancel{font-size:12.5px;color:var(--dim);background:none;border:1px solid var(--line2);
+  border-radius:5px;padding:6px 12px;cursor:pointer}
+.confirm-modal .btn-cancel:hover{color:var(--ink);border-color:var(--dim)}
+.confirm-modal .btn-archive{font-size:12.5px;color:#2a0d0d;background:var(--stale);border:0;
+  border-radius:5px;padding:6px 12px;cursor:pointer;font-weight:600}
+.confirm-modal .btn-archive:hover{background:#ff6b62}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Ticket board — v0</h1>
+    <div class="sub">Run: <code>visual-layer-claude-code-mvp</code></div>
+  </div>
+</header>
+
+<div class="board" id="board">
+
+  <div class="column" data-col="blocked">
+    <div class="column-head"><span class="name">Blocked</span><span class="count">1</span></div>
+    <div class="drop-overlay"></div>
+    <div class="column-body" data-drop="blocked">
+      <div class="ticket" draggable="true"
+        data-title="Add held-out-failure badge to the done ticket"
+        data-cites="st-g2-heldout"
+        data-blocked-by="03-merge-loop-runner, 05-run-summary-writer"
+        data-files="web/app.js, web/style.css"
+        data-checks="bun test src/fold.test.ts -t heldout-badge, bun run typecheck">
+        <div class="title">Add held-out-failure badge to the done ticket</div>
+        <span class="blocked-badge" title="blocked by 2 not-done tickets">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M4.5 4.5l7 7"/></svg>
+          2
+        </span>
+        <div class="actions">
+          <button class="icon-btn trash" title="Archive" data-action="archive">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4.5h10M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M6.5 7.5v4M9.5 7.5v4M4 4.5l.6 8.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9l.6-8.4"/></svg>
+          </button>
+        </div>
+        <div class="ticket-detail" hidden>
+          <p>Show a small badge on a done ticket's card, and its full detail in the drawer sidebar, whenever the held-out set went red right after that ticket's merge. It links to the follow-up ticket that carries the fix, so a person can jump straight from "this shipped, but broke a held-out step" to the ticket already open in ready.</p>
+          <p>An earlier version of this ticket rendered a single badge in the board header instead. That was wrong: the header cannot say <em>which</em> merge caused the regression, only that something, somewhere, did. Attaching the badge to the specific done ticket answers the question a person actually has.</p>
+          <p>The badge reads its state from the run summary the coordinator writes after every held-out pass (#st-g2-heldout). No new polling: the summary is already produced as a side effect of the merge loop, so this ticket only has to render what is there, not compute it.</p>
+          <p>It is blocked on two tickets that are not done yet: <code>03-merge-loop-runner</code>, which is what actually produces the merge loop and the run summary format, and <code>05-run-summary-writer</code>, which defines the schema this badge reads. Until both are built, there is nothing real to read, so this ticket cannot start.</p>
+          <p>When the follow-up ticket merges and the held-out set turns green again, the badge clears on its own — it is a projection of run state, not something a person dismisses by hand. If a done ticket's merge caused more than one red step, the badge should show a count and link every follow-up ticket, not just the first; that is a decision for whoever builds this, since #st-g2-heldout does not spell out the multi-failure case.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column" data-col="ready">
+    <div class="column-head"><span class="name">Ready</span><span class="count">3</span></div>
+    <div class="drop-overlay"></div>
+    <div class="column-body" data-drop="ready">
+      <div class="ticket" draggable="true"
+        data-title="Render 5 columns with counts"
+        data-cites="werk-board-columns"
+        data-files="web/index.html, web/app.js, web/style.css"
+        data-checks="bun run typecheck, bun run lint">
+        <div class="title">Render 5 columns with counts</div>
+        <div class="actions">
+          <button class="icon-btn play" title="Trigger build" data-action="trigger">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6a.6.6 0 0 0 .92.5l7.6-4.8a.6.6 0 0 0 0-1l-7.6-4.8a.6.6 0 0 0-.92.5z"/></svg>
+          </button>
+          <button class="icon-btn trash" title="Archive" data-action="archive">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4.5h10M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M6.5 7.5v4M9.5 7.5v4M4 4.5l.6 8.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9l.6-8.4"/></svg>
+          </button>
+        </div>
+        <div class="ticket-detail" hidden>
+          <p>Lay out the five fixed columns — blocked, ready, building, merging, done — as a single horizontal board. Each column header shows the column name and a live count of the tickets currently inside it, updated whenever a ticket moves in or out.</p>
+          <p>Column identity and order are fixed in code, per #werk-board-columns: blocked, ready, building, merging, done, always in that order, never reordered by a person and never configurable per run. Only which tickets sit inside a column changes at runtime; the columns themselves are not a piece of state anyone edits.</p>
+          <p>Each column needs its own scroll region once it holds more tickets than fit on screen, so a long-running build with many tickets in ready does not push the other columns off screen. The header and count stay pinned while the ticket list beneath it scrolls.</p>
+          <p>This ticket only lays out the shell: five columns, headers, counts, and a scrollable body per column. It does not implement drag-and-drop, the trigger or archive actions, or the ticket detail drawer — those are separate tickets — so this slice can be shown working with static placeholder tickets before any interaction exists.</p>
+        </div>
+      </div>
+      <div class="ticket" draggable="true"
+        data-title="Wire reorder + archive + trigger + stop actions"
+        data-cites="werk-board-control"
+        data-files="web/app.js"
+        data-checks="bun test src/fold.test.ts -t board-actions, bun run typecheck">
+        <div class="title">Wire reorder + archive + trigger + stop actions</div>
+        <div class="actions">
+          <button class="icon-btn play" title="Trigger build" data-action="trigger">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6a.6.6 0 0 0 .92.5l7.6-4.8a.6.6 0 0 0 0-1l-7.6-4.8a.6.6 0 0 0-.92.5z"/></svg>
+          </button>
+          <button class="icon-btn trash" title="Archive" data-action="archive">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4.5h10M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M6.5 7.5v4M9.5 7.5v4M4 4.5l.6 8.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9l.6-8.4"/></svg>
+          </button>
+        </div>
+        <div class="ticket-detail" hidden>
+          <p>Implement the four direct actions #werk-board-control decided: reorder a ticket within ready by dragging it, archive a ticket (ready or blocked only), trigger the build of a ready ticket, and stop the build of a building ticket by dragging it back to ready.</p>
+          <p>The drag surface is column-aware: dragging within ready reorders; dragging a ready ticket into building shows a green "start the build" drop area and triggers the same effect as the trigger icon; dragging a building ticket into ready shows a red "stop the build" area. Every other column pair refuses the drop outright — no overlay, no drop, the cursor shows not-allowed — because those moves are not a person's call: ready/blocked changes only through an agent, and building/merging/done only through the merge loop.</p>
+          <p>Archive asks for confirmation before it does anything, and the confirmation text says plainly that the ticket is not deleted for good — an agent can restore it. This mirrors #werk-remove, the same reversible pattern already decided for a map card, so a person does not have to learn two different mental models for "this is gone but not really gone."</p>
+          <p>No ticket starts to build on its own in this ticket's scope. Every build begins with an explicit trigger, whether that is a click or a drag; only later, if every new ticket turns out to need a build anyway, does the trigger go away and builds start themselves.</p>
+        </div>
+      </div>
+      <div class="ticket" draggable="true"
+        data-title="Follow-up: fix held-out regression"
+        data-ticket-id="04-fix-heldout-regression"
+        data-cites="st-g2-heldout"
+        data-files="src/fold.ts"
+        data-checks="bun test src/fold.test.ts, bun run typecheck">
+        <div class="title">Follow-up: fix held-out regression</div>
+        <div class="actions">
+          <button class="icon-btn play" title="Trigger build" data-action="trigger">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6a.6.6 0 0 0 .92.5l7.6-4.8a.6.6 0 0 0 0-1l-7.6-4.8a.6.6 0 0 0-.92.5z"/></svg>
+          </button>
+          <button class="icon-btn trash" title="Archive" data-action="archive">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4.5h10M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M6.5 7.5v4M9.5 7.5v4M4 4.5l.6 8.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9l.6-8.4"/></svg>
+          </button>
+        </div>
+        <div class="ticket-detail" hidden>
+          <p>Filed automatically, not by a person: the held-out set went red on the step "graph view loads a 200-card map" after the last merge to the run's tree. Per #st-g2-heldout, a red held-out step does not block the merge queue and does not stop the run — it only opens a follow-up ticket and keeps G2 from closing.</p>
+          <p>The regression traces to a change in src/fold.ts's rollup counting: a card with more than 200 descendants now takes a slow path that the graph view's render loop was not budgeted for. The fix is either to cache the rollup or to raise the render loop's frame budget for large graphs; the ticket does not prescribe which, since that is an implementation call for whoever picks it up.</p>
+          <p>Once this ticket's fix merges, the held-out set re-runs on the new merged tree automatically — nobody has to manually re-trigger the check. If it is green, G2 stays open; if it still fails, another follow-up ticket is filed the same way, and this one closes with a note pointing at the new ticket.</p>
+          <p>This ticket carries real cost if it sits too long: the run's tree is currently red on this one held-out step, which is an accepted cost per #st-g2-heldout ("the run's tree can be red on a held-out step until the follow-up ticket is built"), but it means every person looking at the board sees a stale-looking status until this merges.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column" data-col="building">
+    <div class="column-head"><span class="name">Building</span><span class="count">1</span></div>
+    <div class="drop-overlay"></div>
+    <div class="column-body" data-drop="building">
+      <div class="ticket active-session" draggable="true"
+        data-title="Card click-through opens map card"
+        data-cites="vi-board"
+        data-retry="2"
+        data-files="web/app.js"
+        data-checks="bun test src/fold.test.ts -t click-through, bun run lint">
+        <div class="title">Card click-through opens map card</div>
+        <span class="retry-badge" title="retry 2">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 8A5 5 0 1 1 11.5 4.4M13 3v3h-3"/></svg>
+          2
+        </span>
+        <div class="actions"></div>
+        <pre class="agent-log-content" hidden><span class="cmd">14:02:11 $ bun run typecheck</span>
+<span class="err">14:02:13   1 error: TS6133 'oldHandler' is declared but never read, web/app.js:214</span>
+14:02:13 Retry 1 failed — typecheck error
+14:03:40 Reading web/app.js
+14:03:52 Editing web/app.js — removed unused oldHandler import
+<span class="cmd">14:04:01 $ bun run typecheck</span>
+<span class="ok">14:04:03   0 errors</span>
+<span class="cmd">14:04:04 $ bun test src/fold.test.ts -t click-through</span>
+<span class="ok">14:04:05   ✓ opens map card on cite click (11ms)</span>
+<span class="ok">14:04:05   ✓ ignores clicks on ticket-ref chips (3ms)</span>
+<span class="cmd">14:04:06 $ bun run lint</span>
+<span class="ok">14:04:07   0 problems</span>
+14:04:08 Retry 2: re-running full suite from a clean checkout to confirm the fix holds
+<span class="cmd">14:04:09 $ bun test</span>
+<span class="ok">14:04:22   142 pass, 0 fail</span>
+<span class="cmd">14:04:23 $ bun run typecheck</span>
+<span class="ok">14:04:25   0 errors</span>
+14:04:25 Session running — awaiting final check summary</pre>
+        <div class="ticket-detail" hidden>
+          <p>Make each related-card tag on a ticket — the ids under "Related cards" in the detail drawer's sidebar — clickable. Clicking one switches the main map view to that card, so a person can check the actual decision behind a ticket's slice without leaving the board or losing their place in it.</p>
+          <p>Per #vi-board, this only applies to the ids shown in the ticket's full detail view, not the compact card in the column list, which shows only a title. The full view is reached by clicking the card, which is itself part of this same round of work — a drawer beneath the board, not a modal.</p>
+          <p>Retry 1 failed <code>bun run typecheck</code> on an unused import left over from an earlier version of the click handler; the fix was a one-line removal, verified locally, but the retry only completed the fix, not the re-run. Retry 2 re-runs the full check suite from a clean state to confirm the fix actually holds, since a local pass before committing is not the same guarantee as the ticket's own checks passing from scratch.</p>
+          <p>The interaction has to work both from the sidebar's "Related cards" section and its "Blocked by" section, since a blocked_by entry is a ticket id, not a card id, and a ticket id does not open on the map at all — only on the board, in this same drawer. Getting that distinction wrong would make a click silently do nothing, which is worse than not having the feature.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column" data-col="merging">
+    <div class="column-head"><span class="name">Merging</span><span class="count">1</span></div>
+    <div class="drop-overlay"></div>
+    <div class="column-body" data-drop="merging">
+      <div class="ticket" draggable="true"
+        data-title="Ticket card shows cited ids + blockers"
+        data-cites="st-ticket"
+        data-files="web/app.js, src/types.ts"
+        data-checks="bun run typecheck, bun test src/fold.test.ts">
+        <div class="title">Ticket card shows cited ids + blockers</div>
+        <div class="actions"></div>
+        <div class="ticket-detail" hidden>
+          <p>A ticket's full detail view lists the map ids it cites and what blocks it, read straight from the ticket file's own cites and blocked_by fields (#st-ticket) — there is no separate data model or cache to keep in sync with the ticket file on disk.</p>
+          <p>blocked_by is derived, not guessed: it comes from the depends_on edges between the cards a ticket cites, so if ticket A cites a card that depends_on a card ticket B cites, A is blocked_by B automatically, and the planner is responsible for computing that graph correctly before any ticket reaches the board.</p>
+          <p>This ticket only renders what is already computed; it does not implement the derivation itself, and it does not validate that the blocked_by graph is acyclic or agrees with depends_on — those are checks #lp-checks already owns, run once by the planner, not re-run by the board on every page load.</p>
+          <p>The checks are running now on the temporary tree made from the run's tree plus this ticket (#st-build-run, steps 1–2): if they come back red, this ticket goes back to building with the failure attached; if green, it merges into the run's tree and the held-out set gets one more ticket's worth of surface to run against.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column" data-col="done">
+    <div class="column-head"><span class="name">Done</span><span class="count">2</span></div>
+    <div class="drop-overlay"></div>
+    <div class="column-body" data-drop="done">
+      <div class="ticket" draggable="true"
+        data-title="Board scaffold: 5 columns, static data"
+        data-cites="werk-board"
+        data-files="web/index.html, web/style.css"
+        data-checks="bun run lint">
+        <div class="title">Board scaffold: 5 columns, static data</div>
+        <div class="actions"></div>
+        <div class="ticket-detail" hidden>
+          <p>First pass at the board layout: five columns, one static ticket card per column, no live data source yet — the tickets shown are hand-written fixtures, not read from any real run.</p>
+          <p>The purpose of this ticket was narrow on purpose: confirm the visual shape (column widths, header style, card style, spacing) against #vi-board's Trello-style intent before any of the harder logic — drag rules, the detail drawer, live ticket data — gets built on top of a shape nobody had actually looked at yet.</p>
+          <p>It cites only #werk-board, the parent card for the whole v0 board, not the columns or control cards specifically, because at this stage the columns' names and the actions were already decided in prose but not yet seen. Seeing them rendered changed nothing structural, but it did surface that five columns at a fixed width overflow a laptop screen without horizontal scroll, which the next ticket in this run had to account for.</p>
+          <p>This ticket is done: the checks were <code>bun run lint</code> only, since there was no logic yet to unit test, just markup and styles.</p>
+        </div>
+      </div>
+      <div class="ticket" draggable="true"
+        data-title="Column state model (blocked/ready/building/merging/done)"
+        data-cites="werk-board-columns"
+        data-files="src/types.ts, src/fold.ts"
+        data-checks="bun test src/fold.test.ts, bun run typecheck"
+        data-heldout-followups="04-fix-heldout-regression">
+        <div class="title">Column state model (blocked/ready/building/merging/done)</div>
+        <span class="heldout-card-badge" title="held-out set went red after this merge">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2.5 14.5 13.5H1.5L8 2.5z"/><path d="M8 6.6v3"/><circle cx="8" cy="11.2" r=".7" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <div class="actions"></div>
+        <div class="ticket-detail" hidden>
+          <p>Define the five ticket states and the moves between them in code, not just in prose: a TicketState type with the five values, and the transition rules that say which moves are automatic and which are manual.</p>
+          <p>A red check in merging sends a ticket back to building automatically — the merge loop does this (#st-build-run), a person never drags a ticket out of merging by hand. A red held-out step does not move a ticket at all: it is not a per-ticket failure, it is a state of the whole run (#st-g2-heldout), so it surfaces as the board's header badge and a new ticket filed into ready, not as some existing ticket changing column.</p>
+          <p>The model intentionally has no "cancelled" or "failed" terminal state. A ticket that fails its checks in building just stays in building, with a retry count, until either it passes or a person archives it by hand. There is no board state for "we tried and gave up" — that is a human decision, made through the archive action, not something the model infers from a retry count crossing some threshold.</p>
+          <p>Tests cover every legal transition in the table (blocked→ready, ready→building, building→ready, building→merging, merging→building, merging→done) and assert that every other pair throws if some future caller tries to force it — the board's drag logic leans on that same table so the UI and the model can never disagree about what is allowed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<section class="drawer" id="drawer" hidden>
+  <button class="drawer-close" id="drawer-close-btn" title="Close" aria-label="Close">&times;</button>
+  <div class="drawer-inner">
+    <div class="drawer-main">
+      <div class="drawer-head">
+        <h2 id="drawer-title"></h2>
+      </div>
+      <div class="agent-log" id="drawer-log" hidden>
+        <div class="agent-log-label">Agent log <span class="live-dot"></span></div>
+        <pre class="agent-log-body" id="drawer-log-body"></pre>
+      </div>
+      <div class="drawer-slice" id="drawer-slice"></div>
+    </div>
+    <aside class="drawer-side" id="drawer-side"></aside>
+  </div>
+</section>
+
+<div class="note">
+  Static mockup of #werk-board. Drag a ticket to reorder inside Ready. Drag Ready → Building
+  to start its build (green "Start the build" area); drag Building → Ready to stop it (red
+  "Stop the build" area). No other column-to-column drag is allowed: Ready ↔ Blocked and any
+  move between Building, Merging, and Done happen only through an agent or the merge loop,
+  never by hand — those columns show no drop area and refuse the drop. The play icon
+  (trigger build) and trash icon (archive) show only in Ready; Blocked has a trash icon only.
+  The trash icon always confirms first and says the ticket is archived, not deleted, and
+  can be restored by asking an agent — the same reversible pattern #werk-remove already
+  uses for a map card. Click a ticket's title to open its full view in the drawer below the
+  board: the slice on the left, the metadata and relations (cites, blocked_by, retries,
+  files, checks) in a sidebar on the right. A done ticket whose merge broke a held-out step
+  shows a small warning badge and a "Held-out" field in the sidebar, linking to the
+  follow-up ticket that fixes it — click the link to jump straight to it. No data is saved
+  on reload.
+</div>
+
+<div class="backdrop" id="confirm-backdrop" hidden>
+  <div class="confirm-modal" id="confirm-modal"></div>
+</div>
+
+<script>
+let dragEl = null;
+let selectedTicket = null;
+
+function iconSvg(action) {
+  if (action === 'trigger') return '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6a.6.6 0 0 0 .92.5l7.6-4.8a.6.6 0 0 0 0-1l-7.6-4.8a.6.6 0 0 0-.92.5z"/></svg>';
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4.5h10M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M6.5 7.5v4M9.5 7.5v4M4 4.5l.6 8.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9l.6-8.4"/></svg>';
+}
+
+function ticketActions(ticket) {
+  return [...ticket.querySelectorAll('.actions .icon-btn')].map(b => b.dataset.action);
+}
+
+function list(value) {
+  return (value || '').split(',').map(s => s.trim()).filter(Boolean);
+}
+
+function openDrawer(ticket) {
+  if (selectedTicket) selectedTicket.classList.remove('selected');
+  selectedTicket = ticket;
+  ticket.classList.add('selected');
+
+  const title = ticket.dataset.title;
+  const cites = list(ticket.dataset.cites);
+  const blockedBy = list(ticket.dataset.blockedBy);
+  const retry = Number(ticket.dataset.retry || 0);
+  const files = list(ticket.dataset.files);
+  const checks = list(ticket.dataset.checks);
+  const actions = ticketActions(ticket);
+  const detail = ticket.querySelector('.ticket-detail');
+
+  document.getElementById('drawer-title').textContent = title;
+  document.getElementById('drawer-slice').innerHTML = detail ? detail.innerHTML : '';
+
+  const logSource = ticket.querySelector('.agent-log-content');
+  const inBuilding = ticket.closest('.column-body')?.dataset.drop === 'building';
+  const logBox = document.getElementById('drawer-log');
+  const logBody = document.getElementById('drawer-log-body');
+  if (logSource && inBuilding) {
+    logBody.innerHTML = logSource.innerHTML;
+    logBox.hidden = false;
+    logBody.scrollTop = logBody.scrollHeight;
+  } else {
+    logBox.hidden = true;
+    logBody.innerHTML = '';
+  }
+
+  const heldoutFollowups = list(ticket.dataset.heldoutFollowups);
+
+  const side = document.getElementById('drawer-side');
+  side.innerHTML = `
+    <div class="field-label">Related cards (cites)</div>
+    <div class="cites">${cites.map(c => `<span class="cite" data-cite="${c}">${c}</span>`).join('') || '<span class="plain">none</span>'}</div>
+    ${blockedBy.length ? `<div class="field-label">Blocked by (${blockedBy.length} not-done)</div><div class="cites">${blockedBy.map(t => `<span class="cite ticket-ref">${t}</span>`).join('')}</div>` : ''}
+    ${retry > 1 ? `<div class="field-label">Retries</div><div class="plain">${retry}</div>` : ''}
+    ${heldoutFollowups.length ? `<div class="field-label">Held-out</div><div class="plain" style="color:var(--stale);margin-bottom:6px">Went red after this merge</div><div class="cites">${heldoutFollowups.map(t => `<span class="cite ticket-ref" data-ticket-link="${t}">${t}</span>`).join('')}</div>` : ''}
+    ${files.length ? `<div class="field-label">Files</div><ul class="file-list">${files.map(f => `<li>${f}</li>`).join('')}</ul>` : ''}
+    ${checks.length ? `<div class="field-label">Checks</div><ul class="check-list">${checks.map(c => `<li>${c}</li>`).join('')}</ul>` : ''}
+    ${actions.length ? `<div class="drawer-actions">${actions.map(a => `<button class="icon-btn ${a === 'trigger' ? 'play' : 'trash'}" title="${a === 'trigger' ? 'Trigger build' : 'Archive'}" data-action="${a}">${iconSvg(a)}</button>`).join('')}</div>` : ''}
+  `;
+  side.querySelectorAll('.cite[data-cite]').forEach(c => {
+    c.addEventListener('click', () => console.log('open card on map:', c.dataset.cite));
+  });
+  side.querySelectorAll('.cite[data-ticket-link]').forEach(c => {
+    c.addEventListener('click', () => {
+      const target = document.querySelector(`[data-ticket-id="${c.dataset.ticketLink}"]`);
+      if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); openDrawer(target); }
+    });
+  });
+  side.querySelectorAll('.drawer-actions .icon-btn').forEach(b => {
+    b.addEventListener('click', () => handleAction(ticket, b.dataset.action));
+  });
+
+  document.getElementById('drawer').hidden = false;
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').hidden = true;
+  if (selectedTicket) selectedTicket.classList.remove('selected');
+  selectedTicket = null;
+}
+
+function refreshDrawerIfOpen(ticket) {
+  if (selectedTicket === ticket && !document.getElementById('drawer').hidden) openDrawer(ticket);
+}
+
+document.getElementById('drawer-close-btn').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeDrawer();
+    document.getElementById('confirm-backdrop').hidden = true;
+  }
+});
+
+function startBuild(ticket) {
+  const buildingBody = document.querySelector('.column[data-col="building"] .column-body');
+  ticket.querySelector('.actions').innerHTML = '';
+  ticket.classList.add('active-session');
+  buildingBody.appendChild(ticket);
+  refreshDrawerIfOpen(ticket);
+}
+
+function stopBuild(ticket) {
+  const readyBody = document.querySelector('.column[data-col="ready"] .column-body');
+  ticket.classList.remove('active-session');
+  ticket.querySelector('.actions').innerHTML = `
+    <button class="icon-btn play" title="Trigger build" data-action="trigger">${iconSvg('trigger')}</button>
+    <button class="icon-btn trash" title="Archive" data-action="archive">${iconSvg('archive')}</button>
+  `;
+  readyBody.appendChild(ticket);
+  wireActions(ticket);
+  refreshDrawerIfOpen(ticket);
+}
+
+function archiveTicket(ticket) {
+  console.log('archived (not deleted):', ticket.dataset.title);
+  if (selectedTicket === ticket) closeDrawer();
+  ticket.remove();
+}
+
+function confirmArchive(ticket) {
+  const backdrop = document.getElementById('confirm-backdrop');
+  const modal = document.getElementById('confirm-modal');
+  modal.innerHTML = `
+    <h2>Archive "${ticket.dataset.title}"?</h2>
+    <p>It leaves the board, but it is never deleted for good — ask an agent to restore it at any time.</p>
+    <div class="row">
+      <button type="button" class="btn-cancel">Cancel</button>
+      <button type="button" class="btn-archive">Archive</button>
+    </div>
+  `;
+  modal.querySelector('.btn-cancel').addEventListener('click', () => { backdrop.hidden = true; });
+  modal.querySelector('.btn-archive').addEventListener('click', () => {
+    backdrop.hidden = true;
+    archiveTicket(ticket);
+  });
+  backdrop.hidden = false;
+}
+
+document.getElementById('confirm-backdrop').addEventListener('click', e => {
+  if (e.target.id === 'confirm-backdrop') e.currentTarget.hidden = true;
+});
+
+function handleAction(ticket, action) {
+  if (action === 'archive') { confirmArchive(ticket); return; }
+  if (action === 'trigger') { startBuild(ticket); return; }
+}
+
+/* Which manual moves are allowed. Everything else is not a person's call:
+   ready<->blocked goes through an agent (a blocking reason, or resolving one);
+   building/merging/done move only through the merge loop (#st-build-run). */
+function dropKind(sourceCol, targetCol) {
+  if (sourceCol === targetCol) return 'reorder';
+  if (sourceCol === 'ready' && targetCol === 'building') return 'start';
+  if (sourceCol === 'building' && targetCol === 'ready') return 'stop';
+  return null;
+}
+
+function overlayContent(kind) {
+  if (kind === 'start') {
+    return '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6a.6.6 0 0 0 .92.5l7.6-4.8a.6.6 0 0 0 0-1l-7.6-4.8a.6.6 0 0 0-.92.5z"/></svg><span>Start the build</span>';
+  }
+  return '<svg viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="4" width="8" height="8" rx="1"/></svg><span>Stop the build</span>';
+}
+
+function wireActions(ticket) {
+  ticket.querySelectorAll('.actions .icon-btn').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      handleAction(ticket, b.dataset.action);
+    });
+  });
+}
+
+function wireTicket(ticket) {
+  ticket.addEventListener('dragstart', () => { dragEl = ticket; ticket.classList.add('dragging'); });
+  ticket.addEventListener('dragend', () => {
+    dragEl = null;
+    ticket.classList.remove('dragging');
+    document.querySelectorAll('.drop-overlay').forEach(o => { o.classList.remove('show', 'start', 'stop'); o.innerHTML = ''; });
+  });
+  ticket.addEventListener('click', e => {
+    if (e.target.closest('.icon-btn')) return;
+    openDrawer(ticket);
+  });
+  wireActions(ticket);
+}
+
+document.querySelectorAll('.ticket').forEach(wireTicket);
+
+document.querySelectorAll('.column').forEach(col => {
+  const targetCol = col.dataset.col;
+  const body = col.querySelector('.column-body');
+  const overlay = col.querySelector('.drop-overlay');
+
+  body.addEventListener('dragover', e => {
+    if (!dragEl) return;
+    const sourceCol = dragEl.closest('.column-body').dataset.drop;
+    const kind = dropKind(sourceCol, targetCol);
+
+    if (kind === 'reorder') {
+      e.preventDefault();
+      const after = [...body.querySelectorAll('.ticket:not(.dragging)')].find(sib => {
+        const r = sib.getBoundingClientRect();
+        return e.clientY < r.top + r.height / 2;
+      });
+      if (after) body.insertBefore(dragEl, after);
+      else body.appendChild(dragEl);
+      return;
+    }
+
+    if (kind === 'start' || kind === 'stop') {
+      e.preventDefault();
+      overlay.classList.add('show', kind);
+      overlay.innerHTML = overlayContent(kind);
+      return;
+    }
+    // no valid move here — no preventDefault, so the browser shows a not-allowed cursor
+    // and the drop event below never fires.
+  });
+
+  body.addEventListener('dragleave', () => {
+    overlay.classList.remove('show', 'start', 'stop');
+  });
+
+  body.addEventListener('drop', e => {
+    e.preventDefault();
+    overlay.classList.remove('show', 'start', 'stop');
+    if (!dragEl) return;
+    const sourceCol = dragEl.closest('.column-body').dataset.drop;
+    const kind = dropKind(sourceCol, targetCol);
+    if (kind === 'start') startBuild(dragEl);
+    else if (kind === 'stop') stopBuild(dragEl);
+    // 'reorder' already happened live during dragover; nothing left to do here.
+  });
+});
+</script>
+
+</body>
+</html>

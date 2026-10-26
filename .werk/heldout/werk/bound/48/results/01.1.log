@@ -1,0 +1,100 @@
+first pure file: scripts/coverage.ts, own test: scripts/coverage.test.ts
+VERDICT given ok
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 378 pass
+ 0 fail
+ 1259 expect() calls
+Ran 378 tests across 47 files. [61.19s]
+VERDICT make test passes
+VERDICT make test no coverage check ok
+bun run test:coverage
+$ bun scripts/coverage-gate.ts
+ok    100.00%  scripts/coverage.ts
+ok    100.00%  web/highlight.ts
+ok    100.00%  web/md.ts
+ok    100.00%  web/reflink.ts
+ok    100.00%  web/escape.ts
+ok    100.00%  src/cli/args.ts
+ok    100.00%  src/cli/card-id.ts
+ok    100.00%  src/cli/help.ts
+ok    100.00%  src/cli/registry.ts
+ok    100.00%  src/cli/start.ts
+ok    100.00%  src/test/clean-env.ts
+ok    100.00%  src/test/fake-script.ts
+ok    100.00%  src/map/commit.ts
+ok    100.00%  src/map/fold.ts
+ok     99.57%  src/map/rules.ts
+ok    100.00%  src/map/show.ts
+ok    100.00%  src/map/stage.ts
+ok    100.00%  src/map/tree.ts
+ok    100.00%  src/map/types.ts
+ok    100.00%  src/map/removal.ts
+ok    100.00%  src/map/contract.ts
+ok    100.00%  src/map/ops.ts
+ok    100.00%  src/map/notes.ts
+ok    100.00%  src/map/chat.ts
+ok    100.00%  src/agent/prompt.ts
+ok    100.00%  src/tickets/parse.ts
+ok    100.00%  src/tickets/own-checks.ts
+ok    100.00%  src/tickets/set-checks.ts
+ok    100.00%  src/tickets/spec.ts
+ok    100.00%  src/tickets/cards.ts
+ok    100.00%  src/tickets/check.ts
+ok    100.00%  src/tickets/report.ts
+32 pure files, 0 under 90% of lines or without an own test file.
+VERDICT test-coverage passes
+VERDICT one line per pure file with percent ok
+deleted src/cli/card-id.test.ts
+bun run test:coverage
+$ bun scripts/coverage-gate.ts
+ok    100.00%  scripts/coverage.ts
+ok    100.00%  web/highlight.ts
+ok    100.00%  web/md.ts
+ok    100.00%  web/reflink.ts
+ok    100.00%  web/escape.ts
+ok    100.00%  src/cli/args.ts
+FAIL    0.00%  src/cli/card-id.ts  (missing own test file src/cli/card-id.test.ts)
+ok    100.00%  src/cli/help.ts
+ok    100.00%  src/cli/registry.ts
+ok    100.00%  src/cli/start.ts
+ok    100.00%  src/test/clean-env.ts
+ok    100.00%  src/test/fake-script.ts
+ok    100.00%  src/map/commit.ts
+ok    100.00%  src/map/fold.ts
+ok     99.57%  src/map/rules.ts
+ok    100.00%  src/map/show.ts
+ok    100.00%  src/map/stage.ts
+ok    100.00%  src/map/tree.ts
+ok    100.00%  src/map/types.ts
+ok    100.00%  src/map/removal.ts
+ok    100.00%  src/map/contract.ts
+ok    100.00%  src/map/ops.ts
+ok    100.00%  src/map/notes.ts
+ok    100.00%  src/map/chat.ts
+ok    100.00%  src/agent/prompt.ts
+ok    100.00%  src/tickets/parse.ts
+ok    100.00%  src/tickets/own-checks.ts
+ok    100.00%  src/tickets/set-checks.ts
+ok    100.00%  src/tickets/spec.ts
+ok    100.00%  src/tickets/cards.ts
+ok    100.00%  src/tickets/check.ts
+ok    100.00%  src/tickets/report.ts
+32 pure files, 1 under 90% of lines or without an own test file.
+error: script "test:coverage" exited with code 1
+make: *** [test-coverage] Error 1
+VERDICT 0% for src/cli/card-id.ts ok
+VERDICT test-coverage fails ok
+VERDICT names missing test ok
+bun run test
+$ bun test --parallel=4 --timeout=15000
+bun test v1.4.1 (4661e494f) 4x PARALLEL
+
+ 375 pass
+ 0 fail
+ 1254 expect() calls
+Ran 375 tests across 46 files. [26.51s]
+VERDICT make test passes after delete ok
+VERDICT make test no coverage failure ok

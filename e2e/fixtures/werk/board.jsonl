@@ -1,0 +1,25 @@
+{"seq":1,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.planned","payload":{"id":"demo/01","run":"demo","file":".werk/tickets/demo/01.md","title":"Show the five columns","blockedBy":[]}}
+{"seq":2,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.planned","payload":{"id":"demo/02","run":"demo","file":".werk/tickets/demo/02.md","title":"Open a ticket drawer","blockedBy":["demo/01"]}}
+{"seq":3,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.planned","payload":{"id":"demo/03","run":"demo","file":".werk/tickets/demo/03.md","title":"Reorder ready by drag","blockedBy":[]}}
+{"seq":4,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.planned","payload":{"id":"demo/04","run":"demo","file":".werk/tickets/demo/04.md","title":"Trigger a build","blockedBy":[]}}
+{"seq":5,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.planned","payload":{"id":"demo/05","run":"demo","file":".werk/tickets/demo/05.md","title":"Archive a ticket","blockedBy":["demo/01"]}}
+{"seq":6,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"run.tier","payload":{"run":"demo","tier":"feature"}}
+{"seq":7,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.moved","payload":{"id":"demo/01","to":"building"}}
+{"seq":8,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.build.started","payload":{"id":"demo/01","loopRun":"L1"}}
+{"seq":9,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.pass","payload":{"id":"demo/01","loopRun":"L1","pass":1,"green":false}}
+{"seq":10,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.pass","payload":{"id":"demo/01","loopRun":"L1","pass":2,"green":false}}
+{"seq":11,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.pass","payload":{"id":"demo/01","loopRun":"L1","pass":3,"green":true}}
+{"seq":12,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.build.ended","payload":{"id":"demo/01","loopRun":"L1","result":"green"}}
+{"seq":13,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.moved","payload":{"id":"demo/01","to":"merging"}}
+{"seq":14,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.merge","payload":{"id":"demo/01","green":true,"commit":"0123456789abcdef"}}
+{"seq":15,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.moved","payload":{"id":"demo/01","to":"done"}}
+{"seq":16,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.planned","payload":{"id":"demo/06","run":"demo","file":".werk/tickets/demo/06.md","title":"Fix the held-out step","blockedBy":[],"followUpOf":"demo/01","steps":["e2e-board"]}}
+{"seq":17,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.heldout","payload":{"id":"demo/01","green":false,"failed":["e2e-board"],"followUp":"demo/06"}}
+{"seq":18,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.moved","payload":{"id":"demo/02","to":"building"}}
+{"seq":19,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.build.started","payload":{"id":"demo/02","loopRun":"L2","log":".werk/runs/L2/live.jsonl"}}
+{"seq":20,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.moved","payload":{"id":"demo/05","to":"blocked","reason":"waits on the schema"}}
+{"seq":21,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"gate.waiting","payload":{"run":"demo","gate":"G2","tip":"feedface00","reason":"every ticket merged"}}
+{"seq":22,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.pass","payload":{"id":"demo/02","loopRun":"L2","pass":1,"green":false}}
+{"seq":23,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.pass","payload":{"id":"demo/02","loopRun":"L2","pass":2,"green":false}}
+{"seq":24,"at":"2026-10-03T10:00:00.000Z","actor":"you","type":"ticket.moved","payload":{"id":"demo/03","to":"building"}}
+{"seq":25,"at":"2026-10-03T10:00:00.000Z","actor":"agent","type":"ticket.moved","payload":{"id":"demo/03","to":"ready","reason":"the build refused: werk: no ticket file at .werk/tickets/demo/03.md"}}
