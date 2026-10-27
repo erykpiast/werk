@@ -105,7 +105,7 @@ describe('parseGrade', () => {
   })
 
   test('a card left out scores 0; an answer with no array is unreadable', () => {
-    expect(parseGrade('[]', ['a'])).toEqual([{ card: 'a', score: 0, gap: 'the grader gave no line for this card' }])
+    expect(parseGrade('[]', ['a'])).toEqual([{ card: 'a', score: 0, gap: 'the grader gave no line for this card', missing: true }])
     expect(parseGrade('{"card": "a"}', ['a'])).toBe('the grader did not answer with a JSON array')
   })
 })

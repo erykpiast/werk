@@ -34,7 +34,7 @@ import { readEvents, watchTickets } from './log.ts'
 import { paths } from './project.ts'
 import { mapIndex, planBlockers, planScope, renderCard } from './plan-tickets.ts'
 import { planCopy, scopeEntries } from './plan-record.ts'
-import { appendPipeline } from './pipeline.ts'
+import { appendPipeline, NO_USAGE } from './pipeline.ts'
 import { citePrints } from './ticket-watch.ts'
 import { runHeadless, type HeadlessResult } from './prototype.ts'
 import { CHECK_TARGETS } from './rubric.ts'
@@ -228,6 +228,14 @@ function readArchive(path: string): number[] {
   }
 }
 
+/** #st-spec-decisions-answers-file: a missing file means the writer did not finish its task. An
+ *  empty list means no card is missing. Why the file is unusable, or undefined. */
+function answersProblem(path: string): string | undefined {
+  if (!existsSync(path)) return `the writer wrote no answers file at ${path}; it must write [] when no card is missing`
+  const read = readProposals(path)
+  return typeof read === 'string' ? read : undefined
+}
+
 function readProposals(path: string): Proposal[] | string {
   if (!existsSync(path)) return []
   try {
@@ -262,7 +270,7 @@ type PlanOpts = { timeoutMs?: number; silenceMs?: number; logPath?: string; boar
 type PlanRecord = {
   seq?: number
   started: number
-  copy?: { specPath: string; dir: string; before: { spec: string; open: Map<number, string>; known: Set<number> } }
+  copy?: { specPath: string; dir: string; answers: { spec: string; tickets: string }; before: { spec: string; open: Map<number, string>; known: Set<number> } }
 }
 
 /** Plan a subtree, with its start, its steps and its end on the board (#vi-board-plan). */
@@ -300,8 +308,8 @@ function sessionEnded(cwd: string, subtreeId: string, rec: PlanRecord, name: str
     name,
     ms: Date.now() - since,
     result: r.error ? 'error' : 'ok',
-    ...(r.costUsd !== undefined ? { costUsd: r.costUsd } : {}),
-    ...(r.tokens ? { tokens: r.tokens } : {}),
+    costUsd: r.costUsd ?? NO_USAGE.costUsd,
+    tokens: r.tokens ?? NO_USAGE.tokens,
       ...(r.subagents !== undefined ? { responses: r.responses, subagents: r.subagents } : {}),
     ...(r.turns !== undefined ? { turns: r.turns } : {}),
     file: relative(cwd, log),
@@ -318,7 +326,7 @@ function endRecord(cwd: string, subtreeId: string, rec: PlanRecord, result: stri
   if (rec.seq === undefined) return
   let file: string | undefined
   if (rec.copy) {
-    const { specPath, dir, before } = rec.copy
+    const { specPath, dir, before, answers } = rec.copy
     const read = (p: string) => (existsSync(p) ? readFileSync(p, 'utf8') : '')
     const tickets = new Map(
       (existsSync(dir) ? readdirSync(dir) : []).filter((f) => /^\d+\.md$/.test(f)).map((f) => [Number(f.slice(0, -3)), read(join(dir, f))]),
@@ -331,6 +339,9 @@ function endRecord(cwd: string, subtreeId: string, rec: PlanRecord, result: stri
     for (const [key, state] of Object.entries(copy.tickets)) {
       if (state === 'new' || state === 'changed') writeFileSync(join(out, `${key}.md`), tickets.get(Number(key))!)
     }
+    // #werk-plancopy-answers: the answer records each writer returned, one file per writer.
+    if (existsSync(answers.spec)) writeFileSync(join(out, 'spec-answers.json'), read(answers.spec))
+    if (existsSync(answers.tickets)) writeFileSync(join(out, 'ticket-answers.json'), read(answers.tickets))
     writeFileSync(join(out, 'copy.json'), JSON.stringify(copy, null, 2) + '\n')
     file = relative(cwd, out)
   }
@@ -403,6 +414,7 @@ async function planSubtree(
   rec.copy = {
     specPath,
     dir,
+    answers: { spec: specDecisions, tickets: ticketDecisions },
     before: {
       spec: priorSpec,
       open: new Map([...prior.open.keys()].map((num) => [num, readTicketText(num)])),
@@ -427,6 +439,8 @@ async function planSubtree(
   })
   sessionEnded(cwd, subtreeId, rec, 'spec-writer', specLog, spec, since)
   if (spec.error) return { ok: false, reason: 'agent-error', step: 'spec', error: spec.error }
+  const specAnswers = answersProblem(specDecisions)
+  if (specAnswers) return { ok: false, reason: 'agent-error', step: 'spec', error: specAnswers }
   const proposed = propose(cwd, logPath, subtreeId, specDecisions)
   const specText = existsSync(specPath) ? readFileSync(specPath, 'utf8') : ''
   const problem = specText ? specProblem(specText) : `no spec at ${specPath}`
@@ -451,6 +465,8 @@ async function planSubtree(
   })
   sessionEnded(cwd, subtreeId, rec, 'ticket-writer', ticketLog, tickets, since)
   if (tickets.error) return { ok: false, reason: 'agent-error', step: 'tickets', error: tickets.error }
+  const ticketAnswers = answersProblem(ticketDecisions)
+  if (ticketAnswers) return { ok: false, reason: 'agent-error', step: 'tickets', error: ticketAnswers }
   step('checks')
   proposed.push(...propose(cwd, logPath, subtreeId, ticketDecisions))
 

@@ -6,21 +6,31 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { appendBoard } from './board.ts'
+import { appendBoard, foldBoard, readBoard } from './board.ts'
 import type { Ticket } from './board.ts'
 import { decisionFollowUpText } from './decision-pass.ts'
 import { decisionStepText } from './heldout-text.ts'
 import type { Step } from './heldout-text.ts'
 import { parseTicket, ticketChecks, type ParsedTicket } from './ticket.ts'
 
-/** Write the next numbered ticket file of the run. Returns its id and its path from `cwd`. */
-export function writeTicketFile(cwd: string, run: string, text: string): { id: string; file: string } {
+/** Write the ticket file of the run under the first free number from 01 to 99, counted over the
+ *  folder and, when `boardPath` is given, the board (#st-grade-defer-follow-up-file). Returns its
+ *  id and its path from `cwd`. */
+export function writeTicketFile(cwd: string, run: string, text: string, boardPath?: string): { id: string; file: string } {
   const dir = join(cwd, '.werk', 'tickets', run)
   mkdirSync(dir, { recursive: true })
-  const nums = readdirSync(dir)
-    .map((f) => Number(f.replace(/\.md$/, '')))
-    .filter(Number.isFinite)
-  const num = String(Math.max(0, ...nums) + 1).padStart(2, '0')
+  const taken = new Set(
+    readdirSync(dir)
+      .map((f) => Number(f.match(/^\d+/)?.[0] ?? NaN))
+      .filter(Number.isFinite),
+  )
+  if (boardPath) {
+    for (const t of foldBoard(readBoard(boardPath)).tickets.values()) if (t.run === run) taken.add(Number(t.id.slice(run.length + 1)))
+  }
+  let n = 1
+  while (taken.has(n) && n <= 99) n++
+  if (n > 99) throw new Error(`no free ticket number from 01 to 99 in ${run}`)
+  const num = String(n).padStart(2, '0')
   const file = join('.werk', 'tickets', run, `${num}.md`)
   writeFileSync(join(cwd, file), text)
   return { id: `${run}/${num}`, file }
@@ -49,7 +59,7 @@ ${o.gaps.map((g) => `- [ ] The gap in #${g.card} is closed`).join('\n')}
 
 ${ticketChecks(o.ticket).map((c) => `- \`${c}\``).join('\n')}
 `
-  const { id, file } = writeTicketFile(cwd, o.run, text)
+  const { id, file } = writeTicketFile(cwd, o.run, text, o.boardPath)
   appendBoard('ticket.planned', { id, run: o.run, file, title: `Close the gaps the grader found in ${o.of}`, blockedBy: [o.of], followUpOf: o.of }, { path: o.boardPath })
   return id
 }
@@ -79,7 +89,7 @@ ${o.failed.map((c) => `- [ ] \`${c.cmd}\` is green on the main line's tree`).joi
 
 ${o.failed.map((c) => `- \`${c.cmd}\``).join('\n')}
 `
-  const { id, file } = writeTicketFile(cwd, o.run, text)
+  const { id, file } = writeTicketFile(cwd, o.run, text, o.boardPath)
   appendBoard('ticket.planned', { id, run: o.run, file, title, blockedBy: [], followUpOf: o.of }, { path: o.boardPath })
   return id
 }
@@ -99,7 +109,7 @@ export function fileDecisionFollowUp(cwd: string, o: { of: Ticket; changes: stri
     appendBoard('ticket.revised', { id: o.open.id, title, blockedBy: o.open.blockedBy }, { path: o.boardPath })
     return o.open.id
   }
-  const { id, file } = writeTicketFile(cwd, o.of.run, text)
+  const { id, file } = writeTicketFile(cwd, o.of.run, text, o.boardPath)
   appendBoard('ticket.planned', { id, run: o.of.run, file, title, blockedBy: [], followUpOf: o.of.id, rework: true }, { path: o.boardPath })
   return id
 }
@@ -108,7 +118,7 @@ export function fileDecisionFollowUp(cwd: string, o: { of: Ticket; changes: stri
  *  cards they contradict, for the ticket whose steps they are. It carries no steps of its own, so
  *  the steps count as held back, not as covered. Returns its id. */
 export function fileStepDecision(cwd: string, o: { run: string; of: Ticket; found: Array<{ step: Step; card: string; why: string }>; cites: string[]; checks: string[]; touches?: string[]; boardPath: string }): string {
-  const { id, file } = writeTicketFile(cwd, o.run, decisionStepText({ of: o.of.id, steps: o.found, cites: o.cites, checks: o.checks, touches: o.touches }))
+  const { id, file } = writeTicketFile(cwd, o.run, decisionStepText({ of: o.of.id, steps: o.found, cites: o.cites, checks: o.checks, touches: o.touches }), o.boardPath)
   appendBoard('ticket.planned', { id, run: o.run, file, title: `Judge held-out steps of ${o.of.id} against a card: ${o.found.map((f) => f.step.id).join(', ')}`, blockedBy: [], followUpOf: o.of.id }, { path: o.boardPath })
   return id
 }

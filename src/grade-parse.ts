@@ -9,7 +9,9 @@ import type { GraphNode } from './types.ts'
 
 /** `person`: the gap is a question only a person can settle, which counts as a spec gap
  *  (#st-build-cap-spec-gap). */
-export type GradeLine = { card: string; score: number; gap: string; person?: true }
+/** `regression`: the grader says a line that passed at the earlier grade is broken now
+ *  (#st-grade-converge-reply-shape). `missing`: the reply had no line for it. */
+export type GradeLine = { card: string; score: number; gap: string; person?: true; regression?: true; missing?: true }
 
 /** The JSON value in an agent's answer: a fenced json block, or the outermost array. */
 export function extractJson(text: string): unknown {
@@ -67,7 +69,7 @@ The change is \`git diff ${base} HEAD\` in this checkout. You may read files and
 
 Answer with only a JSON array, one object per line, every criterion, the scope line${followed ? `, the "${UNRECORDED_LINE}" line` : ''} and every card below included. "card" is the criterion id, "${SCOPE_LINE}", ${followed ? `"${UNRECORDED_LINE}", ` : ''}or the card id. "built" goes on a card line only:
 
-[{"card": "<criterion id, ${SCOPE_LINE}, ${followed ? `${UNRECORDED_LINE}, ` : ''}or card id>", "score": <1-5>, "built": <true or false, card lines only>, "gap": "<the gap, or empty>", "person": <true, only when a person must settle the gap>}]
+[{"card": "<criterion id, ${SCOPE_LINE}, ${followed ? `${UNRECORDED_LINE}, ` : ''}or card id>", "score": <1-5>, "built": <true or false, card lines only>, "gap": "<the gap, or empty>", "person": <true, only when a person must settle the gap>${earlier ? ', "regression": <true, only on a line that passed at the earlier grade and the diff since then broke>' : ''}}]
 
 ## Acceptance criteria
 
@@ -116,7 +118,8 @@ export function parseGrade(text: string, cardIds: string[]): GradeLine[] | strin
     const card = x.card.replace(/^#/, '')
     const unbuilt = x.built === false && !isCriterion(card) && card !== SCOPE_LINE && card !== UNRECORDED_LINE
     const person = x.person === true && x.score < GRADE_PASS ? { person: true as const } : {}
-    byCard.set(card, unbuilt ? { card, score: Math.max(x.score, GRADE_PASS), gap: '' } : { card, score: x.score, gap: typeof x.gap === 'string' ? x.gap : '', ...person })
+    const regression = x.regression === true && x.score < GRADE_PASS ? { regression: true as const } : {}
+    byCard.set(card, unbuilt ? { card, score: Math.max(x.score, GRADE_PASS), gap: '' } : { card, score: x.score, gap: typeof x.gap === 'string' ? x.gap : '', ...person, ...regression })
   }
-  return cardIds.map((id) => byCard.get(id) ?? { card: id, score: 0, gap: 'the grader gave no line for this card' })
+  return cardIds.map((id) => byCard.get(id) ?? { card: id, score: 0, gap: 'the grader gave no line for this card', missing: true as const })
 }

@@ -414,6 +414,9 @@ export async function runPlan(cwd: string, graph: () => Graph, run: string, opts
       // Stopped: the whole run, or a person's stop on this ticket. Neither is stuck. A refused
       // build has no ticket fault to park: the main line or the ticket file is missing.
       if (r.result === 'refused') stuck ??= `${next.id}: refused${r.error ? `: ${r.error}` : ''}`
+      // #st-build-ticket-broke: a broken build sent its ticket back to ready. The run stops
+      // instead of building the same break again.
+      else if (r.result === 'error') stuck ??= `${next.id}: the build broke${r.error ? `: ${r.error}` : ''}`
       else if (r.result !== 'green' && r.result !== 'stopped') park(next.id, `${r.result}${r.error ? `: ${r.error}` : ''}`)
     })()
       .catch((e) => {

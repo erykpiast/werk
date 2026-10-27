@@ -40,8 +40,9 @@ export function parseFindings(text: string, area: string): Finding[] | string {
       const sev = String(x.severity ?? '').toUpperCase()
       return {
         area,
-        // An unknown severity is recorded, never allowed to block.
-        severity: (SEVERITIES as readonly string[]).includes(sev) ? (sev as Severity) : 'MEDIUM',
+        // #lp-prod-review-unknown-severity: an unknown severity is recorded as written, or as
+        // UNKNOWN when there is none. It never blocks: BLOCKING lists only CRITICAL and HIGH.
+        severity: ((SEVERITIES as readonly string[]).includes(sev) ? sev : sev || 'UNKNOWN') as Severity,
         file: typeof x.file === 'string' ? x.file : undefined,
         line: typeof x.line === 'number' ? x.line : undefined,
         impact: x.impact,

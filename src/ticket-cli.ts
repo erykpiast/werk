@@ -37,7 +37,15 @@ export function ticketCommand(
   const board = () => foldBoard(readBoard(boardPath))
   const find = (ticketId: string | undefined) => {
     if (!ticketId) throw new Error(`ticket ${verb} needs a ticket id`)
-    const t = board().tickets.get(ticketId)
+    // A card id takes a leading #, so a ticket id does too. A bare number that exactly one
+    // archived ticket ends in names that ticket; more than one is ambiguous (restore only).
+    const key = ticketId.replace(/^#/, '')
+    let t = board().tickets.get(key)
+    if (!t && verb === 'restore' && /^\d+$/.test(key)) {
+      const hits = [...board().tickets.values()].filter((x) => x.archived && x.id.endsWith(`/${key}`))
+      if (hits.length > 1) throw new Error(`"${key}" fits ${hits.length} archived tickets: ${hits.map((x) => x.id).join(', ')}. Give the full id.`)
+      t = hits[0]
+    }
     if (!t) throw new Error(`no ticket with the id "${ticketId}". Run "werk ticket list".`)
     return t
   }
@@ -63,7 +71,7 @@ export function ticketCommand(
       const ok = agentMove(t, to, reason)
       if (!ok.ok) throw new Error(ok.why)
       appendBoard('ticket.moved', { id: t.id, to, reason: reason!.trim() }, { actor, path: boardPath })
-      return [`${t.id}: ${t.column} → ${to}`]
+      return [`${t.id} is in ${to}`]
     }
     case 'archive': {
       const t = find(id)
@@ -71,13 +79,13 @@ export function ticketCommand(
       // #werk-board-control-archive-ends-build: no signal. The builder loop of a building ticket
       // reads the board and ends its own build; the branch stays.
       appendBoard('ticket.archived', { id: t.id }, { actor, path: boardPath })
-      return [`archived ${t.id}${t.column === 'building' ? '; its build ends within about a second and the branch stays' : ''}. Nothing is deleted: "werk ticket restore ${t.id}" puts it back.`]
+      return [`${t.id} archived from ${t.column}`]
     }
     case 'restore': {
       const t = find(id)
       if (!t.archived) throw new Error(`${t.id} is not archived`)
       appendBoard('ticket.restored', { id: t.id }, { actor, path: boardPath })
-      return [`restored ${t.id} to ${t.column}`]
+      return [`${t.id} is in ${t.column}`]
     }
     case 'import': {
       const run = id ?? (() => { throw new Error('ticket import needs a plan run id') })()

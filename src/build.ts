@@ -35,7 +35,7 @@ import { fold } from './fold.ts'
 import { citePrints } from './ticket-watch.ts'
 import { asksCause, buildPrompt, gateOf, parseCause, rejectedOf, storyLines } from './build-prompt.ts'
 import type { Failure, GateDetail, NamedCause } from './build-prompt.ts'
-import { appendPipeline } from './pipeline.ts'
+import { appendPipeline, NO_USAGE } from './pipeline.ts'
 import type { BuildStepEnded, StepKind, StepRef } from './pipeline.ts'
 import { addAll, CHECK_TIMEOUT_MS, decidedClosure, runCheck, tail } from './loop.ts'
 import type { CheckResult } from './loop.ts'
@@ -188,7 +188,9 @@ export type BuildResult = {
 export const DEFAULT_GATES: Gate[] = [grader, reviewers]
 
 // Skill and Agent: /implement calls /tdd and /code-review, and the review runs sub-agents.
-const BUILDER_TOOLS = ['Read', 'Grep', 'Glob', 'Write', 'Edit', 'Bash', 'Skill', 'Agent']
+// #st-build-implement-tools: the edit tools, make and git, and nothing else. /implement calls
+// /tdd and /code-review (Skill), and the review runs sub-agents (Agent).
+const BUILDER_TOOLS = ['Read', 'Grep', 'Glob', 'Write', 'Edit', 'Bash(make:*)', 'Bash(git:*)', 'Skill', 'Agent']
 
 /** Read the ticket off the board and say why it cannot build, if it cannot. */
 function readTicket(cwd: string, id: string, boardPath: string): { ticket: ParsedTicket; run: string; column: string; followUpOf?: string } | string {
@@ -328,8 +330,8 @@ async function buildLoop(cwd: string, g: Graph, id: string, opts: BuildOptions, 
       pass,
       name,
       result: out.stopped ? 'stopped' : out.silent ? 'silent' : out.error ? 'error' : 'ok',
-      ...(out.costUsd !== undefined ? { costUsd: out.costUsd } : {}),
-      ...(out.tokens ? { tokens: out.tokens } : {}),
+      costUsd: out.costUsd ?? NO_USAGE.costUsd,
+      tokens: out.tokens ?? NO_USAGE.tokens,
       ...(out.subagents !== undefined ? { responses: out.responses, subagents: out.subagents } : {}),
       ...(out.turns !== undefined ? { turns: out.turns } : {}),
       ...(out.error ? { error: out.error } : {}),
@@ -433,8 +435,9 @@ async function buildLoop(cwd: string, g: Graph, id: string, opts: BuildOptions, 
       pass,
       name,
       result: how,
-      ...(out.costUsd !== undefined ? { costUsd: out.costUsd } : {}),
-      ...(out.tokens ? { tokens: out.tokens } : {}),
+      ...(how === 'stopped' && archived() ? { archived: true as const } : {}),
+      costUsd: out.costUsd ?? NO_USAGE.costUsd,
+      tokens: out.tokens ?? NO_USAGE.tokens,
       ...(out.subagents !== undefined ? { responses: out.responses, subagents: out.subagents } : {}),
       ...(out.turns !== undefined ? { turns: out.turns } : {}),
       ...(out.error ? { error: out.error } : {}),
@@ -632,6 +635,11 @@ async function buildLoop(cwd: string, g: Graph, id: string, opts: BuildOptions, 
   result.result = end
   ended('build', buildSince, { result: end, costUsd: result.costUsd, ...(detail ? { error: detail } : {}) })
   board('ticket.build.ended', { id, loopRun, result: end, ...(detail ? { detail } : {}) })
+  // #st-build-ticket-broke: a broken build leaves no live session, so its ticket goes back to
+  // ready with the failure as the reason. The branch stays.
+  if (end === 'error' && foldBoard(readBoard(boardPath)).tickets.get(id)?.column === 'building') {
+    board('ticket.moved', { id, to: 'ready', reason: `the build broke: ${detail ?? 'unknown error'}` })
+  }
   // #st-build-missing-decision: the ticket now cites what its builds proposed, so a later
   // ruling on a proposal reaches it, merged or not.
   if (end === 'green') {

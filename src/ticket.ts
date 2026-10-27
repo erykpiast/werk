@@ -104,7 +104,8 @@ export function parseTicket(file: string, text: string): ParsedTicket | undefine
   const num = (s: string) => Number(s.replace(/^#/, ''))
   return {
     file,
-    num: Number(file.replace(/\.md$/, '')),
+    // #st-ticket-shape-number: the digits at the start of the file name. NaN when there are none.
+    num: Number(file.match(/^\d+/)?.[0] ?? NaN),
     title,
     cites: csv(get('cites')).map((id) => id.replace(/^#/, '')),
     blockedBy: csv(get('blocked_by')).map(num).filter(Number.isFinite),
@@ -272,14 +273,21 @@ export function checkTicketSet(tickets: ParsedTicket[], ctx: { cardIds: string[]
   })
 
   // Check 3 names tickets, so a failure blocks only those (#st-ticket-partial).
-  const cycle = onCycle(tickets)
-  const known = new Set(tickets.map((t) => t.num))
-  const dangling = tickets.flatMap((t) => t.blockedBy.filter((b) => !known.has(b)).map((b) => ({ ticket: t, b })))
+  // #st-ticket-shape-number-from-file-name: a number two files hold names no ticket, and each
+  // of those files fails here.
+  const counts = new Map<number, number>()
+  for (const t of tickets) if (Number.isFinite(t.num)) counts.set(t.num, (counts.get(t.num) ?? 0) + 1)
+  const shared = tickets.filter((t) => (counts.get(t.num) ?? 0) > 1)
+  const unique = tickets.filter((t) => (counts.get(t.num) ?? 0) <= 1)
+  const cycle = onCycle(unique)
+  const known = new Set(unique.map((t) => t.num))
+  const dangling = unique.flatMap((t) => t.blockedBy.filter((b) => !known.has(b)).map((b) => ({ ticket: t, b })))
   const problems = [
+    ...(shared.length ? [`two files hold one number: ${shared.map((t) => t.file).join(', ')}`] : []),
     ...(cycle.length ? ['blocked_by has a cycle'] : []),
     ...(dangling.length ? [`no such ticket: ${dangling.map((d) => `${d.ticket.file} → ${d.b}`).join(', ')}`] : []),
   ]
-  const named = [...new Set([...cycle, ...dangling.map((d) => d.ticket.num)])].sort((a, b) => a - b)
+  const named = [...new Set([...shared.map((t) => t.num), ...cycle, ...dangling.map((d) => d.ticket.num)])].filter(Number.isFinite).sort((a, b) => a - b)
   checks.push({
     file: '(blocked_by)',
     check: 'blocked_by',

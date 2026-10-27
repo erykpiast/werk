@@ -28,11 +28,12 @@ describe('parseFindings', () => {
     ])
   })
 
-  test('an unknown or missing severity is recorded as MEDIUM, never as blocking', () => {
+  // #lp-prod-review-unknown-severity: recorded as written, or as UNKNOWN, never as blocking.
+  test('an unknown severity is recorded as written and a missing one as UNKNOWN', () => {
     const out = parseFindings('[{"severity": "BLOCKER", "impact": "a"}, {"impact": "b"}]', 'design')
-    expect(out).toEqual([
-      { area: 'design', severity: 'MEDIUM', file: undefined, line: undefined, impact: 'a', fix: undefined },
-      { area: 'design', severity: 'MEDIUM', file: undefined, line: undefined, impact: 'b', fix: undefined },
+    expect(out as unknown).toEqual([
+      { area: 'design', severity: 'BLOCKER', file: undefined, line: undefined, impact: 'a', fix: undefined },
+      { area: 'design', severity: 'UNKNOWN', file: undefined, line: undefined, impact: 'b', fix: undefined },
     ])
   })
 

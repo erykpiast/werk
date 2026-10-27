@@ -4,14 +4,15 @@ import { join } from 'node:path'
 import { appendBoard, foldBoard, readBoard } from './board.ts'
 import { fold } from './fold.ts'
 import { fakeClaude, makeRepo, readJsonl, runCli, writeLog } from './testing/fixture.ts'
+import type { FakeRule } from './testing/fake-claude.ts'
 import { SPEC, ticket } from './testing/samples.ts'
 
 const DECISION = JSON.stringify([{ id: 'root-store', title: 'Items are kept in one JSON file', why: 'No card says where.', body: 'One file.' }])
 
-function plannerRules(tickets: Record<string, string>) {
+function plannerRules(tickets: Record<string, string>): FakeRule[] {
   return [
     { match: 'You are the spec writer', files: { '.werk/specs/root.md': SPEC, '.werk/specs/root.decisions.json': DECISION } },
-    { match: 'You are the ticket writer', files: Object.fromEntries(Object.entries(tickets).map(([n, t]) => [`.werk/tickets/root/${n}.md`, t])) },
+    { match: 'You are the ticket writer', files: { ...Object.fromEntries(Object.entries(tickets).map(([n, t]) => [`.werk/tickets/root/${n}.md`, t])), '.werk/specs/root.ticket-decisions.json': '[]' } },
   ]
 }
 
@@ -114,10 +115,11 @@ describe('werk plan', () => {
     const started = readFileSync(join(repo, '.werk', 'tickets', 'root', '01.md'), 'utf8')
 
     const second = fakeClaude([
-      { match: 'You are the spec writer', files: { '.werk/specs/root.md': SPEC } },
+      { match: 'You are the spec writer', files: { '.werk/specs/root.md': SPEC, '.werk/specs/root.decisions.json': '[]' } },
       {
         match: 'You are the ticket writer',
         files: {
+          '.werk/specs/root.ticket-decisions.json': '[]',
           '.werk/tickets/root/01.md': ticket({ title: 'Changed while building', cites: 'root', stories: '1' }),
           '.werk/tickets/root/02.md': ticket({ title: 'Add an item', cites: 'kid', stories: '2' }),
           '.werk/tickets/root/04.md': ticket({ title: 'Edit', cites: 'kid', blocked: '02', stories: '' }),
@@ -285,7 +287,7 @@ describe('werk plan', () => {
   test('a spec with no user stories stops the run before the ticket writer', async () => {
     const repo = makeRepo()
     writeLog(repo, [{ id: 'root' }])
-    const fake = fakeClaude([{ match: 'You are the spec writer', files: { '.werk/specs/root.md': '## Problem Statement\n\nx\n' } }])
+    const fake = fakeClaude([{ match: 'You are the spec writer', files: { '.werk/specs/root.md': '## Problem Statement\n\nx\n', '.werk/specs/root.decisions.json': '[]' } }])
     const r = await runCli(repo, fake, ['plan', 'root'])
     expect(r.code).toBe(1)
     expect(JSON.parse(r.stdout)).toMatchObject({ ok: false, reason: 'spec-invalid' })
@@ -367,22 +369,31 @@ describe('werk plan', () => {
     expect(board.at(-1)).toMatchObject({ type: 'plan.ended', payload: { result: 'agent-error', step: 'tickets' } })
   })
 
-  test('an unreadable decisions file is reported, and the plan goes on', async () => {
+  // #st-spec-decisions-answers-file: a missing or malformed answers file stops the plan before
+  // the next writer starts.
+  test('a malformed answers file of the spec writer stops the plan before the ticket writer', async () => {
     const repo = makeRepo()
     writeLog(repo, [{ id: 'root' }])
     const fake = fakeClaude([
       { match: 'You are the spec writer', files: { '.werk/specs/root.md': SPEC, '.werk/specs/root.decisions.json': '[{"id": "root-x",' } },
-      { match: 'You are the ticket writer', files: { '.werk/tickets/root/01.md': ticket({ title: 'List', cites: 'root', stories: '1, 2' }), '.werk/specs/root.ticket-decisions.json': '{"id": "root-y"}' } },
     ])
-    const r = await runCli(repo, fake, ['plan', 'root'])
-    const out = JSON.parse(r.stdout)
-    expect(out.ok).toBe(true)
-    expect(out.planned).toEqual(['root/01'])
-    expect(out.proposed).toEqual([
-      { id: '(decisions)', ok: false, detail: expect.stringMatching(/root\.decisions\.json is not valid JSON: /) },
-      { id: '(decisions)', ok: false, detail: expect.stringMatching(/specs\/root\.ticket-decisions\.json is not a JSON array$/) },
-    ])
-    // Nothing was proposed to the map.
+    await runCli(repo, fake, ['plan', 'root'])
+    const board = readJsonl(join(repo, '.werk', 'board.jsonl'))
+    expect(board.at(-1)).toMatchObject({ type: 'plan.ended', payload: { result: 'agent-error', step: 'spec' } })
+    expect(board.at(-1).payload.detail).toMatch(/root\.decisions\.json is not valid JSON: /)
     expect(fold(readJsonl(join(repo, '.werk', 'log.jsonl'))).proposed.size).toBe(0)
+  })
+
+  test('a ticket writer that writes no answers file fails the plan, and an empty list does not', async () => {
+    const repo = makeRepo()
+    writeLog(repo, [{ id: 'root' }])
+    const fake = fakeClaude([
+      { match: 'You are the spec writer', files: { '.werk/specs/root.md': SPEC, '.werk/specs/root.decisions.json': '[]' } },
+      { match: 'You are the ticket writer', files: { '.werk/tickets/root/01.md': ticket({ title: 'List', cites: 'root', stories: '1, 2' }) } },
+    ])
+    await runCli(repo, fake, ['plan', 'root'])
+    const board = readJsonl(join(repo, '.werk', 'board.jsonl'))
+    expect(board.at(-1)).toMatchObject({ type: 'plan.ended', payload: { result: 'agent-error', step: 'tickets' } })
+    expect(board.at(-1).payload.detail).toMatch(/wrote no answers file/)
   })
 })

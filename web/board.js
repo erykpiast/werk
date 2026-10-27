@@ -150,6 +150,11 @@ if (typeof document !== 'undefined') {
     if (!mounted || !opts) return
     for (const x of opts.drawer.querySelectorAll('[data-since]')) x.textContent = elapsed(x.dataset.since)
   }, 1000)
+  // #vi-board-redraw-signal: a builder that died writes nothing to the board log, so no push
+  // comes for it. A slow read makes its dot stop.
+  setInterval(() => {
+    if (mounted) refreshBoard()
+  }, 5000)
 }
 
 // ---------- the columns ----------

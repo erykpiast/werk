@@ -54,7 +54,7 @@ describe('list', () => {
 describe('move', () => {
   test('moves between blocked and ready with the trimmed reason, as the given actor', () => {
     const s = scratch()
-    expect(s.run(['move', 'r/03', 'blocked'], { reason: '  waits on the schema  ' })).toEqual(['r/03: ready → blocked'])
+    expect(s.run(['move', 'r/03', 'blocked'], { reason: '  waits on the schema  ' })).toEqual(['r/03 is in blocked'])
     const e = readBoard(s.board).at(-1)!
     expect([e.type, e.actor]).toEqual(['ticket.moved', 'agent'])
     expect(e.payload).toEqual({ id: 'r/03', to: 'blocked', reason: 'waits on the schema' })
@@ -80,16 +80,16 @@ describe('move', () => {
 describe('archive and restore', () => {
   test('archive takes a ready or blocked ticket, and restore puts it back', () => {
     const s = scratch()
-    expect(s.run(['archive', 'r/02'])[0]).toContain('werk ticket restore r/02')
+    expect(s.run(['archive', 'r/02'])).toEqual(['r/02 archived from blocked'])
     expect(s.fold().tickets.get('r/02')!.archived).toBe(true)
-    expect(s.run(['restore', 'r/02'])).toEqual(['restored r/02 to blocked'])
+    expect(s.run(['restore', 'r/02'])).toEqual(['r/02 is in blocked'])
     expect(s.fold().tickets.get('r/02')!.archived).toBe(false)
   })
 
   test('archive takes a building ticket too, and it stays in building, archived (#werk-board-control)', () => {
     const s = scratch()
     appendBoard('ticket.moved', { id: 'r/01', to: 'building' }, { path: s.board })
-    expect(s.run(['archive', 'r/01'])[0]).toContain('werk ticket restore r/01')
+    expect(s.run(['archive', 'r/01'])).toEqual(['r/01 archived from building'])
     expect(s.fold().tickets.get('r/01')).toMatchObject({ archived: true, column: 'building' })
   })
 

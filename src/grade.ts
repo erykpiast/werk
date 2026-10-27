@@ -38,7 +38,10 @@ export const grader: Gate = async (ctx) => {
   if (out.error) return { record: { grade: null }, failure: { kind: 'step', step: 'grader', detail: out.error } }
   const lines = parseGrade(out.result ?? '', [...criteria.map((_, i) => criterionId(i)), SCOPE_LINE, ...(ctx.followed ? [UNRECORDED_LINE] : []), ...ctx.judged.map((n) => n.id)])
   if (typeof lines === 'string') return { record: { grade: null }, failure: { kind: 'step', step: 'grader', detail: lines } }
-  const low = lines.filter((l) => l.score < GRADE_PASS)
+  // #st-grade-converge-reply-shape: a low score on a line that passed at the earlier grade fails
+  // only when the grader flags a regression. A line the reply left out always fails.
+  const passedBefore = new Set((ctx.earlier ?? []).filter((l) => l.score >= GRADE_PASS).map((l) => l.card))
+  const low = lines.filter((l) => l.score < GRADE_PASS && (l.missing || !passedBefore.has(l.card) || l.regression))
   const failure: Failure | undefined = low.length ? { kind: 'grade', lines: low } : undefined
   return { record: { grade: lines }, failure }
 }

@@ -604,7 +604,7 @@ const ID_POSITIONS: Record<string, number[]> = {
   add: [0], link: [0, 1], unlink: [0, 1], status: [0], kill: [0], 'kill-state': [0], reopen: [0],
   rederive: [0], move: [0], retitle: [0], edit: [0], propose: [0], accept: [0], discard: [0],
   remove: [0], restore: [0], say: [0], quote: [0], show: [0], find: [0], stale: [0],
-  'sample-options': [0], plan: [0],
+  'sample-options': [0], plan: [0], ticket: [1], followup: [0],
 }
 const ID_FLAGS = ['parent', 'under', 'obligation', 'fallback', 'fork', 'card']
 const unhash = (s: string) => s.replace(/^#/, '')

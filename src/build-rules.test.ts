@@ -62,8 +62,16 @@ describe('buildRuleTitles', () => {
 describe('buildRulesFor', () => {
   test('a stage agent gets the titles from the map it is given', () => {
     const path = mapFile(events)
-    for (const role of ['chat', 'builder', 'grader', 'reviewer-security', 'spec-writer', 'ticket-writer', 'step-author', 'binder'] as const) {
+    for (const role of ['chat', 'builder', 'spec-writer', 'ticket-writer'] as const) {
       expect(buildRulesFor(role, path)).toContain('#db')
+    }
+  })
+
+  // #st-build-howto-titles-sample: only the agents that get the werk agent instructions.
+  test('a judge or a step agent, which get no werk instructions, gets nothing', () => {
+    const path = mapFile(events)
+    for (const role of ['grader', 'reviewer-security', 'step-author', 'binder'] as const) {
+      expect(buildRulesFor(role, path)).toBe('')
     }
   })
 

@@ -16,8 +16,8 @@
  */
 import { spawn, spawnSync } from 'node:child_process'
 import { createInterface } from 'node:readline'
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, isAbsolute, join } from 'node:path'
+import { appendFileSync, existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { dirname, isAbsolute, join, resolve, sep } from 'node:path'
 
 export type FakeRule = {
   /** The role this rule answers: the launch's WERK_ROLE (#st-build-seam-role-env). No role
@@ -98,6 +98,10 @@ async function main() {
   const format = formatAt >= 0 ? argv[formatAt + 1] : 'text'
 
   const role = process.env.WERK_ROLE
+  if (!role) {
+    console.error('fake claude: WERK_ROLE is not set')
+    process.exit(2)
+  }
   const rules = (JSON.parse(readFileSync(scriptPath, 'utf8')) as { rules: FakeRule[] }).rules
   const statePath = `${scriptPath}.state.json`
   const out = (o: object) => process.stdout.write(JSON.stringify(o) + '\n')
@@ -123,8 +127,24 @@ async function main() {
     writeFileSync(statePath, JSON.stringify(used))
     const rule = rules[index]
 
-    for (const [path, content] of Object.entries(rule.files ?? {})) {
-      const abs = isAbsolute(path) ? path : join(process.cwd(), path)
+    // Every path is checked before any file is written, so a bad path writes nothing. An edit
+    // lands inside the folder the fake started in, also through a link out of it.
+    const root = realpathSync(process.cwd())
+    const targets = Object.entries(rule.files ?? {}).map(([path, content]) => {
+      const abs = resolve(process.cwd(), path)
+      // An absolute path is the script's own choice of place (the plan writers answer in the
+      // map folder, beside the repository), so only a relative path is held to the folder.
+      if (isAbsolute(path)) return { abs, content }
+      let at = abs
+      while (!existsSync(at) && dirname(at) !== at) at = dirname(at)
+      const real = join(realpathSync(at), abs.slice(at.length))
+      if (real !== root && !real.startsWith(root + sep)) {
+        console.error(`fake claude: the edit path "${path}" leads outside ${process.cwd()}`)
+        process.exit(2)
+      }
+      return { abs, content }
+    })
+    for (const { abs, content } of targets) {
       mkdirSync(dirname(abs), { recursive: true })
       writeFileSync(abs, content)
     }

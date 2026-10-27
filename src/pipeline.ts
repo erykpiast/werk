@@ -38,8 +38,14 @@ export type PassEnd = {
   [record: string]: unknown
 }
 
+/** What a session that reported no usage is logged with (#ms-store-nousage). */
+export const NO_USAGE = { costUsd: 0, tokens: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 } } as const
+
 /** The end of one step of a build. */
 export type BuildStepEnded = StepRef & {
+  /** An archive of the ticket stopped this step: the pass is no evidence about the ticket
+   *  (#ms-store-archived-pass). */
+  archived?: true
   ms: number
   /** The step's own result: green or red for a pass, ok for a check, the end of a build. */
   result: string

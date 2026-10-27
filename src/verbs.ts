@@ -27,7 +27,7 @@ export type Verb = {
 const verbs = new Map<string, Verb>()
 
 export function registerVerb(verb: Verb): void {
-  if (verbs.has(verb.name)) throw new Error(`verb "${verb.name}" is registered twice`)
+  // A second registration of a name replaces the first, so a hot reload of one module works.
   verbs.set(verb.name, verb)
 }
 

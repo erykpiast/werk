@@ -537,8 +537,9 @@ export function boardRoutes(opts: BoardRoutesOptions = {}) {
         // `offset` is the byte the read stopped at, after the last whole line. The live push
         // sends each line's end offset, so the preview drops what this read already gave it.
         const read = path && existsSync(path) ? readFrom(path, 0) : { lines: [], offset: 0 }
+        // #vi-board-session-file-line-shape: the preview shows the last 200 events, oldest first.
         const lines = summarize(read.lines).map(({ end, ...l }) => l)
-        send(res, 200, { id: t.id, live: t.live, column: t.column, lines: lines.slice(-500), offset: read.offset })
+        send(res, 200, { id: t.id, live: t.live, column: t.column, lines: lines.slice(-200), offset: read.offset })
       } catch (err) {
         send(res, (err as { status?: number }).status ?? 400, { ok: false, error: (err as Error).message })
       }

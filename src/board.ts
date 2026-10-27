@@ -383,6 +383,9 @@ export function foldBoard(events: BoardEvent[], after?: (e: BoardEvent, tickets:
         const p = e.payload as BoardEventMap['ticket.archived']
         const t = tickets.get(p.id)
         if (!t) break
+        // #vi-board-state-archive-once: an archive of an archived ticket changes nothing, and a
+        // restore of a ticket that is not archived changes nothing.
+        if (t.archived === (e.type === 'ticket.archived')) break
         t.archived = e.type === 'ticket.archived'
         if (p.reason) t.reason = p.reason
         break
@@ -776,6 +779,8 @@ export function agentMove(t: Ticket, to: Column, reason: string | undefined): { 
     return { ok: false, why: `${t.id} is in ${t.column}; only the merge loop moves it from there` }
   }
   if (t.column === to) return { ok: false, why: `${t.id} is already in ${to}` }
+  // #st-ticket-watch-marked-blocked: only a plan that keeps the ticket clears a cited-card mark.
+  if (to === 'ready' && t.heldBy === CITED_CHANGED) return { ok: false, why: `${t.id} is marked: a cited card changed. Only a plan that keeps the ticket clears the mark` }
   if (!reason?.trim()) return { ok: false, why: 'a move between blocked and ready needs --reason' }
   return { ok: true }
 }

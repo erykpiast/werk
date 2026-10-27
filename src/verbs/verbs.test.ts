@@ -38,9 +38,12 @@ describe('verb registry', () => {
     expect(registeredVerbs().map((v) => v.name)).toEqual(registeredVerbs().map((v) => v.name).sort())
   })
 
-  test('2. a verb registered twice is refused', async () => {
+  test('2. a second registration of a name replaces the first', async () => {
     await loadVerbs()
-    expect(() => registerVerb({ name: 'ticket', summary: 'x', run: () => [] })).toThrow('registered twice')
+    const original = findVerb('ticket')!
+    registerVerb({ name: 'ticket', summary: 'x', run: () => [] })
+    expect(findVerb('ticket')!.summary).toBe('x')
+    registerVerb(original)
   })
 
   test('3. help prints the registered verbs', () => {

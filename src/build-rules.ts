@@ -13,10 +13,11 @@ import type { Graph } from './types.ts'
 /** #st-build-howto-titles: the top card that holds the build rules, the same id in every map. */
 export const HOW = 'how'
 
-/** The roles of the agents that build or judge the project. A classifier, a sampler, a
- *  prototyper and the diagram agents have narrow contracts that no build rule changes. */
-const STAGE_ROLES = new Set<string>(['chat', 'builder', 'grader', 'spec-writer', 'ticket-writer', 'step-author', 'binder'])
-const isStageRole = (role: AgentRole) => STAGE_ROLES.has(role) || role.startsWith('reviewer')
+/** The roles of the agents that get the werk agent instructions: the chat agent, each build
+ *  pass and the plan writers (#st-build-howto-titles-sample). A judge, a classifier, a sampler,
+ *  a prototyper and the diagram agents have narrow contracts that no build rule changes. */
+const STAGE_ROLES = new Set<string>(['chat', 'builder', 'spec-writer', 'ticket-writer'])
+const isStageRole = (role: AgentRole) => STAGE_ROLES.has(role)
 
 /** The title list, one line per decided card under the build-rules card, indented by depth.
  *  An open card is not a rule yet, so it is left out, but its decided children are not. A ghost
