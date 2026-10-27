@@ -10,6 +10,7 @@ import { recordTurn, transcriptDir } from './cost-history.ts'
 const RECORD_DELAY_MS = 2000
 import { paths } from './project.ts'
 import { buildRulesFor } from './build-rules.ts'
+import { HOW, WHAT } from './tops.ts'
 import { agentEnv, instructionArgs } from './instructions.ts'
 import {
   addAlways,
@@ -1097,7 +1098,7 @@ function label(block: any): string {
 
 /** #vi-home-howwhat: the page sends this in place of a card id when the home is open. */
 const HOME = '~home'
-const HOME_LINE = 'Home — the requirements under #root and the build rules under #how'
+const HOME_LINE = `Home — the requirements under #${WHAT} and the build rules under #${HOW}`
 
 /** A one-line reminder of the open card, cheap enough to send on every turn. */
 function tag(id: string): string {

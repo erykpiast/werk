@@ -6,6 +6,8 @@
 // subtree row narrows every section to it, the stats and the list together. Measures that
 // belong to passes, runs and conversations are in the Measure tab (#vi-measure).
 
+import { WHAT } from './md.js'
+
 const STATUSES = ['open', 'proto', 'decided']
 // #vi-flowtab-removed: removed cards show under their own filter only, never under all.
 const FILTERS = ['all', ...STATUSES, 'stale', 'postponed', 'proposed', 'removed']
@@ -18,7 +20,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 let opts = null // { root, graph, openCard, openScope, rollupBar }
 let flows = null // the last /api/flow
 let mounted = false
-let scope = 'root'
+let scope = WHAT
 let filter = 'all'
 let query = ''
 let sortKey = 'last' // the Cards list: 'id', 'status', or 'last'
@@ -191,7 +193,7 @@ function dur(ms) {
 function render() {
   const G = opts.graph()
   if (!G || !flows) return
-  if (!G.byId.has(scope)) scope = 'root'
+  if (!G.byId.has(scope)) scope = WHAT
   const kids = children(G)
   const ids = subtree(G, kids, scope)
   const byFlow = new Map(flows.cards.map((c) => [c.id, c.steps]))
@@ -202,7 +204,7 @@ function render() {
 
   opts.root.innerHTML = `
     <div class="flow-scope">
-      ${scope === 'root' ? '<b>Whole map</b>' : `<button data-scope="root">Whole map</button> › <b>${esc(G.byId.get(scope)?.title)}</b> <button class="flow-open" data-open="${esc(scope)}">open card</button>`}
+      ${scope === WHAT ? '<b>Whole map</b>' : `<button data-scope="${WHAT}">Whole map</button> › <b>${esc(G.byId.get(scope)?.title)}</b> <button class="flow-open" data-open="${esc(scope)}">open card</button>`}
     </div>
     <section class="flow-tiles">
       ${tile('cards', r.cards ?? ids.size)}
@@ -328,7 +330,7 @@ function subtreesHtml(G, kids, byFlow, deps) {
 function proposals(G, ids) {
   const parentOfGhost = new Map(G.ghostEdges.filter((e) => e.type === 'refines').map((e) => [e.from, e.to]))
   return G.nodes.filter(
-    (n) => (n.proposed && (scope === 'root' || ids.has(parentOfGhost.get(n.id)))) || (n.pending && ids.has(n.id)),
+    (n) => (n.proposed && (scope === WHAT || ids.has(parentOfGhost.get(n.id)))) || (n.pending && ids.has(n.id)),
   )
 }
 

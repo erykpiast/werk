@@ -43,6 +43,9 @@ export const setCardBase = (base) => {
 /** #vi-home-howwhat: the home, the bare map address, which shows the two top cards side by
  *  side. It stands where a card id goes. No card can have it as its id: an id never holds `~`. */
 export const HOME = '~home'
+/** The two top cards of every map, the same ids as the server's (src/tops.ts). */
+export const WHAT = 'what'
+export const HOW = 'how'
 /** A card's address on the map (#vi-routes). Every card link uses it, so no link is a hash.
  *  An id is letters, digits, `-`, `_` and `:`, all safe in a path as they are. A link stays
  *  in the current project. */

@@ -3,7 +3,7 @@
 // First: it scopes every /api request of this page to the project in the address.
 import { BASE, projectKey } from './project.js'
 import { initProjects, refreshProjects } from './projects.js'
-import { cardHref, cardLinks, cardOfHref, HOME, md, mdInline, nextPhrase } from './md.js'
+import { cardHref, cardLinks, cardOfHref, HOME, HOW, md, mdInline, nextPhrase, WHAT } from './md.js'
 import { renderInlineDiff, renderOpsMarkdown } from './diff.js'
 import { initBoard, mountBoard, onPlanLog, onTicketLog, openPlan, redrawDrawer, refreshBoard, restartSubtree, resumeSubtree, unmountBoard } from './board.js'
 import { flowScope, initFlow, mountFlow, refreshFlow, setFlowScope, unmountFlow } from './flow.js'
@@ -38,11 +38,11 @@ function parseRoute() {
   const [, v = '', id = ''] = location.pathname.slice(BASE.length).split('/')
   // A bare map address is the home (#vi-home-howwhat). A bare Flow address is the whole map.
   const view = VIEWS.includes(v) ? v : null
-  return { view, id: decodeId(id) || (view === 'flow' ? 'root' : HOME) }
+  return { view, id: decodeId(id) || (view === 'flow' ? WHAT : HOME) }
 }
 const routeView = () => parseRoute().view ?? 'map'
 // #vi-routes: the id is URL-encoded, so any id makes a valid address.
-const bare = (view, id) => id === HOME || (view === 'flow' && id === 'root') || !['map', 'flow'].includes(view)
+const bare = (view, id) => id === HOME || (view === 'flow' && id === WHAT) || !['map', 'flow'].includes(view)
 const pathFor = (view, id = HOME) => BASE + (bare(view, id) ? `/${view}` : `/${view}/${encodeURIComponent(id)}`)
 /** The card the chat's next message carries: the Flow scope in Flow, else the map card. */
 const chatCard = () => (routeView() === 'flow' ? flowScope() : mapCard)
@@ -410,8 +410,8 @@ function flaggedDependsOnHTML(id) {
 /** #st-build-howto-titles: the two top cards of every map, the root of the requirements and the
  *  card that holds the build rules. Neither has a parent, so neither has ✕ or ▶. */
 const TOPS = [
-  { id: 'root', label: 'What', note: 'requirements: what the product does' },
-  { id: 'how', label: 'How', note: 'build rules: how this project is built' },
+  { id: WHAT, label: 'What', note: 'requirements: what the product does' },
+  { id: HOW, label: 'How', note: 'build rules: how this project is built' },
 ]
 const isTop = (id) => TOPS.some((t) => t.id === id)
 
@@ -3011,7 +3011,7 @@ initMeasure({ root: el('measure'), graph: () => G, openCard: go })
 
 /** Switches to a view at its own address. The map and Flow keep the card they last had. */
 function setView(v) {
-  navigate(pathFor(v, v === 'map' ? mapCard : v === 'flow' ? flowScope() : 'root'))
+  navigate(pathFor(v, v === 'map' ? mapCard : v === 'flow' ? flowScope() : WHAT))
 }
 
 let shownView = null

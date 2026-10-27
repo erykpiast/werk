@@ -5,6 +5,7 @@
  * same set of events. See #werk-propose-new and #werk-remove.
  */
 import type { Graph } from './types.ts'
+import { WHAT } from './tops.ts'
 
 /** Every edge the map draws for this node, live or held. */
 function edgesOf(g: Graph, id: string) {
@@ -124,7 +125,7 @@ export function removalSet(g: Graph, id: string, subtree = true): string[] {
  * leaves the map. The CLI, the ✕ and the ✓ on a proposed removal all run this.
  */
 export function planRemoval(g: Graph, id: string, reparent = false): { moves: { id: string; parent: string }[]; ids: string[] } {
-  if (id === 'root') throw new Error('the root card cannot be removed. Every other card hangs off it.')
+  if (id === WHAT) throw new Error(`the top card #${WHAT} cannot be removed. Every requirement hangs off it.`)
   if (!reparent) return { moves: [], ids: removalSet(g, id) }
   const up = parentOf(g, id)
   const kids = childrenOf(g, id)
@@ -147,6 +148,6 @@ export function parentOf(g: Graph, id: string): string | undefined {
 /** Every refines ancestor, nearest first, the root left out. A cycle stops the walk. */
 export function ancestorsOf(g: Graph, id: string): string[] {
   const out: string[] = []
-  for (let p = parentOf(g, id); p && p !== 'root' && !out.includes(p) && p !== id; p = parentOf(g, p)) out.push(p)
+  for (let p = parentOf(g, id); p && p !== WHAT && !out.includes(p) && p !== id; p = parentOf(g, p)) out.push(p)
   return out
 }

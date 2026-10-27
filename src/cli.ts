@@ -36,6 +36,7 @@ import { foldPlanCost } from './cost.ts'
 import { greenMerges, reworkedCards, reworkReport } from './outcomes.ts'
 import { reworkedCode } from './rework-code.ts'
 import { brokenByMoves, lineageRefusal, parentRefusal } from './lineage.ts'
+import { WHAT } from './tops.ts'
 import type { PrototypeResult } from './prototype.ts'
 import type { BodyOp, EdgeType, Graph, GraphNode, Pending, Rollup } from './types.ts'
 
@@ -702,9 +703,9 @@ switch (command) {
       // The new card is a ghost, so only a loop can refuse here. Checked the same way anyway.
       refuseParent(id, parent, true)
       payload.parent = parent
-    } else if (payload.kind === 'card' && id !== 'root' && before.nodes.get('root')?.kind === 'card') {
+    } else if (payload.kind === 'card' && id !== WHAT && before.nodes.get(WHAT)?.kind === 'card') {
       // A card with no parent would sit on no page, so it goes under the root — #werk-write-add-root.
-      payload.parent = 'root'
+      payload.parent = WHAT
     }
     // Not `node.added`. Nothing enters the map that Eryk did not accept — #werk-propose-new.
     append('node.proposed', payload, { actor: actor(flags) })
@@ -1067,7 +1068,7 @@ switch (command) {
   case 'remove': {
     const id = positional[0] ?? fail('remove needs an id')
     const { g, node } = requireNode(id)
-    if (id === 'root') fail('the root card cannot be removed. Every other card hangs off it.')
+    if (id === WHAT) fail(`the top card #${WHAT} cannot be removed. Every requirement hangs off it.`)
     if (node.proposed) fail(`"${id}" is only proposed, so there is nothing to remove. Run: werk discard ${id}`)
     const reparent = flags.reparent === true
     // Checked now, so a removal that cannot run is refused here, not at the ✓.

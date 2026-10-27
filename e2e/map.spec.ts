@@ -63,7 +63,7 @@ test('the home shows the requirements and the build rules side by side, each wit
 })
 
 test('the root card shows its title, its body and its children', async ({ page }) => {
-  await page.goto('/map/root')
+  await page.goto('/map/what')
   await expect(hero(page).getByRole('heading', { level: 1 })).toHaveText('Fixture map')
   await expect(hero(page).locator('.body')).toContainText('The root of the fixture.')
   const below = page.locator('#sections section').filter({ hasText: '3 below' })
@@ -72,7 +72,7 @@ test('the root card shows its title, its body and its children', async ({ page }
     await expect(below.getByRole('button', { name: new RegExp(title) })).toBeVisible()
   }
   await expect(page.locator('#sections')).toContainText('a note on the root card')
-  await evidence(page, 'root')
+  await evidence(page, 'what')
 })
 
 test('a card opened by an old hash address shows its own detail', async ({ page }) => {

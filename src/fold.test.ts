@@ -316,10 +316,10 @@ describe('what one click takes with it', () => {
   })
 
   test('planRemoval: the subtree by default; with reparent, the children move up and stay', () => {
-    const g = fold(log(card('root'), card('a'), edge('a', 'root'), card('b'), edge('b', 'a')))
+    const g = fold(log(card('what'), card('a'), edge('a', 'what'), card('b'), edge('b', 'a')))
     expect(planRemoval(g, 'a')).toEqual({ moves: [], ids: ['a', 'b'] })
-    expect(planRemoval(g, 'a', true)).toEqual({ moves: [{ id: 'b', parent: 'root' }], ids: ['a'] })
-    expect(() => planRemoval(g, 'root')).toThrow('the root card cannot be removed')
+    expect(planRemoval(g, 'a', true)).toEqual({ moves: [{ id: 'b', parent: 'what' }], ids: ['a'] })
+    expect(() => planRemoval(g, 'what')).toThrow('the top card #what cannot be removed')
     // Children and no parent of its own: nowhere to lift them to.
     const orphan = fold(log(card('top'), card('kid'), edge('kid', 'top')))
     expect(() => planRemoval(orphan, 'top', true)).toThrow('no parent of its own')

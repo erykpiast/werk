@@ -161,8 +161,8 @@ describe('removalSet', () => {
 })
 
 describe('planRemoval', () => {
-  test('refuses the root', () => {
-    expect(() => planRemoval(graph({ nodes: ['root'] }), 'root')).toThrow('root card cannot be removed')
+  test('refuses the top card of the requirements', () => {
+    expect(() => planRemoval(graph({ nodes: ['what'] }), 'what')).toThrow('top card #what cannot be removed')
   })
 
   test('without reparent, removes the subtree and moves nothing', () => {
@@ -194,8 +194,8 @@ describe('planRemoval', () => {
 
 describe('tree lookups', () => {
   const g = graph({
-    nodes: ['root', 'a', 'b', 'c', 'ghost'],
-    live: [['a', 'root'], ['b', 'a'], ['c', 'a']],
+    nodes: ['what', 'a', 'b', 'c', 'ghost'],
+    live: [['a', 'what'], ['b', 'a'], ['c', 'a']],
     held: [['ghost', 'b']],
     ghosts: ['ghost'],
   })
@@ -208,10 +208,10 @@ describe('tree lookups', () => {
   test('parentOf reads a live or a held refines edge', () => {
     expect(parentOf(g, 'b')).toBe('a')
     expect(parentOf(g, 'ghost')).toBe('b')
-    expect(parentOf(g, 'root')).toBeUndefined()
+    expect(parentOf(g, 'what')).toBeUndefined()
   })
 
-  test('ancestorsOf lists nearest first and leaves out the root', () => {
+  test('ancestorsOf lists nearest first and leaves out the top card', () => {
     expect(ancestorsOf(g, 'ghost')).toEqual(['b', 'a'])
     expect(ancestorsOf(g, 'a')).toEqual([])
   })

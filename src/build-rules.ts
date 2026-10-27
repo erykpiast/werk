@@ -8,10 +8,11 @@ import { fold } from './fold.ts'
 import type { AgentRole } from './instructions.ts'
 import { readEvents } from './log.ts'
 import { paths } from './project.ts'
+import { HOW } from './tops.ts'
 import type { Graph } from './types.ts'
 
 /** #st-build-howto-titles: the top card that holds the build rules, the same id in every map. */
-export const HOW = 'how'
+export { HOW }
 
 /** The roles of the agents that get the werk agent instructions: the chat agent, each build
  *  pass and the plan writers (#st-build-howto-titles-sample). A judge, a classifier, a sampler,

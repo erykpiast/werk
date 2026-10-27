@@ -17,6 +17,7 @@ import { inProject, paths, projectRoot } from './project.ts'
 import { AddRefusal, addProject, findProject, initGit, lastProject, listProjects, projectAt, removeProject, useProject, type Project } from './projects.ts'
 import { amendRefusal, pendingChange } from './amend.ts'
 import { acceptClosure, ancestorsOf, discardClosure, planRemoval } from './stage.ts'
+import { WHAT } from './tops.ts'
 import { convoTitle, describeConvoDisk, listConvos, MAIN } from './convos.ts'
 import { boardRoutes } from './board-routes.ts'
 import { foldBoard, readBoard } from './board.ts'
@@ -867,7 +868,7 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
           const g = foldLog(url.pathname)
           const node = g.nodes.get(id)
           if (!node) throw new Error(`no node with the id "${id}"`)
-          if (id === 'root') throw new Error('the root card cannot be removed')
+          if (id === WHAT) throw new Error(`the top card #${WHAT} cannot be removed`)
           if (node.proposed) {
             appendMany([...discardClosure(g, id)].reverse().map((each) => ({ type: 'change.discarded' as const, payload: { id: each }, actor: 'you' as const })))
             res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true, discarded: true }))
