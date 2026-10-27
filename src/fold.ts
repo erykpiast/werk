@@ -48,6 +48,19 @@ export function fold(events: Event[]): Graph {
       case 'node.proposed': {
         const { id, parent, citedBy, ...rest } = p
         if (nodes.has(id)) break
+        // An excerpt whose span is not as long as its words is set aside, so a pointer and
+        // its words always agree — #werk-excerpt-event-span.
+        if (rest.kind === 'excerpt') {
+          const whole = (n: unknown) => Number.isInteger(n) && (n as number) >= 0
+          const [start, end] = Array.isArray(rest.span) ? rest.span : []
+          if (!whole(rest.msgIndex) || !whole(start) || !whole(end) || typeof rest.text !== 'string' || end - start !== rest.text.length) break
+          // A quote that marks its pointer as whole carries every part of it. An older
+          // excerpt has no mark and keeps loading — #werk-excerpt-event-shape.
+          if (rest.pointerWhole === true) {
+            const part = (v: unknown) => typeof v === 'string' && v !== ''
+            if (![rest.conversation, rest.session, rest.speaker, rest.saidAt].every(part)) break
+          }
+        }
         nodes.set(id, { id, ...rest, proposed: true })
         if (parent) placeUnder(id, parent, e.seq)
         // A quote is one event too: the excerpt and the supported_by link from the card it
@@ -164,6 +177,13 @@ export function fold(events: Event[]): Graph {
           break
         }
         if (n?.pending) {
+          // The accept of a change to a decided card is an amend. It marks the next hop like a
+          // reopen does, and the card stays decided — #map-frozen, #vi-prop-amended.
+          if (n.status === 'decided' && !n.pending.remove) {
+            reopenedAt.set(p.id, { seq: e.seq, reason: 'amended', at: e.at })
+            // The amend is the review of the card itself, so its older marks clear.
+            rederivedAt.set(p.id, e.seq)
+          }
           if (n.pending.title !== undefined) n.title = n.pending.title
           if (n.pending.why !== undefined) n.why = n.pending.why
           if (n.pending.ops?.length) n.body = applyOps(n.pending.ops)
@@ -229,7 +249,9 @@ export function fold(events: Event[]): Graph {
   for (const [id, at] of removedAt) {
     const n = nodes.get(id)
     if (!n) continue
-    removed.push({ id, title: n.title, kind: n.kind, at })
+    // The refines parent, so a restore can refuse while that parent is still out.
+    const parent = allEdges.find((x) => x.type === 'refines' && x.from === id)?.to
+    removed.push({ id, title: n.title, kind: n.kind, at, ...(parent ? { parent } : {}) })
     nodes.delete(id)
   }
   removed.reverse()
@@ -254,7 +276,7 @@ export function fold(events: Event[]): Graph {
     if (n.obligation) obligations.get(n.obligation)?.cards.push(n.id)
   }
 
-  const { stale, postponed, flagWhy } = deriveStaleness(edges, reopenedAt, rederivedAt, linkedAt, (id) => nodes.get(id)?.kind === 'card')
+  const { stale, postponed, flagWhy, unread } = deriveStaleness(edges, reopenedAt, rederivedAt, linkedAt, (id) => nodes.get(id)?.kind === 'card', (id) => nodes.get(id)?.status === 'decided')
   const rederiveOrder = topoOrderForRederive(edges, stale, postponed)
   const unchallenged = deriveUnchallenged(nodes, edges)
   // A reopen sets the card open, so a card that is decided now was decided after its last
@@ -282,6 +304,7 @@ export function fold(events: Event[]): Graph {
     postponed,
     postponedOrigins,
     flagWhy,
+    unread,
     rederiveOrder,
     reopens,
     unchallenged,
@@ -368,7 +391,8 @@ function deriveStaleness(
   rederivedAt: Map<string, number>,
   linkedAt: Map<string, number>,
   isCard: (id: string) => boolean,
-): { stale: Set<string>; postponed: Set<string>; flagWhy: Map<string, FlagTrace[]> } {
+  isDecided: (id: string) => boolean = () => false,
+): { stale: Set<string>; postponed: Set<string>; flagWhy: Map<string, FlagTrace[]>; unread: Map<string, { to: string; why?: string }[]> } {
   const dependents = new Map<string, { id: string; type: 'depends_on' | 'refines' }[]>() // to -> from
   const reasonOf = new Map<string, string>() // `${from} ${to}` -> why
   for (const e of edges) {
@@ -384,9 +408,12 @@ function deriveStaleness(
   const stale = new Set<string>()
   const postponed = new Set<string>()
   const flagWhy = new Map<string, FlagTrace[]>()
+  const newestMark = new Map<string, number>() // stale card -> seq of its newest mark
   for (const [origin, { seq, reason, why, at }] of reopenedAt) {
     const kind = reason === 'postponed' ? 'postponed' : 'stale'
     const target = kind === 'postponed' ? postponed : stale
+    // A postponement ends when its card is decided again — #vi-prop-review-clears-stale.
+    if (kind === 'postponed' && isDecided(origin)) continue
     const queue = [origin]
     const seen = new Set<string>([origin])
     // Who put each node in the queue. BFS, so the first parent found is on a shortest path —
@@ -402,8 +429,10 @@ function deriveStaleness(
         seen.add(dependent)
         cameFrom.set(dependent, current)
         if (kind === 'postponed') queue.push(dependent)
-        if ((rederivedAt.get(dependent) ?? 0) >= seq) continue
+        // A review clears stale marks only. A paused mark waits for its postponement to end.
+        if (kind === 'stale' && (rederivedAt.get(dependent) ?? 0) >= seq) continue
         target.add(dependent)
+        if (kind === 'stale') newestMark.set(dependent, Math.max(newestMark.get(dependent) ?? 0, seq))
         // Walk back up the parents. The chain ends at `origin`, which has no parent of its
         // own, so the loop already puts it last — [p1, p2, ..., origin].
         const via: string[] = []
@@ -428,7 +457,18 @@ function deriveStaleness(
   for (const [id, list] of flagWhy) {
     if (stale.has(id)) flagWhy.set(id, list.filter((t) => t.kind === 'stale'))
   }
-  return { stale, postponed, flagWhy }
+  // #vi-prop-confirm-names: a confirm of a stale card must list every depends_on target whose
+  // link is older than the card's newest stale mark. A newer link was written against the text
+  // as it is now, so it has nothing to read.
+  const unread = new Map<string, { to: string; why?: string }[]>()
+  for (const id of stale) {
+    const newest = newestMark.get(id) ?? 0
+    const links = edges
+      .filter((e) => e.type === 'depends_on' && e.from === id && (linkedAt.get(`${id} ${e.to} depends_on`) ?? 0) <= newest)
+      .map((e) => ({ to: e.to, why: e.why }))
+    unread.set(id, links)
+  }
+  return { stale, postponed, flagWhy, unread }
 }
 
 /**

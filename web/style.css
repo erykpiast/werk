@@ -417,7 +417,7 @@ body.no-project .shell{display:none}
 .crumbs{position:relative;container-type:inline-size;font-size:12.5px;height:22px}
 .crumbs-row,.crumbs-full{display:flex;align-items:center;gap:6px}
 .crumbs-row{height:22px;min-width:0}
-.crumbs-full{display:none;flex-wrap:wrap;position:absolute;left:-8px;top:-6px;right:-8px;z-index:40;
+.crumbs-full{display:none;flex-wrap:wrap;position:absolute;left:-8px;top:100%;right:-8px;z-index:40;
   padding:6px 8px;min-height:22px;background:var(--panel);border:1px solid var(--line2);
   border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .crumbs:hover .crumbs-full{display:flex}

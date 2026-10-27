@@ -12,7 +12,7 @@ describe('buildCriterion', () => {
 
   test('a metric needs a source, a metric, a threshold and a window, and names each missing flag', () => {
     expect(buildCriterion({ form: 'metric', source: 'posthog' })).toEqual({
-      error: '--form metric also needs --metric --threshold --window',
+      error: '--form metric also needs --metric --threshold --window --min-sample',
     })
     expect(
       buildCriterion({ form: 'metric', source: 'posthog', metric: 'opens', threshold: '< 10', window: '7d', 'min-sample': '100', fallback: 'c:opt0' }),

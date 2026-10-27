@@ -9,7 +9,7 @@ export type Who = 'you' | 'me' | 'prototype'
  * the card lost to an alternative. Missing on old log events — read as `invalidated`,
  * so history keeps its old meaning.
  */
-export type ReopenReason = 'postponed' | 'invalidated' | 'rejected'
+export type ReopenReason = 'postponed' | 'invalidated' | 'rejected' | 'amended'
 
 /** The latest reopen recorded directly on one id, while the id is not decided again. Not the
  *  fanned-out closure — the cause. */
@@ -202,7 +202,7 @@ export type FlagTrace = {
 }
 
 /** A card taken out of the map, kept for `werk removed` and for restoring. #werk-remove. */
-export type Removed = { id: string; title: string; kind: NodeKind; at: string }
+export type Removed = { id: string; title: string; kind: NodeKind; at: string; parent?: string }
 
 /**
  * The demand a build puts in the log before any code is written (#st-build-card). The CLI
@@ -244,6 +244,9 @@ export type Graph = {
   postponedOrigins: Set<string>
   /** Derived, never stored. Why each flagged card is flagged. One entry per reopen it inherits. */
   flagWhy: Map<string, FlagTrace[]>
+  /** Derived, never stored. For each stale card, the depends_on links a confirm must list: those
+   *  made before its newest stale mark. See #vi-prop-confirm-names. */
+  unread: Map<string, { to: string; why?: string }[]>
   /** stale ∪ postponed, ordered so a card's flagged depends_on targets come before it. */
   rederiveOrder: string[]
   /** The latest reopen recorded directly on each id that was ever reopened. Not the closure. */

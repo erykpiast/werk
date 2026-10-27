@@ -45,7 +45,7 @@ export function buildCriterion(input: KillInput): KillCriterion | { error: strin
   if (input.text) c.text = input.text
 
   if (form === 'metric') {
-    const err = need(['source', 'metric', 'threshold', 'window'])
+    const err = need(['source', 'metric', 'threshold', 'window', 'min-sample'])
     if (err) return err
     Object.assign(c, { trigger: 'metric', source: input.source, metric: input.metric, threshold: input.threshold, window: input.window })
     if (minSample) c.minSample = minSample

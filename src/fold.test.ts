@@ -104,6 +104,28 @@ describe('a card added under a parent (#pr-log-one-event)', () => {
     expect(g.edges).toEqual([{ from: 'kid', to: 'root', type: 'refines' }])
   })
 
+  test('an excerpt whose span is not as long as its words is set aside (#werk-excerpt-event-span)', () => {
+    const ex = (span: unknown, msgIndex: unknown = 0) =>
+      ['node.proposed', { id: 'c:ex0', kind: 'excerpt', title: 'w', text: 'seats', msgIndex, span, citedBy: 'c' }] as [EventType, Record<string, unknown>]
+    expect(fold(log(card('c'), ex([0, 5]))).nodes.has('c:ex0')).toBe(true)
+    expect(fold(log(card('c'), ex([0, 4]))).nodes.has('c:ex0')).toBe(false)
+    expect(fold(log(card('c'), ex([-1, 4]))).nodes.has('c:ex0')).toBe(false)
+    expect(fold(log(card('c'), ex([0, 5], 1.5))).nodes.has('c:ex0')).toBe(false)
+    expect(fold(log(card('c'), ex([0, 4]))).ghostEdges).toEqual([])
+  })
+
+  test('a quote that marks its pointer whole is set aside when a part is missing (#werk-excerpt-event-shape)', () => {
+    const base = { id: 'c:ex0', kind: 'excerpt', title: 'w', text: 'seats', msgIndex: 0, span: [0, 5], citedBy: 'c' }
+    const whole = { ...base, pointerWhole: true, conversation: 'main', session: 's', speaker: 'you', saidAt: 't' }
+    const ev = (p: Record<string, unknown>) => ['node.proposed', p] as [EventType, Record<string, unknown>]
+    expect(fold(log(card('c'), ev(whole))).nodes.has('c:ex0')).toBe(true)
+    for (const k of ['conversation', 'session', 'speaker', 'saidAt']) {
+      expect(fold(log(card('c'), ev({ ...whole, [k]: undefined }))).nodes.has('c:ex0')).toBe(false)
+    }
+    // An older excerpt has no mark, so a missing part does not stop it loading.
+    expect(fold(log(card('c'), ev(base))).nodes.has('c:ex0')).toBe(true)
+  })
+
   test('discard takes the parent with it, so a new proposal sits only where it says', () => {
     const g = fold(
       log(
@@ -118,7 +140,7 @@ describe('a card added under a parent (#pr-log-one-event)', () => {
   })
 
   test('a quote is one event: the excerpt and its held supported_by link from the citing card', () => {
-    const quote = ['node.proposed', { id: 'c:ex0', kind: 'excerpt', title: 'w', citedBy: 'c' }] as [EventType, Record<string, unknown>]
+    const quote = ['node.proposed', { id: 'c:ex0', kind: 'excerpt', title: 'w', text: 'w', msgIndex: 0, span: [0, 1], citedBy: 'c' }] as [EventType, Record<string, unknown>]
     const g = fold(log(card('c'), quote))
     expect(g.ghostEdges).toEqual([{ from: 'c', to: 'c:ex0', type: 'supported_by' }])
     expect(g.nodes.get('c:ex0')!).not.toHaveProperty('citedBy')
@@ -225,7 +247,7 @@ describe('what one click takes with it', () => {
         ghost('D', { parent: 'root' }),
         ['node.proposed', { id: 'S', kind: 'source', title: 'Pricing survey' }],
         ['node.proposed', { id: 'T', kind: 'source', title: 'Churn study' }],
-        ['node.proposed', { id: 'C:ex0', kind: 'excerpt', title: 'per seat' }],
+        ['node.proposed', { id: 'C:ex0', kind: 'excerpt', title: 'per seat', text: 'per seat', msgIndex: 0, span: [0, 8] }],
         edge('C', 'S', 'supported_by'),
         edge('D', 'S', 'supported_by'),
         edge('C', 'T', 'supported_by'),
@@ -271,7 +293,7 @@ describe('what one click takes with it', () => {
         ghost('D', { parent: 'root' }),
         ['node.proposed', { id: 'S', kind: 'source', title: 'Pricing survey' }],
         ['node.proposed', { id: 'T', kind: 'source', title: 'Churn study' }],
-        ['node.proposed', { id: 'C:ex0', kind: 'excerpt', title: 'per seat' }],
+        ['node.proposed', { id: 'C:ex0', kind: 'excerpt', title: 'per seat', text: 'per seat', msgIndex: 0, span: [0, 8] }],
         edge('C', 'S', 'supported_by'),
         edge('D', 'S', 'supported_by'),
         edge('C', 'T', 'supported_by'),

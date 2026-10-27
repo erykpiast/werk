@@ -58,7 +58,12 @@ export function cardLinks(html, knows) {
   // The text is escaped, so a written `&` arrives as `&amp;`: the lookbehind treats it as one `&`.
   return html.replace(/(^|[^\w&/#:-])(?<!&amp;)(#)?([a-z][\w-]*(?::[\w-]+)?)/gi, (whole, before, hash, id) => {
     if (!hash && !/[-:]/.test(id)) return whole
-    return knows(id) ? `${before}<a class="ref" href="${cardHref(id)}">#${id}</a>` : whole
+    // #werk-reflink-trailing-punct: drop a trailing `-`, `_`, `:` or `.` one at a time until
+    // the rest names a known id. The dropped characters stay as text after the link.
+    let head = id
+    while (head && !knows(head) && /[-_:.]$/.test(head)) head = head.slice(0, -1)
+    if (!head || !knows(head)) return whole
+    return `${before}<a class="ref" href="${cardHref(head)}">#${head}</a>${id.slice(head.length)}`
   })
 }
 

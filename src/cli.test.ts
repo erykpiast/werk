@@ -1,7 +1,7 @@
 // cli.ts behaviours from #werk-test-behaviours-cli. Each runs the real command line as its
 // own process against a scratch log, and reads the log back to see what it recorded.
 import { describe, expect, test } from 'bun:test'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fold } from './fold.ts'
 import { appendMany, readEvents } from './log.ts'
@@ -17,8 +17,16 @@ function repo() {
   const card = (id: string, ...flags: string[]) => {
     expect(run('add', id, '--title', id, ...flags).code).toBe(0)
     expect(run('accept', id, '--actor', 'you').code).toBe(0)
+    // A quote needs a session for its pointer — #werk-excerpt-event-shape.
+    if (!existsSync(join(dir, '.werk', 'session'))) writeFileSync(join(dir, '.werk', 'session'), 'sess-t\n')
   }
-  return { dir, log, fake, run, card, events: () => readEvents(log), graph: () => fold(readEvents(log)) }
+  /** Decide a card that needs no basis, so a reopen has something to reopen (#vi-prop-reopen-scope). */
+  const decide = (id: string) => {
+    expect(run('edit', id, '--who', 'me', '--no-basis', 'a test card has no basis').code).toBe(0)
+    expect(run('kill', id, '--form', 'revisit').code).toBe(0)
+    expect(run('status', id, 'decided').code).toBe(0)
+  }
+  return { dir, log, fake, run, card, decide, events: () => readEvents(log), graph: () => fold(readEvents(log)) }
 }
 
 describe('cli.ts', () => {
@@ -155,6 +163,7 @@ describe('cli.ts', () => {
     const chain = () => {
       const r = repo()
       r.card('a')
+      r.decide('a')
       r.card('b')
       r.card('c')
       r.run('link', 'b', 'a', '--type', 'depends_on', '--why', 'test')
@@ -176,6 +185,7 @@ describe('cli.ts', () => {
     // A card flagged earlier by another reopen is not in this reopen's list.
     const two = chain()
     two.card('d')
+    two.decide('d')
     two.run('reopen', 'a', '--reason', 'postponed')
     const out = two.run('reopen', 'd', '--reason', 'postponed').stdout
     expect(out).toContain('0 card(s) went postponed, not stale')
@@ -189,10 +199,11 @@ describe('cli.ts', () => {
   test('5b. a depends_on link needs --why; linking again sets it; the stale trace shows it per hop', () => {
     const r = repo()
     r.card('a')
+    r.decide('a')
     r.card('b')
     r.card('c')
     const bare = r.run('link', 'b', 'a', '--type', 'depends_on')
-    expect(bare.code).toBe(1)
+    expect(bare.code).toBe(2)
     expect(bare.stderr).toContain('a depends_on link needs --why')
     expect(r.run('link', 'b', 'a', '--type', 'refines', '--why', 'x').stderr).toContain('--why is only for depends_on')
     expect(r.events().some((e) => e.type === 'edge.added')).toBe(false)
@@ -264,6 +275,18 @@ describe('cli.ts', () => {
     const last = r.events().at(-1)!
     expect([last.type, last.payload.citedBy]).toEqual(['node.proposed', 'c'])
     expect(r.graph().ghostEdges).toContainEqual({ from: 'c', to: 'c:ex0', type: 'supported_by' })
+  })
+
+  test('6a. a quote refuses before it writes when the pointer would lack a part', () => {
+    const r = repo()
+    r.card('c')
+    rmSync(join(r.dir, '.werk', 'session'), { force: true })
+    writeFileSync(join(r.dir, '.werk', 'chat.jsonl'), JSON.stringify({ at: 't1', from: 'you', text: 'seats are the unit we bill' }) + '\n')
+    const before = r.events().length
+    const q = r.run('quote', 'c', 'main', '--text', 'seats are the unit we bill')
+    expect(q.code).toBe(1)
+    expect(q.stderr).toContain('has no session')
+    expect(r.events().length).toBe(before)
   })
 
   test('6b. an excerpt is never added by hand, and its words never change, before or after the accept', () => {
@@ -360,13 +383,57 @@ describe('cli.ts', () => {
     expect(bare.stderr).toContain('"a" cannot become decided')
     expect(r.events().some((e) => e.type === 'rederived')).toBe(false)
 
-    r.run('edit', 'a', '--who', 'me', '--no-basis')
+    r.run('edit', 'a', '--who', 'me', '--no-basis', 'a root')
     r.run('kill', 'a', '--form', 'manual', '--text', 'I try it')
     expect(r.run('rederive', 'a', '--status', 'decided').code).toBe(0)
     expect(r.graph().nodes.get('a')!.status).toBe('decided')
     // Without --status, rederive only clears staleness, so no check runs.
     r.card('b')
     expect(r.run('rederive', 'b').code).toBe(0)
+  })
+
+  test('9b. a confirm of a stale card lists every older link it read (#vi-prop-confirm-names)', () => {
+    const r = repo()
+    for (const id of ['b', 'd', 'c']) r.card(id)
+    r.decide('b')
+    r.decide('d')
+    r.run('link', 'c', 'b', '--type', 'depends_on', '--why', 'c needs the seat count of b')
+    r.run('link', 'c', 'd', '--type', 'depends_on', '--why', 'c needs the currency of d')
+    expect(r.run('reopen', 'b').code).toBe(0)
+    expect(r.graph().stale.has('c')).toBe(true)
+
+    // No list at all, a short list, and an unknown target are each refused and write nothing.
+    const none = r.run('rederive', 'c')
+    expect(none.code).toBe(1)
+    const short = r.run('rederive', 'c', '--confirm', 'b')
+    expect(short.code).toBe(1)
+    expect(short.stderr).toContain('c -> d: c needs the currency of d')
+    expect(short.stderr).toContain('werk rederive c --confirm b,d')
+    const unknown = r.run('rederive', 'c', '--confirm', 'b,d,zzz')
+    expect(unknown.code).toBe(1)
+    expect(unknown.stderr).toContain('has no depends_on link to "zzz"')
+    expect(r.events().some((e) => e.type === 'rederived')).toBe(false)
+
+    expect(r.run('rederive', 'c', '--confirm', 'b,d').code).toBe(0)
+    expect(r.graph().stale.has('c')).toBe(false)
+  })
+
+  test('9c. a link made after the change needs no entry, and an unmarked card writes nothing', () => {
+    const r = repo()
+    for (const id of ['b', 'd', 'c']) r.card(id)
+    r.decide('b')
+    r.decide('d')
+    r.run('link', 'c', 'b', '--type', 'depends_on', '--why', 'c needs b')
+    r.run('reopen', 'b')
+    r.run('link', 'c', 'd', '--type', 'depends_on', '--why', 'c needs d')
+    expect(r.run('rederive', 'c', '--confirm', 'b').code).toBe(0)
+    expect(r.graph().stale.has('c')).toBe(false)
+
+    const before = r.events().length
+    const calm = r.run('rederive', 'd')
+    expect(calm.code).toBe(0)
+    expect(calm.stdout).toContain('has no stale mark')
+    expect(r.events()).toHaveLength(before)
   })
 
   test('10. propose on a ghost is refused: a ghost is frozen', () => {
@@ -527,7 +594,7 @@ describe('#werk-contract-amend-scope: a change to a decided card cannot leave it
     expect(r.graph().nodes.get('q')!.who).toBe('me')
 
     r.run('discard', 'q')
-    expect(r.run('propose', 'q', '--who', 'you', '--unchallenged').code).toBe(0)
+    expect(r.run('propose', 'q', '--who', 'you', '--unchallenged', 'no option was weighed').code).toBe(0)
     expect(r.run('accept', 'q', '--actor', 'you').code).toBe(0)
     const q = r.graph().nodes.get('q')!
     expect(q.who).toBe('you')
@@ -554,7 +621,8 @@ describe('#werk-contract-amend-scope: a change to a decided card cannot leave it
     decided(r, 'old', '--who', 'me')
     expect(r.run('kill', 'old', '--clear').code).toBe(0)
     // The amend waits for the kill criterion, which is free to add, and then goes through.
-    expect(r.run('propose', 'old', '--no-basis').code).toBe(0)
+    expect(r.run('propose', 'old', '--no-basis').code).toBe(1)
+    expect(r.run('propose', 'old', '--no-basis', 'a root').code).toBe(0)
     expect(r.run('accept', 'old', '--actor', 'you').code).toBe(1)
     expect(r.run('kill', 'old', '--form', 'no-metric', '--text', 'none', '--reason', 'cheap').code).toBe(0)
     expect(r.run('accept', 'old', '--actor', 'you').code).toBe(0)
@@ -580,5 +648,45 @@ describe('#werk-contract-amend-scope: a change to a decided card cannot leave it
     r.run('kill', 'c', '--form', 'no-metric', '--text', 'none', '--reason', 'cheap')
     expect(r.run('accept', 'c', '--actor', 'you').code).toBe(0)
     expect(r.graph().nodes.get('c')!.title).toBe('c, reworded')
+  })
+})
+
+describe('#map-frozen: the accept of a change to a decided card is an amend that marks the next hop', () => {
+  test('its dependents and children go stale with the trace amended, and the card stays decided', () => {
+    const r = repo()
+    r.card('y', '--no-basis', '--who', 'me')
+    r.run('kill', 'y', '--form', 'no-metric', '--text', 'none', '--reason', 'cheap')
+    expect(r.run('status', 'y', 'decided').code).toBe(0)
+    r.card('z', '--no-basis')
+    r.run('link', 'z', 'y', '--type', 'depends_on', '--why', 'takes the seat count')
+    r.card('w', '--no-basis', '--parent', 'y')
+    expect(r.graph().stale.size).toBe(0)
+
+    r.run('propose', 'y', '--title', 'y, reworded')
+    expect(r.graph().stale.size).toBe(0)
+    expect(r.run('accept', 'y', '--actor', 'you').code).toBe(0)
+    const g = r.graph()
+    expect(g.nodes.get('y')!.status).toBe('decided')
+    expect([...g.stale].sort()).toEqual(['w', 'z'])
+    expect(g.flagWhy.get('z')![0].reason).toBe('amended')
+    expect(g.stale.has('y')).toBe(false)
+  })
+})
+
+describe('#map-frozen: the words of a decided card change only by a proposal', () => {
+  test('edit and retitle refuse a decided card and name the proposal, and an open card still edits', () => {
+    const r = repo()
+    r.card('d', '--no-basis', '--who', 'me')
+    r.run('kill', 'd', '--form', 'no-metric', '--text', 'none', '--reason', 'cheap')
+    expect(r.run('status', 'd', 'decided').code).toBe(0)
+    for (const args of [['edit', 'd', '--why', 'new'], ['retitle', 'd', 'new title']]) {
+      const out = r.run(...args)
+      expect(out.code).toBe(1)
+      expect(out.stderr).toContain('is an amend')
+    }
+    expect(r.graph().nodes.get('d')!.title).toBe('d')
+    r.card('o', '--no-basis')
+    expect(r.run('edit', 'o', '--why', 'new').code).toBe(0)
+    expect(r.run('retitle', 'o', 'new title').code).toBe(0)
   })
 })

@@ -10,7 +10,7 @@ import { toJSON } from './fold.ts'
 import { foldLog, foldTimes } from './fold-time.ts'
 import { cardFlows, chatWaits, probeCounts, rederives, type ChatWait, type ProbeCount, type Rederive } from './flow.ts'
 import { nextPhrase } from '../web/md.js'
-import { append, readEvents } from './log.ts'
+import { append, appendMany, readEvents } from './log.ts'
 import { readSession } from './agent.ts'
 import { ConvoManager, wholeMs } from './convo-manager.ts'
 import { inProject, paths, projectRoot } from './project.ts'
@@ -800,7 +800,7 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
           const refusal = node.proposed ? undefined : amendRefusal(g, id, pendingChange(node.pending), true)
           if (refusal) throw new Error(refusal)
           const ids = node.proposed ? acceptClosure(g, id) : [id]
-          for (const each of ids) append('change.accepted', { id: each }, { actor: 'you' })
+          appendMany(ids.map((each) => ({ type: 'change.accepted' as const, payload: { id: each }, actor: 'you' as const })))
           res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true, accepted: ids }))
         })
         .catch((err) => {
@@ -820,7 +820,7 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
           if (!node) throw new Error(`no node with the id "${id}"`)
           if (id === 'root') throw new Error('the root card cannot be removed')
           if (node.proposed) {
-            for (const each of discardClosure(g, id)) append('change.discarded', { id: each }, { actor: 'you' })
+            appendMany([...discardClosure(g, id)].reverse().map((each) => ({ type: 'change.discarded' as const, payload: { id: each }, actor: 'you' as const })))
             res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true, discarded: true }))
             return
           }
@@ -840,6 +840,10 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
         .then(({ id }) => {
           const g = foldLog(url.pathname)
           if (!g.removed.some((r) => r.id === id)) throw new Error(`"${id}" is not removed`)
+          const outParent = g.removed.find((r) => r.id === id)?.parent
+          if (outParent && g.removed.some((r) => r.id === outParent)) {
+            throw new Error(`"${id}" sits under "${outParent}", which is still removed. Restore "${outParent}" first.`)
+          }
           append('node.restored', { id }, { actor: 'you' })
           res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true }))
         })

@@ -208,6 +208,9 @@ function cardHTML(id) {
   const kidCount = children(id).length
   const evidence = out(id, 'supported_by').length
   const meta = [`<span>#${esc(id)}</span>`]
+  // The same badge as the hero: blue for a proposed card or edit, red for a pending removal.
+  if (n.proposed) meta.push('<span class="tag ghost">proposed</span>')
+  else if (n.pending) meta.push(`<span class="tag pending${n.pending.remove ? ' removing' : ''}">proposed</span>`)
   if (livePlans.has(id)) meta.push(`<span class="planning" title="A plan of this subtree is running"><span class="pulse"></span>planning</span>`)
   if (kidCount) meta.push(`<span>${kidCount} below</span>`)
   if (evidence) meta.push(`<span>${evidence} evidence</span>`)
@@ -228,7 +231,7 @@ function cardHTML(id) {
 
 /** `sub` replaces the line under the title — a depends_on row shows the link's own reason
  *  there, not the other card's why. #vi-prop-linkwhy. */
-function rowsHTML(ids, label, sub) {
+function rowsHTML(ids, label, sub, held) {
   return ids
     .map((id) => {
       const n = node(id)
@@ -236,7 +239,7 @@ function rowsHTML(ids, label, sub) {
       const small = sub ? sub(id) : (n.finding ?? n.why ?? n.why_not)
       return `<button class="row" data-go="${esc(id)}">
         <span class="k">${esc(label(n))}</span>
-        <span class="t"><span class="rid">#${esc(id)}</span> ${titleHTML(titleOf(n))}${small ? `<small>${esc(small)}</small>` : ''}</span>
+        <span class="t"><span class="rid">#${esc(id)}</span> ${titleHTML(titleOf(n))}${held?.(id) ? ' <span class="tag pending" title="Held until the proposed end is accepted">pending</span>' : ''}${small ? `<small>${esc(small)}</small>` : ''}</span>
       </button>`
     })
     .join('')
@@ -369,7 +372,7 @@ function flagWhyHTML(id) {
     </div>`
   })
   const kind = G.stale.has(id) ? 'stale' : 'postponed'
-  return `<section><h2>Why this card is ${kind}</h2><div class="depwhy-list">${rows.join('')}</div></section>`
+  return `<section><h2>Why this card is ${kind === 'postponed' ? 'paused' : kind}</h2><div class="depwhy-list">${rows.join('')}</div></section>`
 }
 
 /**
@@ -481,7 +484,7 @@ function render() {
   const alarms = []
   // A stale card has no alarm: the STALE chip and the red card edge already say it.
   if (!G.stale.has(id) && G.postponed.has(id)) {
-    alarms.push(`<div class="alarm gray"><b>Postponed.</b> A card this one depends on was postponed, not invalidated. It still holds.</div>`)
+    alarms.push(`<div class="alarm gray"><b>Paused.</b> A card this one depends on was postponed, not invalidated. It still holds.</div>`)
   }
   // The root used to list every proposal, stale card, and postponed card here. Those lists
   // live in the Flow tab now, with filters. #vi-flowtab-home.
@@ -495,7 +498,7 @@ function render() {
     `<span class="tag kind">${esc(n.kind)}</span>`,
     n.status ? `<span class="tag ${n.status}">${esc(n.status)}</span>` : '',
     G.stale.has(id) ? `<span class="tag stale">stale</span>` : '',
-    G.postponed.has(id) ? `<span class="tag postponed">postponed</span>` : '',
+    G.postponed.has(id) ? `<span class="tag postponed">paused</span>` : '',
     G.postponedOrigins.has(id) ? `<span class="tag postponed" title="Postponed, not wrong. Work on it waits.">postponed</span>` : '',
     n.pending ? `<span class="tag pending${removing}">proposed</span>` : '',
     n.proposed ? `<span class="tag ghost">proposed</span>` : '',
@@ -513,11 +516,11 @@ function render() {
     <div class="locate-btns">
       ${n.pending || n.proposed ? `<button type="button" class="locate-btn accept-btn${removing}" data-accept-change="${esc(id)}" title="${acceptLabel}" aria-label="${acceptLabel}">✓</button>` : ''}
       ${
-        isTop(id) && !n.proposed
+        // The ✕ is only for a real card. A proposed card is discarded by a typed correction,
+        // and a pending removal has its ✓ — #vi-remove-btn-ghost-no-x.
+        isTop(id) || n.proposed || n.pending?.remove
           ? ''
-          : `<button type="button" class="locate-btn remove-btn" data-remove="${esc(id)}" title="${
-              n.proposed ? 'Discard this proposed card' : 'Remove this card from the map — reversible'
-            }" aria-label="${n.proposed ? 'Discard this proposed card' : 'Remove this card from the map'}">✕</button>`
+          : `<button type="button" class="locate-btn remove-btn" data-remove="${esc(id)}" title="Remove this card from the map — reversible" aria-label="Remove this card from the map">✕</button>`
       }
       ${
         n.kind === 'card' && !n.proposed && !isTop(id)
@@ -546,6 +549,10 @@ function render() {
   const evidence = out(id, 'supported_by')
   const citedBy = inc(id, 'supported_by')
   const options = inc(id, 'alternative_to')
+  const parents = out(id, 'refines')
+  const alternativeTo = out(id, 'alternative_to')
+  /** A link with a proposed end is held: it is drawn, but it derives nothing yet. */
+  const heldLink = (from, to, type) => (G.ghostEdges ?? []).some((e) => e.from === from && e.to === to && e.type === type)
 
   el('sections').innerHTML = [
     killHTML(id, n),
@@ -553,21 +560,29 @@ function render() {
       `${kids.length} below${kids.filter(isGhost).length ? ` · ${kids.filter(isGhost).length} proposed` : ''}`,
       kids.length ? `<div class="grid">${kids.map(cardHTML).join('')}</div>` : '',
     ),
+    section(
+      'Refines',
+      parents.length ? `<div class="list">${rowsHTML(parents, () => 'refines', null, (to) => heldLink(id, to, 'refines'))}</div>` : '',
+    ),
+    section(
+      'Alternative to',
+      alternativeTo.length ? `<div class="list">${rowsHTML(alternativeTo, () => 'alternative to', null, (to) => heldLink(id, to, 'alternative_to'))}</div>` : '',
+    ),
     section('Options', options.length ? `<div class="grid">${options.map(cardHTML).join('')}</div>` : ''),
-    section('Evidence', evidence.length ? `<div class="list">${rowsHTML(evidence, (x) => x.kind)}</div>` : ''),
+    section('Evidence', evidence.length ? `<div class="list">${rowsHTML(evidence, (x) => x.kind, null, (to) => heldLink(id, to, 'supported_by'))}</div>` : ''),
     flagWhyHTML(id),
     flaggedDependsOnHTML(id),
     section(
       'Depends on',
-      dependsOn.length ? `<div class="list">${rowsHTML(dependsOn, () => 'depends on', (to) => linkWhy(id, to))}</div>` : '',
+      dependsOn.length ? `<div class="list">${rowsHTML(dependsOn, () => 'depends on', (to) => linkWhy(id, to), (to) => heldLink(id, to, 'depends_on'))}</div>` : '',
     ),
     section(
       'Depend on this card',
       dependedBy.length
-        ? `<div class="list">${rowsHTML(dependedBy, () => 'dependent', (from) => linkWhy(from, id))}</div>`
+        ? `<div class="list">${rowsHTML(dependedBy, () => 'dependent', (from) => linkWhy(from, id), (from) => heldLink(from, id, 'depends_on'))}</div>`
         : '',
     ),
-    section('Cited by', citedBy.length ? `<div class="list">${rowsHTML(citedBy, (x) => x.status ?? x.kind)}</div>` : ''),
+    section('Cited by', citedBy.length ? `<div class="list">${rowsHTML(citedBy, (x) => x.status ?? x.kind, null, (from) => heldLink(from, id, 'supported_by'))}</div>` : ''),
     threadHTML(id),
   ].join('')
 
@@ -2133,7 +2148,7 @@ function askRemoval(id, n, kids, up) {
     <p class="rd-note">The log keeps every card. Restore from the root card.</p>
     <div class="rd-btns">
       <button type="button" value="all" class="rd-all">Remove it and the ${kids} card(s) below it</button>
-      <button type="button" value="up" class="rd-up">Remove only this card — its ${direct} child card(s) move up to <b>${esc(up === HOME ? 'the top of the map' : titleOf(node(up)))}</b></button>
+      ${up === undefined ? '' : `<button type="button" value="up" class="rd-up">Remove only this card — its ${direct} child card(s) move up to <b>${esc(up === HOME ? 'the top of the map' : titleOf(node(up)))}</b></button>`}
       <button type="button" value="cancel" class="rd-cancel">Cancel</button>
     </div>`
   document.body.append(dlg)
@@ -2151,7 +2166,7 @@ function askRemoval(id, n, kids, up) {
       resolve(answer)
     })
     dlg.showModal()
-    dlg.querySelector('.rd-up').focus()
+    ;(dlg.querySelector('.rd-up') ?? dlg.querySelector('.rd-cancel')).focus()
   })
 }
 
@@ -2231,7 +2246,8 @@ document.addEventListener('click', (e) => {
     // #vi-remove-btn-reparent: a card with children gets a third answer, the reparent the
     // server already runs. A plain card and a ghost keep the one confirm.
     if (!n?.proposed && kids > 0) {
-      askRemoval(id, n, kids, up).then((reparent) => {
+      // A card with no parent has nowhere to send its children, so only the subtree answer shows — #vi-remove-btn-root-subtree-only.
+      askRemoval(id, n, kids, parent(id)).then((reparent) => {
         if (reparent !== null) runRemoval(remove, id, up, reparent)
       })
       return

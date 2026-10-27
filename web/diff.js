@@ -10,11 +10,20 @@
  *  paragraphs — on a blank line. This is the unit a change is proposed against,
  *  not a sentence: a bullet list or a heading is one block, not many. */
 export function splitBlocks(text) {
-  return String(text ?? '')
-    .split(/\n\s*\n/)
-    // Leading blank lines go, leading spaces stay: an indented first line is a code block.
-    .map((s) => s.replace(/^\n+/, '').trimEnd())
-    .filter((s) => s.trim())
+  // A run of blank lines cuts, except inside a code fence: a blank line there is part of the code.
+  const blocks = []
+  let cur = []
+  let fenced = false
+  for (const line of String(text ?? '').split('\n')) {
+    if (/^\s*```/.test(line)) fenced = !fenced
+    if (!fenced && !line.trim()) {
+      if (cur.length) blocks.push(cur.join('\n'))
+      cur = []
+    } else cur.push(line)
+  }
+  if (cur.length) blocks.push(cur.join('\n'))
+  // Leading blank lines go, leading spaces stay: an indented first line is a code block.
+  return blocks.map((s) => s.replace(/^\n+/, '').trimEnd()).filter((s) => s.trim())
 }
 
 /**
@@ -24,16 +33,19 @@ export function splitBlocks(text) {
  * `removed`. This is the whole point: a wrong claim can never silently mis-render.
  */
 export function verifyOps(oldBody, ops) {
-  const real = new Set(splitBlocks(oldBody))
+  // Two equal blocks are two blocks: each op quotes one, so a quote uses a block up.
+  const real = new Map()
+  for (const b of splitBlocks(oldBody)) real.set(b, (real.get(b) ?? 0) + 1)
   const verified = []
   const rejected = []
   for (const op of ops) {
-    if ((op.tag === 'elaborated' || op.tag === 'removed') && !real.has(op.old)) {
+    if ((op.tag === 'elaborated' || op.tag === 'removed') && (real.get(op.old) ?? 0) === 0) {
       rejected.push({ op, reason: 'quote not found verbatim in the current body' })
       if (op.new) verified.push({ tag: 'new', new: op.new })
       if (op.old) verified.push({ tag: 'removed', old: op.old })
       continue
     }
+    if (op.tag === 'elaborated' || op.tag === 'removed') real.set(op.old, real.get(op.old) - 1)
     verified.push(op)
   }
   return { ops: verified, rejected }

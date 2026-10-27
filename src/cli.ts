@@ -90,12 +90,19 @@ The log is ${paths.log}. Every command appends one event. Nothing is deleted.
        [--reason postponed|invalidated|rejected]   default invalidated. postponed
                                       marks the closure postponed, not stale — still true,
                                       just not being worked on
-  werk rederive <id> [--status s]     clears staleness for one card. --status decided runs
-                                      the same contract check as "werk status"
+  werk rederive <id> [--confirm <id>,<id>...] [--status decided]
+                                      clears the stale mark of one card. --confirm lists the
+                                      depends_on targets whose link reasons were read; a link made
+                                      before the change and missing from the list refuses the
+                                      confirm and prints it again with the full list. A card with
+                                      no stale mark writes nothing and exits 0. --status decided
+                                      runs the same contract check as "werk status"
+                                      (#vi-prop-confirm-names, #werk-cli-reopen-flags)
   werk move <id> --parent <id>        promote or demote in the refines tree
   werk retitle <id> "new title"
-  werk edit <id> --body "..." [--why "..."] [--who ...] [--no-basis] [--unchallenged]
-  werk propose <id> [--title ..] [--why ..] [--ops '[{"tag":..}]']
+  werk edit <id> --body "..." [--why "..."] [--who ...] [--no-basis "<why>"] [--unchallenged "<why>"]
+  werk propose <id> [--title ..] [--why ..] [--ops '[{"tag":..}]'] [--who ..]
+                      [--no-basis "<why>"] [--unchallenged "<why>"]
                                       stage a change, not applied yet — see #al-diff-cli
                                       ops tag: elaborated {old,new} | new {new} | removed {old}
                                       old must quote a real block verbatim or it is
@@ -303,17 +310,17 @@ function parse(argv: string[]): { positional: string[]; flags: Flags } {
 
 const EDGE_TYPES: EdgeType[] = ['refines', 'depends_on', 'supported_by', 'alternative_to']
 
-function edgeType(flags: Flags): EdgeType {
+function edgeType(flags: Flags, code = 1): EdgeType {
   const t = flags.type
   if (typeof t !== 'string' || !EDGE_TYPES.includes(t as EdgeType)) {
-    fail(`--type must be one of ${EDGE_TYPES.join(', ')}`)
+    fail(`--type must be one of ${EDGE_TYPES.join(', ')}`, code)
   }
   return t as EdgeType
 }
 
-function fail(message: string): never {
+function fail(message: string, code = 1): never {
   console.error(`werk: ${message}`)
-  process.exit(1)
+  process.exit(code)
 }
 
 function str(flags: Flags, name: string): string | undefined {
@@ -449,8 +456,8 @@ function refuseWhileRunInProgress(subtree: string) {
  * A zero count is left out, so what prints is what is left to do.
  */
 function rollupLine(r: Rollup | undefined): string | undefined {
-  if (!r || r.cards < 2) return undefined
-  const parts = [`${r.cards} cards`]
+  if (!r) return undefined
+  const parts = [`${r.cards} ${r.cards === 1 ? 'card' : 'cards'}`]
   for (const [n, label] of [
     [r.open, 'open'],
     [r.proto, 'proto'],
@@ -531,6 +538,17 @@ function frozen(id: string, what: string): void {
       `  Discard it and propose it again, with the new wording in the add call:\n` +
       `    werk discard ${id}`,
   )
+}
+
+/** A decided card's words change by an amend, so by a proposal — #map-frozen. */
+function decidedWords(id: string, what: string): void {
+  const n = graph().nodes.get(id)
+  if (n?.kind === 'card' && n.status === 'decided' && !n.proposed) {
+    fail(
+      `"${id}" is decided, so "${what}" would change it in place. A change to a decided card is an amend. Stage it:\n` +
+        `      werk propose ${id} --title "..." --why "..." --ops '[...]'`,
+    )
+  }
 }
 
 /**
@@ -684,11 +702,14 @@ switch (command) {
       // The new card is a ghost, so only a loop can refuse here. Checked the same way anyway.
       refuseParent(id, parent, true)
       payload.parent = parent
+    } else if (payload.kind === 'card' && id !== 'root' && before.nodes.get('root')?.kind === 'card') {
+      // A card with no parent would sit on no page, so it goes under the root — #werk-write-add-root.
+      payload.parent = 'root'
     }
     // Not `node.added`. Nothing enters the map that Eryk did not accept — #werk-propose-new.
     append('node.proposed', payload, { actor: actor(flags) })
     console.log(
-      `proposed ${payload.kind} ${id}${parent ? ` under ${parent}` : ''} — not in the map yet.\n` +
+      `proposed ${payload.kind} ${id}${payload.parent ? ` under ${payload.parent}` : ''} — not in the map yet.\n` +
         `  Eryk accepts it with the ✓ on the card, or: werk accept ${id} --actor you`,
     )
     break
@@ -697,10 +718,10 @@ switch (command) {
   case 'link':
   case 'unlink': {
     const [from, to] = positional
-    if (!from || !to) fail(`${command} needs <from> and <to>`)
+    if (!from || !to) fail(`${command} needs <from> and <to>`, 2)
     requireNode(from)
     requireNode(to)
-    const type = edgeType(flags)
+    const type = edgeType(flags, 2)
     // #vi-prop-linkwhy: a depends_on link says what `from` takes from `to`. Without it, the
     // reader of a stale mark sees a path but cannot judge if the reopen reaches this card.
     const why = command === 'link' ? str(flags, 'why')?.trim() : undefined
@@ -708,13 +729,17 @@ switch (command) {
       fail(
         `a depends_on link needs --why: one sentence on what "${from}" takes from "${to}".\n` +
           `      werk link ${from} ${to} --type depends_on --why "..."`,
+        2,
       )
     }
-    if (why && type !== 'depends_on') fail(`--why is only for depends_on links, not ${type}`)
+    if (why && type !== 'depends_on') fail(`--why is only for depends_on links, not ${type}`, 2)
     // #vi-edges: an option sits beside its card through alternative_to only. A refines link
     // as well would list it twice, under the children and under Options.
     if (command === 'link' && (type === 'refines' || type === 'depends_on') && graph().nodes.get(from)?.kind === 'option') {
       fail(`"${from}" is an option. An option links to its card with alternative_to only, not ${type}.`)
+    }
+    if (command === 'link' && type === 'depends_on' && from === to) {
+      fail(`a depends_on link cannot point a card at itself: "${from}" is its own ancestor. See #vi-prop-nolineage.`)
     }
     if (command === 'link' && type === 'depends_on') {
       const g = graph()
@@ -728,7 +753,7 @@ switch (command) {
     if (command === 'unlink' && type === 'depends_on') amendCheck(from, { dropEdge: { from, to, type } }, true)
     if (command === 'unlink' && type === 'alternative_to') amendCheck(to, { dropEdge: { from, to, type } }, false)
     append(command === 'link' ? 'edge.added' : 'edge.removed', { from, to, type, ...(why ? { why } : {}) }, { actor: actor(flags) })
-    console.log(`${from} ${command === 'link' ? '--' : 'x-'}${type}--> ${to}${why ? `\n  why: ${why}` : ''}`)
+    console.log(`${command === 'link' ? 'linked' : 'unlinked'} ${from} ${command === 'link' ? '--' : 'x-'}${type}--> ${to}${why ? `\n  why: ${why}` : ''}`)
     // An edge on a ghost is drawn but derives nothing. It goes live with the card, so this
     // is a note, not a warning: the link is recorded, it just is not load-bearing yet.
     const ghosts = [from, to].filter((x) => graph().proposed.has(x))
@@ -742,6 +767,7 @@ switch (command) {
     const [id, status] = positional
     if (!id || !['decided', 'open', 'proto'].includes(status)) fail('status needs <id> decided|open|proto')
     const { node } = requireNode(id)
+    if (node.kind === 'excerpt') frozen(id, `status ${status}`)
     if (status === 'decided' && node.kind === 'card') contract(id)
     append('status.set', { id, status }, { actor: actor(flags) })
     console.log(`${id} is ${status}`)
@@ -794,7 +820,12 @@ switch (command) {
 
   case 'reopen': {
     const id = positional[0] ?? fail('reopen needs an id')
-    requireNode(id)
+    const { g: before, node: target } = requireNode(id)
+    // A card that is open with no postponed mark was never decided, so there is nothing to
+    // reopen — #vi-prop-reopen-scope. A postponed card may be reopened to change its reason.
+    if (target.status !== 'decided' && !before.postponedOrigins.has(id)) {
+      fail(`"${id}" is ${target.status ?? 'not decided'} and not postponed, so there is nothing to reopen.`)
+    }
     const reason = str(flags, 'reason') ?? 'invalidated'
     if (!['postponed', 'invalidated', 'rejected'].includes(reason)) {
       fail('--reason must be postponed, invalidated, or rejected')
@@ -818,9 +849,29 @@ switch (command) {
 
   case 'rederive': {
     const id = positional[0] ?? fail('rederive needs an id')
-    const { node } = requireNode(id)
+    const { g, node } = requireNode(id)
     const status = str(flags, 'status')
-    if (status !== undefined && !['decided', 'open', 'proto'].includes(status)) fail('--status must be decided, open, or proto')
+    if (status !== undefined && status !== 'decided') fail('--status takes only decided')
+    // #vi-prop-confirm-names: a confirm of a stale card lists every link it read.
+    const stale = g.stale.has(id)
+    if (stale) {
+      const outgoing = g.edges.filter((e) => e.type === 'depends_on' && e.from === id).map((e) => e.to)
+      const read = (str(flags, 'confirm') ?? '').split(',').map((s) => unhash(s.trim())).filter(Boolean)
+      const unknown = read.filter((t) => !outgoing.includes(t))
+      if (unknown.length > 0) fail(`"${id}" has no depends_on link to ${unknown.map((t) => `"${t}"`).join(', ')}. It depends on: ${outgoing.join(', ') || 'nothing'}.`)
+      const missing = (g.unread.get(id) ?? []).filter((l) => !read.includes(l.to))
+      if (missing.length > 0) {
+        const all = [...new Set([...read, ...missing.map((l) => l.to)])].join(',')
+        fail(
+          `rederive of "${id}" is refused. These links were made before the change and the confirm does not list them:\n` +
+            missing.map((l) => `  ${id} -> ${l.to}: ${l.why ?? '(no reason on record)'}`).join('\n') +
+            `\nRead each reason, then run: werk rederive ${id} --confirm ${all}`,
+        )
+      }
+    } else if (status === undefined) {
+      console.log(`${id} has no stale mark. Nothing was written.`)
+      break
+    }
     if (status === 'decided' && node.kind === 'card') contract(id)
     append('rederived', { id, status }, { actor: actor(flags) })
     console.log(`${id} is up to date. ${graph().stale.size} card(s) still stale.`)
@@ -850,6 +901,7 @@ switch (command) {
     if (!id || !title) fail('retitle needs <id> "new title"')
     requireNode(id)
     frozen(id, 'retitle')
+    decidedWords(id, 'retitle')
     append('node.retitled', { id, title }, { actor: actor(flags) })
     console.log(`${id}: ${title}`)
     break
@@ -866,9 +918,20 @@ switch (command) {
     // who, no-basis and unchallenged are contract facts, not words on the card. They may
     // still be set on a ghost; anything a person reads may not — see #werk-propose-new.
     const words = ['body', 'why', 'finding', 'why_not', 'url', 'text', 'context'].filter((k) => k in patch)
-    if (words.length) frozen(id, `edit --${words[0]}`)
-    if (flags['no-basis'] === true) patch.noBasis = true
-    if (flags.unchallenged === true) patch.noAlternative = true
+    // An excerpt takes no change at all, not only a change of its words — #werk-excerpt-event-frozen-all.
+    if (requireNode(id).node.kind === 'excerpt' && (Object.keys(patch).length || flags['no-basis'] !== undefined || flags.unchallenged !== undefined)) {
+      frozen(id, 'edit')
+    }
+    if (words.length) {
+      frozen(id, `edit --${words[0]}`)
+      decidedWords(id, `edit --${words[0]}`)
+    }
+    // A waiver needs a written reason, so each of these two flags takes one as its value.
+    for (const k of ['no-basis', 'unchallenged'] as const) {
+      if (flags[k] === true) fail(`--${k} needs the reason as its value: --${k} "<why>"`)
+    }
+    if (typeof flags['no-basis'] === 'string') patch.noBasis = true
+    if (typeof flags.unchallenged === 'string') patch.noAlternative = true
     if (Object.keys(patch).length === 0) {
       fail('edit needs at least one of --body --why --finding --why_not --url --who --no-basis --unchallenged')
     }
@@ -881,7 +944,7 @@ switch (command) {
     if (Object.keys(facts).length && requireNode(id).node.status === 'decided') {
       fail(
         `"${id}" is decided, so a change to who decides or to a waiver is an amend. Stage it:\n` +
-          `      werk propose ${id} ${Object.entries(patch).filter(([k]) => k === 'who').map(([, v]) => `--who ${v} `).join('')}${patch.noBasis ? '--no-basis ' : ''}${patch.noAlternative ? '--unchallenged' : ''}`.trimEnd(),
+          `      werk propose ${id} ${Object.entries(patch).filter(([k]) => k === 'who').map(([, v]) => `--who ${v} `).join('')}${patch.noBasis ? `--no-basis ${JSON.stringify(flags['no-basis'])} ` : ''}${patch.noAlternative ? `--unchallenged ${JSON.stringify(flags.unchallenged)}` : ''}`.trimEnd(),
       )
     }
     append('node.bodyEdited', { id, patch }, { actor: actor(flags) })
@@ -910,8 +973,12 @@ switch (command) {
       if (who !== 'you' && who !== 'me' && who !== 'prototype') fail('--who must be you, me or prototype')
       facts.who = who
     }
-    if (flags['no-basis'] === true) facts.noBasis = true
-    if (flags.unchallenged === true) facts.noAlternative = true
+    // A waiver needs a written reason, so each of these two flags takes one as its value.
+    for (const k of ['no-basis', 'unchallenged'] as const) {
+      if (flags[k] === true) fail(`--${k} needs the reason as its value: --${k} "<why>"`)
+    }
+    if (typeof flags['no-basis'] === 'string') facts.noBasis = true
+    if (typeof flags.unchallenged === 'string') facts.noAlternative = true
     if (title === undefined && why === undefined && ops === undefined && !Object.keys(facts).length) {
       fail('propose needs at least one of --title --why --ops --who --no-basis --unchallenged')
     }
@@ -920,8 +987,14 @@ switch (command) {
     // shows in the diff as struck through. Losing a paragraph must never be the quiet case.
     if (ops) {
       const { node } = requireNode(id)
-      const claimed = new Set(ops.map((op) => ('old' in op ? op.old : undefined)).filter(Boolean))
-      const dropped = splitBlocks(node.body ?? '').filter((b) => !claimed.has(b))
+      // Two equal blocks are two blocks: each needs its own op, so a claim uses one up.
+      const claimed = new Map<string, number>()
+      for (const op of ops) if ('old' in op && op.old) claimed.set(op.old, (claimed.get(op.old) ?? 0) + 1)
+      const dropped = splitBlocks(node.body ?? '').filter((b) => {
+        const left = claimed.get(b) ?? 0
+        if (left > 0) claimed.set(b, left - 1)
+        return left === 0
+      })
       if (dropped.length) {
         fail(
           `these ${dropped.length} block(s) of "${id}" are in no op, so accepting would delete them:\n` +
@@ -968,7 +1041,8 @@ switch (command) {
     // after it — #werk-contract-amend-scope. A ghost's accept is not a change of a decided card.
     if (!node.proposed) amendCheck(id, pendingChange(node.pending), true)
     const ids = node.proposed ? acceptClosure(g, id) : [id]
-    for (const each of ids) append('change.accepted', { id: each }, { actor: 'you' })
+    // One write: a failure leaves none of the events in the log — #werk-propose-new-node-events.
+    appendMany(ids.map((each) => ({ type: 'change.accepted' as const, payload: { id: each }, actor: 'you' as const })))
     console.log(`${id}: accepted`)
     for (const each of ids.filter((x) => x !== id)) {
       console.log(`  and ${each} — ${g.nodes.get(each)?.title ?? ''}`)
@@ -981,7 +1055,8 @@ switch (command) {
     const { g, node } = requireNode(id)
     if (!node.pending && !node.proposed) fail(`"${id}" has no pending proposal.`)
     const ids = node.proposed ? discardClosure(g, id) : [id]
-    for (const each of ids) append('change.discarded', { id: each }, { actor: actor(flags) })
+    // A child leaves before its parent, all in one write — #werk-propose-new-node-events.
+    appendMany([...ids].reverse().map((each) => ({ type: 'change.discarded' as const, payload: { id: each }, actor: actor(flags) })))
     console.log(`${id}: discarded`)
     for (const each of ids.filter((x) => x !== id)) {
       console.log(`  and ${each} — ${g.nodes.get(each)?.title ?? ''}`)
@@ -1023,6 +1098,11 @@ switch (command) {
       if (g.nodes.has(id)) fail(`"${id}" is already in the map.`)
       fail(`"${id}" was never removed. Run "werk removed" to see what is out.`)
     }
+    // A card under a parent that is still out would sit in no tree — #werk-remove-restore-undo-parent-out.
+    const outParent = g.removed.find((r) => r.id === id)?.parent
+    if (outParent && g.removed.some((r) => r.id === outParent)) {
+      fail(`"${id}" sits under "${outParent}", which is still removed. Restore "${outParent}" first: werk restore ${outParent}`)
+    }
     append('node.restored', { id }, { actor: actor(flags) })
     const after = graph()
     console.log(`restored ${id} — ${after.nodes.get(id)?.title ?? ''}`)
@@ -1049,10 +1129,26 @@ switch (command) {
 
   case 'show': {
     const g = graph()
-    const id = positional[0] ?? 'root'
+    const rootCard = () => {
+      const child = new Set(g.edges.filter((e) => e.type === 'refines').map((e) => e.from))
+      return [...g.nodes.values()].find((n) => n.kind === 'card' && !n.proposed && !child.has(n.id))?.id
+    }
+    const id = positional[0] ?? rootCard() ?? fail('the map has no card')
     const node = g.nodes.get(id)
-    if (!node) fail(`no node with the id "${id}"`)
-    const flag = g.stale.has(id) ? '  STALE' : g.postponed.has(id) ? '  POSTPONED' : ''
+    if (!node) {
+      if (g.removed.some((r) => r.id === id)) {
+        // The removal's own card is the first node.removed of the run of events it appended.
+        const log = readEvents()
+        let i = log.map((e) => e.type === 'node.removed' && e.payload.id === id).lastIndexOf(true)
+        while (i > 0 && (log[i - 1].type === 'node.removed' || log[i - 1].type === 'level.moved')) i--
+        while (log[i] && log[i].type === 'level.moved') i++
+        const root = log[i]?.payload.id as string | undefined
+        if (root && root !== id) fail(`#${id} is removed with #${root}; restore #${root} to bring it back`)
+        fail(`#${id} is removed; restore #${id} to bring it back`)
+      }
+      fail(`no node #${id} in the map`)
+    }
+    const flag = g.stale.has(id) ? '  STALE' : g.postponed.has(id) ? '  PAUSED' : g.postponedOrigins.has(id) ? '  POSTPONED' : ''
     const ghost = node.proposed ? '  PROPOSED — not in the map until it is accepted' : ''
     console.log(`${node.kind} ${node.id}  [${node.status ?? '-'}]${flag}${ghost}`)
     console.log(node.title)
@@ -1075,7 +1171,7 @@ switch (command) {
     // #vi-prop-bornstale: the mark alone never says which reopen reached here, or how far
     // away it is. A card four hops downstream turned red with nothing on it naming the cause.
     for (const t of g.flagWhy.get(id) ?? []) {
-      const tag = t.kind === 'postponed' ? 'POSTPONED' : 'STALE'
+      const tag = t.kind === 'postponed' ? 'PAUSED' : 'STALE'
       const hops = t.via.length <= 1 ? 'a direct dependency' : `${t.via.length} hops: ${[id, ...t.via].join(' -> ')}`
       console.log(`${tag} from #${t.origin}, ${t.reason} on ${t.at.slice(0, 10)} — ${hops}`)
       if (t.why) console.log(`  ${t.why}`)
@@ -1083,7 +1179,8 @@ switch (command) {
       t.via.forEach((to, i) => {
         console.log(`    ${i === 0 ? id : t.via[i - 1]} -> ${to}: ${t.whys[i] ?? '(no reason recorded)'}`)
       })
-      console.log(`  This card's link predates the reopen, so re-read it before: werk rederive ${id}`)
+      const read = (g.unread.get(id) ?? []).map((l) => l.to).join(',')
+      console.log(`  This card's link predates the reopen, so re-read it before: werk rederive ${id}${read ? ` --confirm ${read}` : ''}`)
     }
     if (node.body) console.log(`\n${node.body}\n`)
     if (node.pending) {
@@ -1113,7 +1210,7 @@ switch (command) {
         const tag = r.reason === 'postponed' ? 'POSTPONED' : 'STALE'
         console.log(`       ${tag} — ${r.reason} on ${r.at.slice(0, 10)}${r.why ? `: ${r.why}` : ''}`)
       } else if (g.stale.has(e.to) || g.postponed.has(e.to)) {
-        const tag = g.stale.has(e.to) ? 'STALE' : 'POSTPONED'
+        const tag = g.stale.has(e.to) ? 'STALE' : 'PAUSED'
         console.log(`       ${tag} — from a reopen further upstream, open #${e.to} to trace it`)
       }
     }
@@ -1223,10 +1320,11 @@ switch (command) {
   }
 
   case 'quote': {
-    const [id, ref] = positional
-    if (!id || !ref) fail('quote needs <card-id> <card|session|name>')
+    const [id, ref, wordsArg] = positional
+    if (!id || !ref) fail('quote needs <card-id> <card|session|name> "the words"')
     requireNode(id)
-    const text = str(flags, 'text') ?? fail('quote needs --text "...", copied verbatim from the transcript')
+    if (wordsArg !== undefined && str(flags, 'text') !== undefined) fail('give the text once, as an argument or with --text')
+    const text = wordsArg ?? str(flags, 'text') ?? fail('needs the text to quote')
     const found = resolveConvo(ref)
     if (!found) fail(`no conversation matches "${ref}". Run "werk convos" to see them.`)
     if ('ambiguous' in found) {
@@ -1249,6 +1347,9 @@ switch (command) {
     if ('repeated' in match) {
       fail(`"${text}" appears ${match.repeated} times in one message in ${convo.name}. Quote more of the sentence so it is unique.`)
     }
+    // A pointer with a part missing cannot be followed, so the quote refuses before it writes — #werk-excerpt-event-shape.
+    const lacking = [['speaker', match.speaker], ['time', match.at], ['session', convo.sessionId]].filter(([, v]) => !v).map(([k]) => k)
+    if (lacking.length) fail(`the matched message in ${convo.name} has no ${lacking.join(', ')}, so the excerpt's pointer would be incomplete.`)
     // An id stays taken while its card is out of the map, ghost or removed — #werk-write-remove-links.
     const g = graph()
     const taken = (k: string) => g.nodes.has(k) || g.removed.some((r) => r.id === k)
@@ -1262,6 +1363,9 @@ switch (command) {
       {
         id: exId,
         kind: 'excerpt',
+        // An excerpt is a fixed copy of words, not a choice: decided from the start, so it
+        // is never an open card — #werk-excerpt-event-status.
+        status: 'decided',
         title: text.length > 60 ? `${text.slice(0, 57)}...` : text,
         conversation: convo.name,
         session: convo.sessionId,
@@ -1271,11 +1375,12 @@ switch (command) {
         speaker: match.speaker,
         saidAt: match.at,
         context: match.context,
+        pointerWhole: true,
         citedBy: id,
       },
       { actor: actor(flags) },
     )
-    console.log(`${exId}: "${match.text}" — ${match.speaker}, msg ${match.msgIndex} in ${convo.name} (${convo.sessionId ?? 'no session'})`)
+    console.log(`${exId}: proposed, supports ${id}: conversation ${convo.name}, message ${match.msgIndex}, span ${match.span[0]}..${match.span[1]}`)
     break
   }
 
@@ -1671,8 +1776,8 @@ switch (command) {
 
   case 'find': {
     const g = graph()
-    const root = positional[0] ?? 'root'
-    requireNode(root)
+    const root = positional[0]
+    if (root) requireNode(root)
     const wantStatus = str(flags, 'status')
     if (wantStatus && wantStatus !== 'open' && wantStatus !== 'proto') {
       fail('--status must be open or proto')
@@ -1685,8 +1790,10 @@ switch (command) {
       children.set(e.to, list)
     }
     const found: string[] = []
-    const queue = [root]
-    const seen = new Set([root])
+    // #werk-find-scope-cli: with no id, read each tree of the map in turn.
+    const hasParent = new Set(g.edges.filter((e) => e.type === 'refines').map((e) => e.from))
+    const queue = root ? [root] : [...g.nodes.keys()].filter((id) => !hasParent.has(id))
+    const seen = new Set(queue)
     while (queue.length > 0) {
       const current = queue.shift()!
       const n = g.nodes.get(current)
@@ -1707,12 +1814,12 @@ switch (command) {
       }
     }
     if (found.length === 0) {
-      console.log(`No clear open or proto cards under ${root}.`)
+      console.log(root ? `There is no open or proto card to work on under ${root}.` : 'There is no open or proto card to work on.')
       break
     }
     for (const id of found) {
       const n = g.nodes.get(id)!
-      console.log(`${n.status!.padEnd(6)} ${id}  ${n.title}`)
+      console.log(`${id}  ${n.status}  ${n.title}`)
     }
     break
   }
@@ -1773,7 +1880,10 @@ switch (command) {
   case 'inbox': {
     const g = graph()
     const since = Number(str(flags, 'since') ?? 0)
-    const notes = readEvents()
+    const all = readEvents()
+    // A note above a later proposal of the same id was about the earlier words — #werk-propose-new-discard-thread-inbox.
+    const reproposed = (node: string, seq: number) => all.some((x) => x.type === 'node.proposed' && x.payload.id === node && x.seq > seq)
+    const notes = all
       .filter((e) => e.type === 'note.added' && e.seq > since && e.actor === 'you')
       .slice(-Number(str(flags, 'n') ?? 20))
     if (notes.length === 0) {
@@ -1782,7 +1892,7 @@ switch (command) {
     }
     for (const e of notes) {
       const n = g.nodes.get(e.payload.node)
-      console.log(`\n[${e.seq}] #${e.payload.node} — ${n?.title ?? '?'}${g.stale.has(e.payload.node) ? '  STALE' : ''}`)
+      console.log(`\n[${e.seq}] #${e.payload.node} — ${n?.title ?? '?'}${g.stale.has(e.payload.node) ? '  STALE' : ''}${reproposed(e.payload.node, e.seq) ? '  (on earlier words, proposed again since)' : ''}`)
       console.log(`  ${e.payload.text}`)
     }
     break

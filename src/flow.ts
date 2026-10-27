@@ -125,7 +125,18 @@ export function rederives(events: Event[], memo = new Map<string, Rederive | nul
         staged.delete(p.id)
         break
       case 'change.accepted':
-        if (staged.delete(p.id)) edit(p.id, e.seq)
+        if (staged.delete(p.id)) {
+          edit(p.id, e.seq)
+          // The accept of a change to a stale decided card is an amend, and it ends the review
+          // of that card — #vi-prop-amended. It counts as a review that changed the card.
+          const key = `${e.seq}:${e.at}`
+          let r = memo.get(key)
+          if (r === undefined) {
+            r = fold(events.slice(0, i)).stale.has(p.id) ? { id: p.id, at: e.at, changed: true, by: e.actor } : null
+            memo.set(key, r)
+          }
+          if (r) out.push(r)
+        }
         break
       case 'reopened':
         lastReopen.set(p.id, e.seq)

@@ -142,13 +142,35 @@ Run `werk show <id>` after you create a card. It prints the whole trace — orig
 reason, date, the hops. If a mark remains, either clear it,
 
 ```bash
-werk rederive <id> --status decided
+werk rederive <id> --confirm <target>,<target>
 ```
 
 or leave it and say why not. Do not leave a red mark unexplained.
 
 A ghost is never marked: its `depends_on` edges are held. Run `show` on what it depends on,
 and say the result in the turn that proposes the card, not later.
+
+## Review every card your change marks, in the same turn
+
+A reopen or an amend marks the next hop. See #vi-prop-auto-review. Before the turn ends, run
+`werk stale` and review each card that your change marked:
+
+1. Run `werk show <id>`. Read the card, the changed card, and the reason on each link between them.
+2. If the card still holds, confirm it. List every `depends_on` target whose reason you read.
+   The mark ends there:
+
+```bash
+werk rederive <id> --confirm <target>,<target>
+```
+
+   A confirm that leaves out an older link is refused. The refusal names each missing link
+   and its reason, and prints the command again with the full list.
+
+3. If the card no longer holds, propose an amend. Do not clear the mark. A `who: you` card
+   changes only when Eryk accepts the proposal.
+
+Skip a card that waits on a stale or open basis. Leave a paused mark as it is. Never confirm
+a card you did not read. Say in the reply which cards you confirmed and which you amended.
 
 ## Point at a depends_on target. Do not restate it
 
