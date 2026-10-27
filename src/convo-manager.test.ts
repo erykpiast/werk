@@ -78,8 +78,7 @@ describe('ConvoManager', () => {
     expect(late).toEqual(['main', 'card-a', 'card-b'])
   })
 
-  test('5. fork needs a parent that has sent a message, and resumes it with --fork-session', async () => {
-    expect(() => manager.fork('main', 'card-a')).toThrow('#main has no conversation yet')
+  test('5. a fork of a parent that has sent a message resumes it with --fork-session', async () => {
     const main = manager.main()
     await turn(main, 'hi')
     const child = manager.fork('main', 'card-a')
@@ -88,6 +87,16 @@ describe('ConvoManager', () => {
     const argv = launches(log).at(-1)!
     expect(flag(argv, '--resume')).toBe(main.sessionId!)
     expect(argv).toContain('--fork-session')
+  })
+
+  test('5-nosession. a fork of a tab with no session opens an empty tab on the clicked card', async () => {
+    const child = manager.fork('main', 'card-a')
+    expect([child.name, child.home]).toEqual(['card-a', 'card-a'])
+    expect(child.history()[0].emptyStart).toBe(true)
+    await turn(child, 'first message')
+    const argv = launches(log).at(-1)!
+    expect(argv).not.toContain('--resume')
+    expect(argv).not.toContain('--fork-session')
   })
 
   test('5a. an empty start needs no parent, takes a new name, and launches with no --resume', async () => {

@@ -33,6 +33,9 @@ import { paths } from './project.ts'
  */
 
 export type Decision = 'allow' | 'always' | 'deny'
+/** What the ask log records: a picked answer to a question is its own decision, not a deny —
+ *  #werk-mc-askqa-log-answer. */
+export type LoggedDecision = Decision | 'answer'
 
 /**
  * A permission change the CLI proposed for this call.
@@ -164,7 +167,10 @@ export function addAlways(add: Partial<Always>): Always {
 }
 
 /** Append one resolved ask to paths.asks. Never deleted, never rewritten — a plain history. */
-export function appendAsk(ask: Ask, decision: Decision) {
+export function appendAsk(ask: Ask, resolved: Decision, message?: string) {
+  // A picked answer travels as a deny with the answer as its message. The log names it
+  // `answer`, so a count of denies holds only refusals, and an answer widens nothing.
+  const decision: LoggedDecision = resolved === 'deny' && message !== undefined ? 'answer' : resolved
   mkdirSync(dirname(paths.asks), { recursive: true })
   const line = {
     at: new Date().toISOString(),

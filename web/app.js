@@ -58,7 +58,12 @@ const startHash = decodeId(location.hash.slice(1))
 if (startHash) history.replaceState(null, '', pathFor('map', startHash))
 else if (!parseRoute().view) {
   const v = localStorage.getItem(projectKey('werk-view'))
-  history.replaceState(null, '', pathFor(VIEWS.includes(v) ? v : 'map'))
+  // The last place on the map, kept once for each project — #vi-tabs-place-browser. A project
+  // with no stored place opens the home.
+  const place = localStorage.getItem(projectKey('werk-place'))
+  const mapPath = pathFor('map')
+  const onMap = !VIEWS.includes(v) || v === 'map'
+  history.replaceState(null, '', onMap && place && (place === mapPath || place.startsWith(`${mapPath}/`)) ? place : pathFor(VIEWS.includes(v) ? v : 'map'))
 }
 /** Did the first address name a map card? Then it wins over the active tab's position. */
 const startedOnCard = parseRoute().view === 'map' && parseRoute().id !== HOME
@@ -647,7 +652,7 @@ function buildControlsHTML(id, s) {
 /** A tab is running while its turn is, and while a background agent it launched still is
  *  — #werk-mc-bgagents. A pending ask is waiting, not running. */
 const isRunning = (tab) =>
-  tab?.status?.state === 'running' || tab?.status?.state === 'thinking' || tab?.background?.length > 0
+  tab?.status?.state === 'running' || tab?.status?.state === 'thinking' || tab?.status?.state === 'writing' || tab?.background?.length > 0
 
 /**
  * #werk-mc-live, point 1: a pulsing dot on the card a running conversation is homed on,
@@ -823,7 +828,7 @@ function updateSummary(group) {
   const calls = [...group.calls.children]
   const n = calls.length
   const last = calls[n - 1]?.querySelector('.txt')?.textContent.trim() ?? ''
-  group.summary.textContent = n > 1 ? `${last} · ${n} tool calls` : last
+  group.summary.textContent = `${last} · ${n} ${n === 1 ? 'call' : 'calls'}`
   group.el.classList.toggle('has-error', calls.some((c) => c.querySelector('.tool-out.failed')))
 }
 
@@ -858,7 +863,7 @@ function endTurn(tab, turn) {
   if (tab.openTurns[0]) unwait(tab, tab.openTurns[0])
 }
 
-const turnRunning = (s) => s.state === 'thinking' || s.state === 'running' || s.state === 'asking'
+const turnRunning = (s) => s.state === 'thinking' || s.state === 'running' || s.state === 'writing' || s.state === 'asking'
 
 /** An agent that is not running has no open turn, whatever the transcript lost. */
 function endAllTurns(tab) {
@@ -1244,7 +1249,7 @@ function renderBgLine() {
 }
 
 function paintStatusUI(s) {
-  const running = s.state === 'thinking' || s.state === 'running' || s.state === 'asking'
+  const running = turnRunning(s)
   const bg = tabs.get(activeName)?.background ?? []
   chatState.classList.toggle('busy', running || bg.length > 0)
   renderBgLine()
@@ -1252,7 +1257,7 @@ function paintStatusUI(s) {
   modelSelect.disabled = running
   // Waiting for you already has its own way out — answer or deny the ask — so the button
   // only needs to cover the turn actually running unattended.
-  interruptBtn.hidden = s.state !== 'thinking' && s.state !== 'running'
+  interruptBtn.hidden = s.state !== 'thinking' && s.state !== 'running' && s.state !== 'writing'
   clearInterval(ticker)
   ticker = null
   if (s.state === 'dead') {
@@ -1270,7 +1275,7 @@ function paintStatusUI(s) {
       chatState.innerHTML = `<i class="pulse wait"></i>waiting for you · ${esc(s.detail ?? '')}`
       return
     }
-    const what = s.state === 'running' ? (s.detail ?? 'working') : 'thinking'
+    const what = s.state === 'running' ? (s.detail ?? 'working') : s.state === 'writing' ? 'writing' : 'thinking'
     // #werk-progress: a pulse, what the agent is doing, seconds, and tokens.
     const tokens = s.tokens ? ` · ${s.tokens.toLocaleString()} tokens` : ''
     chatState.innerHTML = `<i class="pulse"></i>${esc(what)} · ${seconds.toFixed(1)}s${tokens}`
@@ -1680,7 +1685,7 @@ async function hydrateTab(name) {
   tab.context = context
   tab.background = background ?? []
   tab.dead = tab.status.state === 'dead'
-  tab.wasRunning = tab.status.state === 'thinking' || tab.status.state === 'running' || tab.status.state === 'asking'
+  tab.wasRunning = turnRunning(tab.status)
   tab.loaded = true
   if (name === activeName) {
     tab.logEl.scrollTop = stayAt ?? tab.logEl.scrollHeight
@@ -1696,6 +1701,11 @@ async function hydrateTab(name) {
 
 const shots = el('shots')
 let pending = []
+
+// #werk-chat-turn-name-page: t, the send time in base 36, a dash, and the count of messages
+// this page has sent. Only letters, digits and a dash, so the server takes it.
+let sentCount = 0
+const turnName = () => `t${Date.now().toString(36)}-${++sentCount}`
 
 const token = (i) => `[Image #${i + 1}]`
 
@@ -1816,6 +1826,9 @@ function triggerToken() {
   const triggerChar = word[0]
   if (triggerChar !== '/' && triggerChar !== '#') return null
   if (value[start - 1] === '`') return null
+  // #werk-hash-trigger-second2: a second slash, hash or backtick means a path or a token,
+  // not a request for a menu.
+  if (/[/#`]/.test(word.slice(1))) return null
   return { kind: triggerChar === '/' ? 'command' : 'card', query: word.slice(1), start, end: caret }
 }
 
@@ -1828,14 +1841,17 @@ function matchCommands(query) {
 }
 
 /**
- * Card matches, shaped for the shared menu renderer. An empty query lists the most
- * recently added cards — G.nodes is oldest first, so that list is reversed.
+ * Card matches, shaped for the shared menu renderer. #werk-hash-trigger-rank: ids first, in
+ * the header search's order with the exact id first; then cards whose title holds the text.
+ * A bare hash lists nothing. The list is cut at the header search's limit, 12.
  */
 function matchCards(query) {
   const q = query.toLowerCase()
-  const nodes = q ? (G?.nodes ?? []) : [...(G?.nodes ?? [])].reverse()
-  const hits = nodes.filter((n) => `${n.id} ${titleOf(n)}`.toLowerCase().includes(q))
-  return hits.slice(0, 20).map((n) => ({ label: `#${n.id}`, desc: titleOf(n), badge: n.kind }))
+  if (!q || !G) return []
+  const byId = searchHits(`#${query}`)
+  const seen = new Set(byId.map((n) => n.id))
+  const byTitle = G.nodes.filter((n) => !seen.has(n.id) && titleOf(n).toLowerCase().includes(q))
+  return [...byId, ...byTitle].slice(0, 12).map((n) => ({ label: `#${n.id}`, desc: titleOf(n), badge: n.kind }))
 }
 
 function closeCmdMenu() {
@@ -1967,7 +1983,7 @@ el('chat-composer').addEventListener('submit', async (e) => {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     // #werk-chat-turn-id: the turn is named here, when the message is sent.
-    body: JSON.stringify({ text, images, card: chatCard(), convo: activeName, turn: crypto.randomUUID() }),
+    body: JSON.stringify({ text, images, card: chatCard(), convo: activeName, turn: turnName() }),
   })
 })
 
@@ -2002,7 +2018,7 @@ document.addEventListener('click', async (e) => {
   await fetch('/api/chat', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ text, images: [], card: chatCard(), convo: activeName, turn: crypto.randomUUID() }),
+    body: JSON.stringify({ text, images: [], card: chatCard(), convo: activeName, turn: turnName() }),
   })
 })
 
@@ -2015,7 +2031,7 @@ chatInput.addEventListener('keydown', (e) => {
       renderCmdMenu()
       return
     }
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if ((e.key === 'Enter' && !e.shiftKey) || e.key === 'Tab') {
       e.preventDefault()
       pickMatch(cmdSel)
       return
@@ -3004,6 +3020,7 @@ let shownView = null
 function applyRoute() {
   const { id } = parseRoute()
   const v = routeView()
+  if (v === 'map') localStorage.setItem(projectKey('werk-place'), location.pathname)
   // The first call runs before the tabs are restored. The tab's own position waits for them.
   if (v === 'map' && (shownView || startedOnCard)) mapCard = id
   if (v === 'map' && shownView) {
@@ -3259,12 +3276,18 @@ refreshLivePlans()
 // transcripts are on the server. Only the drafts and half-filled question forms live in
 // the page — every tab's, not only the active one's — so they are stashed first. A reload
 // that eats a half-typed message is worse than no reload. #werk-mc-reload-storm.
-stream.addEventListener('reload', () => {
+function stashDrafts() {
   const tab = tabs.get(activeName)
   if (tab) tab.draft = chatInput.value
   const drafts = {}
   for (const [name, t] of tabs) if (t.draft) drafts[name] = t.draft
   sessionStorage.setItem('werk-drafts', JSON.stringify(drafts))
+}
+// #werk-client-reload-draft-pagehide: the browser signals every page that goes away, so a
+// forced reload, a manual reload and a closing tab all stash the draft. Not per keystroke.
+addEventListener('pagehide', stashDrafts)
+stream.addEventListener('reload', () => {
+  stashDrafts()
   const answers = {}
   for (const [id, byQ] of pendingAnswers) answers[id] = [...byQ].map(([qi, picked]) => [qi, [...picked]])
   sessionStorage.setItem('werk-answers', JSON.stringify(answers))
@@ -3306,6 +3329,11 @@ stream.addEventListener('model', (e) => {
   const tab = ensureTab(d.convo || 'main')
   tab.model = d
   if (tab.name === activeName) setModelSelect(d)
+})
+// #werk-model-select-events: a clear in any page empties every page's transcript.
+stream.addEventListener('cleared', (e) => {
+  const d = JSON.parse(e.data)
+  if (tabs.has(d.convo || 'main')) hydrateTab(d.convo || 'main')
 })
 stream.addEventListener('context', (e) => {
   const d = JSON.parse(e.data)

@@ -1,10 +1,10 @@
 // server.ts behaviours from #werk-test-behaviours-server. Each runs against a real
 // `werk serve` process on a scratch .werk, through real HTTP, with the fake claude on PATH.
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { request } from 'node:http'
 import { basename, join } from 'node:path'
-import { launches, serveScratch, waitFor, type Served } from './test/harness.ts'
+import { launches, scratchDir, serveScratch, waitFor, type Served } from './test/harness.ts'
 
 let s: Served
 
@@ -70,6 +70,40 @@ describe('server.ts', () => {
     expect(second.out()).toContain('another werk is already serving this repository on port 4942')
     // The first one is untouched.
     expect((await fetch(s.url + '/api/graph')).status).toBe(200)
+  }, 15000)
+
+  test('1a. the lock is serve.lock and holds the real port once the server listens (#werk-onelock-take-lockfile)', async () => {
+    const lock = JSON.parse(readFileSync(join(s.werk, 'serve.lock'), 'utf8'))
+    // The CLI re-runs itself in a child, so the lock holds the child's pid.
+    expect(lock.pid).toBeGreaterThan(0)
+    expect(lock.port).toBe(4942)
+  })
+
+  test('1b. a lock with port 0 and a live holder refuses, and the message says the port is not known (#werk-onelock-take-lockfile, #werk-onelock-take-wait)', async () => {
+    const dir = scratchDir('werk-lock-')
+    mkdirSync(join(dir, '.werk'), { recursive: true })
+    writeFileSync(join(dir, '.werk', 'serve.lock'), JSON.stringify({ pid: process.pid, port: 0 }))
+    const started = Date.now()
+    const second = await serveScratch(4944, { dir, wait: false, env: { WERK_LOCK_WAIT_MS: '400' } })
+    expect(await second.proc.exited).toBe(1)
+    expect(second.out()).toContain('on port not known yet')
+    expect(Date.now() - started).toBeLessThan(4000)
+  }, 15000)
+
+  test('1c. a start waits for a live holder that exits, then takes the lock (#werk-onelock-take-wait)', async () => {
+    const dir = scratchDir('werk-lock-')
+    mkdirSync(join(dir, '.werk'), { recursive: true })
+    const holder = Bun.spawn(['sleep', '1'])
+    writeFileSync(join(dir, '.werk', 'serve.lock'), JSON.stringify({ pid: holder.pid, port: 1 }))
+    const second = await serveScratch(4945, { dir, env: { WERK_LOCK_WAIT_MS: '4000' } })
+    try {
+      expect(second.out()).toContain(`waiting for pid ${holder.pid}`)
+      const lock = JSON.parse(readFileSync(join(dir, '.werk', 'serve.lock'), 'utf8'))
+      expect(lock.pid).not.toBe(holder.pid)
+      expect(lock.port).toBe(4945)
+    } finally {
+      await second.stop()
+    }
   }, 15000)
 
   test('2. upload takes png/jpeg/gif/webp only, and nothing over 20 MB', async () => {

@@ -2,6 +2,10 @@
 // It covers what an agent actually writes: fenced code, inline code, bold, italic, links,
 // headings, lists, block quotes, horizontal rules, tables, and references to other cards.
 
+/** #werk-progress-safe-links: a link or image address renders only when it starts with http:,
+ *  https:, mailto:, a slash, a hash or a dot. Anything else stays as its written text. */
+const SAFE_URL = /^(?:https?:|mailto:|[/#.])/i
+
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
 
@@ -93,11 +97,11 @@ function inline(s, knows, links = true) {
   const tags = []
   const tag = (html) => `${MARK3}${tags.push(html) - 1}${MARK3}`
   const marked = stashed
-    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, src) =>
-      links ? tag(`<img src="${src}" alt="${alt}" loading="lazy">`) : alt,
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (whole, alt, src) =>
+      !SAFE_URL.test(src) ? whole : links ? tag(`<img src="${src}" alt="${alt}" loading="lazy">`) : alt,
     )
-    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (_, text, href) =>
-      links ? tag(`<a href="${href}" target="_blank" rel="noreferrer">${text}</a>`) : text,
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (whole, text, href) =>
+      !SAFE_URL.test(href) ? whole : links ? tag(`<a href="${href}"${/^https?:|^mailto:/i.test(href) ? ' target="_blank" rel="noreferrer"' : ''}>${text}</a>`) : text,
     )
     .replace(/(\*\*|__)(?=\S)([\s\S]*?\S)\1/g, '<strong>$2</strong>')
     .replace(/(^|[\s(])\*(?=\S)([^*\n]*?\S)\*/g, '$1<em>$2</em>')

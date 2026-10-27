@@ -49,7 +49,12 @@ async function takeLock(port: number) {
   // time for the same project — see the guard at the top of serve().
   const LOCK_PATH = lockPath()
   mkdirSync(dirname(LOCK_PATH), { recursive: true })
-  const lock = JSON.stringify({ pid: process.pid, port, at: new Date().toISOString() })
+  // #werk-onelock-take-lockfile: the lock names port 0 until the server listens.
+  const lock = JSON.stringify({ pid: process.pid, port: 0, at: new Date().toISOString() })
+  // #werk-onelock-take-wait: read the lock every tenth of a second, refuse after the wait.
+  // WERK_LOCK_WAIT_MS changes the wait; a value that is not a whole number of ms is ignored.
+  const waitMs = wholeMs(process.env.WERK_LOCK_WAIT_MS) ?? 5000
+  const started = Date.now()
   for (let wait = 0; ; wait++) {
     try {
       writeFileSync(LOCK_PATH, lock, { flag: 'wx' })
@@ -59,7 +64,7 @@ async function takeLock(port: number) {
     }
     const held = readLock(LOCK_PATH)
     if (held === 'gone') continue
-    const last = wait >= 19
+    const last = Date.now() - started >= waitMs
     // A lock that does not parse may belong to a start between its create and its write.
     // Still unreadable after the whole wait, its holder died between the two.
     const stale = held === 'unreadable' ? last : !alive(held.pid) || held.pid === process.pid
@@ -68,11 +73,18 @@ async function takeLock(port: number) {
       continue
     }
     if (last && held !== 'unreadable') {
-      throw new Error(`another werk is already serving this repository on port ${held.port} (pid ${held.pid}): ${projectRoot()}. Stop it first. One server per .werk.`)
+      throw new Error(`another werk is already serving this repository on port ${held.port || 'not known yet'} (pid ${held.pid}): ${projectRoot()}. Stop it first. One server per .werk.`)
     }
     if (wait === 0) console.log(`werk: waiting for ${held === 'unreadable' ? 'the lock to be written' : `pid ${held.pid} to let go of the lock`}`)
-    await sleep(250)
+    await sleep(100)
   }
+}
+
+/** #werk-onelock-take-lockfile: once the server listens, the lock gets its real port. */
+function fillLockPort(LOCK_PATH: string, port: number) {
+  const held = readLock(LOCK_PATH)
+  if (held === 'gone' || held === 'unreadable' || held.pid !== process.pid) return
+  writeFileSync(LOCK_PATH, JSON.stringify({ ...held, port }))
 }
 
 function readLock(LOCK_PATH: string): { pid: number; port: number } | 'gone' | 'unreadable' {
@@ -272,7 +284,7 @@ type Opened = {
   close: () => void
 }
 
-type OpenOptions = { port: number; allow?: string[]; fresh: boolean; onBusy: () => void }
+type OpenOptions = { port: number; allow?: string[]; fresh: boolean; onBusy: () => void; listening: Promise<void> }
 
 const send = (res: ServerResponse, status: number, body: unknown) => {
   if (!res.headersSent) res.writeHead(status, { 'content-type': MIME['.json'], 'cache-control': 'no-store' })
@@ -312,6 +324,8 @@ export async function serve(port = 4000, allow?: string[], fresh = false, start?
 
   /** Every project opened since the server started, by root. A project opens on its first
    *  request and stays open, so its agents keep running out of view (#werk-projects-background). */
+  let listenDone!: () => void
+  const listening = new Promise<void>((r) => (listenDone = r))
   const opening = new Map<string, Promise<Opened>>()
   const live = new Map<string, Opened>()
   const pushAll = (event: string, data: unknown) => {
@@ -327,7 +341,7 @@ export async function serve(port = 4000, allow?: string[], fresh = false, start?
   const open = (p: Project, first = false): Promise<Opened> => {
     let o = opening.get(p.root)
     if (!o) {
-      o = inProject(p.root, () => openProject(p, { port, allow, fresh: first && fresh, onBusy: projectsChanged }))
+      o = inProject(p.root, () => openProject(p, { port, allow, fresh: first && fresh, onBusy: projectsChanged, listening }))
       opening.set(p.root, o)
       o.then(
         (opened) => live.set(p.root, opened),
@@ -463,6 +477,7 @@ export async function serve(port = 4000, allow?: string[], fresh = false, start?
   })
 
   server.listen(port, () => {
+    listenDone()
     console.log(`werk map on http://localhost:${port}`)
     for (const p of listProjects()) console.log(`  ${p.name}${p.missing ? ' (missing)' : ''}  ${p.root}`)
     if (first) {
@@ -489,6 +504,7 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
   const { port, allow, fresh } = o
   await takeLock(port)
   const LOCK_PATH = lockPath()
+  void o.listening.then(() => fillLockPort(LOCK_PATH, port))
   const clients = new Set<ServerResponse>()
   /** #vi-prop's kill metric: one fold per rederive, done once per open project. */
   const rederiveMemo = new Map<string, Rederive | null>()
@@ -560,6 +576,9 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
           const ext = EXT[type]
           if (!ext) throw new Error(`werk takes png, jpeg, gif or webp, not "${type}"`)
           mkdirSync(paths.attachments, { recursive: true })
+          // #werk-chat-image-inline-folder: one pattern that matches every file, itself included.
+          const ignore = join(paths.attachments, '.gitignore')
+          if (!existsSync(ignore)) writeFileSync(ignore, '*\n')
           const name = `${new Date().toISOString().replace(/[:.]/g, '-')}-${randomUUID().slice(0, 8)}${ext}`
           const path = join(paths.attachments, name)
           writeFileSync(path, bytes)
@@ -574,7 +593,10 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
 
     // Thumbnails. basename strips any path, so only one flat directory is reachable.
     if (url.pathname === '/api/image') {
-      const name = basename(url.searchParams.get('name') ?? '')
+      const asked = url.searchParams.get('name') ?? ''
+      // A plain file name only: a letter or digit first, then letters, digits, dots, dashes
+      // and underscores, with no two dots in a row. Anything else finds no image.
+      const name = /^[A-Za-z0-9][\w.-]*$/.test(asked) && !asked.includes('..') ? asked : ''
       const file = join(paths.attachments, name)
       if (!name || !existsSync(file) || !statSync(file).isFile()) {
         res.writeHead(404).end('not found')
@@ -589,9 +611,17 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
       readBody(req)
         .then(({ text, card, images, convo, turn }) => {
           if (!text?.trim() && !(images ?? []).length) throw new Error('a message needs text or an image')
+          // #werk-chat-card-missing: no card, or an empty one, names the home card. A card
+          // that is not text is a broken request.
+          if (card !== undefined && card !== null && typeof card !== 'string') throw new Error('the open card must be text')
+          card = card || '~home'
+          // #werk-chat-turn-name-limits: 1 to 100 of letters, digits, dots, dashes and
+          // underscores, and no leading dot. The name goes into every event and into the page.
+          if (turn != null && (typeof turn !== 'string' || !/^[A-Za-z0-9_-][A-Za-z0-9._-]{0,99}$/.test(turn)))
+            throw new Error('a turn name holds 1 to 100 letters, digits, dots, dashes or underscores, and does not start with a dot')
           // A tab you type in is on the strip, so it is no longer a #werk-mc-reap target.
           manager.unpark(convo || MAIN)
-          manager.ensure(convo || MAIN).send(text?.trim() ?? '', card, images ?? [], typeof turn === 'string' && turn ? turn : undefined)
+          manager.ensure(convo || MAIN).send(text?.trim() ?? '', card, images ?? [], turn ?? undefined)
           res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true }))
         })
         .catch((err) => {
@@ -745,10 +775,21 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
 
     // Drops the stored session and the visible transcript. Same busy guard as a model
     // switch: --model and a cleared context both take effect only when the child restarts.
+    if (url.pathname === '/api/context/clear' && req.method !== 'POST') {
+      res.writeHead(405, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: false, error: 'clearing the context takes a POST' }))
+      return
+    }
     if (url.pathname === '/api/context/clear' && req.method === 'POST') {
       try {
         const agent = manager.ensure(url.searchParams.get('convo') || MAIN)
+        // #werk-model-select-clear-address: a turn that runs is a conflict, and the answer says busy.
+        if (agent.busy) {
+          res.writeHead(409, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: false, busy: true, error: 'the agent is busy: wait for the current turn to finish before clearing the context' }))
+          return
+        }
         agent.clearContext()
+        // #werk-model-select-events: every open page drops its transcript.
+        push('cleared', { convo: agent.name })
         push('context', { ...agent.context(), convo: agent.name })
         res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true }))
       } catch (err) {
@@ -759,14 +800,22 @@ async function openProject(project: Project, o: OpenOptions): Promise<Opened> {
 
     // A restart is the only way to change --model, so this can't apply mid-turn — the pane
     // disables the selector while busy, and setModel throws if that is bypassed.
+    if (url.pathname === '/api/model' && req.method !== 'POST') {
+      res.writeHead(405, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: false, error: 'switching the model takes a POST' }))
+      return
+    }
     if (url.pathname === '/api/model' && req.method === 'POST') {
       readBody(req)
         .then(({ model, advisor, convo }) => {
           if (!['claude-sonnet-5-5[1m]', 'claude-opus-5-5'].includes(model)) throw new Error('model must be claude-sonnet-5-5[1m] or claude-opus-5-5')
           if (advisor != null && advisor !== 'claude-opus-5-5') throw new Error('advisor must be claude-opus-5-5 or none')
           const agent = manager.ensure(convo || MAIN)
+          if (agent.busy) {
+            res.writeHead(409, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: false, busy: true, error: 'the agent is busy: wait for the current turn to finish before switching models' }))
+            return
+          }
           agent.setModel(model, advisor ?? null)
-          push('model', { ...agent.modelSetting(), convo: agent.name })
+          push('model', { ...agent.modelSetting(), ...agent.context(), convo: agent.name })
           res.writeHead(200, { 'content-type': MIME['.json'] }).end(JSON.stringify({ ok: true }))
         })
         .catch((err) => {

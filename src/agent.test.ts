@@ -62,11 +62,10 @@ describe('agent.ts', () => {
   test('3. an auth failure is never retried', async () => {
     const t = setup({ FAKE_CLAUDE_MODE: 'crash', FAKE_CLAUDE_STDERR: 'Error: not logged in. Run claude auth login' })
     t.agent.send('hi')
-    await waitFor(() => t.system().includes('Fix the problem above, then send it again.'), 'the give-up message')
+    await waitFor(() => t.system().includes('Your message was not delivered. Send it again.'), 'the give-up message')
     await sleep(300)
     expect(launches(t.log)).toHaveLength(1)
     expect(t.system()).not.toContain('Retrying once.')
-    expect(t.system().some((s) => s.startsWith('Your message was not delivered'))).toBe(false)
     expect(t.said.some((m) => m.from === 'result' && m.error && m.text.includes('not logged in'))).toBe(true)
   })
 

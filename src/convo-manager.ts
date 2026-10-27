@@ -120,7 +120,8 @@ export class ConvoManager {
   fork(from: string, atCard: string): Agent {
     const parent = this.ensure(from)
     const source = parent.forkSource()
-    if (!source) throw new Error(`#${from} has no conversation yet — send it a message first`)
+    // #werk-mc-fork-nosession: nothing to copy, so the fork opens an empty tab on the card.
+    if (!source) return this.startEmpty(atCard)
     // A folder from an earlier server run holds a session too. Reusing its name would resume
     // that old conversation instead of forking this one.
     const taken = new Set([...this.agents.keys(), ...listConvos().map((c) => c.name)])

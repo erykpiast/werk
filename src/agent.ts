@@ -92,7 +92,7 @@ export type ChatMessage = {
 
 /** What the pane shows while a turn runs. Never written to the transcript. */
 export type Status = {
-  state: 'idle' | 'thinking' | 'running' | 'asking' | 'dead'
+  state: 'idle' | 'thinking' | 'running' | 'writing' | 'asking' | 'dead'
   detail?: string
   tokens?: number
 }
@@ -523,9 +523,14 @@ export class Agent {
    *  its end instead — an empty done line — and a held message is dropped with its turn. */
   private endTurns() {
     const open = this.turns
+    const running = this.turns.length > this.queue.length
     this.turns = []
     this.queue = []
-    for (const turn of open) this.emit('system', '', { done: true, turn })
+    // #werk-chat-turn-id-exit-queued: the pane tells a turn that started from one that never did.
+    open.forEach((turn, i) => {
+      const started = running && i === 0
+      this.emit('system', started ? 'The agent exited before the reply ended.' : 'The agent exited before this message got an answer.', { done: true, turn })
+    })
   }
 
   private setStatus(next: Status) {
@@ -660,7 +665,9 @@ export class Agent {
 
       // One automatic retry. The session id stays, so the retry resumes as normal.
       // A failure that will repeat, such as a login problem, is not worth retrying.
-      if (this.inflight && !this.retried && !FATAL.test(said)) {
+      // #werk-crashmsg-early-exit: only an exit before init is early. After the agent named its
+      // session it may have run a tool or an edit, so a second run could do that twice.
+      if (this.inflight && !this.sawInit && !this.retried && !FATAL.test(said)) {
         this.retried = true
         this.emit('system', 'Retrying once.')
         this.replay()
@@ -669,8 +676,8 @@ export class Agent {
       // Two endings, two sentences. A FATAL failure was never retried, so only a fix helps
       // (#werk-fullerr). Anything else already had its one retry (#werk-crashmsg).
       if (this.inflight) {
-        const fatal = FATAL.test(said)
-        this.emit('system', fatal ? 'Fix the problem above, then send it again.' : 'Your message was not delivered. Send it again.')
+        // #werk-fullerr-undelivered: every stop of a send ends with the same line.
+        this.emit('system', 'Your message was not delivered. Send it again.')
       }
       // #werk-mc-live: a background death must surface the same way an ask does, not
       // wait for someone to notice a dot on an unfocused tab. A child that crashes between
@@ -736,7 +743,9 @@ export class Agent {
     // whole list rather than patching it, so this is the one event worth reading — a task
     // dropped off it is done, whatever `task_updated`/`task_notification` say about why.
     if (e.type === 'system' && e.subtype === 'background_tasks_changed') {
-      this.bg = (e.tasks ?? []).map((t: any) => ({
+      // An event with no list leaves the count as it is — #werk-mc-live-bgcount-list-event.
+      if (!Array.isArray(e.tasks)) return
+      this.bg = e.tasks.map((t: any) => ({
         id: String(t.task_id),
         type: String(t.task_type ?? ''),
         description: String(t.description ?? ''),
@@ -763,6 +772,11 @@ export class Agent {
         if (kind === 'tool_use') {
           this.setStatus({ state: 'running', detail: ev.content_block.name, tokens: this.tokens })
           this.delta(id, from, `${ev.content_block.name} `)
+        } else if (kind === 'thinking') {
+          this.setStatus({ state: 'thinking', tokens: this.tokens })
+        } else if (kind === 'text') {
+          // #werk-chat-status-writing: a text block is neither thinking nor a tool call.
+          this.setStatus({ state: 'writing', tokens: this.tokens })
         }
         return
       }
@@ -896,7 +910,7 @@ export class Agent {
     }
 
     const { decision, message } = await this.asks.put(ask)
-    appendAsk(ask, decision)
+    appendAsk(ask, decision, message)
 
     if (decision === 'deny') {
       // interrupt: false ends this one call, not the turn. The model sees the denial as a
@@ -979,6 +993,9 @@ export class Agent {
    */
   send(text: string, card?: string, images: string[] = [], turn: string = randomUUID()) {
     let payload = text
+    // #werk-chat-fresh-agent-card: the last card heard belongs to one agent. With no child
+    // running, this turn starts a new one, which has heard no card yet.
+    if (!this.proc) this.lastCard = null
     // The Read tool opens an image file, so a path is all the agent needs. The token
     // tells it where in the message each image belongs.
     if (images.length > 0) {
@@ -1062,13 +1079,20 @@ export class StderrLog {
   }
 }
 
-/** One line naming what a tool call is about to do. */
+/** One line naming a tool call: the tool, then the first line of the first non-empty input
+ *  field among command, file_path, path, pattern, url, query and description. A line over
+ *  80 characters is cut to 79 and ends with an ellipsis. #werk-chat-tool-summary. */
 function label(block: any): string {
   const input = block.input ?? {}
-  if (block.name === 'Bash') return String(input.command ?? '').trim()
-  if (input.file_path) return `${block.name} ${input.file_path}`
-  if (input.pattern) return `${block.name} ${input.pattern}`
-  return `${block.name} ${JSON.stringify(input).slice(0, 200)}`
+  for (const key of ['command', 'file_path', 'path', 'pattern', 'url', 'query', 'description']) {
+    const v = input[key]
+    if (typeof v !== 'string') continue
+    const line = v.split('\n').find((l) => l.trim())?.trim()
+    if (!line) continue
+    const text = `${block.name} ${line}`
+    return text.length > 80 ? `${text.slice(0, 79)}\u2026` : text
+  }
+  return String(block.name ?? '')
 }
 
 /** #vi-home-howwhat: the page sends this in place of a card id when the home is open. */
@@ -1082,21 +1106,24 @@ function tag(id: string): string {
   return n ? `[still on #${id} — "${n.title}"]` : `[still on #${id}]`
 }
 
-/** A compact description of the open card, from the map itself. */
+/** A compact description of the open card, from the map itself. #werk-chat-card-block-layout:
+ *  one labelled line per fact, in a fixed order, and a fact the card lacks is left out. */
 function describe(id: string): string {
   if (id === HOME) return `[the map is now at ${HOME_LINE}]`
   const g = foldLog('chat pane: card line')
   const n = g.nodes.get(id)
-  if (!n) return `[the map is now at #${id}]`
+  // #werk-chat-unknown-card: the turn still goes out, and says the map holds no such card.
+  if (!n) return `[the map is now at #${id} \u2014 the map holds no card with this id]`
+  const named = (x: string) => `#${x} \u2014 ${g.nodes.get(x)?.title ?? ''}`
   const kids = g.edges.filter((e) => e.type === 'refines' && e.to === id).map((e) => e.from)
   const deps = g.edges.filter((e) => e.type === 'depends_on' && e.from === id).map((e) => e.to)
+  const status = n.proposed ? 'proposed' : n.status
   const lines = [
-    `[the map is now at #${id} — "${n.title}"`,
+    `[the map is now at #${id} \u2014 ${n.title}]`,
+    `kind: ${n.kind}${status ? ` \u00b7 status: ${status}` : ''}${n.who ? ` \u00b7 who: ${n.who}` : ''}`,
     n.why ? `why: ${n.why}` : '',
-    `kind: ${n.kind}${n.status ? ` · status: ${n.status}` : ''}${n.who ? ` · who: ${n.who}` : ''}${g.stale.has(id) ? ' · STALE' : ''}`,
-    kids.length ? `below: ${kids.join(', ')}` : '',
-    deps.length ? `depends_on: ${deps.join(', ')}` : '',
-    ']',
+    kids.length ? `children: ${kids.map(named).join('; ')}` : '',
+    deps.length ? `depends on: ${deps.map(named).join('; ')}` : '',
   ]
   return lines.filter(Boolean).join('\n')
 }

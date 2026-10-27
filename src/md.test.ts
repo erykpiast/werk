@@ -19,7 +19,7 @@ describe('mdInline: one line inside a link (#vi-onview-subcards)', () => {
   })
 
   test('an image renders as its alt text', () => {
-    expect(mdInline('![a chart](p.png)')).toBe('a chart')
+    expect(mdInline('![a chart](/p.png)')).toBe('a chart')
   })
 
   test('escapes HTML', () => {
@@ -29,9 +29,9 @@ describe('mdInline: one line inside a link (#vi-onview-subcards)', () => {
 
 describe('md: inline rules', () => {
   test('bold, italic, strike, mark, code, links and images', () => {
-    expect(md('**b** *i* ~~d~~ ==m== `c` [l](https://x.y) ![a](p.png)')).toBe(
+    expect(md('**b** *i* ~~d~~ ==m== `c` [l](https://x.y) ![a](/p.png)')).toBe(
       '<p><strong>b</strong> <em>i</em> <del>d</del> <mark>m</mark> <code>c</code> ' +
-        '<a href="https://x.y" target="_blank" rel="noreferrer">l</a> <img src="p.png" alt="a" loading="lazy"></p>',
+        '<a href="https://x.y" target="_blank" rel="noreferrer">l</a> <img src="/p.png" alt="a" loading="lazy"></p>',
     )
   })
 
