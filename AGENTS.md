@@ -4,9 +4,12 @@ This repository builds its own design tool. Use the tool while you build it.
 
 The instructions for any project that werk works on live in one file. werk adds that file to
 the system prompt of every agent it starts that can write to the map — see
-#werk-agent-instructions. Here, inside werk's own repository, it is imported:
+#agents-instructions. Here, inside werk's own repository, it is imported:
 
 @prompts/agent.md
+
+Read `prompts/agent.md` before writing or changing cards, even if your agent does not
+expand imports. It defines how to frame a decision and choose its parent (see #map-wording).
 
 ## Run it
 

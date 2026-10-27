@@ -109,8 +109,9 @@ A single-hop model check recovers only 6% to 11% of an invalidation chain. There
 to reconstruct these edges later. If a card is true only because another card is true, write
 the edge now, or staleness propagation is dead and the map rots into a pretty outline.
 
-`refines` is where a card **sits**. `depends_on` is what a card **needs**. They are different
-graphs over the same nodes. That is the whole point.
+`refines` means the child makes its parent's decision more specific. It also places the
+card in the tree. A shared topic alone does not justify this link.
+`depends_on` records what a card **needs**. These are different relations over the same cards.
 
 ## Record a rejected option the moment you weigh it
 
@@ -152,7 +153,7 @@ and say the result in the turn that proposes the card, not later.
 
 ## Review every card your change marks, in the same turn
 
-A reopen or an amend marks the next hop. See #vi-prop-auto-review. Before the turn ends, run
+A reopen or an amend marks the next hop. Before the turn ends, run
 `werk stale` and review each card that your change marked:
 
 1. Run `werk show <id>`. Read the card, the changed card, and the reason on each link between them.
@@ -181,6 +182,46 @@ A copy is a second source of truth. If the target changes, staleness propagation
 edge, not the prose — the body still reads as if the old decision holds. Example: a card
 repeats the count of tracker verbs that the card it depends on gives. That card later gets a
 seventh verb. The copy is now wrong, and no mark shows it.
+
+## Frame a decision before choosing its parent
+
+Every decision card states one choice. Its wording must allow a plausible alternative and a
+meaningful kill criterion: a condition that would cause someone to review that choice.
+A topic label, a description of a group, or a statement that rules apply is not a decision.
+Do not create such a card to make the tree look tidy.
+
+Check these points before adding a card or proposing new wording:
+
+1. **State the choice.** Name the behaviour, constraint, or approach the card selects.
+   If two parts can change independently, give them separate cards.
+2. **Identify a plausible alternative.** Explain what another choice would change and why
+   this choice fits the problem. Do not invent rejection history. Record an option as
+   rejected only when it was weighed and rejected. If no option was weighed, say so.
+3. **Define the review condition.** Name evidence, a manual test, or a changed constraint
+   that would make the choice worth reviewing. A value can change when the person's
+   priorities change. A numerical threshold is not required. Do not invent measurements
+   or use an empty condition to rescue a topic label. Record the criterion before deciding.
+4. **Choose a parent whose decision this card makes more specific.** Complete this sentence:
+   "The parent chooses X; this child specifies Y about that choice." A shared topic is
+   insufficient. If no decision fits, use the relevant structural root instead of adding
+   a group card. The fixed requirements and build-rules roots are structural exceptions.
+5. **Keep each decision distinct.** Merge a child that repeats its parent. Keep a detail in
+   the parent's body unless it makes a separate choice. Accept more siblings when that
+   preserves the choices. Check build scope after changing parents: moving a card can change
+   which decisions a build includes.
+
+Example:
+
+```text
+WRONG parent: The storage rules apply to every part of the product.
+RIGHT parent: The product stores all project data locally.
+      child:  The product stores each project's data in that project's folder.
+      alternative for the child: One shared local store holds every project's data.
+      review condition for the child: Moving a project leaves required data behind.
+```
+
+The alternative and review condition above illustrate the test. They do not record a
+decision for the current project.
 
 ## Write a card about its subject, at the level of the decision
 
