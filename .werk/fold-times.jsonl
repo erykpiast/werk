@@ -50028,3 +50028,2250 @@
 {"at":"2026-10-26T10:59:42.516Z","events":14024,"ms":89.8,"via":"/api/subtree/build"}
 {"at":"2026-10-26T10:59:45.008Z","events":14024,"ms":93.63,"via":"/api/subtree/build"}
 {"at":"2026-10-26T10:59:45.108Z","events":14024,"ms":91.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:12.170Z","events":14024,"ms":62.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:12.258Z","events":14024,"ms":75.43,"via":"/api/graph"}
+{"at":"2026-10-26T11:37:12.362Z","events":14024,"ms":81.55,"via":"/api/graph"}
+{"at":"2026-10-26T11:37:12.462Z","events":14024,"ms":82.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:12.553Z","events":14024,"ms":80.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:12.904Z","events":14024,"ms":72.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:12.977Z","events":14024,"ms":64.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:25.053Z","events":14024,"ms":85.16,"via":"chat pane: card line"}
+{"at":"2026-10-26T11:37:26.825Z","events":14024,"ms":70.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:26.894Z","events":14024,"ms":52.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:30.223Z","events":14024,"ms":65.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:30.304Z","events":14024,"ms":60.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:32.672Z","events":14024,"ms":91.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:32.753Z","events":14024,"ms":69.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:34.314Z","events":14024,"ms":48.19,"via":"chat pane: card line"}
+{"at":"2026-10-26T11:37:36.734Z","events":14024,"ms":55.84,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:36.803Z","events":14024,"ms":54.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:36.867Z","events":14024,"ms":53.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:48.315Z","events":14024,"ms":56.56,"via":"/api/graph"}
+{"at":"2026-10-26T11:37:48.445Z","events":14024,"ms":52.47,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:37:48.509Z","events":14024,"ms":53.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:38:29.229Z","events":14024,"ms":82.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:38:29.330Z","events":14024,"ms":84.91,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:38:43.194Z","events":14024,"ms":44.95,"via":"/api/graph"}
+{"at":"2026-10-26T11:38:43.303Z","events":14024,"ms":44.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:38:43.358Z","events":14024,"ms":46.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:39:01.282Z","events":14024,"ms":52.34,"via":"/api/graph"}
+{"at":"2026-10-26T11:39:01.378Z","events":14024,"ms":56.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:39:01.443Z","events":14024,"ms":55.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:39:29.473Z","events":14024,"ms":42.5,"via":"/api/graph"}
+{"at":"2026-10-26T11:39:29.597Z","events":14024,"ms":47.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:39:29.647Z","events":14024,"ms":41.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:39:34.413Z","events":14024,"ms":41.74,"via":"/api/graph"}
+{"at":"2026-10-26T11:39:34.504Z","events":14024,"ms":41.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:39:34.554Z","events":14024,"ms":41.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:41:14.756Z","events":14024,"ms":81.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:41:14.838Z","events":14024,"ms":54.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:41:14.904Z","events":14024,"ms":54.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:49:41.332Z","events":14024,"ms":84.83,"via":"/api/graph"}
+{"at":"2026-10-26T11:49:41.477Z","events":14024,"ms":80.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T11:49:41.569Z","events":14024,"ms":81.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:58:25.723Z","events":14024,"ms":83.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:58:25.812Z","events":14024,"ms":72.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:58:29.281Z","events":14024,"ms":84.8,"via":"werk show"}
+{"at":"2026-10-26T17:58:29.617Z","events":14024,"ms":79.92,"via":"werk show"}
+{"at":"2026-10-26T17:58:29.943Z","events":14024,"ms":79.71,"via":"werk show"}
+{"at":"2026-10-26T17:58:30.271Z","events":14024,"ms":78.97,"via":"werk show"}
+{"at":"2026-10-26T17:58:35.217Z","events":14024,"ms":82.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:58:35.295Z","events":14024,"ms":66.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:08.467Z","events":14024,"ms":81.87,"via":"werk show"}
+{"at":"2026-10-26T17:59:08.786Z","events":14024,"ms":81.58,"via":"werk show"}
+{"at":"2026-10-26T17:59:09.112Z","events":14024,"ms":80.86,"via":"werk show"}
+{"at":"2026-10-26T17:59:09.431Z","events":14024,"ms":81.28,"via":"werk show"}
+{"at":"2026-10-26T17:59:09.749Z","events":14024,"ms":80.37,"via":"werk show"}
+{"at":"2026-10-26T17:59:10.079Z","events":14024,"ms":80.6,"via":"werk show"}
+{"at":"2026-10-26T17:59:10.414Z","events":14024,"ms":80.42,"via":"werk show"}
+{"at":"2026-10-26T17:59:10.726Z","events":14024,"ms":79.68,"via":"werk show"}
+{"at":"2026-10-26T17:59:11.052Z","events":14024,"ms":80.86,"via":"werk show"}
+{"at":"2026-10-26T17:59:11.380Z","events":14024,"ms":83.63,"via":"werk show"}
+{"at":"2026-10-26T17:59:11.699Z","events":14024,"ms":81.6,"via":"werk show"}
+{"at":"2026-10-26T17:59:12.052Z","events":14024,"ms":113.85,"via":"werk show"}
+{"at":"2026-10-26T17:59:12.362Z","events":14024,"ms":82.24,"via":"werk show"}
+{"at":"2026-10-26T17:59:14.167Z","events":14024,"ms":98.33,"via":"werk show"}
+{"at":"2026-10-26T17:59:14.356Z","events":14024,"ms":67.13,"via":"/api/graph"}
+{"at":"2026-10-26T17:59:14.534Z","events":14024,"ms":101.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:14.577Z","events":14024,"ms":113.1,"via":"werk show"}
+{"at":"2026-10-26T17:59:14.634Z","events":14024,"ms":87.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:14.798Z","events":14024,"ms":112.34,"via":"werk show"}
+{"at":"2026-10-26T17:59:14.933Z","events":14024,"ms":90.75,"via":"werk show"}
+{"at":"2026-10-26T17:59:15.134Z","events":14024,"ms":91.35,"via":"werk show"}
+{"at":"2026-10-26T17:59:15.270Z","events":14024,"ms":84.23,"via":"werk show"}
+{"at":"2026-10-26T17:59:15.462Z","events":14024,"ms":88.88,"via":"werk show"}
+{"at":"2026-10-26T17:59:15.604Z","events":14024,"ms":87.19,"via":"werk show"}
+{"at":"2026-10-26T17:59:15.799Z","events":14024,"ms":87.74,"via":"werk show"}
+{"at":"2026-10-26T17:59:15.924Z","events":14024,"ms":83.11,"via":"werk show"}
+{"at":"2026-10-26T17:59:16.116Z","events":14024,"ms":87.99,"via":"werk show"}
+{"at":"2026-10-26T17:59:16.277Z","events":14024,"ms":103.38,"via":"werk show"}
+{"at":"2026-10-26T17:59:16.490Z","events":14024,"ms":106.62,"via":"werk show"}
+{"at":"2026-10-26T17:59:16.615Z","events":14024,"ms":82.41,"via":"werk show"}
+{"at":"2026-10-26T17:59:16.832Z","events":14024,"ms":112.11,"via":"werk show"}
+{"at":"2026-10-26T17:59:16.971Z","events":14024,"ms":100.95,"via":"werk show"}
+{"at":"2026-10-26T17:59:17.233Z","events":14024,"ms":94.03,"via":"werk show"}
+{"at":"2026-10-26T17:59:17.353Z","events":14024,"ms":106.37,"via":"werk show"}
+{"at":"2026-10-26T17:59:17.560Z","events":14024,"ms":87.34,"via":"werk show"}
+{"at":"2026-10-26T17:59:17.672Z","events":14024,"ms":82.52,"via":"werk show"}
+{"at":"2026-10-26T17:59:17.932Z","events":14024,"ms":132.1,"via":"werk show"}
+{"at":"2026-10-26T17:59:18.053Z","events":14024,"ms":82.98,"via":"werk show"}
+{"at":"2026-10-26T17:59:18.276Z","events":14024,"ms":100.43,"via":"werk show"}
+{"at":"2026-10-26T17:59:18.424Z","events":14024,"ms":91.25,"via":"werk show"}
+{"at":"2026-10-26T17:59:18.621Z","events":14024,"ms":90.25,"via":"werk show"}
+{"at":"2026-10-26T17:59:18.754Z","events":14024,"ms":87.89,"via":"werk show"}
+{"at":"2026-10-26T17:59:19.033Z","events":14024,"ms":130.19,"via":"werk show"}
+{"at":"2026-10-26T17:59:19.136Z","events":14024,"ms":84.54,"via":"werk show"}
+{"at":"2026-10-26T17:59:19.350Z","events":14024,"ms":84.48,"via":"werk show"}
+{"at":"2026-10-26T17:59:19.469Z","events":14024,"ms":85.62,"via":"werk show"}
+{"at":"2026-10-26T17:59:19.684Z","events":14024,"ms":94.12,"via":"werk show"}
+{"at":"2026-10-26T17:59:19.798Z","events":14024,"ms":83.87,"via":"werk show"}
+{"at":"2026-10-26T17:59:20.004Z","events":14024,"ms":87.49,"via":"werk show"}
+{"at":"2026-10-26T17:59:20.121Z","events":14024,"ms":86.8,"via":"werk show"}
+{"at":"2026-10-26T17:59:20.323Z","events":14024,"ms":88.95,"via":"werk show"}
+{"at":"2026-10-26T17:59:20.484Z","events":14024,"ms":94.02,"via":"werk show"}
+{"at":"2026-10-26T17:59:20.678Z","events":14024,"ms":92.53,"via":"werk show"}
+{"at":"2026-10-26T17:59:20.816Z","events":14024,"ms":85.32,"via":"werk show"}
+{"at":"2026-10-26T17:59:21.000Z","events":14024,"ms":89.18,"via":"werk show"}
+{"at":"2026-10-26T17:59:21.141Z","events":14024,"ms":83.38,"via":"werk show"}
+{"at":"2026-10-26T17:59:21.340Z","events":14024,"ms":99.3,"via":"werk show"}
+{"at":"2026-10-26T17:59:21.470Z","events":14024,"ms":83.21,"via":"werk show"}
+{"at":"2026-10-26T17:59:21.658Z","events":14024,"ms":88.84,"via":"werk show"}
+{"at":"2026-10-26T17:59:21.804Z","events":14024,"ms":94.51,"via":"werk show"}
+{"at":"2026-10-26T17:59:22.159Z","events":14024,"ms":81.23,"via":"werk show"}
+{"at":"2026-10-26T17:59:45.587Z","events":14024,"ms":66.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:45.672Z","events":14024,"ms":71.8,"via":"/api/graph"}
+{"at":"2026-10-26T17:59:45.767Z","events":14024,"ms":66.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:45.969Z","events":14024,"ms":69.85,"via":"/api/graph"}
+{"at":"2026-10-26T17:59:46.048Z","events":14024,"ms":63.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:46.123Z","events":14024,"ms":64.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:46.253Z","events":14024,"ms":62.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T17:59:46.325Z","events":14024,"ms":62.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:22.318Z","events":14024,"ms":77.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:22.413Z","events":14024,"ms":72.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:22.489Z","events":14024,"ms":63.53,"via":"/api/graph"}
+{"at":"2026-10-26T18:00:22.574Z","events":14024,"ms":60.36,"via":"/api/graph"}
+{"at":"2026-10-26T18:00:22.814Z","events":14024,"ms":70.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:22.890Z","events":14024,"ms":63.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:34.556Z","events":14024,"ms":92.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:34.677Z","events":14024,"ms":100.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:34.772Z","events":14024,"ms":83.84,"via":"/api/graph"}
+{"at":"2026-10-26T18:00:34.891Z","events":14024,"ms":81.36,"via":"/api/graph"}
+{"at":"2026-10-26T18:00:35.093Z","events":14024,"ms":73.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:35.177Z","events":14024,"ms":72.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:35.274Z","events":14024,"ms":80.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:35.355Z","events":14024,"ms":71.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:54.254Z","events":14024,"ms":94.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:54.365Z","events":14024,"ms":90.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:54.449Z","events":14024,"ms":73.03,"via":"/api/graph"}
+{"at":"2026-10-26T18:00:54.554Z","events":14024,"ms":72.09,"via":"/api/graph"}
+{"at":"2026-10-26T18:00:54.776Z","events":14024,"ms":72.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:00:54.858Z","events":14024,"ms":72.42,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:21.258Z","events":14024,"ms":86.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:21.373Z","events":14024,"ms":91.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:21.475Z","events":14024,"ms":91.74,"via":"/api/graph"}
+{"at":"2026-10-26T18:01:21.574Z","events":14024,"ms":71.34,"via":"/api/graph"}
+{"at":"2026-10-26T18:01:21.816Z","events":14024,"ms":72.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:21.902Z","events":14024,"ms":75.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:27.910Z","events":14024,"ms":78.82,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:28.002Z","events":14024,"ms":73.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:28.085Z","events":14024,"ms":71.97,"via":"/api/graph"}
+{"at":"2026-10-26T18:01:28.189Z","events":14024,"ms":73.4,"via":"/api/graph"}
+{"at":"2026-10-26T18:01:28.830Z","events":14024,"ms":75.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:28.915Z","events":14024,"ms":75.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:33.808Z","events":14024,"ms":72.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:38.808Z","events":14024,"ms":75.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:43.805Z","events":14024,"ms":71.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:48.803Z","events":14024,"ms":69.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:53.814Z","events":14024,"ms":76.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:01:58.812Z","events":14024,"ms":78.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:02:03.767Z","events":14024,"ms":70.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:02:08.832Z","events":14024,"ms":92.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:02:13.807Z","events":14024,"ms":79.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:02:18.782Z","events":14024,"ms":76.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:02:23.802Z","events":14024,"ms":80.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:02:55.838Z","events":14024,"ms":77.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:03:30.259Z","events":14024,"ms":84.02,"via":"/api/graph"}
+{"at":"2026-10-26T18:03:30.391Z","events":14024,"ms":84.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:03:30.488Z","events":14024,"ms":85.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:03:55.888Z","events":14024,"ms":109.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:04:55.850Z","events":14024,"ms":91.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:05:55.964Z","events":14024,"ms":97.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:06:55.778Z","events":14024,"ms":89.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:07:56.007Z","events":14024,"ms":130.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:08:40.611Z","events":14024,"ms":344.66,"via":"/api/graph"}
+{"at":"2026-10-26T18:08:43.248Z","events":14024,"ms":155.2,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:08:43.414Z","events":14024,"ms":145.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:08:55.931Z","events":14024,"ms":139.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:09:55.990Z","events":14024,"ms":193.29,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:10:55.896Z","events":14024,"ms":114.68,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:11:55.525Z","events":14024,"ms":98.58,"via":"/api/graph"}
+{"at":"2026-10-26T18:11:55.793Z","events":14024,"ms":218.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:11:56.293Z","events":14024,"ms":440.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:11:56.448Z","events":14024,"ms":125.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:11:57.655Z","events":14024,"ms":87.46,"via":"werk show"}
+{"at":"2026-10-26T18:11:58.000Z","events":14024,"ms":94.15,"via":"werk show"}
+{"at":"2026-10-26T18:11:58.321Z","events":14024,"ms":87.27,"via":"werk show"}
+{"at":"2026-10-26T18:11:58.643Z","events":14024,"ms":86.79,"via":"werk show"}
+{"at":"2026-10-26T18:11:58.993Z","events":14024,"ms":115.73,"via":"werk show"}
+{"at":"2026-10-26T18:11:59.322Z","events":14024,"ms":96.17,"via":"werk show"}
+{"at":"2026-10-26T18:11:59.680Z","events":14024,"ms":90.11,"via":"werk show"}
+{"at":"2026-10-26T18:12:55.881Z","events":14024,"ms":130.95,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:13:55.866Z","events":14024,"ms":105.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:14:55.895Z","events":14024,"ms":117.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:15:28.187Z","events":14024,"ms":113.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:15:28.306Z","events":14024,"ms":99.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:15:55.873Z","events":14024,"ms":103.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:47.351Z","events":14024,"ms":130.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:47.516Z","events":14024,"ms":124.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:47.622Z","events":14024,"ms":95.84,"via":"/api/graph"}
+{"at":"2026-10-26T18:16:47.893Z","events":14024,"ms":103.07,"via":"/api/graph"}
+{"at":"2026-10-26T18:16:48.004Z","events":14024,"ms":89.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:48.105Z","events":14024,"ms":92.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:48.268Z","events":14024,"ms":95.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:48.396Z","events":14024,"ms":100.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:48.495Z","events":14024,"ms":89.15,"via":"/api/graph"}
+{"at":"2026-10-26T18:16:48.611Z","events":14024,"ms":92.3,"via":"/api/graph"}
+{"at":"2026-10-26T18:16:48.791Z","events":14024,"ms":89.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:48.895Z","events":14024,"ms":92.74,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:48.999Z","events":14024,"ms":89.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:49.096Z","events":14024,"ms":88.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:49.222Z","events":14024,"ms":88.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:49.321Z","events":14024,"ms":88.89,"via":"/api/graph"}
+{"at":"2026-10-26T18:16:49.430Z","events":14024,"ms":85.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:49.596Z","events":14024,"ms":90.42,"via":"/api/graph"}
+{"at":"2026-10-26T18:16:49.704Z","events":14024,"ms":89.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:49.805Z","events":14024,"ms":91.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:49.920Z","events":14024,"ms":99.83,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:50.024Z","events":14024,"ms":95.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:54.813Z","events":14024,"ms":90.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:16:59.786Z","events":14024,"ms":91.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:02.371Z","events":14024,"ms":105.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:02.501Z","events":14024,"ms":117.92,"via":"/api/graph"}
+{"at":"2026-10-26T18:17:02.624Z","events":14024,"ms":90.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:02.739Z","events":14024,"ms":96.46,"via":"/api/graph"}
+{"at":"2026-10-26T18:17:02.956Z","events":14024,"ms":90.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:03.058Z","events":14024,"ms":92.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:07.828Z","events":14024,"ms":91.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:12.815Z","events":14024,"ms":100.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:17.604Z","events":14024,"ms":86.96,"via":"werk show"}
+{"at":"2026-10-26T18:17:17.753Z","events":14024,"ms":96.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:22.874Z","events":14024,"ms":97.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:27.839Z","events":14024,"ms":102.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:32.829Z","events":14024,"ms":97.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:37.824Z","events":14024,"ms":102.47,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:42.876Z","events":14024,"ms":137.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:47.744Z","events":14024,"ms":87.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:52.819Z","events":14024,"ms":86.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:17:57.831Z","events":14024,"ms":94.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:02.835Z","events":14024,"ms":99.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:17.175Z","events":14024,"ms":81.92,"via":"werk show"}
+{"at":"2026-10-26T18:18:17.495Z","events":14024,"ms":81.55,"via":"werk show"}
+{"at":"2026-10-26T18:18:17.829Z","events":14024,"ms":84.21,"via":"werk show"}
+{"at":"2026-10-26T18:18:18.159Z","events":14024,"ms":82.88,"via":"werk show"}
+{"at":"2026-10-26T18:18:18.488Z","events":14024,"ms":87.37,"via":"werk show"}
+{"at":"2026-10-26T18:18:18.817Z","events":14024,"ms":82.45,"via":"werk show"}
+{"at":"2026-10-26T18:18:19.149Z","events":14024,"ms":82.66,"via":"werk show"}
+{"at":"2026-10-26T18:18:19.482Z","events":14024,"ms":81.05,"via":"werk show"}
+{"at":"2026-10-26T18:18:19.817Z","events":14024,"ms":82.6,"via":"werk show"}
+{"at":"2026-10-26T18:18:20.157Z","events":14024,"ms":85.01,"via":"werk show"}
+{"at":"2026-10-26T18:18:20.493Z","events":14024,"ms":82.36,"via":"werk show"}
+{"at":"2026-10-26T18:18:20.827Z","events":14024,"ms":82.67,"via":"werk show"}
+{"at":"2026-10-26T18:18:34.381Z","events":14024,"ms":91.14,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:34.543Z","events":14024,"ms":87.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:34.641Z","events":14024,"ms":89.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:39.119Z","events":14024,"ms":96.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:39.225Z","events":14024,"ms":93.31,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:39.333Z","events":14024,"ms":84.96,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:39.508Z","events":14024,"ms":84.62,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:39.612Z","events":14024,"ms":86.83,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:39.711Z","events":14024,"ms":87.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:39.866Z","events":14024,"ms":85.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:39.961Z","events":14024,"ms":86.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:44.828Z","events":14024,"ms":91.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:45.188Z","events":14024,"ms":99.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:45.287Z","events":14024,"ms":87.89,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:45.410Z","events":14024,"ms":87.25,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:45.506Z","events":14024,"ms":83.57,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:45.675Z","events":14024,"ms":84.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:45.828Z","events":14024,"ms":144,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:50.101Z","events":14024,"ms":93.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:50.214Z","events":14024,"ms":102.77,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:50.328Z","events":14024,"ms":88.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:50.424Z","events":14024,"ms":83.84,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:50.615Z","events":14024,"ms":89.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:50.713Z","events":14024,"ms":88.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:55.377Z","events":14024,"ms":93.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:55.485Z","events":14024,"ms":90.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:55.584Z","events":14024,"ms":89.68,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:55.727Z","events":14024,"ms":115.37,"via":"/api/graph"}
+{"at":"2026-10-26T18:18:55.920Z","events":14024,"ms":89.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:18:56.025Z","events":14024,"ms":96,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:00.850Z","events":14024,"ms":95.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:05.835Z","events":14024,"ms":93.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:10.830Z","events":14024,"ms":101.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:11.125Z","events":14024,"ms":92.83,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:11.227Z","events":14024,"ms":91.12,"via":"/api/graph"}
+{"at":"2026-10-26T18:19:11.346Z","events":14024,"ms":88.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:11.456Z","events":14024,"ms":90.19,"via":"/api/graph"}
+{"at":"2026-10-26T18:19:11.676Z","events":14024,"ms":83.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:11.771Z","events":14024,"ms":86.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:11.876Z","events":14024,"ms":87.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:11.975Z","events":14024,"ms":89.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:16.873Z","events":14024,"ms":99.91,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:21.825Z","events":14024,"ms":87.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:24.275Z","events":14024,"ms":102.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:24.386Z","events":14024,"ms":90,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:24.481Z","events":14024,"ms":85.2,"via":"/api/graph"}
+{"at":"2026-10-26T18:19:24.593Z","events":14024,"ms":85.92,"via":"/api/graph"}
+{"at":"2026-10-26T18:19:24.804Z","events":14024,"ms":85.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:24.901Z","events":14024,"ms":87.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:29.848Z","events":14024,"ms":94.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:34.818Z","events":14024,"ms":86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:39.851Z","events":14024,"ms":95.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:44.816Z","events":14024,"ms":85.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:49.819Z","events":14024,"ms":86.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:54.805Z","events":14024,"ms":87.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:19:59.817Z","events":14024,"ms":88.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:20:04.751Z","events":14024,"ms":87.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:20:09.826Z","events":14024,"ms":86.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:20:14.805Z","events":14024,"ms":91.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:20:19.816Z","events":14024,"ms":88.42,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:20:24.831Z","events":14024,"ms":91.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:20:55.959Z","events":14024,"ms":164.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:21:55.852Z","events":14024,"ms":91.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:22:55.863Z","events":14024,"ms":98.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:23:55.894Z","events":14024,"ms":108.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:24:55.882Z","events":14024,"ms":98.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:25:35.686Z","events":14024,"ms":91.34,"via":"/api/graph"}
+{"at":"2026-10-26T18:25:35.861Z","events":14024,"ms":92.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:25:35.962Z","events":14024,"ms":90.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:25:41.229Z","events":14024,"ms":81.19,"via":"werk show"}
+{"at":"2026-10-26T18:25:41.562Z","events":14024,"ms":82.46,"via":"werk show"}
+{"at":"2026-10-26T18:25:41.894Z","events":14024,"ms":81.94,"via":"werk show"}
+{"at":"2026-10-26T18:25:42.220Z","events":14024,"ms":80.8,"via":"werk show"}
+{"at":"2026-10-26T18:25:42.582Z","events":14024,"ms":85.69,"via":"werk show"}
+{"at":"2026-10-26T18:25:42.969Z","events":14024,"ms":103.16,"via":"werk show"}
+{"at":"2026-10-26T18:25:55.861Z","events":14024,"ms":105.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:26:55.958Z","events":14024,"ms":111.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:27:55.905Z","events":14024,"ms":96.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:28:55.896Z","events":14024,"ms":99.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:29:04.806Z","events":14024,"ms":93.53,"via":"/api/graph"}
+{"at":"2026-10-26T18:29:04.966Z","events":14024,"ms":91.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:29:05.068Z","events":14024,"ms":93.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:29:06.100Z","events":14024,"ms":98.57,"via":"werk show"}
+{"at":"2026-10-26T18:29:06.412Z","events":14024,"ms":85.12,"via":"werk show"}
+{"at":"2026-10-26T18:29:06.747Z","events":14024,"ms":82.66,"via":"werk show"}
+{"at":"2026-10-26T18:29:07.073Z","events":14024,"ms":82.66,"via":"werk show"}
+{"at":"2026-10-26T18:29:07.399Z","events":14024,"ms":81.27,"via":"werk show"}
+{"at":"2026-10-26T18:29:55.875Z","events":14024,"ms":100.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:04.477Z","events":14024,"ms":104.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:04.588Z","events":14024,"ms":98.17,"via":"/api/graph"}
+{"at":"2026-10-26T18:30:04.712Z","events":14024,"ms":100.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:04.820Z","events":14024,"ms":86.96,"via":"/api/graph"}
+{"at":"2026-10-26T18:30:05.098Z","events":14024,"ms":96.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:05.209Z","events":14024,"ms":99.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:09.842Z","events":14024,"ms":94.42,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:14.833Z","events":14024,"ms":92.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:19.782Z","events":14024,"ms":95.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:24.825Z","events":14024,"ms":88.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:29.848Z","events":14024,"ms":97.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:34.862Z","events":14024,"ms":101.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:39.839Z","events":14024,"ms":99.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:44.813Z","events":14024,"ms":91.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:49.828Z","events":14024,"ms":93.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:54.830Z","events":14024,"ms":91.63,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:30:59.836Z","events":14024,"ms":92.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:31:04.821Z","events":14024,"ms":88.47,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:31:39.257Z","events":14024,"ms":85.69,"via":"werk find"}
+{"at":"2026-10-26T18:31:39.602Z","events":14024,"ms":86.26,"via":"werk find"}
+{"at":"2026-10-26T18:31:39.701Z","events":14024,"ms":78.36,"via":"werk find"}
+{"at":"2026-10-26T18:31:55.878Z","events":14024,"ms":104.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:32:55.880Z","events":14024,"ms":99.84,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:33:55.883Z","events":14024,"ms":100.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:34:55.918Z","events":14024,"ms":111.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:35:55.898Z","events":14024,"ms":106.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:36:56.007Z","events":14024,"ms":199.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:37:19.989Z","events":14024,"ms":112.13,"via":"/api/graph"}
+{"at":"2026-10-26T18:37:20.166Z","events":14024,"ms":99.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:37:20.275Z","events":14024,"ms":97.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:47:26.513Z","events":14024,"ms":65.95,"via":"/api/graph"}
+{"at":"2026-10-26T18:47:41.517Z","events":14024,"ms":71.29,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:47:41.575Z","events":14024,"ms":47.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:46.122Z","events":14024,"ms":69.91,"via":"/api/change/accept"}
+{"at":"2026-10-26T18:48:46.305Z","events":14025,"ms":49.94,"via":"/api/graph"}
+{"at":"2026-10-26T18:48:46.379Z","events":14025,"ms":52.92,"via":"/api/graph"}
+{"at":"2026-10-26T18:48:46.456Z","events":14025,"ms":53.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:46.517Z","events":14025,"ms":47.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:46.572Z","events":14025,"ms":46.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:46.636Z","events":14025,"ms":46.54,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:46.699Z","events":14025,"ms":49.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:46.755Z","events":14025,"ms":46.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:49.824Z","events":14025,"ms":65.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:49.907Z","events":14025,"ms":73.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:55.160Z","events":14025,"ms":69.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:48:55.225Z","events":14025,"ms":54.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:49:20.103Z","events":14025,"ms":82.65,"via":"werk show"}
+{"at":"2026-10-26T18:49:20.422Z","events":14025,"ms":80.5,"via":"werk show"}
+{"at":"2026-10-26T18:49:20.754Z","events":14025,"ms":81.15,"via":"werk show"}
+{"at":"2026-10-26T18:49:21.081Z","events":14025,"ms":81.23,"via":"werk show"}
+{"at":"2026-10-26T18:49:21.411Z","events":14025,"ms":81.34,"via":"werk show"}
+{"at":"2026-10-26T18:49:21.744Z","events":14025,"ms":82.39,"via":"werk show"}
+{"at":"2026-10-26T18:49:22.070Z","events":14025,"ms":81.72,"via":"werk show"}
+{"at":"2026-10-26T18:49:22.400Z","events":14025,"ms":82.01,"via":"werk show"}
+{"at":"2026-10-26T18:49:22.732Z","events":14025,"ms":82.71,"via":"werk show"}
+{"at":"2026-10-26T18:49:23.060Z","events":14025,"ms":82.38,"via":"werk show"}
+{"at":"2026-10-26T18:49:23.407Z","events":14025,"ms":103.39,"via":"werk show"}
+{"at":"2026-10-26T18:49:23.715Z","events":14025,"ms":83.05,"via":"werk show"}
+{"at":"2026-10-26T18:49:24.016Z","events":14025,"ms":82.51,"via":"werk show"}
+{"at":"2026-10-26T18:49:24.343Z","events":14025,"ms":81.41,"via":"werk show"}
+{"at":"2026-10-26T18:49:24.669Z","events":14025,"ms":81.65,"via":"werk show"}
+{"at":"2026-10-26T18:49:24.994Z","events":14025,"ms":82.07,"via":"werk show"}
+{"at":"2026-10-26T18:49:25.319Z","events":14025,"ms":81.41,"via":"werk show"}
+{"at":"2026-10-26T18:49:25.656Z","events":14025,"ms":83.25,"via":"werk show"}
+{"at":"2026-10-26T18:49:25.967Z","events":14025,"ms":82.53,"via":"werk show"}
+{"at":"2026-10-26T18:49:26.281Z","events":14025,"ms":81.05,"via":"werk show"}
+{"at":"2026-10-26T18:49:26.615Z","events":14025,"ms":84.58,"via":"werk show"}
+{"at":"2026-10-26T18:49:26.949Z","events":14025,"ms":82.24,"via":"werk show"}
+{"at":"2026-10-26T18:49:27.276Z","events":14025,"ms":80.14,"via":"werk show"}
+{"at":"2026-10-26T18:49:27.591Z","events":14025,"ms":80.55,"via":"werk show"}
+{"at":"2026-10-26T18:49:27.915Z","events":14025,"ms":81.42,"via":"werk show"}
+{"at":"2026-10-26T18:49:28.244Z","events":14025,"ms":80.41,"via":"werk show"}
+{"at":"2026-10-26T18:49:28.578Z","events":14025,"ms":80.91,"via":"werk show"}
+{"at":"2026-10-26T18:49:28.911Z","events":14025,"ms":79.78,"via":"werk show"}
+{"at":"2026-10-26T18:49:29.239Z","events":14025,"ms":80.71,"via":"werk show"}
+{"at":"2026-10-26T18:49:29.561Z","events":14025,"ms":85.16,"via":"werk show"}
+{"at":"2026-10-26T18:49:29.876Z","events":14025,"ms":81.79,"via":"werk show"}
+{"at":"2026-10-26T18:49:30.193Z","events":14025,"ms":81.52,"via":"werk show"}
+{"at":"2026-10-26T18:49:30.527Z","events":14025,"ms":83.95,"via":"werk show"}
+{"at":"2026-10-26T18:49:30.862Z","events":14025,"ms":85.77,"via":"werk show"}
+{"at":"2026-10-26T18:49:31.190Z","events":14025,"ms":81.32,"via":"werk show"}
+{"at":"2026-10-26T18:49:31.523Z","events":14025,"ms":82.55,"via":"werk show"}
+{"at":"2026-10-26T18:49:31.829Z","events":14025,"ms":86.43,"via":"werk show"}
+{"at":"2026-10-26T18:49:32.158Z","events":14025,"ms":83.66,"via":"werk show"}
+{"at":"2026-10-26T18:49:32.473Z","events":14025,"ms":81.76,"via":"werk show"}
+{"at":"2026-10-26T18:49:32.798Z","events":14025,"ms":82.22,"via":"werk show"}
+{"at":"2026-10-26T18:49:33.125Z","events":14025,"ms":81.7,"via":"werk show"}
+{"at":"2026-10-26T18:49:33.454Z","events":14025,"ms":81.66,"via":"werk show"}
+{"at":"2026-10-26T18:49:33.783Z","events":14025,"ms":81.78,"via":"werk show"}
+{"at":"2026-10-26T18:49:34.116Z","events":14025,"ms":82.86,"via":"werk show"}
+{"at":"2026-10-26T18:49:34.449Z","events":14025,"ms":82.52,"via":"werk show"}
+{"at":"2026-10-26T18:49:34.780Z","events":14025,"ms":81.88,"via":"werk show"}
+{"at":"2026-10-26T18:49:35.109Z","events":14025,"ms":80.27,"via":"werk show"}
+{"at":"2026-10-26T18:49:35.470Z","events":14025,"ms":86.85,"via":"werk show"}
+{"at":"2026-10-26T18:49:35.778Z","events":14025,"ms":84.73,"via":"werk show"}
+{"at":"2026-10-26T18:49:36.084Z","events":14025,"ms":83.54,"via":"werk show"}
+{"at":"2026-10-26T18:49:39.996Z","events":14025,"ms":72.91,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:49:40.076Z","events":14025,"ms":66.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:49:52.850Z","events":14025,"ms":82.25,"via":"werk show"}
+{"at":"2026-10-26T18:49:53.189Z","events":14025,"ms":84.93,"via":"werk show"}
+{"at":"2026-10-26T18:49:53.529Z","events":14025,"ms":90.03,"via":"werk show"}
+{"at":"2026-10-26T18:49:53.836Z","events":14025,"ms":83.52,"via":"werk show"}
+{"at":"2026-10-26T18:49:54.140Z","events":14025,"ms":81.11,"via":"werk show"}
+{"at":"2026-10-26T18:49:54.462Z","events":14025,"ms":82.03,"via":"werk show"}
+{"at":"2026-10-26T18:49:54.793Z","events":14025,"ms":82.6,"via":"werk show"}
+{"at":"2026-10-26T18:49:55.118Z","events":14025,"ms":81.61,"via":"werk show"}
+{"at":"2026-10-26T18:50:01.159Z","events":14025,"ms":81.57,"via":"werk show"}
+{"at":"2026-10-26T18:50:13.483Z","events":14025,"ms":85.09,"via":"werk show"}
+{"at":"2026-10-26T18:50:13.829Z","events":14025,"ms":84.05,"via":"werk show"}
+{"at":"2026-10-26T18:50:14.185Z","events":14025,"ms":82.89,"via":"werk show"}
+{"at":"2026-10-26T18:50:18.034Z","events":14025,"ms":62.32,"via":"/api/change/accept"}
+{"at":"2026-10-26T18:50:18.187Z","events":14026,"ms":55.97,"via":"/api/graph"}
+{"at":"2026-10-26T18:50:18.264Z","events":14026,"ms":58.87,"via":"/api/graph"}
+{"at":"2026-10-26T18:50:18.340Z","events":14026,"ms":54.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:18.411Z","events":14026,"ms":57.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:18.476Z","events":14026,"ms":56.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:18.552Z","events":14026,"ms":57.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:18.625Z","events":14026,"ms":61.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:18.688Z","events":14026,"ms":54.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:21.555Z","events":14026,"ms":62.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:21.616Z","events":14026,"ms":53.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:27.709Z","events":14026,"ms":75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:27.773Z","events":14026,"ms":53.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:33.421Z","events":14026,"ms":83.41,"via":"werk show"}
+{"at":"2026-10-26T18:50:33.736Z","events":14026,"ms":83.13,"via":"werk show"}
+{"at":"2026-10-26T18:50:34.058Z","events":14026,"ms":82.38,"via":"werk show"}
+{"at":"2026-10-26T18:50:39.193Z","events":14026,"ms":64.33,"via":"/api/change/accept"}
+{"at":"2026-10-26T18:50:39.331Z","events":14027,"ms":55.32,"via":"/api/graph"}
+{"at":"2026-10-26T18:50:39.412Z","events":14027,"ms":60.01,"via":"/api/graph"}
+{"at":"2026-10-26T18:50:39.492Z","events":14027,"ms":59.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:39.554Z","events":14027,"ms":54.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:39.619Z","events":14027,"ms":52.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:39.682Z","events":14027,"ms":54.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:41.530Z","events":14027,"ms":78.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:50:41.598Z","events":14027,"ms":58.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:03.698Z","events":14027,"ms":72.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:03.764Z","events":14027,"ms":54.42,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:09.517Z","events":14027,"ms":59.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:09.580Z","events":14027,"ms":54.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:14.749Z","events":14027,"ms":70.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:14.827Z","events":14027,"ms":64.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:36.106Z","events":14027,"ms":54.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:36.168Z","events":14027,"ms":53.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:52.626Z","events":14027,"ms":69.68,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:52.693Z","events":14027,"ms":58.12,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:51:55.283Z","events":14027,"ms":81.29,"via":"werk show"}
+{"at":"2026-10-26T18:51:55.616Z","events":14027,"ms":83.11,"via":"werk show"}
+{"at":"2026-10-26T18:52:06.548Z","events":14027,"ms":79.99,"via":"chat pane: card line"}
+{"at":"2026-10-26T18:52:10.997Z","events":14027,"ms":53.13,"via":"werk status"}
+{"at":"2026-10-26T18:52:11.075Z","events":14027,"ms":68.94,"via":"werk status"}
+{"at":"2026-10-26T18:52:11.140Z","events":14027,"ms":50.31,"via":"werk status"}
+{"at":"2026-10-26T18:52:11.277Z","events":14028,"ms":55.69,"via":"/api/graph"}
+{"at":"2026-10-26T18:52:11.376Z","events":14028,"ms":60.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:11.394Z","events":14028,"ms":52.82,"via":"werk status"}
+{"at":"2026-10-26T18:52:11.451Z","events":14028,"ms":65.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:11.489Z","events":14028,"ms":85.09,"via":"werk status"}
+{"at":"2026-10-26T18:52:11.558Z","events":14028,"ms":57.42,"via":"werk status"}
+{"at":"2026-10-26T18:52:11.773Z","events":14028,"ms":52.26,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:11.857Z","events":14028,"ms":75.6,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:11.923Z","events":14028,"ms":55.79,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:12.047Z","events":14029,"ms":45.4,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:12.066Z","events":14029,"ms":61.78,"via":"/api/graph"}
+{"at":"2026-10-26T18:52:12.164Z","events":14029,"ms":66.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:12.238Z","events":14029,"ms":67.58,"via":"werk show"}
+{"at":"2026-10-26T18:52:12.249Z","events":14029,"ms":73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:15.062Z","events":14029,"ms":51.8,"via":"werk show"}
+{"at":"2026-10-26T18:52:15.216Z","events":14029,"ms":49.9,"via":"werk show"}
+{"at":"2026-10-26T18:52:20.374Z","events":14029,"ms":50.3,"via":"werk link"}
+{"at":"2026-10-26T18:52:20.454Z","events":14029,"ms":70.28,"via":"werk link"}
+{"at":"2026-10-26T18:52:20.510Z","events":14029,"ms":45.55,"via":"werk link"}
+{"at":"2026-10-26T18:52:20.565Z","events":14029,"ms":45.92,"via":"werk link"}
+{"at":"2026-10-26T18:52:20.697Z","events":14030,"ms":45.91,"via":"werk link"}
+{"at":"2026-10-26T18:52:20.749Z","events":14030,"ms":44.84,"via":"werk link"}
+{"at":"2026-10-26T18:52:20.917Z","events":14030,"ms":49.36,"via":"werk kill"}
+{"at":"2026-10-26T18:52:21.172Z","events":14031,"ms":49.27,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.248Z","events":14031,"ms":67.54,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.303Z","events":14031,"ms":45.76,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.435Z","events":14032,"ms":45.84,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.611Z","events":14032,"ms":51.25,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.691Z","events":14032,"ms":71.89,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.757Z","events":14032,"ms":56.42,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:21.885Z","events":14033,"ms":46.14,"via":"werk rederive"}
+{"at":"2026-10-26T18:52:22.057Z","events":14033,"ms":53.32,"via":"werk show"}
+{"at":"2026-10-26T18:52:22.211Z","events":14033,"ms":51.46,"via":"werk show"}
+{"at":"2026-10-26T18:52:24.210Z","events":14033,"ms":54.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.277Z","events":14033,"ms":57.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.352Z","events":14033,"ms":53.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.415Z","events":14033,"ms":55.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.486Z","events":14033,"ms":55.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.549Z","events":14033,"ms":53.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.620Z","events":14033,"ms":61.49,"via":"/api/graph"}
+{"at":"2026-10-26T18:52:24.714Z","events":14033,"ms":64.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.818Z","events":14033,"ms":70.63,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:24.880Z","events":14033,"ms":53.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:26.820Z","events":14033,"ms":59.59,"via":"/api/graph"}
+{"at":"2026-10-26T18:52:26.907Z","events":14033,"ms":52.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:26.967Z","events":14033,"ms":52.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:52:30.033Z","events":14033,"ms":82.67,"via":"werk show"}
+{"at":"2026-10-26T18:52:38.870Z","events":14033,"ms":77.72,"via":"/api/change/accept"}
+{"at":"2026-10-26T18:52:44.373Z","events":14033,"ms":82.15,"via":"werk show"}
+{"at":"2026-10-26T18:52:44.702Z","events":14033,"ms":80.48,"via":"werk show"}
+{"at":"2026-10-26T18:52:45.031Z","events":14033,"ms":81.65,"via":"werk show"}
+{"at":"2026-10-26T18:53:05.313Z","events":14033,"ms":65.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:05.377Z","events":14033,"ms":55.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:08.384Z","events":14033,"ms":71.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:08.444Z","events":14033,"ms":51.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:09.061Z","events":14033,"ms":73.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:09.123Z","events":14033,"ms":53.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:09.542Z","events":14033,"ms":76.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:09.609Z","events":14033,"ms":56.51,"via":"/api/subtree/build"}
+{"at":"2026-10-26T18:53:16.638Z","events":14033,"ms":68.4,"via":"/api/change/accept"}
+{"at":"2026-10-26T18:53:39.219Z","events":14033,"ms":77.38,"via":"chat pane: card line"}
+{"at":"2026-10-26T18:53:41.338Z","events":14033,"ms":49.73,"via":"werk show"}
+{"at":"2026-10-26T18:53:45.110Z","events":14033,"ms":54.93,"via":"werk show"}
+{"at":"2026-10-26T18:53:45.269Z","events":14033,"ms":49.1,"via":"werk show"}
+{"at":"2026-10-26T19:16:49.862Z","events":14033,"ms":53.13,"via":"werk kill"}
+{"at":"2026-10-26T19:16:50.061Z","events":14034,"ms":60.3,"via":"/api/graph"}
+{"at":"2026-10-26T19:16:50.166Z","events":14034,"ms":67.25,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:16:50.242Z","events":14034,"ms":66.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:16:53.799Z","events":14034,"ms":57,"via":"/api/graph"}
+{"at":"2026-10-26T19:16:53.892Z","events":14034,"ms":56.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:16:53.958Z","events":14034,"ms":58.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:22.824Z","events":14034,"ms":78.2,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:17:22.959Z","events":14035,"ms":52.8,"via":"/api/graph"}
+{"at":"2026-10-26T19:17:23.051Z","events":14035,"ms":59.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:23.120Z","events":14035,"ms":60.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:23.195Z","events":14035,"ms":62.56,"via":"/api/graph"}
+{"at":"2026-10-26T19:17:23.289Z","events":14035,"ms":60.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:23.356Z","events":14035,"ms":58.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:27.162Z","events":14035,"ms":67.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:27.224Z","events":14035,"ms":53.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:32.805Z","events":14035,"ms":81.84,"via":"werk show"}
+{"at":"2026-10-26T19:17:40.642Z","events":14035,"ms":64.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:40.703Z","events":14035,"ms":53.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:17:49.883Z","events":14035,"ms":78.98,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:17:54.709Z","events":14035,"ms":79.6,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:17:56.472Z","events":14035,"ms":50.52,"via":"werk show"}
+{"at":"2026-10-26T19:17:59.732Z","events":14035,"ms":51.26,"via":"werk kill"}
+{"at":"2026-10-26T19:17:59.868Z","events":14036,"ms":52.7,"via":"/api/graph"}
+{"at":"2026-10-26T19:17:59.964Z","events":14036,"ms":52.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:00.024Z","events":14036,"ms":52.47,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:03.321Z","events":14036,"ms":52.59,"via":"/api/graph"}
+{"at":"2026-10-26T19:18:03.408Z","events":14036,"ms":52.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:03.468Z","events":14036,"ms":52.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:06.375Z","events":14036,"ms":84.49,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:18:06.519Z","events":14037,"ms":55.69,"via":"/api/graph"}
+{"at":"2026-10-26T19:18:06.602Z","events":14037,"ms":61.77,"via":"/api/graph"}
+{"at":"2026-10-26T19:18:06.675Z","events":14037,"ms":58.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:06.779Z","events":14037,"ms":92.54,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:06.903Z","events":14037,"ms":106.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:07.001Z","events":14037,"ms":78.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:07.813Z","events":14037,"ms":75.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:07.883Z","events":14037,"ms":61.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:12.151Z","events":14037,"ms":81.84,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:12.241Z","events":14037,"ms":71.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:17.601Z","events":14037,"ms":79.9,"via":"werk show"}
+{"at":"2026-10-26T19:18:35.647Z","events":14037,"ms":63.55,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:18:37.247Z","events":14037,"ms":49.09,"via":"werk show"}
+{"at":"2026-10-26T19:18:39.894Z","events":14037,"ms":76.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:39.967Z","events":14037,"ms":62.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:43.916Z","events":14037,"ms":55.45,"via":"/api/graph"}
+{"at":"2026-10-26T19:18:44.013Z","events":14037,"ms":56.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:44.078Z","events":14037,"ms":57.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:55.138Z","events":14037,"ms":71.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:18:55.203Z","events":14037,"ms":56.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:17.898Z","events":14037,"ms":71.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:17.962Z","events":14037,"ms":55.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:20.655Z","events":14037,"ms":75.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:20.721Z","events":14037,"ms":56.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:21.938Z","events":14037,"ms":75.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:22.007Z","events":14037,"ms":60.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:25.087Z","events":14037,"ms":71.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:25.153Z","events":14037,"ms":57.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:32.639Z","events":14037,"ms":79.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:32.707Z","events":14037,"ms":58.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:40.331Z","events":14037,"ms":73.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:40.399Z","events":14037,"ms":59.47,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:47.549Z","events":14037,"ms":74.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:19:47.617Z","events":14037,"ms":59.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:06.536Z","events":14037,"ms":81.61,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:20:09.246Z","events":14037,"ms":55.97,"via":"werk show"}
+{"at":"2026-10-26T19:20:20.422Z","events":14037,"ms":52.29,"via":"werk show"}
+{"at":"2026-10-26T19:20:23.886Z","events":14037,"ms":51.92,"via":"werk status"}
+{"at":"2026-10-26T19:20:23.965Z","events":14037,"ms":68.81,"via":"werk status"}
+{"at":"2026-10-26T19:20:24.019Z","events":14037,"ms":44.06,"via":"werk status"}
+{"at":"2026-10-26T19:20:26.701Z","events":14037,"ms":50.35,"via":"werk kill"}
+{"at":"2026-10-26T19:20:26.847Z","events":14038,"ms":62.29,"via":"/api/graph"}
+{"at":"2026-10-26T19:20:26.963Z","events":14038,"ms":51.41,"via":"werk status"}
+{"at":"2026-10-26T19:20:26.963Z","events":14038,"ms":62.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:27.052Z","events":14038,"ms":80.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:27.065Z","events":14038,"ms":93.61,"via":"werk status"}
+{"at":"2026-10-26T19:20:27.120Z","events":14038,"ms":44.66,"via":"werk status"}
+{"at":"2026-10-26T19:20:27.304Z","events":14039,"ms":66.61,"via":"/api/graph"}
+{"at":"2026-10-26T19:20:27.403Z","events":14039,"ms":59.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:27.468Z","events":14039,"ms":56.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:31.651Z","events":14039,"ms":57.06,"via":"/api/graph"}
+{"at":"2026-10-26T19:20:31.749Z","events":14039,"ms":58.93,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:31.814Z","events":14039,"ms":56.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:20:37.955Z","events":14039,"ms":63.07,"via":"werk show"}
+{"at":"2026-10-26T19:21:37.670Z","events":14039,"ms":76.22,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:21:43.301Z","events":14039,"ms":79.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:21:43.387Z","events":14039,"ms":77.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:01.901Z","events":14039,"ms":55.32,"via":"/api/graph"}
+{"at":"2026-10-26T19:22:02.000Z","events":14039,"ms":57.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:02.066Z","events":14039,"ms":57.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:13.021Z","events":14039,"ms":79.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:13.090Z","events":14039,"ms":60.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:18.095Z","events":14039,"ms":74.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:18.160Z","events":14039,"ms":56.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:22:41.681Z","events":14039,"ms":80.13,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:22:46.292Z","events":14039,"ms":80.93,"via":"werk stale"}
+{"at":"2026-10-26T19:22:51.243Z","events":14039,"ms":79.98,"via":"werk stale"}
+{"at":"2026-10-26T19:22:51.844Z","events":14039,"ms":92.36,"via":"werk show"}
+{"at":"2026-10-26T19:22:55.698Z","events":14039,"ms":102.15,"via":"werk stale"}
+{"at":"2026-10-26T19:22:56.071Z","events":14039,"ms":82.27,"via":"werk show"}
+{"at":"2026-10-26T19:22:56.395Z","events":14039,"ms":80.8,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:56.491Z","events":14039,"ms":75.7,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:56.587Z","events":14039,"ms":77.56,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:56.968Z","events":14039,"ms":79.55,"via":"werk show"}
+{"at":"2026-10-26T19:22:57.292Z","events":14039,"ms":80.34,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:57.386Z","events":14039,"ms":76.83,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:57.482Z","events":14039,"ms":78.46,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:57.856Z","events":14039,"ms":80.06,"via":"werk show"}
+{"at":"2026-10-26T19:22:58.192Z","events":14039,"ms":80.86,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:58.287Z","events":14039,"ms":75.95,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:58.385Z","events":14039,"ms":79.09,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:58.750Z","events":14039,"ms":80.33,"via":"werk show"}
+{"at":"2026-10-26T19:22:59.087Z","events":14039,"ms":83.65,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:59.183Z","events":14039,"ms":75.88,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:59.284Z","events":14039,"ms":79.27,"via":"werk rederive"}
+{"at":"2026-10-26T19:22:59.661Z","events":14039,"ms":85,"via":"werk show"}
+{"at":"2026-10-26T19:23:00.000Z","events":14039,"ms":81.74,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:00.096Z","events":14039,"ms":76.84,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:00.194Z","events":14039,"ms":79,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:00.559Z","events":14039,"ms":80.09,"via":"werk show"}
+{"at":"2026-10-26T19:23:00.887Z","events":14039,"ms":81.01,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:00.981Z","events":14039,"ms":76.03,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:01.079Z","events":14039,"ms":79.6,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:01.451Z","events":14039,"ms":81.96,"via":"werk show"}
+{"at":"2026-10-26T19:23:01.782Z","events":14039,"ms":81.46,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:01.880Z","events":14039,"ms":78.03,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:01.978Z","events":14039,"ms":78.13,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:02.348Z","events":14039,"ms":80.19,"via":"werk show"}
+{"at":"2026-10-26T19:23:02.682Z","events":14039,"ms":81.14,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:02.777Z","events":14039,"ms":76.03,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:02.876Z","events":14039,"ms":79.23,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:03.245Z","events":14039,"ms":81.2,"via":"werk show"}
+{"at":"2026-10-26T19:23:03.574Z","events":14039,"ms":81.06,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:03.668Z","events":14039,"ms":76.6,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:03.766Z","events":14039,"ms":79.1,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:03.935Z","events":14040,"ms":59.79,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:03.959Z","events":14040,"ms":58.2,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:04.060Z","events":14040,"ms":61.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:04.128Z","events":14040,"ms":59.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:04.273Z","events":14040,"ms":83.45,"via":"werk show"}
+{"at":"2026-10-26T19:23:04.601Z","events":14040,"ms":82.23,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:04.707Z","events":14040,"ms":82.04,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:04.804Z","events":14040,"ms":79.21,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:05.149Z","events":14040,"ms":81.45,"via":"werk show"}
+{"at":"2026-10-26T19:23:05.530Z","events":14040,"ms":109.73,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:05.669Z","events":14040,"ms":113.27,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:05.802Z","events":14040,"ms":109.51,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:06.217Z","events":14040,"ms":84.31,"via":"werk show"}
+{"at":"2026-10-26T19:23:06.553Z","events":14040,"ms":84.73,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:06.649Z","events":14040,"ms":76.6,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:06.747Z","events":14040,"ms":78.79,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:07.117Z","events":14040,"ms":80.64,"via":"werk show"}
+{"at":"2026-10-26T19:23:07.447Z","events":14040,"ms":80.91,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:07.543Z","events":14040,"ms":76.67,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:07.640Z","events":14040,"ms":79.46,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:07.985Z","events":14040,"ms":82.23,"via":"werk show"}
+{"at":"2026-10-26T19:23:08.325Z","events":14040,"ms":80.72,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:08.421Z","events":14040,"ms":76.25,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:08.519Z","events":14040,"ms":78.54,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:08.870Z","events":14040,"ms":82.32,"via":"werk show"}
+{"at":"2026-10-26T19:23:09.184Z","events":14040,"ms":82.62,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:09.281Z","events":14040,"ms":76.77,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:09.381Z","events":14040,"ms":79.06,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:09.545Z","events":14041,"ms":56.4,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:09.577Z","events":14041,"ms":61.63,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:09.688Z","events":14041,"ms":73.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:09.768Z","events":14041,"ms":71.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:09.905Z","events":14041,"ms":90.7,"via":"werk show"}
+{"at":"2026-10-26T19:23:09.937Z","events":14041,"ms":61.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:10.006Z","events":14041,"ms":61.25,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:10.220Z","events":14041,"ms":85.18,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:10.319Z","events":14041,"ms":78.64,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:10.417Z","events":14041,"ms":79.19,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:10.792Z","events":14041,"ms":81.91,"via":"werk show"}
+{"at":"2026-10-26T19:23:11.118Z","events":14041,"ms":81.96,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:11.215Z","events":14041,"ms":78.29,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:11.314Z","events":14041,"ms":81,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:11.683Z","events":14041,"ms":80.13,"via":"werk show"}
+{"at":"2026-10-26T19:23:12.020Z","events":14041,"ms":80.83,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:12.115Z","events":14041,"ms":76.12,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:12.212Z","events":14041,"ms":78.78,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:12.584Z","events":14041,"ms":81.8,"via":"werk show"}
+{"at":"2026-10-26T19:23:12.911Z","events":14041,"ms":80.96,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:13.009Z","events":14041,"ms":77,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:13.107Z","events":14041,"ms":79.75,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:13.274Z","events":14042,"ms":56.36,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:13.298Z","events":14042,"ms":58.4,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:13.400Z","events":14042,"ms":61.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:13.472Z","events":14042,"ms":62.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:13.626Z","events":14042,"ms":85.07,"via":"werk show"}
+{"at":"2026-10-26T19:23:13.952Z","events":14042,"ms":82.18,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:14.144Z","events":14043,"ms":59.11,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:14.171Z","events":14043,"ms":81.53,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:14.240Z","events":14043,"ms":63.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:14.312Z","events":14043,"ms":63.08,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:14.383Z","events":14043,"ms":58.2,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:14.452Z","events":14043,"ms":60.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:14.507Z","events":14043,"ms":83.43,"via":"werk show"}
+{"at":"2026-10-26T19:23:14.854Z","events":14043,"ms":83.06,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:14.997Z","events":14043,"ms":94.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:15.002Z","events":14043,"ms":125.07,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:15.070Z","events":14043,"ms":62.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:15.083Z","events":14043,"ms":59.68,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:15.218Z","events":14044,"ms":40.07,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:15.262Z","events":14044,"ms":60.7,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:15.352Z","events":14044,"ms":60.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:15.427Z","events":14044,"ms":66.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:15.552Z","events":14044,"ms":83.42,"via":"werk show"}
+{"at":"2026-10-26T19:23:15.892Z","events":14044,"ms":84.63,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:15.990Z","events":14044,"ms":78.56,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:16.089Z","events":14044,"ms":80.97,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:16.462Z","events":14044,"ms":81.42,"via":"werk stale"}
+{"at":"2026-10-26T19:23:16.584Z","events":14044,"ms":63,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:16.654Z","events":14044,"ms":60.51,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:17.373Z","events":14044,"ms":77.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:17.444Z","events":14044,"ms":60.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:19.675Z","events":14044,"ms":82.37,"via":"werk stale"}
+{"at":"2026-10-26T19:23:20.027Z","events":14044,"ms":82.78,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:20.124Z","events":14044,"ms":76.72,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:20.229Z","events":14044,"ms":82.93,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:20.601Z","events":14044,"ms":81.79,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:20.696Z","events":14044,"ms":76.03,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:20.794Z","events":14044,"ms":79,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:21.166Z","events":14044,"ms":79.92,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:21.261Z","events":14044,"ms":76.33,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:21.360Z","events":14044,"ms":79.3,"via":"werk rederive"}
+{"at":"2026-10-26T19:23:27.480Z","events":14044,"ms":54.57,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:30.313Z","events":14044,"ms":76.22,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:23:30.454Z","events":14045,"ms":56.38,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:30.540Z","events":14045,"ms":58.77,"via":"/api/graph"}
+{"at":"2026-10-26T19:23:31.328Z","events":14045,"ms":67.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:23:31.411Z","events":14045,"ms":69.03,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:24:09.575Z","events":14045,"ms":64.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:24:09.640Z","events":14045,"ms":56.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:24:13.315Z","events":14045,"ms":78.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:24:13.379Z","events":14045,"ms":55.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:24:56.836Z","events":14045,"ms":77.76,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:25:04.347Z","events":14045,"ms":73.26,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:25:14.635Z","events":14045,"ms":70.66,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:25:17.641Z","events":14045,"ms":50.01,"via":"werk show"}
+{"at":"2026-10-26T19:25:23.203Z","events":14045,"ms":52.86,"via":"werk kill"}
+{"at":"2026-10-26T19:25:23.345Z","events":14046,"ms":56.98,"via":"/api/graph"}
+{"at":"2026-10-26T19:25:23.443Z","events":14046,"ms":59.96,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:23.480Z","events":14046,"ms":49.83,"via":"werk show"}
+{"at":"2026-10-26T19:25:23.516Z","events":14046,"ms":63.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:26.704Z","events":14046,"ms":54.58,"via":"/api/graph"}
+{"at":"2026-10-26T19:25:26.792Z","events":14046,"ms":53.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:26.856Z","events":14046,"ms":55.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:37.364Z","events":14046,"ms":79.23,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:25:37.506Z","events":14047,"ms":54.92,"via":"/api/graph"}
+{"at":"2026-10-26T19:25:37.586Z","events":14047,"ms":57.13,"via":"/api/graph"}
+{"at":"2026-10-26T19:25:37.663Z","events":14047,"ms":62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:37.734Z","events":14047,"ms":61.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:37.828Z","events":14047,"ms":82.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:37.902Z","events":14047,"ms":62.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:47.856Z","events":14047,"ms":67.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:47.925Z","events":14047,"ms":60.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:48.641Z","events":14047,"ms":82.62,"via":"werk show"}
+{"at":"2026-10-26T19:25:58.962Z","events":14047,"ms":61.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:25:59.026Z","events":14047,"ms":55.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:26:03.698Z","events":14047,"ms":81.15,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:26:03.835Z","events":14048,"ms":54.46,"via":"/api/graph"}
+{"at":"2026-10-26T19:26:03.923Z","events":14048,"ms":65.47,"via":"/api/graph"}
+{"at":"2026-10-26T19:26:29.236Z","events":14048,"ms":77.28,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:26:29.384Z","events":14049,"ms":55.96,"via":"/api/graph"}
+{"at":"2026-10-26T19:26:29.520Z","events":14049,"ms":56.53,"via":"/api/graph"}
+{"at":"2026-10-26T19:27:24.031Z","events":14049,"ms":82.19,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:27:26.882Z","events":14049,"ms":81.65,"via":"werk show"}
+{"at":"2026-10-26T19:27:27.223Z","events":14049,"ms":80.68,"via":"werk search"}
+{"at":"2026-10-26T19:27:30.525Z","events":14049,"ms":80.35,"via":"werk show"}
+{"at":"2026-10-26T19:27:30.882Z","events":14049,"ms":82.96,"via":"werk show"}
+{"at":"2026-10-26T19:27:36.752Z","events":14049,"ms":55.31,"via":"/api/graph"}
+{"at":"2026-10-26T19:28:26.734Z","events":14049,"ms":69.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:26.800Z","events":14049,"ms":55.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:34.004Z","events":14049,"ms":75.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:34.067Z","events":14049,"ms":53.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:40.099Z","events":14049,"ms":70.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:40.164Z","events":14049,"ms":56.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:52.154Z","events":14049,"ms":74.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:28:52.219Z","events":14049,"ms":56.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:10.511Z","events":14049,"ms":73.09,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:29:18.663Z","events":14049,"ms":62.96,"via":"/api/graph"}
+{"at":"2026-10-26T19:29:18.763Z","events":14049,"ms":56.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:18.827Z","events":14049,"ms":55.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:45.363Z","events":14049,"ms":77.36,"via":"/api/change/accept"}
+{"at":"2026-10-26T19:29:45.511Z","events":14051,"ms":56.18,"via":"/api/graph"}
+{"at":"2026-10-26T19:29:45.610Z","events":14051,"ms":61.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:45.678Z","events":14051,"ms":56.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:45.744Z","events":14051,"ms":55.3,"via":"/api/graph"}
+{"at":"2026-10-26T19:29:45.892Z","events":14051,"ms":107.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:45.998Z","events":14051,"ms":85.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:46.160Z","events":14051,"ms":65.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:46.234Z","events":14051,"ms":64.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:49.663Z","events":14051,"ms":69.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:49.731Z","events":14051,"ms":57.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:53.372Z","events":14051,"ms":68.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:53.442Z","events":14051,"ms":58.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:55.234Z","events":14051,"ms":69.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:55.300Z","events":14051,"ms":56.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:56.423Z","events":14051,"ms":82.64,"via":"werk show"}
+{"at":"2026-10-26T19:29:56.516Z","events":14051,"ms":61.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:56.584Z","events":14051,"ms":59.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:56.748Z","events":14051,"ms":81.96,"via":"werk show"}
+{"at":"2026-10-26T19:29:59.502Z","events":14051,"ms":71.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:29:59.567Z","events":14051,"ms":56.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:30:01.087Z","events":14051,"ms":73.63,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:30:01.150Z","events":14051,"ms":54.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:30:21.680Z","events":14051,"ms":63.96,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:30:25.341Z","events":14051,"ms":88.83,"via":"werk show"}
+{"at":"2026-10-26T19:30:25.679Z","events":14051,"ms":83.12,"via":"werk show"}
+{"at":"2026-10-26T19:30:26.012Z","events":14051,"ms":81.79,"via":"werk show"}
+{"at":"2026-10-26T19:30:37.001Z","events":14051,"ms":54.24,"via":"/api/graph"}
+{"at":"2026-10-26T19:30:37.117Z","events":14051,"ms":52.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:30:37.181Z","events":14051,"ms":56.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:34:01.233Z","events":14051,"ms":69.29,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:34:10.570Z","events":14051,"ms":83.57,"via":"chat pane: card line"}
+{"at":"2026-10-26T19:37:18.957Z","events":14051,"ms":59.42,"via":"/api/graph"}
+{"at":"2026-10-26T19:37:19.111Z","events":14051,"ms":90.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:37:19.195Z","events":14051,"ms":70.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:37:22.412Z","events":14051,"ms":87.26,"via":"werk status"}
+{"at":"2026-10-26T19:37:22.510Z","events":14051,"ms":76.5,"via":"werk status"}
+{"at":"2026-10-26T19:37:22.610Z","events":14051,"ms":78.89,"via":"werk status"}
+{"at":"2026-10-26T19:37:22.980Z","events":14051,"ms":81.53,"via":"werk status"}
+{"at":"2026-10-26T19:37:23.076Z","events":14051,"ms":76.74,"via":"werk status"}
+{"at":"2026-10-26T19:37:23.175Z","events":14051,"ms":79.47,"via":"werk status"}
+{"at":"2026-10-26T19:37:23.553Z","events":14051,"ms":82.39,"via":"werk status"}
+{"at":"2026-10-26T19:37:23.649Z","events":14051,"ms":76.61,"via":"werk status"}
+{"at":"2026-10-26T19:37:23.748Z","events":14051,"ms":80.07,"via":"werk status"}
+{"at":"2026-10-26T19:37:24.122Z","events":14051,"ms":83.09,"via":"werk status"}
+{"at":"2026-10-26T19:37:24.218Z","events":14051,"ms":77.47,"via":"werk status"}
+{"at":"2026-10-26T19:37:24.316Z","events":14051,"ms":79.35,"via":"werk status"}
+{"at":"2026-10-26T19:37:27.948Z","events":14051,"ms":82.48,"via":"werk status"}
+{"at":"2026-10-26T19:37:28.048Z","events":14051,"ms":77,"via":"werk status"}
+{"at":"2026-10-26T19:37:28.147Z","events":14051,"ms":79.12,"via":"werk status"}
+{"at":"2026-10-26T19:37:28.521Z","events":14051,"ms":80.62,"via":"werk show"}
+{"at":"2026-10-26T19:37:28.861Z","events":14051,"ms":82.64,"via":"werk show"}
+{"at":"2026-10-26T19:37:29.190Z","events":14051,"ms":82.56,"via":"werk show"}
+{"at":"2026-10-26T19:37:29.520Z","events":14051,"ms":81.34,"via":"werk show"}
+{"at":"2026-10-26T19:46:26.332Z","events":14051,"ms":74.18,"via":"/api/graph"}
+{"at":"2026-10-26T19:46:26.490Z","events":14051,"ms":57.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T19:46:26.561Z","events":14051,"ms":61.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:07.015Z","events":14051,"ms":88.43,"via":"werk kill"}
+{"at":"2026-10-26T22:03:07.234Z","events":14052,"ms":79.95,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:07.360Z","events":14052,"ms":82.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:07.467Z","events":14052,"ms":92.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:07.572Z","events":14052,"ms":102.63,"via":"werk status"}
+{"at":"2026-10-26T22:03:07.678Z","events":14052,"ms":84.29,"via":"werk status"}
+{"at":"2026-10-26T22:03:07.762Z","events":14052,"ms":63.81,"via":"werk status"}
+{"at":"2026-10-26T22:03:07.969Z","events":14053,"ms":73.56,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:08.096Z","events":14053,"ms":74.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:08.177Z","events":14053,"ms":63.63,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:08.224Z","events":14053,"ms":87.95,"via":"werk kill"}
+{"at":"2026-10-26T22:03:08.252Z","events":14053,"ms":66.74,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:08.423Z","events":14054,"ms":62.3,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:08.521Z","events":14054,"ms":63.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:08.614Z","events":14054,"ms":80.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:08.705Z","events":14054,"ms":86.85,"via":"werk status"}
+{"at":"2026-10-26T22:03:08.806Z","events":14054,"ms":81.14,"via":"werk status"}
+{"at":"2026-10-26T22:03:08.905Z","events":14054,"ms":80.34,"via":"werk status"}
+{"at":"2026-10-26T22:03:09.240Z","events":14054,"ms":89.64,"via":"werk kill"}
+{"at":"2026-10-26T22:03:09.440Z","events":14055,"ms":64.9,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:09.544Z","events":14055,"ms":74.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:09.628Z","events":14055,"ms":74.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:09.715Z","events":14055,"ms":88.65,"via":"werk status"}
+{"at":"2026-10-26T22:03:09.815Z","events":14055,"ms":80.79,"via":"werk status"}
+{"at":"2026-10-26T22:03:09.915Z","events":14055,"ms":80.97,"via":"werk status"}
+{"at":"2026-10-26T22:03:10.261Z","events":14055,"ms":88.75,"via":"werk kill"}
+{"at":"2026-10-26T22:03:10.470Z","events":14056,"ms":71.28,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:10.577Z","events":14056,"ms":71.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:10.665Z","events":14056,"ms":77.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:10.800Z","events":14056,"ms":86.13,"via":"werk status"}
+{"at":"2026-10-26T22:03:10.902Z","events":14056,"ms":79.6,"via":"werk status"}
+{"at":"2026-10-26T22:03:11.009Z","events":14056,"ms":85.64,"via":"werk status"}
+{"at":"2026-10-26T22:03:11.315Z","events":14057,"ms":171.48,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:11.948Z","events":14057,"ms":452.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:12.106Z","events":14057,"ms":126.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:12.162Z","events":14057,"ms":141.27,"via":"werk show"}
+{"at":"2026-10-26T22:03:12.202Z","events":14057,"ms":65.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:12.539Z","events":14057,"ms":97.02,"via":"werk show"}
+{"at":"2026-10-26T22:03:12.888Z","events":14057,"ms":97.51,"via":"werk show"}
+{"at":"2026-10-26T22:03:13.236Z","events":14057,"ms":93.26,"via":"werk show"}
+{"at":"2026-10-26T22:03:20.991Z","events":14057,"ms":97.2,"via":"werk link"}
+{"at":"2026-10-26T22:03:21.098Z","events":14057,"ms":85.4,"via":"werk link"}
+{"at":"2026-10-26T22:03:21.202Z","events":14057,"ms":85.88,"via":"werk link"}
+{"at":"2026-10-26T22:03:21.293Z","events":14057,"ms":72.96,"via":"werk link"}
+{"at":"2026-10-26T22:03:21.652Z","events":14057,"ms":127.13,"via":"werk add"}
+{"at":"2026-10-26T22:03:21.866Z","events":14057,"ms":155.33,"via":"werk show"}
+{"at":"2026-10-26T22:03:21.882Z","events":14058,"ms":84.88,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:21.973Z","events":14058,"ms":61.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:22.044Z","events":14058,"ms":61.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:22.192Z","events":14058,"ms":83.18,"via":"werk link"}
+{"at":"2026-10-26T22:03:22.288Z","events":14058,"ms":76.03,"via":"werk link"}
+{"at":"2026-10-26T22:03:22.308Z","events":14058,"ms":83.79,"via":"werk show"}
+{"at":"2026-10-26T22:03:22.443Z","events":14059,"ms":54.82,"via":"werk link"}
+{"at":"2026-10-26T22:03:22.480Z","events":14059,"ms":57.56,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:22.517Z","events":14059,"ms":57.14,"via":"werk link"}
+{"at":"2026-10-26T22:03:22.574Z","events":14059,"ms":62.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:22.654Z","events":14059,"ms":69.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:22.838Z","events":14059,"ms":83.06,"via":"werk status"}
+{"at":"2026-10-26T22:03:22.934Z","events":14059,"ms":77.21,"via":"werk status"}
+{"at":"2026-10-26T22:03:23.032Z","events":14059,"ms":79.42,"via":"werk status"}
+{"at":"2026-10-26T22:03:23.374Z","events":14059,"ms":80.41,"via":"werk status"}
+{"at":"2026-10-26T22:03:23.466Z","events":14059,"ms":73.18,"via":"werk status"}
+{"at":"2026-10-26T22:03:23.521Z","events":14059,"ms":38.21,"via":"werk status"}
+{"at":"2026-10-26T22:03:23.865Z","events":14059,"ms":81.09,"via":"werk show"}
+{"at":"2026-10-26T22:03:24.186Z","events":14059,"ms":80.16,"via":"werk show"}
+{"at":"2026-10-26T22:03:24.509Z","events":14059,"ms":80.74,"via":"werk show"}
+{"at":"2026-10-26T22:03:24.843Z","events":14059,"ms":80.63,"via":"werk show"}
+{"at":"2026-10-26T22:03:27.960Z","events":14059,"ms":84.06,"via":"werk edit"}
+{"at":"2026-10-26T22:03:28.058Z","events":14059,"ms":77.45,"via":"werk edit"}
+{"at":"2026-10-26T22:03:28.157Z","events":14059,"ms":79.76,"via":"werk edit"}
+{"at":"2026-10-26T22:03:28.352Z","events":14060,"ms":59.72,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:28.459Z","events":14060,"ms":75.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:28.556Z","events":14060,"ms":83.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:28.673Z","events":14060,"ms":104.43,"via":"werk status"}
+{"at":"2026-10-26T22:03:28.792Z","events":14060,"ms":92.85,"via":"werk status"}
+{"at":"2026-10-26T22:03:28.854Z","events":14060,"ms":41.4,"via":"werk status"}
+{"at":"2026-10-26T22:03:29.049Z","events":14061,"ms":62.62,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:29.146Z","events":14061,"ms":59.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:29.216Z","events":14061,"ms":56.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:29.285Z","events":14061,"ms":60.95,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:30.772Z","events":14061,"ms":79.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:30.849Z","events":14061,"ms":67.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:33.514Z","events":14061,"ms":56.09,"via":"/api/graph"}
+{"at":"2026-10-26T22:03:33.609Z","events":14061,"ms":61.74,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:03:33.678Z","events":14061,"ms":60.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:09.005Z","events":14061,"ms":80.42,"via":"werk show"}
+{"at":"2026-10-26T22:04:25.574Z","events":14061,"ms":76.9,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:04:25.717Z","events":14062,"ms":53.92,"via":"/api/graph"}
+{"at":"2026-10-26T22:04:25.800Z","events":14062,"ms":61.77,"via":"/api/graph"}
+{"at":"2026-10-26T22:04:26.615Z","events":14062,"ms":70.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:26.680Z","events":14062,"ms":56.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:30.379Z","events":14062,"ms":100.93,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:04:32.872Z","events":14062,"ms":85.6,"via":"werk status"}
+{"at":"2026-10-26T22:04:32.970Z","events":14062,"ms":79.13,"via":"werk status"}
+{"at":"2026-10-26T22:04:33.072Z","events":14062,"ms":80.77,"via":"werk status"}
+{"at":"2026-10-26T22:04:33.416Z","events":14062,"ms":80.48,"via":"werk show"}
+{"at":"2026-10-26T22:04:36.314Z","events":14062,"ms":94.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:36.407Z","events":14062,"ms":82.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:36.903Z","events":14062,"ms":80.46,"via":"werk edit"}
+{"at":"2026-10-26T22:04:36.997Z","events":14062,"ms":76.33,"via":"werk edit"}
+{"at":"2026-10-26T22:04:37.093Z","events":14062,"ms":78.17,"via":"werk edit"}
+{"at":"2026-10-26T22:04:37.307Z","events":14063,"ms":80.99,"via":"/api/graph"}
+{"at":"2026-10-26T22:04:37.420Z","events":14063,"ms":82.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:37.511Z","events":14063,"ms":81.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:37.513Z","events":14063,"ms":84.44,"via":"werk status"}
+{"at":"2026-10-26T22:04:37.612Z","events":14063,"ms":79.98,"via":"werk status"}
+{"at":"2026-10-26T22:04:37.710Z","events":14063,"ms":78.24,"via":"werk status"}
+{"at":"2026-10-26T22:04:37.926Z","events":14064,"ms":83.01,"via":"/api/graph"}
+{"at":"2026-10-26T22:04:38.033Z","events":14064,"ms":77.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:38.118Z","events":14064,"ms":74.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:38.201Z","events":14064,"ms":74.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:40.398Z","events":14064,"ms":75.25,"via":"/api/graph"}
+{"at":"2026-10-26T22:04:40.508Z","events":14064,"ms":78.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:40.591Z","events":14064,"ms":76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:42.891Z","events":14064,"ms":94.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:42.973Z","events":14064,"ms":74.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:04:47.765Z","events":14064,"ms":82.21,"via":"werk show"}
+{"at":"2026-10-26T22:05:04.618Z","events":14064,"ms":76.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:05:04.701Z","events":14064,"ms":74.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:06:04.726Z","events":14064,"ms":97.91,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:06:12.931Z","events":14064,"ms":72.15,"via":"/api/graph"}
+{"at":"2026-10-26T22:06:13.047Z","events":14064,"ms":75.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:06:13.129Z","events":14064,"ms":73.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:06:26.991Z","events":14064,"ms":117.13,"via":"/api/node/remove"}
+{"at":"2026-10-26T22:06:28.783Z","events":14065,"ms":113.28,"via":"/api/graph"}
+{"at":"2026-10-26T22:06:28.887Z","events":14065,"ms":82.4,"via":"/api/graph"}
+{"at":"2026-10-26T22:06:31.126Z","events":14065,"ms":95.91,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:06:31.211Z","events":14065,"ms":76.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:08:40.850Z","events":14065,"ms":87.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:08:40.935Z","events":14065,"ms":72.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:09:33.683Z","events":14065,"ms":101.22,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:09:38.391Z","events":14065,"ms":88.09,"via":"werk show"}
+{"at":"2026-10-26T22:09:38.735Z","events":14065,"ms":80.95,"via":"werk show"}
+{"at":"2026-10-26T22:09:41.571Z","events":14065,"ms":79.62,"via":"werk show"}
+{"at":"2026-10-26T22:09:41.900Z","events":14065,"ms":79.47,"via":"werk show"}
+{"at":"2026-10-26T22:10:02.100Z","events":14065,"ms":81.37,"via":"werk propose"}
+{"at":"2026-10-26T22:10:02.198Z","events":14065,"ms":74.85,"via":"werk propose"}
+{"at":"2026-10-26T22:10:02.293Z","events":14065,"ms":77.48,"via":"werk propose"}
+{"at":"2026-10-26T22:10:02.363Z","events":14065,"ms":52.1,"via":"werk propose"}
+{"at":"2026-10-26T22:10:02.507Z","events":14066,"ms":36.7,"via":"werk propose"}
+{"at":"2026-10-26T22:10:02.573Z","events":14066,"ms":77.35,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:02.687Z","events":14066,"ms":76.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:02.768Z","events":14066,"ms":72.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:07.473Z","events":14066,"ms":82.48,"via":"werk discard"}
+{"at":"2026-10-26T22:10:07.789Z","events":14066,"ms":81.81,"via":"werk link"}
+{"at":"2026-10-26T22:10:07.885Z","events":14066,"ms":75.6,"via":"werk link"}
+{"at":"2026-10-26T22:10:07.983Z","events":14066,"ms":77.86,"via":"werk link"}
+{"at":"2026-10-26T22:10:08.054Z","events":14066,"ms":53.96,"via":"werk link"}
+{"at":"2026-10-26T22:10:08.211Z","events":14067,"ms":36.37,"via":"werk link"}
+{"at":"2026-10-26T22:10:08.262Z","events":14067,"ms":76.88,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:08.271Z","events":14067,"ms":41.06,"via":"werk link"}
+{"at":"2026-10-26T22:10:08.376Z","events":14067,"ms":76.34,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:08.458Z","events":14067,"ms":73.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:08.572Z","events":14067,"ms":78.03,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:08.595Z","events":14067,"ms":82.59,"via":"werk unlink"}
+{"at":"2026-10-26T22:10:08.691Z","events":14067,"ms":77.14,"via":"werk unlink"}
+{"at":"2026-10-26T22:10:08.786Z","events":14067,"ms":77.12,"via":"werk unlink"}
+{"at":"2026-10-26T22:10:08.854Z","events":14067,"ms":51.89,"via":"werk unlink"}
+{"at":"2026-10-26T22:10:09.019Z","events":14068,"ms":53.66,"via":"werk unlink"}
+{"at":"2026-10-26T22:10:09.063Z","events":14068,"ms":76.83,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:09.076Z","events":14068,"ms":38.58,"via":"werk unlink"}
+{"at":"2026-10-26T22:10:09.165Z","events":14068,"ms":77.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:09.252Z","events":14068,"ms":75.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:09.341Z","events":14068,"ms":80.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:09.400Z","events":14068,"ms":82.28,"via":"werk show"}
+{"at":"2026-10-26T22:10:09.724Z","events":14068,"ms":80.47,"via":"werk show"}
+{"at":"2026-10-26T22:10:15.324Z","events":14068,"ms":86.97,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:15.442Z","events":14068,"ms":85.83,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:15.526Z","events":14068,"ms":76.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:19.319Z","events":14068,"ms":95.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:19.408Z","events":14068,"ms":80.03,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:20.697Z","events":14068,"ms":82.67,"via":"werk show"}
+{"at":"2026-10-26T22:10:21.032Z","events":14068,"ms":80.13,"via":"werk show"}
+{"at":"2026-10-26T22:10:21.367Z","events":14068,"ms":81.25,"via":"werk show"}
+{"at":"2026-10-26T22:10:24.770Z","events":14068,"ms":74.09,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:10:24.946Z","events":14069,"ms":72.94,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:25.055Z","events":14069,"ms":78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:25.163Z","events":14069,"ms":97.54,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:25.341Z","events":14069,"ms":143.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:25.450Z","events":14069,"ms":82.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:25.534Z","events":14069,"ms":74.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:25.619Z","events":14069,"ms":71.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:25.698Z","events":14069,"ms":71.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:30.278Z","events":14069,"ms":76.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:30.359Z","events":14069,"ms":72.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:35.369Z","events":14069,"ms":83.07,"via":"werk show"}
+{"at":"2026-10-26T22:10:39.803Z","events":14069,"ms":82.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:39.884Z","events":14069,"ms":70.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:41.984Z","events":14069,"ms":93.95,"via":"/api/node/remove"}
+{"at":"2026-10-26T22:10:43.292Z","events":14071,"ms":75.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:43.376Z","events":14071,"ms":74.21,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:43.473Z","events":14071,"ms":77.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:43.557Z","events":14071,"ms":75.29,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:43.637Z","events":14071,"ms":71.51,"via":"/api/graph"}
+{"at":"2026-10-26T22:10:43.743Z","events":14071,"ms":71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:43.829Z","events":14071,"ms":74.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:43.908Z","events":14071,"ms":69.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:43.987Z","events":14071,"ms":70.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:44.604Z","events":14071,"ms":87.82,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:44.682Z","events":14071,"ms":70.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:46.345Z","events":14071,"ms":90.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:46.424Z","events":14071,"ms":70.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:54.443Z","events":14071,"ms":85.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:54.520Z","events":14071,"ms":68.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:55.871Z","events":14071,"ms":86.84,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:10:55.947Z","events":14071,"ms":68.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:07.124Z","events":14071,"ms":86.14,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:11:10.748Z","events":14071,"ms":69.71,"via":"/api/graph"}
+{"at":"2026-10-26T22:11:10.868Z","events":14071,"ms":68.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:10.943Z","events":14071,"ms":68.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:36.380Z","events":14071,"ms":93.12,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:36.468Z","events":14071,"ms":79.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:37.670Z","events":14071,"ms":95.46,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:37.748Z","events":14071,"ms":70.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:40.336Z","events":14071,"ms":101.04,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:11:42.530Z","events":14071,"ms":81.77,"via":"werk show"}
+{"at":"2026-10-26T22:11:42.871Z","events":14071,"ms":80.41,"via":"werk show"}
+{"at":"2026-10-26T22:11:43.204Z","events":14071,"ms":80.74,"via":"werk show"}
+{"at":"2026-10-26T22:11:46.003Z","events":14071,"ms":80.08,"via":"werk rederive"}
+{"at":"2026-10-26T22:11:46.100Z","events":14071,"ms":78.7,"via":"werk rederive"}
+{"at":"2026-10-26T22:11:46.196Z","events":14071,"ms":78.28,"via":"werk rederive"}
+{"at":"2026-10-26T22:11:46.362Z","events":14072,"ms":53.87,"via":"werk rederive"}
+{"at":"2026-10-26T22:11:46.399Z","events":14072,"ms":70.47,"via":"/api/graph"}
+{"at":"2026-10-26T22:11:46.510Z","events":14072,"ms":71.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:46.594Z","events":14072,"ms":72.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:46.679Z","events":14072,"ms":75.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:46.687Z","events":14072,"ms":85.14,"via":"werk show"}
+{"at":"2026-10-26T22:11:48.989Z","events":14072,"ms":83.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:49.071Z","events":14072,"ms":72.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:49.153Z","events":14072,"ms":70.59,"via":"/api/graph"}
+{"at":"2026-10-26T22:11:49.260Z","events":14072,"ms":75.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:11:49.339Z","events":14072,"ms":70.82,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:08.303Z","events":14072,"ms":87.47,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:12:11.296Z","events":14072,"ms":82.99,"via":"werk stale"}
+{"at":"2026-10-26T22:12:11.640Z","events":14072,"ms":80.98,"via":"werk show"}
+{"at":"2026-10-26T22:12:15.203Z","events":14072,"ms":82.38,"via":"werk stale"}
+{"at":"2026-10-26T22:12:15.555Z","events":14072,"ms":81.58,"via":"werk stale"}
+{"at":"2026-10-26T22:12:15.898Z","events":14072,"ms":83.27,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:15.995Z","events":14072,"ms":76.64,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:16.094Z","events":14072,"ms":77.97,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:16.472Z","events":14072,"ms":81.76,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:16.566Z","events":14072,"ms":76.26,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:16.666Z","events":14072,"ms":79.14,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:17.036Z","events":14072,"ms":80.74,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:17.131Z","events":14072,"ms":75.49,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:17.227Z","events":14072,"ms":78.19,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:17.595Z","events":14072,"ms":80,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:17.690Z","events":14072,"ms":75.85,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:17.786Z","events":14072,"ms":78.46,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:18.162Z","events":14072,"ms":81.28,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:18.256Z","events":14072,"ms":75.74,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:18.352Z","events":14072,"ms":78.8,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:18.722Z","events":14072,"ms":82.25,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:18.817Z","events":14072,"ms":75.93,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:18.916Z","events":14072,"ms":78.27,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:19.291Z","events":14072,"ms":81.63,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:19.386Z","events":14072,"ms":76.9,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:19.482Z","events":14072,"ms":79.64,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:19.858Z","events":14072,"ms":84.04,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:19.954Z","events":14072,"ms":77.74,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:20.026Z","events":14072,"ms":55.23,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:20.396Z","events":14072,"ms":81.27,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:20.491Z","events":14072,"ms":76.27,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:20.587Z","events":14072,"ms":78.55,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:20.929Z","events":14072,"ms":81.38,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:21.023Z","events":14072,"ms":76.42,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:21.119Z","events":14072,"ms":78.4,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:21.490Z","events":14072,"ms":83.05,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:21.585Z","events":14072,"ms":75.82,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:21.687Z","events":14072,"ms":79.4,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:22.056Z","events":14072,"ms":81.53,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:22.150Z","events":14072,"ms":76.53,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:22.245Z","events":14072,"ms":77.83,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:22.592Z","events":14072,"ms":81.74,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:22.689Z","events":14072,"ms":76.5,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:22.789Z","events":14072,"ms":80.93,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:23.126Z","events":14072,"ms":81.16,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:23.222Z","events":14072,"ms":76.42,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:23.318Z","events":14072,"ms":78.85,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:23.688Z","events":14072,"ms":80.91,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:23.784Z","events":14072,"ms":77.4,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:23.882Z","events":14072,"ms":79.26,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:24.258Z","events":14072,"ms":80.99,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:24.353Z","events":14072,"ms":76.15,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:24.450Z","events":14072,"ms":79.57,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:24.826Z","events":14072,"ms":82.38,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:24.921Z","events":14072,"ms":76.29,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:25.018Z","events":14072,"ms":79.11,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:27.988Z","events":14072,"ms":82.38,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:28.085Z","events":14072,"ms":76.55,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:28.182Z","events":14072,"ms":78.68,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:31.864Z","events":14072,"ms":81.68,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:32.069Z","events":14073,"ms":70.48,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:32.089Z","events":14073,"ms":82.96,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:32.180Z","events":14073,"ms":72.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:32.261Z","events":14073,"ms":72.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:32.413Z","events":14073,"ms":84.06,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:32.586Z","events":14074,"ms":36.54,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:32.619Z","events":14074,"ms":72.1,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:32.729Z","events":14074,"ms":75.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:32.808Z","events":14074,"ms":71.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:36.034Z","events":14074,"ms":85.45,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:36.209Z","events":14075,"ms":37.55,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:36.239Z","events":14075,"ms":70.89,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:36.342Z","events":14075,"ms":72.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:36.426Z","events":14075,"ms":76.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:36.538Z","events":14075,"ms":81.39,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:36.741Z","events":14076,"ms":70.47,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:36.757Z","events":14076,"ms":82.28,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:36.847Z","events":14076,"ms":72.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:36.927Z","events":14076,"ms":71.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:37.076Z","events":14076,"ms":81.3,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:37.279Z","events":14077,"ms":70.94,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:37.293Z","events":14077,"ms":81.79,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:37.385Z","events":14077,"ms":72.47,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:37.465Z","events":14077,"ms":71.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:37.611Z","events":14077,"ms":81.16,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:37.815Z","events":14078,"ms":71.63,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:37.828Z","events":14078,"ms":82.42,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:37.923Z","events":14078,"ms":71.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:38.008Z","events":14078,"ms":75.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:38.147Z","events":14078,"ms":81.46,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:38.350Z","events":14079,"ms":70.61,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:38.368Z","events":14079,"ms":88.23,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:38.458Z","events":14079,"ms":77.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:38.538Z","events":14079,"ms":72.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:38.686Z","events":14079,"ms":81.59,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:38.895Z","events":14080,"ms":71.32,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:38.909Z","events":14080,"ms":81.88,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:39.001Z","events":14080,"ms":70.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:39.085Z","events":14080,"ms":75.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:39.230Z","events":14080,"ms":82.21,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:39.436Z","events":14081,"ms":71.89,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:39.451Z","events":14081,"ms":84.97,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:39.539Z","events":14081,"ms":70.72,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:39.620Z","events":14081,"ms":73.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:39.772Z","events":14081,"ms":82.9,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:39.976Z","events":14082,"ms":69.81,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:39.990Z","events":14082,"ms":85.76,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:40.085Z","events":14082,"ms":70.93,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:40.166Z","events":14082,"ms":73.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:40.312Z","events":14082,"ms":83.19,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:40.517Z","events":14083,"ms":71.42,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:40.528Z","events":14083,"ms":83.32,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:40.620Z","events":14083,"ms":71.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:40.701Z","events":14083,"ms":72.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:40.848Z","events":14083,"ms":81.95,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:41.053Z","events":14084,"ms":71.89,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:41.062Z","events":14084,"ms":81.94,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:41.160Z","events":14084,"ms":76.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:41.242Z","events":14084,"ms":72.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:41.384Z","events":14084,"ms":82.22,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:41.591Z","events":14085,"ms":73.51,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:41.604Z","events":14085,"ms":87.79,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:41.700Z","events":14085,"ms":75.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:41.782Z","events":14085,"ms":73.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:41.926Z","events":14085,"ms":82.24,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:42.132Z","events":14086,"ms":73.07,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:42.150Z","events":14086,"ms":90.94,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:42.245Z","events":14086,"ms":72.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:42.327Z","events":14086,"ms":73.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:42.477Z","events":14086,"ms":83.15,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:42.681Z","events":14087,"ms":72.11,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:42.693Z","events":14087,"ms":83.48,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:42.785Z","events":14087,"ms":72.95,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:42.865Z","events":14087,"ms":71.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:43.014Z","events":14087,"ms":82.57,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:43.217Z","events":14088,"ms":71.44,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:43.234Z","events":14088,"ms":84.29,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:43.324Z","events":14088,"ms":71.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:43.404Z","events":14088,"ms":72.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:43.558Z","events":14088,"ms":82.42,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:43.764Z","events":14089,"ms":73.18,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:43.775Z","events":14089,"ms":84.96,"via":"werk rederive"}
+{"at":"2026-10-26T22:12:43.869Z","events":14089,"ms":74.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:43.948Z","events":14089,"ms":71.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:44.101Z","events":14089,"ms":81.15,"via":"werk stale"}
+{"at":"2026-10-26T22:12:48.251Z","events":14089,"ms":70.78,"via":"/api/graph"}
+{"at":"2026-10-26T22:12:48.367Z","events":14089,"ms":77.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:48.448Z","events":14089,"ms":72.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:58.953Z","events":14089,"ms":81.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:12:59.037Z","events":14089,"ms":73.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:02.304Z","events":14089,"ms":90.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:02.383Z","events":14089,"ms":70.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:03.961Z","events":14089,"ms":87.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:04.039Z","events":14089,"ms":68.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:24.273Z","events":14089,"ms":85.71,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:13:27.408Z","events":14089,"ms":83,"via":"werk show"}
+{"at":"2026-10-26T22:13:27.776Z","events":14089,"ms":95.6,"via":"werk rederive"}
+{"at":"2026-10-26T22:13:27.958Z","events":14090,"ms":38.46,"via":"werk rederive"}
+{"at":"2026-10-26T22:13:27.983Z","events":14090,"ms":74.21,"via":"/api/graph"}
+{"at":"2026-10-26T22:13:28.092Z","events":14090,"ms":74.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:28.181Z","events":14090,"ms":78.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:28.301Z","events":14090,"ms":84.85,"via":"werk show"}
+{"at":"2026-10-26T22:13:28.468Z","events":14090,"ms":74.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:28.550Z","events":14090,"ms":74.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:31.359Z","events":14090,"ms":70.16,"via":"/api/graph"}
+{"at":"2026-10-26T22:13:31.477Z","events":14090,"ms":79.51,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:13:31.556Z","events":14090,"ms":71.25,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:12.721Z","events":14090,"ms":87.63,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:14:14.610Z","events":14090,"ms":81.69,"via":"werk show"}
+{"at":"2026-10-26T22:14:25.559Z","events":14090,"ms":81.86,"via":"werk rederive"}
+{"at":"2026-10-26T22:14:25.767Z","events":14091,"ms":70.73,"via":"/api/graph"}
+{"at":"2026-10-26T22:14:25.785Z","events":14091,"ms":83.59,"via":"werk rederive"}
+{"at":"2026-10-26T22:14:25.878Z","events":14091,"ms":72.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:25.958Z","events":14091,"ms":72.42,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:41.869Z","events":14091,"ms":83.74,"via":"werk propose"}
+{"at":"2026-10-26T22:14:41.965Z","events":14091,"ms":76.13,"via":"werk propose"}
+{"at":"2026-10-26T22:14:42.063Z","events":14091,"ms":77.99,"via":"werk propose"}
+{"at":"2026-10-26T22:14:42.134Z","events":14091,"ms":53.21,"via":"werk propose"}
+{"at":"2026-10-26T22:14:42.282Z","events":14092,"ms":36.27,"via":"werk propose"}
+{"at":"2026-10-26T22:14:42.337Z","events":14092,"ms":70.67,"via":"/api/graph"}
+{"at":"2026-10-26T22:14:42.443Z","events":14092,"ms":73.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:42.526Z","events":14092,"ms":74.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:42.612Z","events":14092,"ms":82.69,"via":"werk add"}
+{"at":"2026-10-26T22:14:42.816Z","events":14093,"ms":71.05,"via":"/api/graph"}
+{"at":"2026-10-26T22:14:42.920Z","events":14093,"ms":72.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:43.002Z","events":14093,"ms":74.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:43.057Z","events":14093,"ms":82.64,"via":"werk link"}
+{"at":"2026-10-26T22:14:43.157Z","events":14093,"ms":81.36,"via":"werk link"}
+{"at":"2026-10-26T22:14:43.346Z","events":14094,"ms":53.06,"via":"werk link"}
+{"at":"2026-10-26T22:14:43.362Z","events":14094,"ms":71.41,"via":"/api/graph"}
+{"at":"2026-10-26T22:14:43.429Z","events":14094,"ms":66.28,"via":"werk link"}
+{"at":"2026-10-26T22:14:43.482Z","events":14094,"ms":79.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:43.577Z","events":14094,"ms":83.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:47.831Z","events":14094,"ms":68.93,"via":"/api/graph"}
+{"at":"2026-10-26T22:14:47.931Z","events":14094,"ms":69.51,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:48.008Z","events":14094,"ms":69.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:14:48.546Z","events":14094,"ms":77.94,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:15:06.076Z","events":14094,"ms":106.8,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:15:09.314Z","events":14094,"ms":82.2,"via":"werk kill"}
+{"at":"2026-10-26T22:15:09.517Z","events":14095,"ms":70.87,"via":"/api/graph"}
+{"at":"2026-10-26T22:15:09.620Z","events":14095,"ms":69.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:09.706Z","events":14095,"ms":75.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:09.764Z","events":14095,"ms":85.74,"via":"werk show"}
+{"at":"2026-10-26T22:15:12.729Z","events":14095,"ms":69.29,"via":"/api/graph"}
+{"at":"2026-10-26T22:15:12.837Z","events":14095,"ms":74.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:12.916Z","events":14095,"ms":71.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:28.819Z","events":14095,"ms":93.99,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:15:38.940Z","events":14095,"ms":91.04,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:15:43.079Z","events":14095,"ms":81.83,"via":"werk edit"}
+{"at":"2026-10-26T22:15:43.174Z","events":14095,"ms":76.33,"via":"werk edit"}
+{"at":"2026-10-26T22:15:43.272Z","events":14095,"ms":78.71,"via":"werk edit"}
+{"at":"2026-10-26T22:15:45.978Z","events":14095,"ms":84.48,"via":"werk propose"}
+{"at":"2026-10-26T22:15:46.073Z","events":14095,"ms":74.95,"via":"werk propose"}
+{"at":"2026-10-26T22:15:46.130Z","events":14095,"ms":39.11,"via":"werk propose"}
+{"at":"2026-10-26T22:15:49.917Z","events":14095,"ms":82.7,"via":"werk propose"}
+{"at":"2026-10-26T22:15:50.013Z","events":14095,"ms":76.42,"via":"werk propose"}
+{"at":"2026-10-26T22:15:50.111Z","events":14095,"ms":78.44,"via":"werk propose"}
+{"at":"2026-10-26T22:15:50.182Z","events":14095,"ms":52.41,"via":"werk propose"}
+{"at":"2026-10-26T22:15:50.332Z","events":14096,"ms":37.85,"via":"werk propose"}
+{"at":"2026-10-26T22:15:50.392Z","events":14096,"ms":72.64,"via":"/api/graph"}
+{"at":"2026-10-26T22:15:50.504Z","events":14096,"ms":72.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:50.586Z","events":14096,"ms":73.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:53.838Z","events":14096,"ms":85.8,"via":"/api/graph"}
+{"at":"2026-10-26T22:15:53.989Z","events":14096,"ms":85.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:15:54.082Z","events":14096,"ms":82.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:07.037Z","events":14096,"ms":97.51,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:16:14.314Z","events":14096,"ms":79.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:14.396Z","events":14096,"ms":70.81,"via":"/api/graph"}
+{"at":"2026-10-26T22:16:14.497Z","events":14096,"ms":72.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:14.579Z","events":14096,"ms":74.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:14.994Z","events":14096,"ms":72.54,"via":"/api/graph"}
+{"at":"2026-10-26T22:16:15.089Z","events":14096,"ms":72.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:15.167Z","events":14096,"ms":70.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:15.501Z","events":14096,"ms":84.84,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:16:27.266Z","events":14096,"ms":109.17,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:16:38.342Z","events":14096,"ms":81.54,"via":"werk propose"}
+{"at":"2026-10-26T22:16:38.439Z","events":14096,"ms":77.54,"via":"werk propose"}
+{"at":"2026-10-26T22:16:38.536Z","events":14096,"ms":78.58,"via":"werk propose"}
+{"at":"2026-10-26T22:16:38.611Z","events":14096,"ms":53.37,"via":"werk propose"}
+{"at":"2026-10-26T22:16:38.782Z","events":14097,"ms":55.91,"via":"werk propose"}
+{"at":"2026-10-26T22:16:38.824Z","events":14097,"ms":79.73,"via":"/api/graph"}
+{"at":"2026-10-26T22:16:38.940Z","events":14097,"ms":79.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:39.033Z","events":14097,"ms":84.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:42.535Z","events":14097,"ms":94.75,"via":"/api/graph"}
+{"at":"2026-10-26T22:16:42.661Z","events":14097,"ms":96.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:16:42.762Z","events":14097,"ms":89.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:08.443Z","events":14097,"ms":100.7,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:17:08.631Z","events":14098,"ms":77.19,"via":"/api/graph"}
+{"at":"2026-10-26T22:17:08.758Z","events":14098,"ms":84.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:08.848Z","events":14098,"ms":76.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:08.970Z","events":14098,"ms":114.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:09.072Z","events":14098,"ms":90.32,"via":"/api/graph"}
+{"at":"2026-10-26T22:17:09.178Z","events":14098,"ms":81.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:09.270Z","events":14098,"ms":78.74,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:09.361Z","events":14098,"ms":81.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:14.104Z","events":14098,"ms":78.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:14.193Z","events":14098,"ms":80.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:17:19.331Z","events":14098,"ms":80.78,"via":"werk show"}
+{"at":"2026-10-26T22:17:26.361Z","events":14098,"ms":80.85,"via":"werk show"}
+{"at":"2026-10-26T22:17:38.836Z","events":14098,"ms":90.41,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:17:44.418Z","events":14098,"ms":52.74,"via":"werk search"}
+{"at":"2026-10-26T22:17:44.574Z","events":14098,"ms":50.18,"via":"werk show"}
+{"at":"2026-10-26T22:17:49.310Z","events":14098,"ms":56.56,"via":"werk search"}
+{"at":"2026-10-26T22:17:49.514Z","events":14098,"ms":69,"via":"werk search"}
+{"at":"2026-10-26T22:17:51.185Z","events":14098,"ms":51.48,"via":"werk show"}
+{"at":"2026-10-26T22:17:51.351Z","events":14098,"ms":51.49,"via":"werk show"}
+{"at":"2026-10-26T22:18:59.871Z","events":14098,"ms":107.74,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:18:59.962Z","events":14098,"ms":81.2,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:11.513Z","events":14098,"ms":81.18,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:19:14.949Z","events":14098,"ms":79.04,"via":"/api/graph"}
+{"at":"2026-10-26T22:19:15.067Z","events":14098,"ms":80.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:15.156Z","events":14098,"ms":81.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:17.337Z","events":14098,"ms":126.89,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:17.436Z","events":14098,"ms":86.47,"via":"/api/graph"}
+{"at":"2026-10-26T22:19:17.538Z","events":14098,"ms":80.63,"via":"/api/graph"}
+{"at":"2026-10-26T22:19:17.660Z","events":14098,"ms":85.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:17.748Z","events":14098,"ms":79.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:17.902Z","events":14098,"ms":81.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:17.991Z","events":14098,"ms":79.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:23.601Z","events":14098,"ms":78.46,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:19:25.823Z","events":14098,"ms":50.41,"via":"werk show"}
+{"at":"2026-10-26T22:19:27.038Z","events":14098,"ms":82.98,"via":"werk show"}
+{"at":"2026-10-26T22:19:27.377Z","events":14098,"ms":82.07,"via":"werk stale"}
+{"at":"2026-10-26T22:19:30.942Z","events":14098,"ms":89.64,"via":"werk show"}
+{"at":"2026-10-26T22:19:31.292Z","events":14098,"ms":83.09,"via":"werk rederive"}
+{"at":"2026-10-26T22:19:31.521Z","events":14099,"ms":95.2,"via":"/api/graph"}
+{"at":"2026-10-26T22:19:31.538Z","events":14099,"ms":98.05,"via":"werk rederive"}
+{"at":"2026-10-26T22:19:31.644Z","events":14099,"ms":86.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:31.738Z","events":14099,"ms":85.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:31.865Z","events":14099,"ms":87.67,"via":"werk show"}
+{"at":"2026-10-26T22:19:35.609Z","events":14099,"ms":80.87,"via":"/api/graph"}
+{"at":"2026-10-26T22:19:35.730Z","events":14099,"ms":80.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:35.818Z","events":14099,"ms":79.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:50.573Z","events":14099,"ms":98.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:50.666Z","events":14099,"ms":83.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:53.335Z","events":14099,"ms":80.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:53.424Z","events":14099,"ms":79.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:55.138Z","events":14099,"ms":78.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:55.227Z","events":14099,"ms":80.06,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:58.660Z","events":14099,"ms":81.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:19:58.748Z","events":14099,"ms":79.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:02.403Z","events":14099,"ms":80.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:02.492Z","events":14099,"ms":81.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:10.407Z","events":14099,"ms":52.11,"via":"werk add"}
+{"at":"2026-10-26T22:20:10.557Z","events":14099,"ms":49.63,"via":"werk link"}
+{"at":"2026-10-26T22:20:10.708Z","events":14099,"ms":49.69,"via":"werk show"}
+{"at":"2026-10-26T22:20:15.005Z","events":14099,"ms":53.91,"via":"werk add"}
+{"at":"2026-10-26T22:20:15.086Z","events":14099,"ms":71.43,"via":"werk add"}
+{"at":"2026-10-26T22:20:15.143Z","events":14099,"ms":46.72,"via":"werk add"}
+{"at":"2026-10-26T22:20:15.302Z","events":14100,"ms":76.36,"via":"/api/graph"}
+{"at":"2026-10-26T22:20:15.391Z","events":14100,"ms":49.88,"via":"werk link"}
+{"at":"2026-10-26T22:20:15.412Z","events":14100,"ms":79.08,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:15.468Z","events":14100,"ms":68.54,"via":"werk link"}
+{"at":"2026-10-26T22:20:15.497Z","events":14100,"ms":76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:15.522Z","events":14100,"ms":45.25,"via":"werk link"}
+{"at":"2026-10-26T22:20:15.576Z","events":14100,"ms":44.58,"via":"werk link"}
+{"at":"2026-10-26T22:20:15.700Z","events":14101,"ms":44.81,"via":"werk link"}
+{"at":"2026-10-26T22:20:15.754Z","events":14101,"ms":42.99,"via":"werk link"}
+{"at":"2026-10-26T22:20:15.754Z","events":14101,"ms":78.15,"via":"/api/graph"}
+{"at":"2026-10-26T22:20:15.884Z","events":14101,"ms":81.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:15.935Z","events":14101,"ms":52.18,"via":"werk status"}
+{"at":"2026-10-26T22:20:15.974Z","events":14101,"ms":81.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:16.016Z","events":14101,"ms":72.68,"via":"werk status"}
+{"at":"2026-10-26T22:20:16.084Z","events":14101,"ms":58.79,"via":"werk status"}
+{"at":"2026-10-26T22:20:16.303Z","events":14101,"ms":51.38,"via":"werk show"}
+{"at":"2026-10-26T22:20:18.994Z","events":14101,"ms":53.15,"via":"werk kill"}
+{"at":"2026-10-26T22:20:19.204Z","events":14102,"ms":78.15,"via":"/api/graph"}
+{"at":"2026-10-26T22:20:19.270Z","events":14102,"ms":52.35,"via":"werk status"}
+{"at":"2026-10-26T22:20:19.314Z","events":14102,"ms":78.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:19.351Z","events":14102,"ms":72.9,"via":"werk status"}
+{"at":"2026-10-26T22:20:19.401Z","events":14102,"ms":78.42,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:19.420Z","events":14102,"ms":58.87,"via":"werk status"}
+{"at":"2026-10-26T22:20:19.589Z","events":14103,"ms":83.57,"via":"/api/graph"}
+{"at":"2026-10-26T22:20:19.696Z","events":14103,"ms":77.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:19.781Z","events":14103,"ms":76.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:24.270Z","events":14103,"ms":77.53,"via":"/api/graph"}
+{"at":"2026-10-26T22:20:24.379Z","events":14103,"ms":78.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:24.464Z","events":14103,"ms":77.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:25.474Z","events":14103,"ms":93.72,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:20:29.106Z","events":14103,"ms":84.42,"via":"werk search"}
+{"at":"2026-10-26T22:20:31.603Z","events":14103,"ms":83.7,"via":"werk show"}
+{"at":"2026-10-26T22:20:36.706Z","events":14103,"ms":76.32,"via":"/api/graph"}
+{"at":"2026-10-26T22:20:36.818Z","events":14103,"ms":77.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:20:36.905Z","events":14103,"ms":77.74,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:22:00.566Z","events":14103,"ms":94.17,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:22:03.400Z","events":14103,"ms":83.71,"via":"werk search"}
+{"at":"2026-10-26T22:22:03.761Z","events":14103,"ms":80.73,"via":"werk show"}
+{"at":"2026-10-26T22:22:10.468Z","events":14103,"ms":74.88,"via":"/api/graph"}
+{"at":"2026-10-26T22:22:10.581Z","events":14103,"ms":74.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:22:10.665Z","events":14103,"ms":75.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:00.410Z","events":14103,"ms":95.33,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:23:04.134Z","events":14103,"ms":105.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:04.239Z","events":14103,"ms":94.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:04.438Z","events":14103,"ms":81.59,"via":"werk show"}
+{"at":"2026-10-26T22:23:16.490Z","events":14103,"ms":82.29,"via":"werk add"}
+{"at":"2026-10-26T22:23:24.211Z","events":14103,"ms":84.35,"via":"werk add"}
+{"at":"2026-10-26T22:23:24.311Z","events":14103,"ms":82.16,"via":"werk add"}
+{"at":"2026-10-26T22:23:24.403Z","events":14103,"ms":73.12,"via":"werk add"}
+{"at":"2026-10-26T22:23:24.609Z","events":14104,"ms":75.64,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:24.721Z","events":14104,"ms":80.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:24.812Z","events":14104,"ms":82.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:24.835Z","events":14104,"ms":90,"via":"werk link"}
+{"at":"2026-10-26T22:23:24.934Z","events":14104,"ms":79.23,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.037Z","events":14104,"ms":82.73,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.110Z","events":14104,"ms":53.98,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.255Z","events":14105,"ms":35.99,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.314Z","events":14105,"ms":40.54,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.319Z","events":14105,"ms":78.03,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:25.432Z","events":14105,"ms":81.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:25.526Z","events":14105,"ms":85.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:25.649Z","events":14105,"ms":84.46,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.746Z","events":14105,"ms":77.25,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.843Z","events":14105,"ms":79.37,"via":"werk link"}
+{"at":"2026-10-26T22:23:25.915Z","events":14105,"ms":54.02,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.060Z","events":14106,"ms":36.2,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.118Z","events":14106,"ms":40.39,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.124Z","events":14106,"ms":77.48,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:26.235Z","events":14106,"ms":77.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:26.323Z","events":14106,"ms":80.59,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:26.448Z","events":14106,"ms":82.34,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.544Z","events":14106,"ms":76.63,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.641Z","events":14106,"ms":79.28,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.727Z","events":14106,"ms":67.95,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.770Z","events":14106,"ms":82.82,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:26.863Z","events":14107,"ms":81.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:26.889Z","events":14107,"ms":39.56,"via":"werk link"}
+{"at":"2026-10-26T22:23:26.951Z","events":14107,"ms":42.53,"via":"werk link"}
+{"at":"2026-10-26T22:23:27.257Z","events":14107,"ms":82.25,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:27.309Z","events":14107,"ms":87.94,"via":"werk add"}
+{"at":"2026-10-26T22:23:27.359Z","events":14107,"ms":78.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:27.448Z","events":14108,"ms":80.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:27.815Z","events":14108,"ms":106.82,"via":"werk link"}
+{"at":"2026-10-26T22:23:27.928Z","events":14108,"ms":90.83,"via":"werk link"}
+{"at":"2026-10-26T22:23:28.018Z","events":14108,"ms":81.83,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:28.127Z","events":14109,"ms":82.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:28.158Z","events":14109,"ms":79.48,"via":"werk link"}
+{"at":"2026-10-26T22:23:28.217Z","events":14109,"ms":81.29,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:28.255Z","events":14109,"ms":78.84,"via":"werk link"}
+{"at":"2026-10-26T22:23:28.327Z","events":14109,"ms":84.6,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:28.597Z","events":14109,"ms":86.48,"via":"werk status"}
+{"at":"2026-10-26T22:23:28.720Z","events":14109,"ms":102.89,"via":"werk status"}
+{"at":"2026-10-26T22:23:28.808Z","events":14109,"ms":89.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:28.836Z","events":14109,"ms":95.75,"via":"werk status"}
+{"at":"2026-10-26T22:23:28.910Z","events":14109,"ms":90.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:32.601Z","events":14109,"ms":84.25,"via":"werk kill"}
+{"at":"2026-10-26T22:23:32.811Z","events":14110,"ms":77.76,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:32.917Z","events":14110,"ms":76.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:33.005Z","events":14110,"ms":79.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:33.042Z","events":14110,"ms":84.08,"via":"werk status"}
+{"at":"2026-10-26T22:23:33.141Z","events":14110,"ms":77.84,"via":"werk status"}
+{"at":"2026-10-26T22:23:33.241Z","events":14110,"ms":80,"via":"werk status"}
+{"at":"2026-10-26T22:23:33.449Z","events":14111,"ms":76.61,"via":"/api/graph"}
+{"at":"2026-10-26T22:23:33.556Z","events":14111,"ms":78.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:33.649Z","events":14111,"ms":84.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:23:33.667Z","events":14111,"ms":88.11,"via":"werk show"}
+{"at":"2026-10-26T22:23:37.509Z","events":14111,"ms":75.96,"via":"/api/graph"}
+{"at":"2026-10-26T22:25:14.921Z","events":14111,"ms":96.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:25:15.006Z","events":14111,"ms":75.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:25:45.502Z","events":14111,"ms":95.86,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:25:45.682Z","events":14113,"ms":74.82,"via":"/api/graph"}
+{"at":"2026-10-26T22:25:45.801Z","events":14113,"ms":77.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:25:45.889Z","events":14113,"ms":79.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:25:45.980Z","events":14113,"ms":77.69,"via":"/api/graph"}
+{"at":"2026-10-26T22:25:46.122Z","events":14113,"ms":106.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:25:46.245Z","events":14113,"ms":105.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:25:56.031Z","events":14113,"ms":83.55,"via":"werk show"}
+{"at":"2026-10-26T22:25:59.712Z","events":14113,"ms":92.54,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:26:02.881Z","events":14113,"ms":88.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:02.970Z","events":14113,"ms":79.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:03.197Z","events":14113,"ms":83.07,"via":"werk show"}
+{"at":"2026-10-26T22:26:03.532Z","events":14113,"ms":83.13,"via":"werk search"}
+{"at":"2026-10-26T22:26:09.242Z","events":14113,"ms":81.46,"via":"werk show"}
+{"at":"2026-10-26T22:26:22.373Z","events":14113,"ms":71.51,"via":"/api/graph"}
+{"at":"2026-10-26T22:26:22.458Z","events":14113,"ms":69.71,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:26:22.631Z","events":14114,"ms":73.45,"via":"/api/graph"}
+{"at":"2026-10-26T22:26:22.726Z","events":14114,"ms":76.84,"via":"/api/graph"}
+{"at":"2026-10-26T22:26:22.826Z","events":14114,"ms":84.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:22.922Z","events":14114,"ms":85.38,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:23.018Z","events":14114,"ms":85.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:23.100Z","events":14114,"ms":72.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:33.058Z","events":14114,"ms":81.85,"via":"werk show"}
+{"at":"2026-10-26T22:26:40.200Z","events":14114,"ms":84.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:40.280Z","events":14114,"ms":71.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:45.621Z","events":14114,"ms":75.67,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:45.703Z","events":14114,"ms":73.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:55.635Z","events":14114,"ms":88.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:26:55.713Z","events":14114,"ms":70.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:06.793Z","events":14114,"ms":84.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:06.871Z","events":14114,"ms":70.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:15.108Z","events":14114,"ms":87.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:15.187Z","events":14114,"ms":69.98,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:30.208Z","events":14114,"ms":91.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:30.289Z","events":14114,"ms":70.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:32.187Z","events":14114,"ms":91.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:32.266Z","events":14114,"ms":70.29,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:35.624Z","events":14114,"ms":89.99,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:27:38.836Z","events":14114,"ms":82.09,"via":"werk show"}
+{"at":"2026-10-26T22:27:41.501Z","events":14114,"ms":81.88,"via":"werk show"}
+{"at":"2026-10-26T22:27:41.840Z","events":14114,"ms":82.69,"via":"werk show"}
+{"at":"2026-10-26T22:27:46.816Z","events":14114,"ms":82.85,"via":"werk status"}
+{"at":"2026-10-26T22:27:46.917Z","events":14114,"ms":79.25,"via":"werk status"}
+{"at":"2026-10-26T22:27:47.018Z","events":14114,"ms":79.38,"via":"werk status"}
+{"at":"2026-10-26T22:27:51.556Z","events":14114,"ms":83.17,"via":"werk kill"}
+{"at":"2026-10-26T22:27:51.763Z","events":14115,"ms":74.5,"via":"/api/graph"}
+{"at":"2026-10-26T22:27:51.872Z","events":14115,"ms":72.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:51.956Z","events":14115,"ms":76.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:52.009Z","events":14115,"ms":84.97,"via":"werk kill"}
+{"at":"2026-10-26T22:27:52.216Z","events":14116,"ms":74.83,"via":"/api/graph"}
+{"at":"2026-10-26T22:27:52.329Z","events":14116,"ms":77.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:52.417Z","events":14116,"ms":77.95,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:52.473Z","events":14116,"ms":85.09,"via":"werk status"}
+{"at":"2026-10-26T22:27:52.573Z","events":14116,"ms":79.64,"via":"werk status"}
+{"at":"2026-10-26T22:27:52.672Z","events":14116,"ms":79.37,"via":"werk status"}
+{"at":"2026-10-26T22:27:52.875Z","events":14117,"ms":70.77,"via":"/api/graph"}
+{"at":"2026-10-26T22:27:53.000Z","events":14117,"ms":75.93,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:53.086Z","events":14117,"ms":73.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:53.099Z","events":14117,"ms":83.86,"via":"werk status"}
+{"at":"2026-10-26T22:27:53.170Z","events":14117,"ms":74.54,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:53.197Z","events":14117,"ms":78.39,"via":"werk status"}
+{"at":"2026-10-26T22:27:53.294Z","events":14117,"ms":79.85,"via":"werk status"}
+{"at":"2026-10-26T22:27:53.502Z","events":14118,"ms":75.52,"via":"/api/graph"}
+{"at":"2026-10-26T22:27:53.598Z","events":14118,"ms":72.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:53.679Z","events":14118,"ms":69.84,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:27:53.759Z","events":14118,"ms":70.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:04.137Z","events":14118,"ms":49.35,"via":"werk show"}
+{"at":"2026-10-26T22:28:04.295Z","events":14118,"ms":51.17,"via":"werk show"}
+{"at":"2026-10-26T22:28:19.923Z","events":14118,"ms":97.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:20.034Z","events":14118,"ms":94.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:22.018Z","events":14118,"ms":76.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:22.108Z","events":14118,"ms":81.12,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:29.764Z","events":14118,"ms":90.22,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:28:31.603Z","events":14118,"ms":118.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:31.688Z","events":14118,"ms":76.23,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:37.060Z","events":14118,"ms":86.2,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:37.172Z","events":14118,"ms":98.12,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:37.178Z","events":14118,"ms":70.8,"via":"werk show"}
+{"at":"2026-10-26T22:28:39.322Z","events":14118,"ms":71.51,"via":"/api/graph"}
+{"at":"2026-10-26T22:28:39.426Z","events":14118,"ms":70.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:28:39.506Z","events":14118,"ms":71.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:29.740Z","events":14118,"ms":95.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:29.823Z","events":14118,"ms":74.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:36.103Z","events":14118,"ms":77.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:36.187Z","events":14118,"ms":74.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:40.051Z","events":14118,"ms":79.99,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:40.135Z","events":14118,"ms":75.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:42.523Z","events":14118,"ms":77.73,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:42.607Z","events":14118,"ms":75.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:48.461Z","events":14118,"ms":78.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:48.545Z","events":14118,"ms":75.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:29:58.153Z","events":14118,"ms":96.03,"via":"werk show"}
+{"at":"2026-10-26T22:30:06.054Z","events":14118,"ms":71.54,"via":"/api/graph"}
+{"at":"2026-10-26T22:30:06.168Z","events":14118,"ms":72.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:06.246Z","events":14118,"ms":70.39,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:17.317Z","events":14118,"ms":92.62,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:30:20.422Z","events":14118,"ms":59.88,"via":"werk status"}
+{"at":"2026-10-26T22:30:20.511Z","events":14118,"ms":77.34,"via":"werk status"}
+{"at":"2026-10-26T22:30:20.571Z","events":14118,"ms":50.18,"via":"werk status"}
+{"at":"2026-10-26T22:30:25.508Z","events":14118,"ms":60.04,"via":"werk edit"}
+{"at":"2026-10-26T22:30:25.601Z","events":14118,"ms":83.53,"via":"werk edit"}
+{"at":"2026-10-26T22:30:25.686Z","events":14118,"ms":75,"via":"werk edit"}
+{"at":"2026-10-26T22:30:25.774Z","events":14118,"ms":79.12,"via":"werk edit"}
+{"at":"2026-10-26T22:30:25.830Z","events":14118,"ms":46.57,"via":"werk edit"}
+{"at":"2026-10-26T22:30:25.987Z","events":14119,"ms":72.87,"via":"/api/graph"}
+{"at":"2026-10-26T22:30:26.085Z","events":14119,"ms":58.82,"via":"werk link"}
+{"at":"2026-10-26T22:30:26.092Z","events":14119,"ms":71.83,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:26.173Z","events":14119,"ms":72.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:26.174Z","events":14119,"ms":80.9,"via":"werk link"}
+{"at":"2026-10-26T22:30:26.245Z","events":14119,"ms":59.43,"via":"werk link"}
+{"at":"2026-10-26T22:30:26.303Z","events":14119,"ms":49.5,"via":"werk link"}
+{"at":"2026-10-26T22:30:26.343Z","events":14119,"ms":73.81,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:26.442Z","events":14120,"ms":48.04,"via":"werk link"}
+{"at":"2026-10-26T22:30:26.497Z","events":14120,"ms":46.45,"via":"werk link"}
+{"at":"2026-10-26T22:30:26.510Z","events":14120,"ms":72.6,"via":"/api/graph"}
+{"at":"2026-10-26T22:30:26.614Z","events":14120,"ms":74.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:26.673Z","events":14120,"ms":55.72,"via":"werk kill"}
+{"at":"2026-10-26T22:30:26.699Z","events":14120,"ms":71.56,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:26.782Z","events":14121,"ms":75.09,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:26.928Z","events":14121,"ms":74.02,"via":"/api/graph"}
+{"at":"2026-10-26T22:30:26.966Z","events":14121,"ms":58.54,"via":"werk status"}
+{"at":"2026-10-26T22:30:27.030Z","events":14121,"ms":72.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:27.056Z","events":14121,"ms":81.16,"via":"werk status"}
+{"at":"2026-10-26T22:30:27.112Z","events":14121,"ms":74.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:27.125Z","events":14121,"ms":61.03,"via":"werk status"}
+{"at":"2026-10-26T22:30:27.289Z","events":14122,"ms":75.4,"via":"/api/graph"}
+{"at":"2026-10-26T22:30:27.392Z","events":14122,"ms":72.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:27.471Z","events":14122,"ms":70.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:27.560Z","events":14122,"ms":70.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:30.277Z","events":14122,"ms":71.23,"via":"/api/graph"}
+{"at":"2026-10-26T22:30:30.382Z","events":14122,"ms":71.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:30.462Z","events":14122,"ms":70.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:37.595Z","events":14122,"ms":90.32,"via":"werk show"}
+{"at":"2026-10-26T22:30:58.997Z","events":14122,"ms":77.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:30:59.081Z","events":14122,"ms":75.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:06.646Z","events":14122,"ms":79.96,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:06.726Z","events":14122,"ms":71.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:14.299Z","events":14122,"ms":87.27,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:14.379Z","events":14122,"ms":72.1,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:18.122Z","events":14122,"ms":83.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:18.201Z","events":14122,"ms":71.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:40.107Z","events":14122,"ms":86.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:31:40.187Z","events":14122,"ms":70.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:22.399Z","events":14122,"ms":79.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:22.479Z","events":14122,"ms":72.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:24.962Z","events":14122,"ms":83.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:25.040Z","events":14122,"ms":70.22,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:30.717Z","events":14122,"ms":90.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:30.796Z","events":14122,"ms":70.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:45.833Z","events":14122,"ms":81.58,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:32:51.586Z","events":14122,"ms":71.13,"via":"/api/graph"}
+{"at":"2026-10-26T22:32:51.692Z","events":14122,"ms":70.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:32:51.772Z","events":14122,"ms":70.57,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:29.863Z","events":14122,"ms":87.23,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:33:34.944Z","events":14122,"ms":91.2,"via":"werk show"}
+{"at":"2026-10-26T22:33:39.277Z","events":14122,"ms":69.45,"via":"/api/graph"}
+{"at":"2026-10-26T22:33:39.385Z","events":14122,"ms":69.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:39.462Z","events":14122,"ms":70.33,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:53.996Z","events":14122,"ms":91.45,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:54.077Z","events":14122,"ms":70.93,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:57.160Z","events":14122,"ms":100.65,"via":"/api/node/remove"}
+{"at":"2026-10-26T22:33:58.681Z","events":14123,"ms":268.68,"via":"/api/graph"}
+{"at":"2026-10-26T22:33:58.819Z","events":14123,"ms":82.51,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:58.920Z","events":14123,"ms":76.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:59.009Z","events":14123,"ms":79.69,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:59.096Z","events":14123,"ms":77.5,"via":"/api/graph"}
+{"at":"2026-10-26T22:33:59.189Z","events":14123,"ms":73.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:59.270Z","events":14123,"ms":72.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:59.448Z","events":14123,"ms":158.87,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:33:59.550Z","events":14123,"ms":88.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:04.176Z","events":14123,"ms":77.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:04.259Z","events":14123,"ms":76.08,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:04.366Z","events":14123,"ms":85.54,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:04.451Z","events":14123,"ms":77.26,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:14.267Z","events":14123,"ms":100.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:14.379Z","events":14123,"ms":102.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:18.928Z","events":14123,"ms":85.19,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:19.019Z","events":14123,"ms":81.64,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:34:44.275Z","events":14123,"ms":92.41,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:34:46.356Z","events":14123,"ms":59.88,"via":"werk show"}
+{"at":"2026-10-26T22:34:56.580Z","events":14123,"ms":56.63,"via":"werk discard"}
+{"at":"2026-10-26T22:34:56.743Z","events":14124,"ms":77.7,"via":"/api/graph"}
+{"at":"2026-10-26T22:34:56.884Z","events":14124,"ms":58.42,"via":"werk add"}
+{"at":"2026-10-26T22:34:56.972Z","events":14124,"ms":80.1,"via":"werk add"}
+{"at":"2026-10-26T22:34:57.052Z","events":14124,"ms":69.62,"via":"werk add"}
+{"at":"2026-10-26T22:34:57.214Z","events":14125,"ms":80.71,"via":"/api/graph"}
+{"at":"2026-10-26T22:34:57.334Z","events":14125,"ms":61.15,"via":"werk link"}
+{"at":"2026-10-26T22:34:57.422Z","events":14125,"ms":79.6,"via":"werk link"}
+{"at":"2026-10-26T22:34:57.493Z","events":14125,"ms":59.76,"via":"werk link"}
+{"at":"2026-10-26T22:34:57.549Z","events":14125,"ms":48.36,"via":"werk link"}
+{"at":"2026-10-26T22:34:57.685Z","events":14126,"ms":52.07,"via":"werk link"}
+{"at":"2026-10-26T22:34:57.714Z","events":14126,"ms":80.21,"via":"/api/graph"}
+{"at":"2026-10-26T22:34:57.742Z","events":14126,"ms":47.35,"via":"werk link"}
+{"at":"2026-10-26T22:34:57.938Z","events":14126,"ms":54.62,"via":"werk show"}
+{"at":"2026-10-26T22:35:01.754Z","events":14126,"ms":76.48,"via":"/api/graph"}
+{"at":"2026-10-26T22:36:49.707Z","events":14126,"ms":82.71,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:36:54.445Z","events":14126,"ms":58.77,"via":"werk show"}
+{"at":"2026-10-26T22:36:54.612Z","events":14126,"ms":55.42,"via":"werk search"}
+{"at":"2026-10-26T22:36:57.533Z","events":14126,"ms":59.3,"via":"werk show"}
+{"at":"2026-10-26T22:37:03.223Z","events":14126,"ms":95.15,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:03.323Z","events":14126,"ms":83.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:06.030Z","events":14126,"ms":63.59,"via":"werk discard"}
+{"at":"2026-10-26T22:37:06.192Z","events":14127,"ms":80.49,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:06.306Z","events":14127,"ms":80.2,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:06.322Z","events":14127,"ms":59.22,"via":"werk add"}
+{"at":"2026-10-26T22:37:06.394Z","events":14127,"ms":78.84,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:06.413Z","events":14127,"ms":82.82,"via":"werk add"}
+{"at":"2026-10-26T22:37:06.498Z","events":14127,"ms":73.6,"via":"werk add"}
+{"at":"2026-10-26T22:37:06.669Z","events":14128,"ms":76.57,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:06.776Z","events":14128,"ms":55.54,"via":"werk link"}
+{"at":"2026-10-26T22:37:06.780Z","events":14128,"ms":80.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:06.860Z","events":14128,"ms":74.64,"via":"werk link"}
+{"at":"2026-10-26T22:37:06.869Z","events":14128,"ms":80.4,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:06.918Z","events":14128,"ms":48.25,"via":"werk link"}
+{"at":"2026-10-26T22:37:06.973Z","events":14128,"ms":47.11,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.104Z","events":14129,"ms":52,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.134Z","events":14129,"ms":79.73,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:07.161Z","events":14129,"ms":46.62,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.243Z","events":14129,"ms":78.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:07.331Z","events":14129,"ms":79.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:07.334Z","events":14129,"ms":57.14,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.421Z","events":14129,"ms":79.49,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.490Z","events":14129,"ms":59.18,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.545Z","events":14129,"ms":46.77,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.677Z","events":14130,"ms":51.02,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.709Z","events":14130,"ms":80.32,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:07.732Z","events":14130,"ms":46.39,"via":"werk link"}
+{"at":"2026-10-26T22:37:07.820Z","events":14130,"ms":79.95,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:07.907Z","events":14130,"ms":55.58,"via":"werk add"}
+{"at":"2026-10-26T22:37:07.908Z","events":14130,"ms":78.96,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:08.068Z","events":14131,"ms":79.74,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:08.179Z","events":14131,"ms":79.13,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:08.183Z","events":14131,"ms":56.08,"via":"werk link"}
+{"at":"2026-10-26T22:37:08.267Z","events":14131,"ms":79.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:08.268Z","events":14131,"ms":76.82,"via":"werk link"}
+{"at":"2026-10-26T22:37:08.399Z","events":14132,"ms":47.43,"via":"werk link"}
+{"at":"2026-10-26T22:37:08.455Z","events":14132,"ms":47.63,"via":"werk link"}
+{"at":"2026-10-26T22:37:08.477Z","events":14132,"ms":78.35,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:08.590Z","events":14132,"ms":80.63,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:08.635Z","events":14132,"ms":57.74,"via":"werk status"}
+{"at":"2026-10-26T22:37:08.679Z","events":14132,"ms":80.3,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:08.723Z","events":14132,"ms":80.16,"via":"werk status"}
+{"at":"2026-10-26T22:37:08.793Z","events":14132,"ms":58.87,"via":"werk status"}
+{"at":"2026-10-26T22:37:09.020Z","events":14132,"ms":57.52,"via":"werk show"}
+{"at":"2026-10-26T22:37:09.178Z","events":14132,"ms":55.87,"via":"werk show"}
+{"at":"2026-10-26T22:37:12.886Z","events":14132,"ms":57.19,"via":"werk kill"}
+{"at":"2026-10-26T22:37:13.046Z","events":14133,"ms":78.03,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:13.156Z","events":14133,"ms":80.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:13.179Z","events":14133,"ms":57.15,"via":"werk status"}
+{"at":"2026-10-26T22:37:13.243Z","events":14133,"ms":79.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:13.262Z","events":14133,"ms":74.62,"via":"werk status"}
+{"at":"2026-10-26T22:37:13.319Z","events":14133,"ms":47.4,"via":"werk status"}
+{"at":"2026-10-26T22:37:13.521Z","events":14134,"ms":81.13,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:13.642Z","events":14134,"ms":78.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:13.728Z","events":14134,"ms":77.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:18.219Z","events":14134,"ms":75.66,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:18.328Z","events":14134,"ms":78.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:18.415Z","events":14134,"ms":77.97,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:26.989Z","events":14134,"ms":97.72,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:37:27.168Z","events":14135,"ms":76.67,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:27.304Z","events":14135,"ms":116.53,"via":"/api/graph"}
+{"at":"2026-10-26T22:37:27.441Z","events":14135,"ms":115.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:27.568Z","events":14135,"ms":116.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:27.668Z","events":14135,"ms":88.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:37:27.791Z","events":14135,"ms":112.95,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:02.857Z","events":14135,"ms":94.95,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:38:03.043Z","events":14137,"ms":81.08,"via":"/api/graph"}
+{"at":"2026-10-26T22:38:03.166Z","events":14137,"ms":83.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:03.299Z","events":14137,"ms":120.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:03.432Z","events":14137,"ms":112.92,"via":"/api/graph"}
+{"at":"2026-10-26T22:38:03.547Z","events":14137,"ms":83.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:03.650Z","events":14137,"ms":93.75,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:08.094Z","events":14137,"ms":90.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:08.181Z","events":14137,"ms":77.62,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:13.355Z","events":14137,"ms":90.66,"via":"werk show"}
+{"at":"2026-10-26T22:38:27.957Z","events":14137,"ms":85.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:28.045Z","events":14137,"ms":78.7,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:46.127Z","events":14137,"ms":95.53,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:46.213Z","events":14137,"ms":77.86,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:38:58.812Z","events":14137,"ms":99.71,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:39:07.449Z","events":14137,"ms":57.81,"via":"werk propose"}
+{"at":"2026-10-26T22:39:07.533Z","events":14137,"ms":74.2,"via":"werk propose"}
+{"at":"2026-10-26T22:39:07.591Z","events":14137,"ms":47.25,"via":"werk propose"}
+{"at":"2026-10-26T22:39:07.646Z","events":14137,"ms":46.75,"via":"werk propose"}
+{"at":"2026-10-26T22:39:11.558Z","events":14137,"ms":56.45,"via":"werk show"}
+{"at":"2026-10-26T22:39:20.942Z","events":14137,"ms":59.98,"via":"werk show"}
+{"at":"2026-10-26T22:39:21.107Z","events":14137,"ms":55.24,"via":"werk propose"}
+{"at":"2026-10-26T22:39:21.197Z","events":14137,"ms":81.31,"via":"werk propose"}
+{"at":"2026-10-26T22:39:21.266Z","events":14137,"ms":58.41,"via":"werk propose"}
+{"at":"2026-10-26T22:39:21.321Z","events":14137,"ms":47.07,"via":"werk propose"}
+{"at":"2026-10-26T22:39:21.458Z","events":14138,"ms":50.57,"via":"werk propose"}
+{"at":"2026-10-26T22:39:21.482Z","events":14138,"ms":78.93,"via":"/api/graph"}
+{"at":"2026-10-26T22:39:21.606Z","events":14138,"ms":84.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:21.691Z","events":14138,"ms":76.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:24.565Z","events":14138,"ms":76.31,"via":"/api/graph"}
+{"at":"2026-10-26T22:39:24.674Z","events":14138,"ms":75.61,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:24.759Z","events":14138,"ms":77.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:58.023Z","events":14138,"ms":84.99,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:39:58.218Z","events":14139,"ms":79.2,"via":"/api/graph"}
+{"at":"2026-10-26T22:39:58.321Z","events":14139,"ms":80.33,"via":"/api/graph"}
+{"at":"2026-10-26T22:39:58.486Z","events":14139,"ms":138.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:58.582Z","events":14139,"ms":86.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:58.689Z","events":14139,"ms":78.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:58.782Z","events":14139,"ms":78.31,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:39:58.870Z","events":14139,"ms":80.85,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:01.905Z","events":14139,"ms":89.44,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:01.991Z","events":14139,"ms":76.48,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:07.133Z","events":14139,"ms":79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:07.222Z","events":14139,"ms":79.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:08.834Z","events":14139,"ms":89.6,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:08.923Z","events":14139,"ms":79.77,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:40:09.109Z","events":14139,"ms":89.79,"via":"werk show"}
+{"at":"2026-10-26T22:40:20.007Z","events":14139,"ms":94.99,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:40:20.187Z","events":14140,"ms":77.14,"via":"/api/graph"}
+{"at":"2026-10-26T22:40:20.296Z","events":14140,"ms":85.83,"via":"/api/graph"}
+{"at":"2026-10-26T22:41:10.522Z","events":14140,"ms":94.2,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:41:13.253Z","events":14140,"ms":59.89,"via":"werk show"}
+{"at":"2026-10-26T22:41:20.411Z","events":14140,"ms":78.41,"via":"/api/graph"}
+{"at":"2026-10-26T22:41:43.203Z","events":14140,"ms":98.44,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:41:46.150Z","events":14140,"ms":58.27,"via":"werk show"}
+{"at":"2026-10-26T22:41:50.757Z","events":14140,"ms":76.48,"via":"/api/graph"}
+{"at":"2026-10-26T22:42:37.814Z","events":14140,"ms":94.59,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:42:41.024Z","events":14140,"ms":62.36,"via":"werk show"}
+{"at":"2026-10-26T22:42:47.660Z","events":14140,"ms":74.76,"via":"/api/graph"}
+{"at":"2026-10-26T22:43:12.350Z","events":14140,"ms":95.44,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:43:18.593Z","events":14140,"ms":75.89,"via":"/api/graph"}
+{"at":"2026-10-26T22:43:42.375Z","events":14140,"ms":101.19,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:43:44.996Z","events":14140,"ms":64.78,"via":"werk show"}
+{"at":"2026-10-26T22:43:50.086Z","events":14140,"ms":75.94,"via":"/api/graph"}
+{"at":"2026-10-26T22:44:31.467Z","events":14140,"ms":97.3,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:44:34.645Z","events":14140,"ms":58.11,"via":"werk show"}
+{"at":"2026-10-26T22:44:34.824Z","events":14140,"ms":56.17,"via":"werk show"}
+{"at":"2026-10-26T22:44:34.985Z","events":14140,"ms":54.01,"via":"werk show"}
+{"at":"2026-10-26T22:44:45.272Z","events":14140,"ms":75.47,"via":"/api/graph"}
+{"at":"2026-10-26T22:46:00.869Z","events":14140,"ms":93.89,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:46:14.752Z","events":14140,"ms":75.5,"via":"/api/graph"}
+{"at":"2026-10-26T22:46:41.131Z","events":14140,"ms":85.82,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:46:41.218Z","events":14140,"ms":78.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:47:39.486Z","events":14140,"ms":92.12,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:47:43.946Z","events":14140,"ms":53.94,"via":"werk show"}
+{"at":"2026-10-26T22:47:44.102Z","events":14140,"ms":52.76,"via":"werk show"}
+{"at":"2026-10-26T22:47:44.260Z","events":14140,"ms":54.86,"via":"werk show"}
+{"at":"2026-10-26T22:47:44.414Z","events":14140,"ms":54.91,"via":"werk show"}
+{"at":"2026-10-26T22:47:44.568Z","events":14140,"ms":54.02,"via":"werk search"}
+{"at":"2026-10-26T22:47:56.366Z","events":14140,"ms":83.47,"via":"/api/graph"}
+{"at":"2026-10-26T22:48:08.278Z","events":14140,"ms":94.99,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:48:13.244Z","events":14140,"ms":59.05,"via":"werk search"}
+{"at":"2026-10-26T22:48:13.420Z","events":14140,"ms":54.61,"via":"werk search"}
+{"at":"2026-10-26T22:48:13.591Z","events":14140,"ms":53.81,"via":"werk search"}
+{"at":"2026-10-26T22:48:13.772Z","events":14140,"ms":58.7,"via":"werk show"}
+{"at":"2026-10-26T22:48:27.278Z","events":14140,"ms":77.22,"via":"/api/graph"}
+{"at":"2026-10-26T22:51:44.954Z","events":14140,"ms":95.23,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:51:53.980Z","events":14140,"ms":77.68,"via":"/api/graph"}
+{"at":"2026-10-26T22:53:20.606Z","events":14140,"ms":99.59,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:53:25.030Z","events":14140,"ms":76.67,"via":"/api/graph"}
+{"at":"2026-10-26T22:54:10.970Z","events":14140,"ms":99.41,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:54:19.163Z","events":14140,"ms":75.21,"via":"/api/graph"}
+{"at":"2026-10-26T22:55:22.897Z","events":14140,"ms":94.32,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:55:43.303Z","events":14140,"ms":57.62,"via":"werk discard"}
+{"at":"2026-10-26T22:55:43.517Z","events":14141,"ms":77.92,"via":"/api/graph"}
+{"at":"2026-10-26T22:55:43.604Z","events":14141,"ms":59.24,"via":"werk show"}
+{"at":"2026-10-26T22:55:43.647Z","events":14141,"ms":82.79,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:55:43.758Z","events":14141,"ms":56.49,"via":"werk show"}
+{"at":"2026-10-26T22:55:53.690Z","events":14141,"ms":61.23,"via":"werk add"}
+{"at":"2026-10-26T22:55:59.121Z","events":14141,"ms":60.45,"via":"werk add"}
+{"at":"2026-10-26T22:55:59.212Z","events":14141,"ms":80.19,"via":"werk add"}
+{"at":"2026-10-26T22:55:59.282Z","events":14141,"ms":58.62,"via":"werk add"}
+{"at":"2026-10-26T22:55:59.444Z","events":14142,"ms":78.83,"via":"/api/graph"}
+{"at":"2026-10-26T22:55:59.562Z","events":14142,"ms":69.45,"via":"werk link"}
+{"at":"2026-10-26T22:55:59.627Z","events":14142,"ms":84.32,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:55:59.659Z","events":14142,"ms":87.13,"via":"werk link"}
+{"at":"2026-10-26T22:55:59.750Z","events":14142,"ms":79.67,"via":"werk link"}
+{"at":"2026-10-26T22:55:59.835Z","events":14142,"ms":75.42,"via":"werk link"}
+{"at":"2026-10-26T22:55:59.967Z","events":14143,"ms":49.81,"via":"werk link"}
+{"at":"2026-10-26T22:55:59.996Z","events":14143,"ms":80.47,"via":"/api/graph"}
+{"at":"2026-10-26T22:56:00.026Z","events":14143,"ms":50.88,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.214Z","events":14143,"ms":54.47,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.294Z","events":14143,"ms":72.25,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.351Z","events":14143,"ms":46.81,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.404Z","events":14143,"ms":46.21,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.537Z","events":14144,"ms":51.17,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.569Z","events":14144,"ms":82.62,"via":"/api/graph"}
+{"at":"2026-10-26T22:56:00.591Z","events":14144,"ms":44.98,"via":"werk link"}
+{"at":"2026-10-26T22:56:00.743Z","events":14144,"ms":88.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:56:00.773Z","events":14144,"ms":55.64,"via":"werk add"}
+{"at":"2026-10-26T22:56:00.957Z","events":14145,"ms":78.92,"via":"/api/graph"}
+{"at":"2026-10-26T22:56:01.051Z","events":14145,"ms":56.18,"via":"werk link"}
+{"at":"2026-10-26T22:56:01.140Z","events":14145,"ms":80.05,"via":"werk link"}
+{"at":"2026-10-26T22:56:01.283Z","events":14146,"ms":47,"via":"werk link"}
+{"at":"2026-10-26T22:56:01.338Z","events":14146,"ms":46.51,"via":"werk link"}
+{"at":"2026-10-26T22:56:01.352Z","events":14146,"ms":80.22,"via":"/api/graph"}
+{"at":"2026-10-26T22:56:01.528Z","events":14146,"ms":54.88,"via":"werk status"}
+{"at":"2026-10-26T22:56:01.611Z","events":14146,"ms":75.1,"via":"werk status"}
+{"at":"2026-10-26T22:56:01.666Z","events":14146,"ms":46.79,"via":"werk status"}
+{"at":"2026-10-26T22:56:01.887Z","events":14146,"ms":56.59,"via":"werk show"}
+{"at":"2026-10-26T22:56:09.034Z","events":14146,"ms":72.55,"via":"/api/graph"}
+{"at":"2026-10-26T22:57:45.296Z","events":14146,"ms":91.31,"via":"/api/change/accept"}
+{"at":"2026-10-26T22:57:45.474Z","events":14148,"ms":71.08,"via":"/api/graph"}
+{"at":"2026-10-26T22:57:45.593Z","events":14148,"ms":74.65,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:57:45.677Z","events":14148,"ms":76.02,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:57:45.806Z","events":14148,"ms":118.83,"via":"/api/graph"}
+{"at":"2026-10-26T22:57:45.927Z","events":14148,"ms":77.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:57:46.029Z","events":14148,"ms":92.88,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:40.834Z","events":14148,"ms":91.13,"via":"chat pane: card line"}
+{"at":"2026-10-26T22:58:45.792Z","events":14148,"ms":59.82,"via":"werk kill"}
+{"at":"2026-10-26T22:58:45.947Z","events":14149,"ms":73.97,"via":"/api/graph"}
+{"at":"2026-10-26T22:58:46.060Z","events":14149,"ms":77.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:46.085Z","events":14149,"ms":61.97,"via":"werk status"}
+{"at":"2026-10-26T22:58:46.145Z","events":14149,"ms":76.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:46.176Z","events":14149,"ms":81.54,"via":"werk status"}
+{"at":"2026-10-26T22:58:46.258Z","events":14149,"ms":69.77,"via":"werk status"}
+{"at":"2026-10-26T22:58:46.422Z","events":14150,"ms":74.9,"via":"/api/graph"}
+{"at":"2026-10-26T22:58:46.535Z","events":14150,"ms":58.63,"via":"werk show"}
+{"at":"2026-10-26T22:58:46.537Z","events":14150,"ms":77.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:46.630Z","events":14150,"ms":84.66,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:46.744Z","events":14150,"ms":74.25,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:50.012Z","events":14150,"ms":76.55,"via":"/api/graph"}
+{"at":"2026-10-26T22:58:50.126Z","events":14150,"ms":78.58,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:50.208Z","events":14150,"ms":73.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:58:56.612Z","events":14150,"ms":91.81,"via":"werk show"}
+{"at":"2026-10-26T22:59:10.923Z","events":14150,"ms":85.21,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:59:11.008Z","events":14150,"ms":75.8,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:59:14.642Z","events":14150,"ms":85.43,"via":"/api/subtree/build"}
+{"at":"2026-10-26T22:59:14.727Z","events":14150,"ms":76.94,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:00:22.247Z","events":14150,"ms":93.77,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:00:25.070Z","events":14150,"ms":60.96,"via":"werk show"}
+{"at":"2026-10-26T23:00:27.337Z","events":14150,"ms":64.33,"via":"werk show"}
+{"at":"2026-10-26T23:00:27.511Z","events":14150,"ms":59.4,"via":"werk show"}
+{"at":"2026-10-26T23:00:34.247Z","events":14150,"ms":58.57,"via":"werk discard"}
+{"at":"2026-10-26T23:00:34.458Z","events":14151,"ms":76.76,"via":"/api/graph"}
+{"at":"2026-10-26T23:00:34.548Z","events":14151,"ms":59.6,"via":"werk show"}
+{"at":"2026-10-26T23:00:34.650Z","events":14151,"ms":85.5,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:00:42.849Z","events":14151,"ms":63.95,"via":"werk add"}
+{"at":"2026-10-26T23:00:42.940Z","events":14151,"ms":77.7,"via":"werk add"}
+{"at":"2026-10-26T23:00:42.998Z","events":14151,"ms":49.12,"via":"werk add"}
+{"at":"2026-10-26T23:00:43.158Z","events":14152,"ms":77.19,"via":"/api/graph"}
+{"at":"2026-10-26T23:00:43.268Z","events":14152,"ms":63.58,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.338Z","events":14152,"ms":93.9,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:00:43.369Z","events":14152,"ms":90.62,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.433Z","events":14152,"ms":53.8,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.497Z","events":14152,"ms":54.55,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.633Z","events":14153,"ms":52.78,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.652Z","events":14153,"ms":72.89,"via":"/api/graph"}
+{"at":"2026-10-26T23:00:43.692Z","events":14153,"ms":50.73,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.889Z","events":14153,"ms":55.13,"via":"werk link"}
+{"at":"2026-10-26T23:00:43.972Z","events":14153,"ms":75.38,"via":"werk link"}
+{"at":"2026-10-26T23:00:44.030Z","events":14153,"ms":48.06,"via":"werk link"}
+{"at":"2026-10-26T23:00:44.085Z","events":14153,"ms":47.77,"via":"werk link"}
+{"at":"2026-10-26T23:00:44.216Z","events":14154,"ms":52.19,"via":"werk link"}
+{"at":"2026-10-26T23:00:44.241Z","events":14154,"ms":71.36,"via":"/api/graph"}
+{"at":"2026-10-26T23:00:44.271Z","events":14154,"ms":46.66,"via":"werk link"}
+{"at":"2026-10-26T23:00:44.457Z","events":14154,"ms":54.7,"via":"werk show"}
+{"at":"2026-10-26T23:00:48.897Z","events":14154,"ms":68.51,"via":"/api/graph"}
+{"at":"2026-10-26T23:02:01.128Z","events":14154,"ms":93.08,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:02:05.443Z","events":14154,"ms":62.3,"via":"werk show"}
+{"at":"2026-10-26T23:02:05.614Z","events":14154,"ms":54.64,"via":"werk search"}
+{"at":"2026-10-26T23:02:05.790Z","events":14154,"ms":55.82,"via":"werk search"}
+{"at":"2026-10-26T23:02:16.490Z","events":14154,"ms":58.09,"via":"werk discard"}
+{"at":"2026-10-26T23:02:16.698Z","events":14155,"ms":72.34,"via":"/api/graph"}
+{"at":"2026-10-26T23:02:16.789Z","events":14155,"ms":56.47,"via":"werk add"}
+{"at":"2026-10-26T23:02:16.810Z","events":14155,"ms":73.37,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:02:16.875Z","events":14155,"ms":76.48,"via":"werk add"}
+{"at":"2026-10-26T23:02:16.934Z","events":14155,"ms":49.67,"via":"werk add"}
+{"at":"2026-10-26T23:02:17.094Z","events":14156,"ms":71.39,"via":"/api/graph"}
+{"at":"2026-10-26T23:02:17.192Z","events":14156,"ms":55.89,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.249Z","events":14156,"ms":71.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:02:17.282Z","events":14156,"ms":81.64,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.354Z","events":14156,"ms":59.14,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.409Z","events":14156,"ms":46,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.539Z","events":14157,"ms":47.11,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.562Z","events":14157,"ms":71.57,"via":"/api/graph"}
+{"at":"2026-10-26T23:02:17.592Z","events":14157,"ms":45.66,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.787Z","events":14157,"ms":56.89,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.875Z","events":14157,"ms":80.38,"via":"werk link"}
+{"at":"2026-10-26T23:02:17.945Z","events":14157,"ms":58.2,"via":"werk link"}
+{"at":"2026-10-26T23:02:18.001Z","events":14157,"ms":47.78,"via":"werk link"}
+{"at":"2026-10-26T23:02:18.129Z","events":14158,"ms":48.36,"via":"werk link"}
+{"at":"2026-10-26T23:02:18.153Z","events":14158,"ms":70.52,"via":"/api/graph"}
+{"at":"2026-10-26T23:02:18.185Z","events":14158,"ms":47.52,"via":"werk link"}
+{"at":"2026-10-26T23:02:18.382Z","events":14158,"ms":55.62,"via":"werk show"}
+{"at":"2026-10-26T23:02:21.932Z","events":14158,"ms":69,"via":"/api/graph"}
+{"at":"2026-10-26T23:03:14.667Z","events":14158,"ms":89.49,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:03:17.197Z","events":14158,"ms":56.87,"via":"werk search"}
+{"at":"2026-10-26T23:03:17.386Z","events":14158,"ms":53.25,"via":"werk search"}
+{"at":"2026-10-26T23:03:17.559Z","events":14158,"ms":54.87,"via":"werk search"}
+{"at":"2026-10-26T23:03:19.780Z","events":14158,"ms":58.64,"via":"werk show"}
+{"at":"2026-10-26T23:03:19.950Z","events":14158,"ms":53.87,"via":"werk search"}
+{"at":"2026-10-26T23:03:20.124Z","events":14158,"ms":55.6,"via":"werk search"}
+{"at":"2026-10-26T23:03:29.884Z","events":14158,"ms":71.85,"via":"werk discard"}
+{"at":"2026-10-26T23:03:30.092Z","events":14159,"ms":72.68,"via":"/api/graph"}
+{"at":"2026-10-26T23:03:30.165Z","events":14159,"ms":55.5,"via":"werk add"}
+{"at":"2026-10-26T23:03:30.254Z","events":14159,"ms":77.39,"via":"werk add"}
+{"at":"2026-10-26T23:03:30.266Z","events":14159,"ms":71.05,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:03:30.314Z","events":14159,"ms":48.87,"via":"werk add"}
+{"at":"2026-10-26T23:03:30.509Z","events":14160,"ms":71.25,"via":"/api/graph"}
+{"at":"2026-10-26T23:03:30.573Z","events":14160,"ms":56.78,"via":"werk link"}
+{"at":"2026-10-26T23:03:30.607Z","events":14160,"ms":70.49,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:03:30.655Z","events":14160,"ms":74.04,"via":"werk link"}
+{"at":"2026-10-26T23:03:30.712Z","events":14160,"ms":47.76,"via":"werk link"}
+{"at":"2026-10-26T23:03:30.766Z","events":14160,"ms":46.74,"via":"werk link"}
+{"at":"2026-10-26T23:03:30.896Z","events":14161,"ms":51.96,"via":"werk link"}
+{"at":"2026-10-26T23:03:30.929Z","events":14161,"ms":70.9,"via":"/api/graph"}
+{"at":"2026-10-26T23:03:30.951Z","events":14161,"ms":46.73,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.148Z","events":14161,"ms":57.25,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.239Z","events":14161,"ms":82.61,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.308Z","events":14161,"ms":59.06,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.363Z","events":14161,"ms":47.19,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.491Z","events":14162,"ms":48.26,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.516Z","events":14162,"ms":71.12,"via":"/api/graph"}
+{"at":"2026-10-26T23:03:31.546Z","events":14162,"ms":47.14,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.740Z","events":14162,"ms":53.88,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.821Z","events":14162,"ms":74.17,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.879Z","events":14162,"ms":46.84,"via":"werk link"}
+{"at":"2026-10-26T23:03:31.933Z","events":14162,"ms":46.09,"via":"werk link"}
+{"at":"2026-10-26T23:03:32.067Z","events":14163,"ms":52.51,"via":"werk link"}
+{"at":"2026-10-26T23:03:32.086Z","events":14163,"ms":71.58,"via":"/api/graph"}
+{"at":"2026-10-26T23:03:32.122Z","events":14163,"ms":46.4,"via":"werk link"}
+{"at":"2026-10-26T23:03:32.241Z","events":14163,"ms":72.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:03:32.297Z","events":14163,"ms":57.06,"via":"werk show"}
+{"at":"2026-10-26T23:03:36.772Z","events":14163,"ms":68.43,"via":"/api/graph"}
+{"at":"2026-10-26T23:04:28.050Z","events":14163,"ms":77.69,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:04:35.703Z","events":14163,"ms":55.1,"via":"werk show"}
+{"at":"2026-10-26T23:04:42.587Z","events":14163,"ms":61.43,"via":"werk propose"}
+{"at":"2026-10-26T23:04:42.679Z","events":14163,"ms":82.13,"via":"werk propose"}
+{"at":"2026-10-26T23:04:42.749Z","events":14163,"ms":60.11,"via":"werk propose"}
+{"at":"2026-10-26T23:04:42.804Z","events":14163,"ms":46.54,"via":"werk propose"}
+{"at":"2026-10-26T23:04:47.047Z","events":14163,"ms":56.62,"via":"werk propose"}
+{"at":"2026-10-26T23:04:47.132Z","events":14163,"ms":76.75,"via":"werk propose"}
+{"at":"2026-10-26T23:04:47.190Z","events":14163,"ms":48.56,"via":"werk propose"}
+{"at":"2026-10-26T23:04:47.244Z","events":14163,"ms":46.42,"via":"werk propose"}
+{"at":"2026-10-26T23:04:47.377Z","events":14164,"ms":51.73,"via":"werk propose"}
+{"at":"2026-10-26T23:04:47.399Z","events":14164,"ms":71.99,"via":"/api/graph"}
+{"at":"2026-10-26T23:04:50.698Z","events":14164,"ms":68.65,"via":"/api/graph"}
+{"at":"2026-10-26T23:05:51.679Z","events":14164,"ms":88.42,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:06:00.082Z","events":14164,"ms":61.68,"via":"werk discard"}
+{"at":"2026-10-26T23:06:00.239Z","events":14165,"ms":72.14,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:00.399Z","events":14165,"ms":57.59,"via":"werk add"}
+{"at":"2026-10-26T23:06:00.459Z","events":14165,"ms":70.78,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:06:00.492Z","events":14165,"ms":83.55,"via":"werk add"}
+{"at":"2026-10-26T23:06:00.565Z","events":14165,"ms":59.96,"via":"werk add"}
+{"at":"2026-10-26T23:06:00.717Z","events":14166,"ms":69.98,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:00.824Z","events":14166,"ms":55.08,"via":"werk link"}
+{"at":"2026-10-26T23:06:00.874Z","events":14166,"ms":72.04,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:06:00.907Z","events":14166,"ms":74.89,"via":"werk link"}
+{"at":"2026-10-26T23:06:00.965Z","events":14166,"ms":47.77,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.019Z","events":14166,"ms":46.47,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.155Z","events":14167,"ms":50.49,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.210Z","events":14167,"ms":46.05,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.230Z","events":14167,"ms":72.01,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:01.411Z","events":14167,"ms":57.99,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.493Z","events":14167,"ms":73.63,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.550Z","events":14167,"ms":48.37,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.606Z","events":14167,"ms":48.53,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.739Z","events":14168,"ms":50.98,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.795Z","events":14168,"ms":46.96,"via":"werk link"}
+{"at":"2026-10-26T23:06:01.810Z","events":14168,"ms":72.48,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:01.989Z","events":14168,"ms":55.6,"via":"werk link"}
+{"at":"2026-10-26T23:06:02.070Z","events":14168,"ms":73.05,"via":"werk link"}
+{"at":"2026-10-26T23:06:02.126Z","events":14168,"ms":46.25,"via":"werk link"}
+{"at":"2026-10-26T23:06:02.181Z","events":14168,"ms":46.74,"via":"werk link"}
+{"at":"2026-10-26T23:06:02.312Z","events":14169,"ms":50.69,"via":"werk link"}
+{"at":"2026-10-26T23:06:02.334Z","events":14169,"ms":71.46,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:02.367Z","events":14169,"ms":46.69,"via":"werk link"}
+{"at":"2026-10-26T23:06:02.561Z","events":14169,"ms":53.88,"via":"werk show"}
+{"at":"2026-10-26T23:06:11.298Z","events":14169,"ms":58.14,"via":"werk discard"}
+{"at":"2026-10-26T23:06:11.500Z","events":14170,"ms":70.69,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:11.601Z","events":14170,"ms":58.23,"via":"werk add"}
+{"at":"2026-10-26T23:06:11.615Z","events":14170,"ms":74.52,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:06:11.690Z","events":14170,"ms":81.17,"via":"werk add"}
+{"at":"2026-10-26T23:06:11.764Z","events":14170,"ms":59.25,"via":"werk add"}
+{"at":"2026-10-26T23:06:11.917Z","events":14171,"ms":71.59,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:12.021Z","events":14171,"ms":57.18,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.074Z","events":14171,"ms":73.28,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:06:12.111Z","events":14171,"ms":82.25,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.182Z","events":14171,"ms":60.91,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.238Z","events":14171,"ms":47.69,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.377Z","events":14172,"ms":53.31,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.392Z","events":14172,"ms":72.41,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:12.437Z","events":14172,"ms":52.25,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.633Z","events":14172,"ms":54.58,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.721Z","events":14172,"ms":79.3,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.789Z","events":14172,"ms":58.23,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.844Z","events":14172,"ms":47.28,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.975Z","events":14173,"ms":51.78,"via":"werk link"}
+{"at":"2026-10-26T23:06:12.996Z","events":14173,"ms":71.21,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:13.030Z","events":14173,"ms":46.64,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.224Z","events":14173,"ms":56.32,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.311Z","events":14173,"ms":79.35,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.380Z","events":14173,"ms":58.91,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.435Z","events":14173,"ms":47.21,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.563Z","events":14174,"ms":48.56,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.590Z","events":14174,"ms":72.67,"via":"/api/graph"}
+{"at":"2026-10-26T23:06:13.618Z","events":14174,"ms":47.03,"via":"werk link"}
+{"at":"2026-10-26T23:06:13.808Z","events":14174,"ms":55.79,"via":"werk show"}
+{"at":"2026-10-26T23:06:17.173Z","events":14174,"ms":69.26,"via":"/api/graph"}
+{"at":"2026-10-26T23:07:01.349Z","events":14174,"ms":92.12,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:07:06.250Z","events":14174,"ms":60.07,"via":"werk discard"}
+{"at":"2026-10-26T23:07:06.453Z","events":14175,"ms":71.36,"via":"/api/graph"}
+{"at":"2026-10-26T23:07:06.556Z","events":14175,"ms":58.55,"via":"werk add"}
+{"at":"2026-10-26T23:07:06.623Z","events":14175,"ms":71.16,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:07:06.653Z","events":14175,"ms":88.59,"via":"werk add"}
+{"at":"2026-10-26T23:07:06.741Z","events":14175,"ms":77.45,"via":"werk add"}
+{"at":"2026-10-26T23:07:06.895Z","events":14176,"ms":71.01,"via":"/api/graph"}
+{"at":"2026-10-26T23:07:07.035Z","events":14176,"ms":62.06,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.060Z","events":14176,"ms":74.35,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:07:07.126Z","events":14176,"ms":82.12,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.196Z","events":14176,"ms":59.41,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.251Z","events":14176,"ms":47.38,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.397Z","events":14177,"ms":56.05,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.456Z","events":14177,"ms":50.28,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.463Z","events":14177,"ms":79.06,"via":"/api/graph"}
+{"at":"2026-10-26T23:07:07.656Z","events":14177,"ms":59.69,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.748Z","events":14177,"ms":83.8,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.820Z","events":14177,"ms":61.51,"via":"werk link"}
+{"at":"2026-10-26T23:07:07.877Z","events":14177,"ms":48.9,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.012Z","events":14178,"ms":51.95,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.033Z","events":14178,"ms":72.35,"via":"/api/graph"}
+{"at":"2026-10-26T23:07:08.068Z","events":14178,"ms":48.09,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.265Z","events":14178,"ms":55.5,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.354Z","events":14178,"ms":81.69,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.423Z","events":14178,"ms":58.96,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.477Z","events":14178,"ms":46.18,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.606Z","events":14179,"ms":50.95,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.631Z","events":14179,"ms":72.92,"via":"/api/graph"}
+{"at":"2026-10-26T23:07:08.660Z","events":14179,"ms":46.05,"via":"werk link"}
+{"at":"2026-10-26T23:07:08.855Z","events":14179,"ms":54.21,"via":"werk show"}
+{"at":"2026-10-26T23:07:11.209Z","events":14179,"ms":68.06,"via":"/api/graph"}
+{"at":"2026-10-26T23:08:17.773Z","events":14179,"ms":89.78,"via":"/api/change/accept"}
+{"at":"2026-10-26T23:08:17.960Z","events":14180,"ms":76.88,"via":"/api/graph"}
+{"at":"2026-10-26T23:08:18.110Z","events":14180,"ms":112.07,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:08:18.261Z","events":14180,"ms":132.01,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:08:18.372Z","events":14180,"ms":92.55,"via":"/api/graph"}
+{"at":"2026-10-26T23:08:18.482Z","events":14180,"ms":73.14,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:08:18.562Z","events":14180,"ms":72.18,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:09:17.697Z","events":14180,"ms":87.49,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:09:20.694Z","events":14180,"ms":74.97,"via":"werk search"}
+{"at":"2026-10-26T23:09:20.924Z","events":14180,"ms":70.46,"via":"werk search"}
+{"at":"2026-10-26T23:09:21.166Z","events":14180,"ms":98.18,"via":"werk search"}
+{"at":"2026-10-26T23:09:21.373Z","events":14180,"ms":77.22,"via":"werk show"}
+{"at":"2026-10-26T23:09:29.297Z","events":14180,"ms":71.71,"via":"/api/graph"}
+{"at":"2026-10-26T23:09:29.441Z","events":14180,"ms":99.96,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:09:29.526Z","events":14180,"ms":70.51,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:26:52.861Z","events":14180,"ms":95.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:26:52.953Z","events":14180,"ms":81.72,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:27:57.139Z","events":14180,"ms":84.08,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:28:02.401Z","events":14180,"ms":66.92,"via":"/api/graph"}
+{"at":"2026-10-26T23:28:02.506Z","events":14180,"ms":67.17,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:28:02.582Z","events":14180,"ms":67.72,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:29:31.046Z","events":14180,"ms":70.41,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:29:31.125Z","events":14180,"ms":69.36,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:29:47.373Z","events":14180,"ms":86.24,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:29:47.453Z","events":14180,"ms":68.71,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:40:36.260Z","events":14180,"ms":54.04,"via":"werk search"}
+{"at":"2026-10-26T23:40:36.429Z","events":14180,"ms":53.05,"via":"werk search"}
+{"at":"2026-10-26T23:40:40.093Z","events":14180,"ms":89.52,"via":"/api/graph"}
+{"at":"2026-10-26T23:40:56.300Z","events":14180,"ms":75.68,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:03.816Z","events":14180,"ms":77.11,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:41:03.901Z","events":14180,"ms":73.16,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:04.130Z","events":14180,"ms":70.58,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:11.002Z","events":14180,"ms":75.52,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:11.131Z","events":14180,"ms":64.76,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:41:11.202Z","events":14180,"ms":53.91,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:11.282Z","events":14180,"ms":57.06,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:25.477Z","events":14180,"ms":54.66,"via":"/api/graph"}
+{"at":"2026-10-26T23:41:31.348Z","events":14180,"ms":72.92,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:41:31.427Z","events":14180,"ms":68.55,"via":"/api/subtree/build"}
+{"at":"2026-10-26T23:41:45.774Z","events":14180,"ms":58.7,"via":"chat pane: card line"}
+{"at":"2026-10-26T23:41:55.259Z","events":14180,"ms":55.96,"via":"/api/graph"}
+{"at":"2026-10-26T23:42:20.453Z","events":14180,"ms":93.59,"via":"werk stale"}
+{"at":"2026-10-26T23:42:20.831Z","events":14180,"ms":91,"via":"werk search"}
+{"at":"2026-10-26T23:50:44.908Z","events":14180,"ms":124.96,"via":"werk show"}
+{"at":"2026-10-26T23:51:14.157Z","events":14180,"ms":101.64,"via":"werk show"}
+{"at":"2026-10-26T23:51:14.546Z","events":14180,"ms":100.12,"via":"werk inbox"}
+{"at":"2026-10-27T09:15:14.853Z","events":14180,"ms":80.72,"via":"/api/subtree/build"}
+{"at":"2026-10-27T09:15:14.946Z","events":14180,"ms":75.97,"via":"/api/subtree/build"}
+{"at":"2026-10-27T18:31:21.883Z","events":14180,"ms":97.37,"via":"/api/graph"}
+{"at":"2026-10-27T18:31:22.101Z","events":14180,"ms":109.35,"via":"/api/subtree/build"}
+{"at":"2026-10-27T18:31:22.216Z","events":14180,"ms":95.91,"via":"/api/subtree/build"}
+{"at":"2026-10-27T18:45:15.835Z","events":14180,"ms":93.89,"via":"/api/graph"}
+{"at":"2026-10-27T18:45:16.017Z","events":14180,"ms":81.28,"via":"/api/subtree/build"}
+{"at":"2026-10-27T18:45:16.122Z","events":14180,"ms":92.48,"via":"/api/subtree/build"}
+{"at":"2026-10-27T19:33:32.200Z","events":14180,"ms":111.23,"via":"/api/graph"}
+{"at":"2026-10-27T19:33:32.470Z","events":14180,"ms":169.97,"via":"/api/subtree/build"}
+{"at":"2026-10-27T19:33:32.753Z","events":14180,"ms":260.03,"via":"/api/subtree/build"}
+{"at":"2026-10-27T22:44:36.931Z","events":2106,"ms":6.47,"via":"werk stale"}
+{"at":"2026-10-27T22:44:37.019Z","events":2106,"ms":6.93,"via":"werk show"}
+{"at":"2026-10-27T22:44:37.107Z","events":2106,"ms":6.35,"via":"werk show"}
+{"at":"2026-10-27T22:44:37.198Z","events":2106,"ms":6.78,"via":"werk find"}
+{"at":"2026-10-27T23:00:12.755Z","events":2106,"ms":10.86,"via":"/api/graph"}
+{"at":"2026-10-27T23:00:12.796Z","events":2106,"ms":15.33,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:12.806Z","events":2106,"ms":4.75,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:17.648Z","events":2106,"ms":12.5,"via":"/api/graph"}
+{"at":"2026-10-27T23:00:18.218Z","events":2106,"ms":19.12,"via":"/api/graph"}
+{"at":"2026-10-27T23:00:18.235Z","events":2106,"ms":11.33,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:18.248Z","events":2106,"ms":9.04,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:18.271Z","events":2106,"ms":13.82,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:18.286Z","events":2106,"ms":12.52,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:23.571Z","events":2106,"ms":5.79,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:23.578Z","events":2106,"ms":5.05,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:31.129Z","events":2106,"ms":10.69,"via":"/api/graph"}
+{"at":"2026-10-27T23:00:31.264Z","events":2106,"ms":14.25,"via":"/api/graph"}
+{"at":"2026-10-27T23:00:31.277Z","events":2106,"ms":7.94,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:31.284Z","events":2106,"ms":4.85,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:31.294Z","events":2106,"ms":6.75,"via":"/api/subtree/build"}
+{"at":"2026-10-27T23:00:31.302Z","events":2106,"ms":5.35,"via":"/api/subtree/build"}

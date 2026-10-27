@@ -208,6 +208,9 @@
 # runs down column 48 into attachments' north face. The image upload has no edge of its own: an
 # edge id is its from->to pair, so it shares the composer->live edge and its label.
 #
+# Local edit for #vi-crumbs: `crumbs` joins MAP VIEW in the free cell of row 6, column 48, east
+# of switcher, as the header shows it. It has no edges.
+#
 # Local edit for #ms-col-time: measure->board is a new edge. A new empty row 0 on top of the grid
 # carries it. It leaves measure's north face at column 29, runs up that column, crosses
 # tree->live on one junction, runs west along row 0, and runs down column 14 onto board's north
@@ -233,58 +236,59 @@ content
     subgraph mapview [MAP VIEW]
       tree["refines tree | the decision tree, as a list you open and close; a proposed card shows as a ghost; a decided card carries a Build button"] @vi-onview,vi-overwrite,werk-propose-new,vi-onview-postponed,vi-board-plan,werk-board-build-subtree,vi-onview-root,vi-board-plan-controls,vi-home-howwhat,vi-home-howwhat-address,vi-home-howwhat-open
       graph3d["3d graph | the same cards, drawn as a 3D web of links"] @vi-graph3d-highlight,vi-graph3d-paused
-      detail["card detail | the full text of one card"] @vi-detail,vi-onview,werk-reflink,werk-codeblock,vi-onview-postponed,vi-onview-hero,vi-onview-subcards,vi-onview-look,werk-reflink-inview,werk-codeblock-langs,werk-reflink-label,werk-reflink-guard,al-diff-render,vi-routes-card-in-project
+      detail["card detail | the full text of one card"] @vi-detail,vi-onview,werk-reflink,werk-codeblock,vi-onview-postponed,vi-onview-hero,vi-onview-subcards,vi-onview-look,werk-reflink-inview,werk-codeblock-langs,werk-reflink-label,werk-reflink-guard,al-diff-render,vi-routes-card-in-project,werk-excerpt-shown-position,vi-counts-card-postponed-word
       rollup["rollup bar | counts of decided, open, and stale cards"] @rollup,ro-axes,ro-inline,vi-onview-postponed
       diagram["system diagram | this picture, drawn by the grid pipeline from a hand-authored .wgrid file"] @vi-sysdiag,vi-sysdiag-link,vi-sysdiag-declare,vi-sysdiag-compare,vi-sysdiag-nokind,vi-sysdiag-grid,vi-sysdiag-metrics,vi-sysdiag-grid-inline-label,vi-sysdiag-grid-gaps,vi-sysdiag-file
-      board["ticket board | one column per ticket state: blocked, ready, building, merging, done"] @werk-board,vi-board,werk-board-columns,werk-board-control,vi-board-plan,vi-board-details,werk-board-colwidth,st-ticket-restore,vi-board-session-file,vi-board-plan-controls,vi-board-title-clamp,vi-board-ticket-decisions-2
+      board["ticket board | one column per ticket state: blocked, ready, building, merging, done"] @werk-board,vi-board,werk-board-columns,werk-board-control,vi-board-plan,vi-board-details,werk-board-colwidth,st-ticket-restore,vi-board-session-file,vi-board-plan-controls,vi-board-title-clamp,vi-board-ticket-decisions-2,vi-board-state-moves,vi-board-state-replan,vi-board-state-fold-scope,vi-board-state-archive-columns
       flow["flow tab | counts from the map cards: the status loop, totals for each subtree, and a flat list of all cards"] @vi-flowtab-removed
       measure["measure tab | measures from the pipeline log, the board log, the conversations and the background jobs: chat-pane waits, the share of local diagram redraws, each ticket's time per board column, and kill-criterion gauges"] @ms-outcome-interv-chat,vi-flow-localrate,lp-overseer-psfail-metric,werk-write-measure-signal,ms-col-time
       switcher["project switcher | the current project's name at the left of the sticky header; its menu lists every project, marks each one with a running agent turn or a dead agent, and ends with Add project…, which opens the operating system's folder dialog; a switch reopens that project's last card and view"] @werk-projects-switcher,werk-projects-add,werk-projects-background,werk-projects-display,werk-projects-names,werk-v0-onechat
-      search["search box | a box in the header that opens any card, option, source or excerpt by its id or its words; a query that starts with # matches ids only, exact id first; each result shows a status-color dot and the card id"] @vi-jump,vi-jump-hash,vi-jump-row
-      viewtabs["view tabs | one tab per view in the header; a click opens that view at its own address, and the view in use is kept per project"] @vi-tabs,vi-routes
+      crumbs["breadcrumbs | the path from the root to the open card, in header row 1 after the project switcher; one line high, each ancestor a button; hover opens the full path in an overlay right under the line"] @vi-crumbs,vi-crumbs-place,vi-crumbs-line,vi-crumbs-line-under
+      search["search box | a box in the header that opens any card, option, source or excerpt by its id or its words; a query that starts with # matches ids only, exact id first; each result shows a status-color dot and the card id"] @vi-jump,vi-jump-hash,vi-jump-row,vi-layout-header-read-wire
+      viewtabs["view tabs | one tab per view in the header; a click opens that view at its own address, and the view in use is kept per project"] @vi-tabs,vi-routes,werk-stack-view-address-with-view,vi-tabs-place-browser-name,vi-routes-board-placeholder
     end
     subgraph pane [CHAT PANE]
       approvebar["approval bar | shows the call and the CLI's reason; allow once, always allow, or deny"] @werk-approve,werk-approve-bar
-      composer["composer | the box where you type"] @werk-chat,werk-shot-chip,werk-hash-trigger,werk-chat-cmdmenu,werk-chat-image-inline
+      composer["composer | the box where you type"] @werk-chat,werk-shot-chip,werk-hash-trigger,werk-chat-cmdmenu,werk-chat-image-inline,werk-chat-cmdmenu-source,werk-chat-cmdmenu-read
       transcript["transcript | the chat history, with a button for the suggested next action"] @werk-progress,werk-tool-collapse,werk-mc-askqa,werk-mc-nextbtn,werk-chat-turn-id,werk-mc-tab-bottom
       bgline["background-agents line | a line pinned under the chat log while a background agent of this tab still runs"] @werk-mc-bgagents,werk-mc-bg-line
       deadbar["attention bar | one line per tab that needs the person, shown in the pane of every other tab, naming the tab and its reason in the reason's color: dead, permission, question, or offer"] @werk-mc-live-dead,werk-mc-live-line
       tabs["tab strip | one tab per conversation; its dot blinks in the color of what the tab needs: dead, permission, question, or offer"] @werk-mc-tabs,werk-mc-park,werk-mc-keys,werk-mc-asks,werk-mc-asks-dot,werk-mc-live,werk-mc-bgagents,werk-mc-live-bgcount,werk-mc-tabs-step-wrap,werk-mc-live-dead,werk-mc-live-line,werk-mc-split-plus
-      header["model + context header | which model runs, how much context is left, and a dead mark while the conversation's agent has exited on its own"] @werk-model-select,werk-context-pie,werk-head-bottom,werk-model-persist,werk-v0-dead-mark
+      header["model + context header | which model runs, how much context is left, and a dead mark while the conversation's agent has exited on its own"] @werk-model-select,werk-context-pie,werk-head-bottom,werk-model-persist,werk-v0-dead-mark,werk-context-pie-clear-keeps-log,werk-model-select-queued
     end
     subgraph proc [SERVER PROCESS]
       state["state | GET /api/graph under the project's own address, one fetch of today's folded map; a name not on the project list is refused"] @werk,vi-edges,vi-overwrite,werk-write-watch-start,werk-write-changed,werk-projects,werk-projects-address
-      live["live + sse | POST /api/chat, /api/ask, POST /api/upload for a pasted image, and the SSE stream back"] @werk-pane,werk-progress,werk-crash,werk-serve-trust,werk-chat-image-inline,werk-projects-address,werk-serve-trust-token-header-name,werk-serve-trust-token-carrier
-      foldfn["fold | turns the log of past decisions into today's state"] @werk,pr-log,pr-log-refuse,pr-log-one-event,pr-log-fold-marks,pr-wf-paused-resume,pr-wf-paused-reach,vi-prop-trace-reason,vi-prop-amended
-      runner["conversation manager | one agent per conversation, each at a home card, either forked from its parent's session or started empty"] @werk-invoke,werk-chat-stdin,werk-resume,werk-mc-fork,werk-mc-split,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,werk-mc-park-unpark,werk-chat-no-card-line,werk-chat-opnames,werk-projects,werk-projects-background,werk-mc-split-plus,werk-v0-onechat
+      live["live + sse | POST /api/chat, /api/ask, POST /api/upload for a pasted image, and the SSE stream back"] @werk-pane,werk-progress,werk-crash,werk-serve-trust,werk-chat-image-inline,werk-projects-address,werk-serve-trust-token-header-name,werk-serve-trust-token-carrier,werk-reflink-chat-wire,werk-reflink-chat-frame,werk-approve-live-events
+      foldfn["fold | turns the log of past decisions into today's state"] @werk,pr-log,pr-log-refuse,pr-log-one-event,pr-log-fold-marks,pr-wf-paused-resume,pr-wf-paused-reach,vi-prop-trace-reason,vi-prop-amended,werk-remove-restore-undo-fold-shape,pr-wf-naming-downstream-word,werk-excerpt-event-span
+      runner["conversation manager | one agent per conversation, each at a home card, either forked from its parent's session or started empty"] @werk-invoke,werk-chat-stdin,werk-resume,werk-mc-fork,werk-mc-split,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,werk-mc-park-unpark,werk-chat-no-card-line,werk-chat-opnames,werk-projects,werk-projects-background,werk-mc-split-plus,werk-v0-onechat,werk-chat-turn-id-exit-queued,werk-chat-fresh-agent-card,werk-crashmsg-early-exit,werk-wording-check-writers,werk-mc-fork-nosession
       gate["ask queue | holds the calls Claude Code's own engine could not decide; werk decides nothing itself"] @werk-perm-native,werk-perm-mode,werk-approve
-      accept["accept + remove | commits a ghost with its ghost parents, or removes a card with its subtree"] @werk-propose-new,werk-remove,werk-remove-restore-undo,werk-propose-new-carry,werk-write-remove-links,werk-write-staged-removal
+      accept["accept + remove | commits a ghost with its ghost parents, or removes a card with its subtree"] @werk-propose-new,werk-remove,werk-remove-restore-undo,werk-propose-new-carry,werk-write-remove-links,werk-write-staged-removal,werk-remove-restore-undo-event-types
       lock["server locks | one lock per machine holds the running server's pid and port, and each project holds its own lock in its map folder; a project another live server holds shows as locked"] @werk-onelock,werk-onelock-take,werk-projects-one-process,werk-projects-locks,werk-projects-start-attach
-      dev["dev reload | reloads code changes without losing a live chat"] @werk-dev,werk-hmr,werk-client-reload,werk-hmr-swap,werk-stack-layout,werk-hmr-entry-settles,werk-projects-one-process
+      dev["dev reload | reloads code changes without losing a live chat"] @werk-dev,werk-hmr,werk-client-reload,werk-hmr-swap,werk-stack-layout,werk-hmr-entry-settles,werk-projects-one-process,werk-hmr-swap-serve-reexec
       diagramsync["diagram sync job | a background job that runs the scout and the updater when the decided cards change; no chat shows it"] @vi-sysdiag-quiet,vi-sysdiag-agents
     end
     subgraph store [STORE]
       log["log.jsonl | every decision, ever made, in order"] @pr-log,werk,werk-two-files
       chatlog["conversations | an append-only log beside the map log, one line per session (tab, session id, home card, parent session), plus one chat.jsonl per conversation and, beside its session file, one saved-settings file (model, advisor, last context fill)"] @werk-two-files,werk-resume,werk-blockid,werk-mc-fork,werk-mc-shared-convo-log,werk-excerpt-chatlog,werk-model-persist-settings-file
-      allow["allow.json | always-allow rules the CLI suggested, kept per conversation and given to that conversation's next child"] @werk-perm-native,werk-approve,werk-mc-allow
-      asks["asks.jsonl | every answered approval question"] @werk-approve-log
+      allow["allow.json | always-allow rules the CLI suggested, kept per conversation and given to that conversation's next child"] @werk-perm-native,werk-approve,werk-mc-allow,werk-approve-allow-file
+      asks["asks.jsonl | every answered approval question"] @werk-approve-log,werk-mc-askqa-log-answer
       pipelog["pipeline log | every step of every stage: its start, its end, its cost and result, and for a red step its gate and cause; committed to git; each agent session's transcript and each check run's full output sit beside it as untracked files, named by the step's ended event"] @ms-store,ms-cost,ms-store-files,ms-store-git,werk-v0-pipeline-log
       projectlist["project list | the projects of one person, stored once per user outside every project; a project is named by its folder name; in dev mode werk's own checkout is added on top, never written"] @werk-projects-list,werk-projects-names,werk-projects-dev-self,werk-projects-list-store
       attachments["attachments | one image file per pasted screenshot, outside version control; a message carries only its path, and the agent reads the file"] @werk-shots,werk-chat-image-inline
     end
     subgraph test [TEST HARNESS]
-      unittest["bun test | src/ and React component tests; 90% line gate on the pure modules"] @werk-test-runner,werk-test-scope,werk-v0-seams,werk-test-env,werk-test-dom,werk-base-test-project,werk-test-store,werk-test-external,werk-test-pure-list,werk-test-fake-ask-open,werk-v0-seams-fake-script,werk-test-fake-edit-inside,werk-test-fake-launch-log,werk-test-pure-list-union,werk-reflink-own-test-coverage,st-build-seam-role-env,werk-chat-fake-role,werk-test-globals,werk-test-runner-parallel
-      e2e["playwright e2e | boots the real server in Chromium, asserts on the DOM, writes a PNG as evidence"] @werk-test-visual,werk-test-visual-judge,werk-v0-seams,werk-test-env,werk-base-test-project,werk-test-store,werk-test-external,werk-test-app-copy,werk-test-fake-ask-open,werk-v0-seams-fake-script,werk-test-fake-edit-inside,werk-test-fake-launch-log,st-build-seam-role-env,werk-chat-fake-role,werk-v0-seams-heldout-folder
+      unittest["bun test | src/ and React component tests; 90% line gate on the pure modules"] @werk-test-runner,werk-test-scope,werk-v0-seams,werk-test-env,werk-test-dom,werk-base-test-project,werk-test-store,werk-test-external,werk-test-pure-list,werk-test-fake-ask-open,werk-v0-seams-fake-script,werk-test-fake-edit-inside,werk-test-fake-launch-log,werk-test-pure-list-union,werk-reflink-own-test-coverage,st-build-seam-role-env,werk-chat-fake-role,werk-test-globals,werk-test-runner-parallel,werk-test-runner-e2e-suffix
+      e2e["playwright e2e | boots the real server in Chromium, asserts on the DOM, writes a PNG as evidence"] @werk-test-visual,werk-test-visual-judge,werk-v0-seams,werk-test-env,werk-base-test-project,werk-test-store,werk-test-external,werk-test-app-copy,werk-test-fake-ask-open,werk-v0-seams-fake-script,werk-test-fake-edit-inside,werk-test-fake-launch-log,st-build-seam-role-env,werk-chat-fake-role,werk-v0-seams-heldout-folder,werk-test-runner-e2e-suffix
       ci["github actions ci | after each merge to the main line, a clean machine installs from the lockfile, runs every check, builds and starts werk; green gates a release, not a merge"] @werk-ci,werk-dist,werk-devex-toolver
     end
     subgraph buildloop [BUILD LOOP]
       planner["planner | one decided subtree becomes one spec, then tracer-bullet tickets"] @werk-loop,st-spec,st-ticket,st-ticket-stories,st-ticket-own-checks,st-ticket-set-checks,st-plan-extend,st-ticket-shape,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,st-spec-linked,st-build-howto-titles,st-model-per-role,werk-agent-runner-one
       ticketwatch["ticket watch | plain code that reads each log change and blocks every open ticket that cites a changed card"] @st-ticket-watch,st-build-missing-decision
       subgraph builderloop [BUILDER LOOP]
-        implement["implement | a fresh builder agent does one unit of work toward the ticket, in its own worktree"] @st-build-ticket,st-build-implement,werk-loop-fanout,werk-loop,st-build-parallel,st-build-target,st-build-implement-search,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,st-build-howto-titles,lp-agent-sees,st-model-per-role,werk-agent-runner-one
+        implement["implement | a fresh builder agent does one unit of work toward the ticket, in its own worktree"] @st-build-ticket,st-build-implement,werk-loop-fanout,werk-loop,st-build-parallel,st-build-target,st-build-implement-search,werk-agent-instructions,werk-agent-subagents,werk-agent-instructions-append,st-build-howto-titles,lp-agent-sees,st-model-per-role,werk-agent-runner-one,st-build-ticket-branch,st-build-stuck-retry
         check["check | one command per check, exit code only"] @lp-checks,st-build-ticket,werk-test-fresh-tree,ms-fail-cause,lp-prod-checks,werk-checks,werk-lint,werk-typecheck,st-build-tip-in
-        grade["grade | a grader agent reads the diff against each decided card, score 1-5"] @lp-prod-judge,st-build-ticket,lp-prod-judge-scope,lp-prod-judge-read-only,st-build-howto-titles,st-model-per-role,st-grade-converge,st-grade-defer,st-build-card-proposed-recorded,werk-agent-runner-one
-        review["review | five reviewer agents, one per quality area, read the diff"] @lp-prod-review,st-build-ticket,lp-prod-judge-read-only,st-build-seam-role-env-reviewer-area,st-build-howto-titles,st-model-per-role,werk-agent-runner-one
+        grade["grade | a grader agent reads the diff against each decided card, score 1-5"] @lp-prod-judge,st-build-ticket,lp-prod-judge-scope,lp-prod-judge-read-only,st-build-howto-titles,st-model-per-role,st-grade-converge,st-grade-defer,st-build-card-proposed-recorded,werk-agent-runner-one,st-grade-defer-follow-up-checks,st-grade-converge-reply-shape,st-grade-defer-follow-up-file
+        review["review | five reviewer agents, one per quality area, read the diff"] @lp-prod-review,st-build-ticket,lp-prod-judge-read-only,st-build-seam-role-env-reviewer-area,st-build-howto-titles,st-model-per-role,werk-agent-runner-one,lp-prod-review-unknown-severity
       end
       merger["merge loop | merges one finished ticket at a time, and files a follow-up for a red check"] @werk-loop,st-build-run,st-build-run-mechanics,st-plan-main,st-build-conflict,st-build-stop-ready,st-build-target,st-build-conflict-resolve,st-build-stuck-park,st-run-start-guard,st-build-cap-spec-gap,st-heldout-followup-gate,ms-merge-red-follow-up,st-followup-one-open
       heldout["held-out set | Given/When/Then steps the builder never sees, bound to tests by a binder agent"] @werk-loop,st-validate-heldout,lp-prod-heldout,lp-heldout-steps,lp-heldout-author,lp-heldout-binder,st-heldout-notrun,st-heldout-step-fresh,lp-heldout-mechanics,st-build-howto-titles,st-model-per-role,st-heldout-unbuilt-capability,st-heldout-step-contradiction,st-heldout-unbuilt-close,werk-agent-runner-one
@@ -294,7 +298,7 @@ content
       sampler["sample runner | N one-shot claude --print agents on one brief; a fork is where their manifests diverge"] @al-sample-runner,al-sample-noask,al-sample-diverge,al-sample-budget
       prototyper["prototype runner | builds one artifact per option of a fork, in parallel"] @al-sample-proto-agent,al-sample-artifact,al-sample-build-isolation,al-sample-when
     end
-    cli["cli | stages every new card and checks the contract before decided"] @werk-contract,werk-contract-where,werk-propose-new,werk-verb-registry,werk-ticket-check-verb,werk-ticket-check-verb-form,st-ticket-checks-run,werk-cli-ticket-restore,werk-cli-search,pr-wf-paused-basis,werk-find-scope,werk-contract-amend-scope,werk-contract-waiver-reason,werk-contract-no-decider,werk-contract-all-missing,werk-propose-new-discard-thread,werk-excerpt-event,werk-excerpt-pointer,werk-excerpt-once,vi-detail-cli-proof,werk-propose-new-real-under-ghost,werk-cli-hash-id,werk-propose-new-carry,werk-cli-followed,werk-cli-followup,werk-contract-amend-who
+    cli["cli | stages every new card and checks the contract before decided"] @werk-contract,werk-contract-where,werk-propose-new,werk-verb-registry,werk-ticket-check-verb,werk-ticket-check-verb-form,st-ticket-checks-run,werk-cli-ticket-restore,werk-cli-search,pr-wf-paused-basis,werk-find-scope,werk-contract-amend-scope,werk-contract-waiver-reason,werk-contract-no-decider,werk-contract-all-missing,werk-propose-new-discard-thread,werk-excerpt-event,werk-excerpt-pointer,werk-excerpt-once,vi-detail-cli-proof,werk-propose-new-real-under-ghost,werk-cli-hash-id,werk-propose-new-carry,werk-cli-followed,werk-cli-followup,werk-contract-amend-who,werk-cli-name,werk-cli-rework,werk-cli-build-ticket-list,werk-cli-build-ticket-writes,werk-excerpt-cli-form,werk-write-add-root,vi-prop-nolineage-ghost,werk-excerpt-event-shape,werk-excerpt-event-frozen-all,werk-excerpt-event-status,werk-cli-propose-reason-value,vi-prop-confirm-names,werk-cli-reopen-flags,werk-cli-edit-reason-value,werk-dist-printed-name
     child["claude code child | the Claude Code process doing the work"] @werk-invoke,werk-chat-stdin
     tracker["issue tracker | an outside tool, like Linear or GitHub"] @tracker,tk-verbs,vi-backend
     release["release run | a GitHub Actions run that a person's version tag on a green main-line commit starts; builds one executable per platform, with the runtime and the built client inside, attaches the files and their checksums to a GitHub release, and updates the Homebrew formula"] @werk-release,werk-dist,werk-devex-toolver
@@ -305,11 +309,11 @@ content
     rollup -->|loads decided, open, and stale counts| state @rollup
     switcher -->|lists the projects, and adds a folder picked in the folder dialog| projectlist @werk-projects-list,werk-projects-add,werk-projects-add-protocol
     tree -->|the check button accepts a ghost| accept @werk-propose-new
-    detail -->|its remove control removes the card| accept @werk-remove,vi-remove-btn,vi-remove-btn-reparent
+    detail -->|its remove control removes the card| accept @werk-remove,vi-remove-btn,vi-remove-btn-reparent,vi-remove-btn-ghost-no-x
     flow -->|its removed filter's restore button restores the card| accept @vi-flowtab-removed
     tree -->|shift+click forks a conversation at that card| live @werk-mc-open
     accept -->|appends the events| log @werk-propose-new,werk-remove
-    approvebar -->|asks before a risky action runs| live @werk-approve
+    approvebar -->|asks before a risky action runs| live @werk-approve,werk-approve-requests
     composer -->|sends what you type, and uploads each pasted image at once, before the send| live @werk-chat,werk-chat-image-inline
     transcript -->|streams the reply as it is written| live @werk-progress,werk-chat-turn-id
     tabs -->|switches which chat is live| live @werk-mc-follow
@@ -322,7 +326,7 @@ content
     runner -->|checks no other server is running| lock @werk-onelock
     runner -->|starts the next child with the saved rules| allow @werk-perm-native
     runner -->|records each chat turn's cost, conversation and open card when the turn ends| pipelog @ms-store-plan
-    live -->|checks and stores each pasted image, and serves its thumbnail| attachments @werk-chat-image-inline,werk-shots
+    live -->|checks and stores each pasted image, and serves its thumbnail| attachments @werk-chat-image-inline,werk-shots,werk-chat-image-inline-sniff
     child -->|sends a call its own engine could not decide| gate @werk-perm-native
     gate -->|keeps the always-allow rules| allow @werk-perm-native
     gate -->|appends each answered question| asks @werk-approve-log
@@ -354,7 +358,7 @@ content
     planner -->|starts the merge loop over the planned tickets, with no pause| merger @werk-board-build-subtree
     log -->|each change to a cited card| ticketwatch @st-ticket-watch
     ticketwatch -->|moves each open ticket that cites it to blocked, with the reason| board @st-ticket-watch
-    board -->|triggers one ticket's build; archiving the ticket ends it| implement @werk-board-control,st-build-died,werk-board-control-archive-ends-build
+    board -->|triggers one ticket's build; archiving the ticket ends it| implement @werk-board-control,st-build-died,werk-board-control-archive-ends-build,st-build-died-detached,st-build-died-cap
     implement -->|when a build the board started ends, moves its ticket to merging on green, or back to ready with the reason at the retry cap| board @st-build-ticket-hand-off
     implement -->|runs the checks on the diff| check @st-build-ticket
     check -->|green: grade the diff| grade @st-build-ticket
@@ -367,13 +371,13 @@ content
     merger -->|runs the held-out set on the merged tree| heldout @st-build-run,st-validate-heldout,st-heldout-beside
     heldout -->|sends the text of a failed step| implement @lp-heldout-feedback,st-heldout-followup-per-ticket
     planner -->|records each plan, spec, and ticket step, with the scope cards each plan read, and keeps a copy of the spec and tickets each plan wrote| pipelog @ms-store,ms-store-scope,ms-store-plancopy
-    implement -->|records each builder pass's start, end, and cost| pipelog @ms-store,werk-v0-pipeline-log
-    implement -->|proposes a card for a decision no card makes, or names the cards it followed, to close the build's card obligation| cli @st-build-missing-decision,st-build-card
+    implement -->|records each builder pass's start, end, and cost| pipelog @ms-store,werk-v0-pipeline-log,st-build-died-record
+    implement -->|proposes a card for a decision no card makes, or names the cards it followed, to close the build's card obligation| cli @st-build-missing-decision,st-build-card,st-build-card-event
     merger -->|moves tickets through merging and done| board @werk-board-columns
     overseer -->|watches each agent session for a stuck one| implement @lp-overseer,lp-overseer-det
     child -->|spawns the prototyper subagent| prototyper @al-sample-proto-agent,al-ask-own-options
 
-    class tree,graph3d,detail,rollup,diagram,board,flow,measure,switcher,search,viewtabs,approvebar,composer,transcript,bgline,deadbar,tabs,header read
+    class tree,graph3d,detail,rollup,diagram,board,flow,measure,switcher,search,viewtabs,crumbs,approvebar,composer,transcript,bgline,deadbar,tabs,header read
     class state,live,foldfn,runner,gate,accept,lock,overseer,diagramsync,ticketwatch state
     class dev,unittest,e2e dev
     class log,chatlog,allow,asks,pipelog,projectlist,attachments write
@@ -387,7 +391,7 @@ grid
   ". . . . . . . . . . . . . cli->board measure->board . . flow->accept . . tree->live tree->live tree->live tree->live tree->live tree->live tree->live flow->accept+tree->live tree->live tree->live+measure->board tree->live tree->live tree->live tree->live tree->live @tree->live tree->live tree->live tree->live tree->live tree->live tree->live tree->live tree->live . . . . . cli->board"
   ". . . . . . . . . . . . . cli->board measure->board . detail->accept detail->accept+flow->accept detail->accept detail->accept tree->live+detail->accept detail->accept detail->accept . . . . flow->accept . measure->board . . . . . . . . . . . . . tree->live . . . . . cli->board"
   ". . . . . . . . . . . . . cli->board measure->board . detail->accept flow->accept . . tree->live . detail->accept . . . flow flow flow measure->board . . . . . . . . . . . . . tree->live . . . . . cli->board"
-  ". . board board board board board board board board board board board board board ticketwatch->board detail->accept flow->accept tree->accept tree tree graph3d detail rollup diagram diagram measure measure measure measure gate->approvebar gate->approvebar approvebar composer . transcript tabs header bgline deadbar . . . tree->live . search viewtabs switcher . cli->board"
+  ". . board board board board board board board board board board board board board ticketwatch->board detail->accept flow->accept tree->accept tree tree graph3d detail rollup diagram diagram measure measure measure measure gate->approvebar gate->approvebar approvebar composer . transcript tabs header bgline deadbar . . . tree->live . search viewtabs switcher crumbs cli->board"
   ". . merger->board . . . . board->implement . implement->board . . . . planner->board ticketwatch->board detail->accept flow->accept tree->accept tree->planner tree->state . detail->state rollup->state child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . approvebar->live composer->live . transcript->live tabs->live header->live . . . . . tree->live . . . switcher->projectlist . cli->board"
   ". . merger->board . . . . @board->implement . @implement->board . . . . planner->board @ticketwatch->board @detail->accept flow->accept @tree->accept @tree->planner @tree->state . @detail->state @rollup->state child->diagram diagramsync->diagram @measure->chatlog @measure->asks @measure->pipelog . gate->approvebar . @approvebar->live @composer->live . @transcript->live @tabs->live @header->live . . . . . tree->live . . . switcher->projectlist . cli->board"
   ". . merger->board . . . . board->implement . implement->board . . . . planner->board ticketwatch->board detail->accept flow->accept tree->accept tree->planner tree->state . detail->state rollup->state child->diagram diagramsync->diagram measure->chatlog measure->asks measure->pipelog . gate->approvebar . approvebar->live composer->live . transcript->live tabs->live header->live . . . . . tree->live . . . switcher->projectlist . cli->board"

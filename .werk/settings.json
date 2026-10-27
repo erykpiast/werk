@@ -1,1 +1,1 @@
-{"model":"claude-sonnet-5-5[1m]","advisor":"claude-opus-5-5","context":{"used":164431,"max":1000000}}
+{"model":"claude-opus-5-5","advisor":null,"context":{"used":0,"max":200000}}
